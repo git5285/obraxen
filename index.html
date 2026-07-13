@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RemainOn — Reparación de pavimentos industriales</title>
+<meta name="description" content="RemainOn repara pavimentos industriales: juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas con mínima parada de actividad.">
+<meta property="og:title" content="RemainOn — Reparación de pavimentos industriales">
+<meta property="og:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "RemainOn",
+  "description": "Reparación de pavimentos industriales: juntas, fisuras, recrecidos y tratamientos superficiales.",
+  "email": "info@remainon.com",
+  "telephone": "+34 000 000 000",
+  "areaServed": ["España", "Europa"],
+  "openingHours": "Mo-Fr 08:00-18:00"
+}
+</script>
+<style>
+  :root{
+    --fondo:#F8FAFC;
+    --carbon:#0F172A;
+    --carbon-2:#1E293B;
+    --pizarra:#64748B;
+    --pizarra-2:#94A3B8;
+    --acento:#EA580C;
+    --acento-osc:#C2410C;
+    --acento-claro:#FB923C;
+    --blanco:#FFFFFF;
+    --linea:#E2E8F0;
+    --r-lg:28px;
+    --r-md:18px;
+    --r-sm:12px;
+    --maxw:1180px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+    background:var(--fondo);
+    color:var(--carbon);
+    line-height:1.6;
+    font-size:16px;
+    padding:16px;
+  }
+  h1,h2,h3{line-height:1.12;font-weight:800;letter-spacing:-.015em}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--acento);outline-offset:2px;border-radius:4px}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .skip{
+    position:absolute;left:-9999px;top:0;background:var(--carbon);color:var(--blanco);
+    padding:10px 18px;border-radius:0 0 12px 0;z-index:100;
+  }
+  .skip:focus{left:16px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--acento-osc);margin-bottom:14px;
+  }
+  .kicker::before{content:"";width:22px;height:2px;background:var(--acento)}
+
+  .ic{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+  .foto{position:relative;overflow:hidden}
+  .foto > .tex{
+    position:absolute;inset:0;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"),
+      linear-gradient(135deg,#94A3B8 0%,#7C8798 45%,#64748B 100%);
+    background-blend-mode:overlay;
+    transition:transform .45s ease;
+  }
+  .foto:hover > .tex{transform:scale(1.045)}
+  .foto.ph::after{
+    content:"Foto";
+    position:absolute;top:12px;right:14px;z-index:1;
+    font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:13px 26px;border-radius:999px;border:0;cursor:pointer;
+    font-family:inherit;font-weight:700;font-size:.95rem;text-decoration:none;
+    transition:background .15s ease;
+  }
+  .btn-acento{background:var(--acento);color:var(--blanco)}
+  .btn-acento:hover{background:var(--acento-osc)}
+  .btn-borde{border:1.5px solid rgba(255,255,255,.45);color:var(--blanco);background:transparent}
+  .btn-borde:hover{border-color:var(--blanco)}
+
+  .sticky-nav{
+    position:fixed;top:0;left:0;right:0;z-index:60;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);
+    transform:translateY(-100%);transition:transform .25s ease;
+  }
+  .sticky-nav.visible{transform:translateY(0)}
+  .sticky-nav .inner{
+    max-width:calc(var(--maxw) + 48px);margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 24px;
+  }
+  .sticky-nav ul{display:flex;gap:4px;list-style:none}
+  .sticky-nav ul a{
+    text-decoration:none;font-size:.85rem;font-weight:600;color:var(--pizarra);
+    padding:7px 14px;border-radius:999px;display:block;
+  }
+  .sticky-nav ul a:hover{color:var(--carbon)}
+  .sticky-nav ul a.activo{background:var(--carbon);color:var(--blanco)}
+  .sticky-nav .btn{padding:9px 20px;font-size:.85rem}
+  .logo{font-weight:800;font-size:1.2rem;text-decoration:none;letter-spacing:-.01em}
+  .logo span{color:var(--acento)}
+
+  .hero{
+    border-radius:var(--r-lg);overflow:hidden;color:var(--blanco);
+    background:
+      radial-gradient(120% 90% at 85% 8%,rgba(234,88,12,.22) 0%,transparent 52%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E"),
+      linear-gradient(140deg,#1E293B 0%,#0F172A 55%,#0B1120 100%);
+    max-width:calc(var(--maxw) + 48px);
+    margin:0 auto;
+  }
+  .hero-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 36px}
+  .hero-nav .logo{font-size:1.25rem}
+  .hero-nav ul{display:flex;gap:6px;list-style:none;background:rgba(255,255,255,.07);border-radius:999px;padding:6px}
+  .hero-nav ul a{
+    text-decoration:none;font-size:.88rem;font-weight:600;
+    padding:8px 16px;border-radius:999px;opacity:.85;display:block;
+  }
+  .hero-nav ul a:hover{opacity:1;background:rgba(255,255,255,.1)}
+  .hero-body{
+    display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:end;
+    padding:72px 56px 40px;
+  }
+  .hero h1{font-size:clamp(2.4rem,5.2vw,4rem);max-width:15ch}
+  .hero h1 em{font-style:normal;color:var(--acento-claro)}
+  .hero-sub{margin:22px 0 30px;max-width:46ch;color:rgba(255,255,255,.75)}
+  .hero-badge{
+    justify-self:end;align-self:start;
+    background:rgba(255,255,255,.08);backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:var(--r-md);padding:16px 18px;max-width:260px;
+    font-size:.85rem;color:rgba(255,255,255,.82);
+  }
+  .hero-badge strong{display:block;color:var(--blanco);margin-bottom:4px;font-size:.9rem}
+  .hero-badge .chip{display:inline-block;background:var(--acento);color:var(--blanco);
+    font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    border-radius:999px;padding:3px 10px;margin-bottom:10px}
+
+  .fisura-wrap{padding:0 56px 34px}
+  .fisura{width:100%;height:56px;display:block}
+  .fisura .f-rota{fill:none;stroke:rgba(148,163,184,.55);stroke-width:2.5;stroke-dasharray:5 6}
+  .fisura .f-fija{fill:none;stroke:var(--acento);stroke-width:5;stroke-linecap:round}
+  .fisura-label{display:flex;justify-content:space-between;margin-top:6px;
+    font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+
+  .intro{padding:90px 0 30px}
+  .intro .fila{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+  .intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .stat b{font-size:2.1rem;font-weight:800;display:block;letter-spacing:-.02em}
+  .stat b i{font-style:normal;color:var(--acento)}
+  .stat span{font-size:.82rem;color:var(--pizarra)}
+
+  .proceso{padding:60px 0 40px}
+  .proceso .cab{margin-bottom:30px}
+  .tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .tarjeta{
+    background:var(--blanco);border-radius:var(--r-md);padding:26px 24px;
+    border:1px solid var(--linea);
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .tarjeta:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(15,23,42,.08)}
+  .tarjeta .num{
+    display:inline-block;background:var(--carbon);color:var(--blanco);
+    font-weight:800;font-size:.8rem;
+    border-radius:var(--r-sm);padding:6px 11px;margin-bottom:40px;
+  }
+  .tarjeta h3{font-size:1.08rem;margin-bottom:10px}
+  .tarjeta p{font-size:.9rem;color:var(--pizarra)}
+
+  .sectores{padding:34px 0 10px}
+  .sectores .fila{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:12px 14px;
+    padding:26px 0;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  }
+  .sector{
+    font-weight:700;font-size:.92rem;color:var(--pizarra);
+    padding:8px 18px;border:1px solid var(--linea);
+    border-radius:999px;background:var(--blanco);
+  }
+
+  .servicios{padding:90px 0 40px}
+  .servicios .cab{text-align:center;max-width:60ch;margin:0 auto 44px}
+  .servicios h2{font-size:clamp(1.8rem,3.6vw,2.5rem)}
+  .serv-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}
+  .serv{
+    border-radius:var(--r-md);min-height:280px;
+    display:flex;align-items:flex-end;
+  }
+  .serv .capa{
+    position:relative;z-index:1;width:100%;padding:22px 24px;
+    background:linear-gradient(transparent,rgba(11,17,32,.85));
+    color:var(--blanco);
+  }
+  .serv .capa .ic{color:var(--acento-claro);margin-bottom:10px;width:28px;height:28px}
+  .serv h3{font-size:1.15rem;margin-bottom:4px}
+  .serv p{font-size:.85rem;color:rgba(255,255,255,.75)}
+
+  .catalogo{margin-top:36px;background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r-md);padding:28px 30px}
+  .catalogo h3{font-size:1rem;margin-bottom:16px}
+  .catalogo ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 24px}
+  .catalogo li{
+    font-size:.9rem;color:var(--carbon-2);display:flex;align-items:center;gap:10px;
+  }
+  .catalogo li::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--acento);flex:none}
+
+  [hidden]{display:none !important}
+  .proyectos{padding:50px 0}
+  .proyectos .cab{margin-bottom:30px}
+  .proy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .proy{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r-md);overflow:hidden}
+  .proy .foto{min-height:190px}
+  .proy .cuerpo{padding:22px 24px}
+  .proy .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .proy .meta span{
+    font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--fondo);border:1px solid var(--linea);border-radius:999px;padding:4px 11px;color:var(--pizarra);
+  }
+  .proy .meta span.m2{background:#FFF7ED;border-color:#FED7AA;color:var(--acento-osc)}
+  .proy h3{font-size:1.05rem;margin-bottom:10px}
+  .proy p{font-size:.88rem;color:var(--pizarra)}
+  .proy dl{margin-top:14px;font-size:.85rem;display:grid;gap:6px}
+  .proy dt{font-weight:700;color:var(--carbon)}
+  .proy dd{color:var(--pizarra);margin-bottom:4px}
+  .equipo{padding:50px 0}
+  .eq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .persona{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r-md);overflow:hidden}
+  .persona .foto{min-height:220px}
+  .persona .cuerpo{padding:20px 22px}
+  .persona h3{font-size:1.02rem}
+  .persona .cargo{font-size:.82rem;color:var(--acento-osc);font-weight:700;margin:2px 0 10px}
+  .persona p{font-size:.85rem;color:var(--pizarra)}
+  .persona ul{list-style:none;margin-top:12px;font-size:.85rem}
+  .persona li{margin-bottom:4px}
+  .persona a{color:var(--carbon-2);text-decoration:none}
+  .persona a:hover{color:var(--acento-osc)}
+  .recursos{padding:50px 0}
+  .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+  .rec{
+    background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r-md);
+    padding:24px;display:flex;flex-direction:column;gap:10px;text-decoration:none;
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .rec:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(15,23,42,.08)}
+  .rec .tipo{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acento-osc)}
+  .rec h3{font-size:1rem}
+  .rec p{font-size:.86rem;color:var(--pizarra)}
+  .rec .leer{margin-top:auto;font-size:.85rem;font-weight:700;color:var(--carbon)}
+
+  .porque{padding:50px 0}
+  .porque .panel{
+    border-radius:var(--r-lg);overflow:hidden;color:var(--blanco);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E"),
+      linear-gradient(120deg,#1E293B 0%,#0B1120 100%);
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;
+    padding:56px;
+  }
+  .porque h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:16px}
+  .porque .kicker{color:var(--acento-claro)}
+  .porque .col-izq > p{color:rgba(255,255,255,.72);max-width:40ch;margin-bottom:34px}
+  .ventajas{display:flex;flex-direction:column;gap:14px}
+  .ventaja{
+    background:var(--blanco);color:var(--carbon);
+    border-radius:var(--r-md);padding:20px 22px;
+    display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start;
+  }
+  .ventaja .ico{
+    width:44px;height:44px;border-radius:var(--r-sm);
+    background:#FFF7ED;color:var(--acento);border:1px solid #FED7AA;
+    display:grid;place-items:center;
+  }
+  .ventaja h3{font-size:1rem;margin-bottom:4px}
+  .ventaja p{font-size:.87rem;color:var(--pizarra)}
+
+  .cita{padding:80px 0;text-align:center}
+  .cita h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:40px}
+  .cita blockquote{font-size:1.15rem;font-style:italic;max-width:56ch;margin:0 auto 22px}
+  .cita cite{font-style:normal;font-size:.9rem;color:var(--pizarra)}
+  .cita cite b{display:block;color:var(--carbon);font-size:1rem}
+
+  .faq{padding:40px 0 80px}
+  .faq .fila{display:grid;grid-template-columns:1fr 1.2fr;gap:56px;align-items:start}
+  .faq h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:16px}
+  .faq .col-izq > p{color:var(--pizarra);max-width:40ch}
+  .faq details{
+    background:var(--blanco);border:1px solid var(--linea);
+    border-radius:var(--r-md);margin-bottom:12px;overflow:hidden;
+  }
+  .faq summary{
+    cursor:pointer;list-style:none;padding:18px 22px;
+    font-weight:700;font-size:.95rem;display:flex;justify-content:space-between;gap:16px;
+  }
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";font-weight:800;color:var(--acento)}
+  .faq details[open] summary::after{content:"–"}
+  .faq details[open]{border-color:var(--acento)}
+  .faq details p{padding:0 22px 18px;font-size:.9rem;color:var(--carbon-2)}
+
+  .cierre{
+    border-radius:var(--r-lg);overflow:hidden;color:var(--blanco);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E"),
+      linear-gradient(140deg,#1E293B 0%,#0B1120 100%);
+    max-width:calc(var(--maxw) + 48px);
+    margin:0 auto;padding:64px 56px 40px;
+  }
+  .cierre .cta-fila{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;margin-bottom:56px;align-items:start}
+  .cierre h2{font-size:clamp(1.8rem,3.6vw,2.6rem);max-width:18ch}
+  .cierre .cta-fila > div > p{color:rgba(255,255,255,.7);max-width:44ch;margin-top:12px;font-size:.95rem}
+  .cierre .kicker{color:var(--acento-claro)}
+  .form{background:var(--blanco);border-radius:var(--r-md);padding:26px;color:var(--carbon)}
+  .form label{display:block;font-size:.82rem;font-weight:700;margin:14px 0 6px}
+  .form label:first-of-type{margin-top:0}
+  .form input,.form textarea{
+    width:100%;border:1px solid #CBD5E1;border-radius:10px;
+    padding:11px 13px;font-family:inherit;font-size:.92rem;background:var(--fondo);
+  }
+  .form input:focus,.form textarea:focus{outline:2px solid var(--acento);outline-offset:0;border-color:var(--acento)}
+  .form textarea{min-height:96px;resize:vertical}
+  .form .btn{width:100%;justify-content:center;margin-top:18px}
+  .form small{display:block;margin-top:10px;font-size:.75rem;color:var(--pizarra)}
+  .foot{
+    background:var(--blanco);color:var(--carbon);
+    border-radius:var(--r-md);padding:36px;
+    display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:32px;
+  }
+  .foot .marca p{font-size:.85rem;color:var(--pizarra);margin:12px 0 0;max-width:26ch}
+  .foot h3{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+  .foot ul{list-style:none}
+  .foot li{margin-bottom:8px}
+  .foot a{font-size:.9rem;color:var(--pizarra);text-decoration:none}
+  .foot a:hover{color:var(--carbon)}
+  .legal{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    padding-top:24px;font-size:.8rem;color:rgba(255,255,255,.5)}
+
+  @media (max-width:860px){
+    .hero-nav ul,.sticky-nav ul{display:none}
+    .hero-body{grid-template-columns:1fr;padding:48px 28px 30px}
+    .fisura-wrap{padding:0 28px 28px}
+    .hero-badge{justify-self:start}
+    .intro .fila,.porque .panel,.faq .fila,.cierre .cta-fila{grid-template-columns:1fr}
+    .serv-grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr 1fr}
+    .cierre{padding:44px 28px 28px}
+    .foot{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .btn,.tarjeta,.foto > .tex,.sticky-nav{transition:none}
+    .fisura .f-fija{stroke-dashoffset:0 !important;stroke-dasharray:none !important}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<div class="sticky-nav" id="stickyNav" aria-hidden="true">
+  <div class="inner">
+    <a class="logo" href="#inicio">Remain<span>On</span></a>
+    <ul id="stickyLinks">
+      <li><a href="#proceso" data-sec="proceso">Proceso</a></li>
+      <li><a href="#servicios" data-sec="servicios">Servicios</a></li>
+      <!-- Activar junto con sus secciones:
+      <li><a href="#proyectos" data-sec="proyectos">Proyectos</a></li>
+      <li><a href="#equipo" data-sec="equipo">Equipo</a></li>
+      <li><a href="#recursos" data-sec="recursos">Recursos</a></li>
+      -->
+      <li><a href="#empresa" data-sec="empresa">Empresa</a></li>
+      <li><a href="#faq" data-sec="faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
+  </div>
+</div>
+
+<section class="hero" id="inicio">
+  <div class="hero-nav">
+    <a class="logo" href="#inicio">Remain<span>On</span></a>
+    <ul>
+      <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <!-- Activar junto con sus secciones:
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#equipo">Equipo</a></li>
+      <li><a href="#recursos">Recursos</a></li>
+      -->
+      <li><a href="#empresa">Empresa</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
+  </div>
+  <div class="hero-body">
+    <div>
+      <h1 data-reveal>Tu pavimento vuelve a rendir. <em>Tu planta no se detiene.</em></h1>
+      <p class="hero-sub" data-reveal>Reparación de juntas, fisuras y superficies degradadas en naves logísticas, plantas de producción y aparcamientos industriales. Intervenciones por fases, compatibles con tu operativa.</p>
+      <span data-reveal style="display:inline-block">
+        <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
+        <a class="btn btn-borde" href="#servicios">Ver servicios</a>
+      </span>
+    </div>
+    <div class="hero-badge" data-reveal>
+      <span class="chip">Equipo veterano</span>
+      <strong>Oficio de siempre, empresa nueva</strong>
+      Fundada por profesionales con amplia trayectoria en pavimentos industriales.
+    </div>
+  </div>
+  <div class="fisura-wrap" aria-hidden="true">
+    <svg class="fisura" viewBox="0 0 1200 56" preserveAspectRatio="none">
+      <path class="f-rota" d="M0,28 L70,22 L130,34 L200,18 L260,36 L330,24 L400,32 L470,20 L540,34 L610,26 L680,33 L750,21 L820,31 L890,24 L960,32 L1030,25 L1100,30 L1200,28"/>
+      <path class="f-fija" id="fisuraFija" d="M0,28 L1200,28"/>
+    </svg>
+    <div class="fisura-label"><span>Fisura</span><span>Reparada</span></div>
+  </div>
+</section>
+
+<main id="contenido">
+  <section class="intro">
+    <div class="wrap fila">
+      <div>
+        <p class="kicker" data-reveal>RemainOn</p>
+        <h2 data-reveal>Soluciones para suelos que no pueden permitirse parar</h2>
+      </div>
+      <div class="stats">
+        <div class="stat" data-reveal><b>+<i data-counter="XX">XX</i></b><span>Años de experiencia acumulada del equipo</span></div>
+        <div class="stat" data-reveal><b><i data-counter="48">48</i>&nbsp;h</b><span>Respuesta a cada solicitud de evaluación</span></div>
+        <div class="stat" data-reveal><b><i data-counter="100">100</i>%</b><span>Presupuestos cerrados, sin sorpresas</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="proceso" id="proceso">
+    <div class="wrap">
+      <div class="cab">
+        <p class="kicker" data-reveal>Cómo trabajamos</p>
+        <h2 data-reveal style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Un método en cuatro fases</h2>
+      </div>
+      <div class="tarjetas">
+        <div class="tarjeta" data-stagger>
+          <span class="num">01</span>
+          <h3>Primera valoración sin visita</h3>
+          <p>Envíanos fotos o un vídeo de la zona afectada y te damos una valoración inicial. Después inspeccionamos in situ para determinar la causa del daño, no solo el síntoma.</p>
+        </div>
+        <div class="tarjeta" data-stagger>
+          <span class="num">02</span>
+          <h3>Propuesta técnica</h3>
+          <p>Presupuesto cerrado con solución, materiales, plazos y plan de fases adaptado a tu actividad.</p>
+        </div>
+        <div class="tarjeta" data-stagger>
+          <span class="num">03</span>
+          <h3>Ejecución</h3>
+          <p>Intervención con equipos propios, señalización de zonas y control de polvo y residuos durante la obra.</p>
+        </div>
+        <div class="tarjeta" data-stagger>
+          <span class="num">04</span>
+          <h3>Entrega y seguimiento</h3>
+          <p>Verificación final contigo y recomendaciones de mantenimiento para proteger la reparación.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sectores">
+    <div class="wrap">
+      <div class="fila" aria-label="Sectores en los que trabajamos">
+        <span class="sector" data-stagger>Logística</span>
+        <span class="sector" data-stagger>Alimentación</span>
+        <span class="sector" data-stagger>Automoción</span>
+        <span class="sector" data-stagger>Retail</span>
+        <span class="sector" data-stagger>Farmacéutico</span>
+        <span class="sector" data-stagger>Aparcamientos</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="servicios" id="servicios">
+    <div class="wrap">
+      <div class="cab">
+        <p class="kicker" data-reveal style="justify-content:center;display:flex">Qué hacemos</p>
+        <h2 data-reveal>Reparaciones rápidas, duraderas y seguras</h2>
+      </div>
+      <div class="serv-grid">
+        <div class="serv foto" data-stagger role="img" aria-label="Operarios sellando juntas y fisuras en el pavimento de una nave industrial">
+          <div class="tex"></div>
+          <div class="capa">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h7M14 12h7M10 12l2-3 2 3-2 3z"/><path d="M3 7v10M21 7v10"/></svg>
+            <h3>Reparación de juntas</h3>
+            <p>Reconstrucción y sellado de juntas dañadas por el tráfico de carretillas y maquinaria pesada.</p>
+          </div>
+        </div>
+        <div class="serv foto" data-stagger role="img" aria-label="Losa de hormigón con fisuras durante la inspección de una nave">
+          <div class="tex"></div>
+          <div class="capa">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L9 14l3 2 4-6 5 4"/><path d="M3 20h18"/></svg>
+            <h3>Tratamiento de fisuras</h3>
+            <p>Reparación estructural o superficial con resinas y morteros técnicos.</p>
+          </div>
+        </div>
+        <div class="serv foto" data-stagger role="img" aria-label="Fresadora de pavimento trabajando sobre la solera de hormigón">
+          <div class="tex"></div>
+          <div class="capa">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M4 20h16"/><path d="M6 16V9l6-4 6 4v7"/></svg>
+            <h3>Recrecidos y nivelación</h3>
+            <p>Recuperación de planimetría con morteros autonivelantes en zonas hundidas o desgastadas.</p>
+          </div>
+        </div>
+        <div class="serv foto" data-stagger role="img" aria-label="Aplicación de sellador con rodillo sobre pavimento industrial">
+          <div class="tex"></div>
+          <div class="capa">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>
+            <h3>Tratamientos superficiales</h3>
+            <p>Pulido, endurecimiento y recubrimientos continuos, más señalización vial interior.</p>
+          </div>
+        </div>
+      </div>
+      <div class="catalogo" data-reveal>
+        <h3>¿Tu caso es más específico? También lo ejecutamos:</h3>
+        <ul>
+          <li>Retirada de pavimento epoxi</li>
+          <li>Reparación de suelos de resina epoxi</li>
+          <li>Eliminación de señalización vial antigua</li>
+          <li>Retirada de anclajes, tornillos y espárragos</li>
+          <li>Bacheo y parcheo de hormigón</li>
+          <li>Reparación de arañazos y desconchones</li>
+          <li>Sellado de juntas de dilatación</li>
+          <li>Pulido de hormigón en grandes superficies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="proyectos" id="proyectos" hidden>
+    <div class="wrap">
+      <div class="cab">
+        <p class="kicker">Casos de éxito</p>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Proyectos que hablan por nosotros</h2>
+      </div>
+      <div class="proy-grid">
+        <article class="proy">
+          <div class="foto ph"><div class="tex"></div></div>
+          <div class="cuerpo">
+            <div class="meta">
+              <span class="m2">[0.000] m²</span>
+              <span>[Sector]</span>
+              <span>[Ciudad, País]</span>
+            </div>
+            <h3>[Título del proyecto: qué se hizo y para quién]</h3>
+            <dl>
+              <dt>Problema</dt>
+              <dd>[Estado inicial del pavimento y cómo afectaba a la operativa]</dd>
+              <dt>Solución</dt>
+              <dd>[Intervención ejecutada: sistemas, fases, plazos]</dd>
+              <dt>Resultado</dt>
+              <dd>[Resultado medible: días de obra, paradas evitadas, garantía]</dd>
+            </dl>
+          </div>
+        </article>
+        <article class="proy">
+          <div class="foto ph"><div class="tex"></div></div>
+          <div class="cuerpo">
+            <div class="meta">
+              <span class="m2">[0.000] m²</span>
+              <span>[Sector]</span>
+              <span>[Ciudad, País]</span>
+            </div>
+            <h3>[Título del proyecto]</h3>
+            <dl>
+              <dt>Problema</dt><dd>[…]</dd>
+              <dt>Solución</dt><dd>[…]</dd>
+              <dt>Resultado</dt><dd>[…]</dd>
+            </dl>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="equipo" id="equipo" hidden>
+    <div class="wrap">
+      <div class="cab" style="margin-bottom:30px">
+        <p class="kicker">El equipo</p>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Las personas detrás de cada obra</h2>
+      </div>
+      <div class="eq-grid">
+        <article class="persona">
+          <div class="foto ph"><div class="tex"></div></div>
+          <div class="cuerpo">
+            <h3>[Nombre Apellido]</h3>
+            <p class="cargo">[Cargo — p. ej. Socio fundador / Dirección técnica]</p>
+            <p>[Una línea sobre su responsabilidad: qué garantiza esta persona en cada proyecto]</p>
+            <ul>
+              <li><a href="mailto:[email]@remainon.com">[email]@remainon.com</a></li>
+              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
+            </ul>
+          </div>
+        </article>
+        <article class="persona">
+          <div class="foto ph"><div class="tex"></div></div>
+          <div class="cuerpo">
+            <h3>[Nombre Apellido]</h3>
+            <p class="cargo">[Cargo]</p>
+            <p>[Responsabilidad]</p>
+            <ul>
+              <li><a href="mailto:[email]@remainon.com">[email]@remainon.com</a></li>
+              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
+            </ul>
+          </div>
+        </article>
+        <article class="persona">
+          <div class="foto ph"><div class="tex"></div></div>
+          <div class="cuerpo">
+            <h3>[Nombre Apellido]</h3>
+            <p class="cargo">[Cargo]</p>
+            <p>[Responsabilidad]</p>
+            <ul>
+              <li><a href="mailto:[email]@remainon.com">[email]@remainon.com</a></li>
+              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="recursos" id="recursos" hidden>
+    <div class="wrap">
+      <div class="cab" style="margin-bottom:30px">
+        <p class="kicker">Recursos</p>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Conocimiento técnico del pavimento</h2>
+      </div>
+      <div class="rec-grid">
+        <a class="rec" href="#">
+          <span class="tipo">Guía técnica</span>
+          <h3>[Por qué fallan las juntas de dilatación en naves logísticas — y cómo evitarlo]</h3>
+          <p>[Resumen de dos líneas del artículo]</p>
+          <span class="leer">Leer artículo →</span>
+        </a>
+        <a class="rec" href="#">
+          <span class="tipo">Guía técnica</span>
+          <h3>[Fisuras en pavimento industrial: cuáles son estructurales y cuáles no]</h3>
+          <p>[Resumen de dos líneas del artículo]</p>
+          <span class="leer">Leer artículo →</span>
+        </a>
+        <a class="rec" href="#">
+          <span class="tipo">Mantenimiento</span>
+          <h3>[Plan de mantenimiento preventivo del pavimento: qué revisar cada trimestre]</h3>
+          <p>[Resumen de dos líneas del artículo]</p>
+          <span class="leer">Leer artículo →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="porque" id="empresa">
+    <div class="wrap">
+      <div class="panel">
+        <div class="col-izq">
+          <p class="kicker" data-reveal>Por qué RemainOn</p>
+          <h2 data-reveal>Oficio de siempre, empresa nueva</h2>
+          <p data-reveal>Combinamos oficio, planificación y materiales homologados para que la reparación dure y tu actividad no se resienta.</p>
+          <span data-reveal style="display:inline-block"><a class="btn btn-acento" href="#contacto">Pide una evaluación</a></span>
+        </div>
+        <div class="ventajas">
+          <div class="ventaja" data-stagger>
+            <div class="ico" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <h3>Experiencia real</h3>
+              <p>Equipo con amplia trayectoria en ejecución y reparación de pavimentos industriales. Conocemos los suelos porque los hemos construido.</p>
+            </div>
+          </div>
+          <div class="ventaja" data-stagger>
+            <div class="ico" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <div>
+              <h3>Mínima parada de actividad</h3>
+              <p>Trabajos por fases y en horarios compatibles con tu operativa: noches, fines de semana o zonas acotadas.</p>
+            </div>
+          </div>
+          <div class="ventaja" data-stagger>
+            <div class="ico" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18M12 3a15 15 0 000 18"/></svg>
+            </div>
+            <div>
+              <h3>Vocación europea</h3>
+              <p>Estándares y materiales homologados pensando en operar en toda Europa, con el mismo nivel de exigencia en cada obra.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cita">
+    <div class="wrap">
+      <p class="kicker" data-reveal style="justify-content:center;display:flex">El equipo</p>
+      <h2 data-reveal>Quiénes estamos detrás</h2>
+      <blockquote data-reveal>«Hemos pasado años ejecutando pavimentos industriales. RemainOn nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, sin que la planta lo pague.»</blockquote>
+      <cite data-reveal><b>[Nombre Apellido]</b>Socio fundador, RemainOn</cite>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap fila">
+      <div class="col-izq">
+        <p class="kicker" data-reveal>Resolvemos dudas</p>
+        <h2 data-reveal>Preguntas frecuentes sobre reparación de pavimentos</h2>
+        <p data-reveal>Las dudas que más nos plantean responsables de mantenimiento y operaciones antes de una intervención.</p>
+      </div>
+      <div>
+        <details data-stagger>
+          <summary>¿Podéis darme una valoración sin venir a la instalación?</summary>
+          <p>Sí. Con fotos o un vídeo de la zona afectada y las medidas aproximadas podemos darte una primera valoración orientativa. La visita técnica solo es necesaria para el presupuesto cerrado definitivo.</p>
+        </details>
+        <details data-stagger>
+          <summary>¿Puedo seguir operando durante la reparación?</summary>
+          <p>Sí, en la mayoría de los casos. Planificamos por fases y acotamos zonas para que el resto de la instalación siga trabajando. Muchas intervenciones se ejecutan en turnos de noche o fin de semana.</p>
+        </details>
+        <details data-stagger>
+          <summary>¿Cuánto tarda en poder pisarse una zona reparada?</summary>
+          <p>Depende del sistema empleado: hay morteros y resinas de curado rápido que admiten tráfico peatonal en horas y tráfico de carretillas en 24–48 horas. Lo concretamos en la propuesta técnica.</p>
+        </details>
+        <details data-stagger>
+          <summary>¿Por qué se rompen las juntas y las fisuras vuelven a aparecer?</summary>
+          <p>Normalmente porque se repara el síntoma sin corregir la causa: juntas mal dimensionadas, soporte degradado o tráfico distinto al previsto en el diseño original. Nuestro diagnóstico empieza por ahí.</p>
+        </details>
+        <details data-stagger>
+          <summary>¿Ofrecéis garantía sobre las reparaciones?</summary>
+          <p>Sí. Cada propuesta incluye la garantía aplicable según el sistema y las condiciones de uso, junto con recomendaciones de mantenimiento para conservarla.</p>
+        </details>
+        <details data-stagger>
+          <summary>¿Trabajáis fuera de España?</summary>
+          <p>Sí, planteamos proyectos en el resto de Europa. Cuéntanos la ubicación y el alcance y te confirmamos disponibilidad y plazos.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="cierre" id="contacto">
+  <div class="cta-fila">
+    <div>
+      <p class="kicker" data-reveal>Contacto</p>
+      <h2 data-reveal>¿Tu pavimento está frenando tu operativa?</h2>
+      <p data-reveal>Cuéntanos qué le pasa y te proponemos la solución más adecuada, sin compromiso. Respondemos en menos de 48 horas laborables.</p>
+    </div>
+    <form class="form" action="#" method="post" data-reveal>
+      <label for="f-nombre">Nombre</label>
+      <input id="f-nombre" name="nombre" type="text" autocomplete="name" required>
+      <label for="f-email">Correo electrónico</label>
+      <input id="f-email" name="email" type="email" autocomplete="email" required>
+      <label for="f-msg">¿Qué le pasa a tu pavimento?</label>
+      <textarea id="f-msg" name="mensaje" required></textarea>
+      <button class="btn btn-acento" type="submit">Enviar solicitud</button>
+      <small>También puedes escribirnos a <a href="mailto:info@remainon.com">info@remainon.com</a> o llamar al <a href="tel:+34000000000">+34 000 000 000</a>.</small>
+    </form>
+  </div>
+  <div class="foot">
+    <div class="marca">
+      <a class="logo" style="color:var(--carbon)" href="#inicio">Remain<span>On</span></a>
+      <p>Reparación de pavimentos industriales en España y Europa.</p>
+      <p style="margin-top:14px;font-size:.75rem;line-height:1.7">
+        <strong>Razón social:</strong> [RemainOn S.L.]<br>
+        <strong>CIF:</strong> [B-00000000]<br>
+        <strong>Domicilio:</strong> [Calle, nº, CP, Ciudad]<br>
+        <strong>Actividad:</strong> Reparación y tratamiento técnico de pavimentos industriales de hormigón
+      </p>
+    </div>
+    <div>
+      <h3>General</h3>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#empresa">Empresa</a></li>
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Servicios</h3>
+      <ul>
+        <li><a href="#servicios">Juntas</a></li>
+        <li><a href="#servicios">Fisuras</a></li>
+        <li><a href="#servicios">Recrecidos</a></li>
+        <li><a href="#servicios">Superficiales</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Contacto</h3>
+      <ul>
+        <li><a href="mailto:info@remainon.com">info@remainon.com</a></li>
+        <li><a href="tel:+34000000000">+34 000 000 000</a></li>
+        <li>L–V, 8:00–18:00</li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <span>© 2026 RemainOn. Todos los derechos reservados.</span>
+    <span>Aviso legal · Privacidad</span>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+if (window.gsap && window.ScrollTrigger) {
+  gsap.registerPlugin(ScrollTrigger);
+  const mm = gsap.matchMedia();
+
+  const sticky = document.getElementById("stickyNav");
+  const hero = document.querySelector(".hero");
+  ScrollTrigger.create({
+    trigger: hero, start: "bottom top",
+    onEnter: () => { sticky.classList.add("visible"); sticky.setAttribute("aria-hidden","false"); },
+    onLeaveBack: () => { sticky.classList.remove("visible"); sticky.setAttribute("aria-hidden","true"); }
+  });
+  document.querySelectorAll("main section[id], .cierre").forEach((sec) => {
+    const id = sec.id;
+    const link = document.querySelector(`#stickyLinks a[data-sec="${id}"]`);
+    if (!link) return;
+    ScrollTrigger.create({
+      trigger: sec, start: "top center", end: "bottom center",
+      onToggle: (self) => link.classList.toggle("activo", self.isActive)
+    });
+  });
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    gsap.from(".hero [data-reveal]", {
+      opacity: 0, y: 12, duration: 0.35, ease: "power1.out", stagger: 0.08
+    });
+
+    const fija = document.getElementById("fisuraFija");
+    const largo = fija.getTotalLength();
+    gsap.fromTo(fija,
+      { strokeDasharray: largo, strokeDashoffset: largo },
+      { strokeDashoffset: 0, ease: "none",
+        scrollTrigger: { trigger: ".fisura-wrap", start: "top 85%", end: "top 25%", scrub: 0.5 } }
+    );
+
+    gsap.utils.toArray("main [data-reveal], .cierre [data-reveal]").forEach((el) => {
+      gsap.from(el, {
+        opacity: 0, y: 12, duration: 0.35, ease: "power1.out",
+        scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none reverse" }
+      });
+    });
+
+    gsap.set("[data-stagger]", { opacity: 0, y: 10 });
+    ScrollTrigger.batch("[data-stagger]", {
+      start: "top 88%",
+      onEnter: (targets) => gsap.to(targets, {
+        opacity: 1, y: 0, duration: 0.3, ease: "power1.out", stagger: 0.04, overwrite: true
+      }),
+      onLeaveBack: (targets) => gsap.set(targets, { opacity: 0, y: 10, overwrite: true })
+    });
+
+    document.querySelectorAll("[data-counter]").forEach((el) => {
+      const fin = parseInt(el.dataset.counter, 10);
+      if (Number.isNaN(fin)) return;
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: fin, duration: 0.9, ease: "power1.out",
+        scrollTrigger: { trigger: el, start: "top 90%" },
+        onUpdate: () => { el.textContent = Math.round(obj.v); }
+      });
+    });
+
+    return () => gsap.set("[data-stagger]", { clearProps: "all" });
+  });
+}
+</script>
+</body>
+</html>
