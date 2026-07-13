@@ -1,0 +1,7 @@
+assets/solutions/**/originals/*.jpeg filter=lfs diff=lfs merge=lfs -text
+img/architecture-hall-illustrative.png filter=lfs diff=lfs merge=lfs -text
+img/sectors/distribucion.jpg filter=lfs diff=lfs merge=lfs -text
+img/sectors/logistica.jpg filter=lfs diff=lfs merge=lfs -text
+img/architecture-hall-illustrative.png !text !filter !merge !diff
+img/sectors/distribucion.jpg !text !filter !merge !diff
+img/sectors/logistica.jpg !text !filter !merge !diff
