@@ -8,6 +8,9 @@
 <meta property="og:title" content="RemainOn — Reparación de pavimentos industriales">
 <meta property="og:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
 <meta property="og:type" content="website">
+<!-- QUITAR noindex cuando se completen los placeholders y el formulario -->
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -59,6 +62,7 @@
     padding:10px 18px;border-radius:0 0 12px 0;z-index:100;
   }
   .skip:focus{left:16px}
+  section[id],.cierre{scroll-margin-top:76px}
   .kicker{
     display:inline-flex;align-items:center;gap:8px;
     font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
@@ -353,7 +357,19 @@
   .legal{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
     padding-top:24px;font-size:.8rem;color:rgba(255,255,255,.5)}
 
+  .menu-btn{display:none;background:none;border:0;cursor:pointer;padding:8px}
+  .menu-btn span{display:block;width:22px;height:2px;background:#fff;margin:5px 0;border-radius:2px}
+  .sticky-nav .menu-btn span{background:var(--carbon)}
+  .movil-menu{position:fixed;inset:0;z-index:80;background:rgba(11,17,32,.97);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease}
+  .movil-menu.abierto{opacity:1;visibility:visible}
+  .movil-menu a{color:#fff;text-decoration:none;font-size:1.5rem;font-weight:800;padding:10px 18px}
+  .movil-menu .btn{margin-top:16px;font-size:1rem}
+  .movil-menu .cerrar{position:absolute;top:20px;right:24px;background:none;border:0;
+    color:#fff;font-size:2rem;cursor:pointer;line-height:1;padding:6px}
   @media (max-width:860px){
+    .menu-btn{display:block}
     .hero-nav ul,.sticky-nav ul{display:none}
     .hero-body{grid-template-columns:1fr;padding:48px 28px 30px}
     .fisura-wrap{padding:0 28px 28px}
@@ -375,6 +391,15 @@
 
 <a class="skip" href="#contenido">Saltar al contenido</a>
 
+<nav class="movil-menu" id="menuMovil" aria-label="Menú móvil">
+  <button class="cerrar" aria-label="Cerrar menú" onclick="menuMovil.classList.remove('abierto')">&times;</button>
+  <a href="#proceso" onclick="menuMovil.classList.remove('abierto')">Proceso</a>
+  <a href="#servicios" onclick="menuMovil.classList.remove('abierto')">Servicios</a>
+  <a href="#empresa" onclick="menuMovil.classList.remove('abierto')">Empresa</a>
+  <a href="#faq" onclick="menuMovil.classList.remove('abierto')">FAQ</a>
+  <a class="btn btn-acento" href="#contacto" onclick="menuMovil.classList.remove('abierto')">Pide una evaluación</a>
+</nav>
+
 <div class="sticky-nav" id="stickyNav" aria-hidden="true">
   <div class="inner">
     <a class="logo" href="#inicio">Remain<span>On</span></a>
@@ -389,6 +414,7 @@
       <li><a href="#empresa" data-sec="empresa">Empresa</a></li>
       <li><a href="#faq" data-sec="faq">FAQ</a></li>
     </ul>
+    <button class="menu-btn" aria-label="Abrir menú" onclick="menuMovil.classList.add('abierto')"><span></span><span></span><span></span></button>
     <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
   </div>
 </div>
@@ -407,6 +433,7 @@
       <li><a href="#empresa">Empresa</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
+    <button class="menu-btn" aria-label="Abrir menú" onclick="menuMovil.classList.add('abierto')"><span></span><span></span><span></span></button>
     <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
   </div>
   <div class="hero-body">
@@ -765,7 +792,9 @@
       <h2 data-reveal>¿Tu pavimento está frenando tu operativa?</h2>
       <p data-reveal>Cuéntanos qué le pasa y te proponemos la solución más adecuada, sin compromiso. Respondemos en menos de 48 horas laborables.</p>
     </div>
-    <form class="form" action="#" method="post" data-reveal>
+    <!-- INTERINO: el envío abre el cliente de correo con los datos.
+     Sustituir por backend/Formspree cuando haya cuenta. -->
+    <form class="form" id="formContacto" action="#" method="post" data-reveal>
       <label for="f-nombre">Nombre</label>
       <input id="f-nombre" name="nombre" type="text" autocomplete="name" required>
       <label for="f-email">Correo electrónico</label>
@@ -834,6 +863,15 @@ if (window.gsap && window.ScrollTrigger) {
     onEnter: () => { sticky.classList.add("visible"); sticky.setAttribute("aria-hidden","false"); },
     onLeaveBack: () => { sticky.classList.remove("visible"); sticky.setAttribute("aria-hidden","true"); }
   });
+  const fc = document.getElementById("formContacto");
+  if (fc) fc.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const d = new FormData(fc);
+    location.href = "mailto:info@remainon.com"
+      + "?subject=" + encodeURIComponent("Solicitud de evaluación — " + d.get("nombre"))
+      + "&body=" + encodeURIComponent(d.get("mensaje") + "\n\nContacto: " + d.get("nombre") + " <" + d.get("email") + ">");
+  });
+
   document.querySelectorAll("main section[id], .cierre").forEach((sec) => {
     const id = sec.id;
     const link = document.querySelector(`#stickyLinks a[data-sec="${id}"]`);
@@ -891,4 +929,3 @@ if (window.gsap && window.ScrollTrigger) {
 </body>
 </html>
 
-<!-- verificación despliegue automático  -->
