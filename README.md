@@ -85,7 +85,10 @@ romperían esta arquitectura sin aportar una mejora proporcional en preview.
 
 `.github/workflows/quality.yml` ejecuta instalación reproducible, validación de
 ambas implementaciones, Playwright y Lighthouse en cada pull request y en los
-pushes a `main`. Los informes se conservan como artefactos durante 14 días.
+pushes a `main`. La rama `main` exige `Quality gate` en modo estricto, también
+para administradores. Los informes se conservan como artefactos durante 14 días.
+El repositorio de código es público por decisión expresa; esto no cambia el
+estado `noindex` ni habilita un despliegue web.
 
 El job de preview Vercel está preparado, pero permanece **apagado por defecto**.
 Solo puede ejecutarse en un pull request cuando exista el entorno protegido

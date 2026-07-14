@@ -11,6 +11,8 @@ base estatica hasta su migracion.
 - Problemas de prioridad alta pendientes: **0**.
 - Preview deliberadamente cerrada: `noindex,nofollow`, sin dominio y sin
   despliegues Git automáticos.
+- Repositorio público por decisión expresa; `main` protegido con el contexto
+  estricto `Quality gate`. La visibilidad del código no publica el sitio.
 - Sin recursos de terceros, secretos detectados ni errores de consola en las
   rutas comprobadas; el unico componente cliente propio es la navegacion.
 
@@ -94,6 +96,9 @@ de la base actual.
 - La base Next supera ESLint, TypeScript estricto, 31 tests, build de produccion
   y 24 pruebas Playwright efectivas en 390 y 1.440 px (2 exclusivas de móvil se
   omiten correctamente en escritorio).
+- El run remoto `29356531044` completa el gate en 2 min 8 s; la preview Vercel
+  queda omitida. Lighthouse usa un runner exacto, aislado y cacheable, y el
+  servidor Next se cierra sin procesos huérfanos.
 - `/`, `/robots.txt` y una ruta 404 de Next.js responden como se espera, sin
   errores de consola, overflow ni exposicion accidental a indexacion.
 - Next y la referencia miden exactamente 13.701 px de alto en movil y 8.117 px

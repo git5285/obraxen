@@ -194,7 +194,7 @@ precipitada.
 
 ### Fase 4 — Calidad de entrega
 
-- [x] Añadir GitHub Actions como check de pull request y dejar la preview de
+- [x] Añadir GitHub Actions como check obligatorio y estricto de `main`, y dejar la preview de
   Vercel preparada tras un entorno protegido, secretos y un interruptor apagado
   por defecto; no se ha desplegado ni autorizado producción.
 - [x] Añadir tests unitarios de reglas de publicacion y tests de navegador de rutas,
