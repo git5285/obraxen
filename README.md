@@ -29,6 +29,7 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
   estáticas y permanecen `noindex` mientras el sitio esté en preview
 - `img/` — fotografías optimizadas para web; los originales se mantienen fuera del repo
 - `SITE_ARCHITECTURE.md` — jerarquía, rutas, navegación y enlaces internos
+- `CONTENT_AUDIT.md` — reglas de copy, afirmaciones permitidas y datos pendientes
 - `dist/` — **salida generada** por el build (portada, seis casos, legales y activos).
   Es lo único que se sirve; está en `.gitignore` (lo regenera el build).
 
