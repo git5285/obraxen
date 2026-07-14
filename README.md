@@ -1,188 +1,139 @@
 # Web corporativa — reparación de pavimentos industriales
 
-Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos industriales.
-**Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
-`dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
+Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
+Components. La portada, el hub, seis fichas de proyecto y los dos borradores
+legales se prerenderizan en build; la navegación es la única isla cliente propia.
 
-La base actual es la referencia funcional y visual. Las Fases 1–3 ya incorporan
-en paralelo la portada, el hub y las seis fichas de proyecto con Next.js App
-Router, Server Components, TypeScript, validacion Zod, ESLint y Vitest. La
-migracion por fases, sus puertas de calidad y el modelo de consentimiento se
-detallan en [`ROADMAP.md`](ROADMAP.md). Hasta que las rutas legales alcancen
-paridad, el build estatico sigue siendo la salida principal y no se despliega la
-base Next.js.
+La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
+con los despliegues Git de Vercel desactivados. La visibilidad pública del
+repositorio no autoriza publicar o desplegar el sitio.
 
-> **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
-> temporal heredada del nombre de la carpeta. No es la marca, no es una opción
-> definitiva y el build impide utilizarla como nombre público. La empresa aún no
-> está constituida; la forma jurídica prevista es una sociedad limitada. El
-> análisis de naming puede continuar como investigación, pero la selección,
-> integración y constitución siguen pendientes de decisión expresa.
+> **Identidad pendiente:** “RemainOn” es solo una referencia interna heredada de
+> la carpeta. No es una marca seleccionada. La empresa todavía no está
+> constituida y nombre, razón social, CIF, dominio, domicilio y canales de
+> contacto permanecen en `null` hasta disponer de datos reales.
 
-## Estructura
+## Arquitectura
 
-- `src/index.html` — **plantilla** de la portada; usa placeholders
-  `{{brand.*}}` y parciales `{{> …}}`. No contiene el nombre literal.
-- `src/projects.html` — plantilla del archivo `/proyectos/`; presenta cada obra
-  como un expediente de evidencia generado desde datos
-- `src/project.html` — plantilla común de los seis casos individuales
-- `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`) y el
-  comportamiento cliente aislado de la portada (`home-script`)
-- `scripts/build.mjs` — render estático (sin dependencias)
-- `src/app/` — App Router, metadata, robots, portada, hub y seis casos migrados
-  con paridad visual
-- `src/components/` — secciones servidoras de portada y proyectos; una unica
-  isla cliente para menu movil y navegacion sticky
-- `src/lib/` — carga tipada de identidad, proyectos, ofertas y estado de
-  publicacion, ademas del modelo de portada e imports responsive de imagen
-- `tests/` — reglas de datos, publicacion, portada y rutas Next.js
-- `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
-- `css/home.css` — estilos propios de la portada, separados de su estructura HTML
-- `css/projects.css` — estilos propios del hub técnico de proyectos
-- `data/brand.json` — **único punto de verdad de la identidad de marca**
-  (nombre, razón social, claim, dominio, contactos, fundador y estado de publicación)
-- `data/proyectos.json` — seis proyectos ejecutados con magnitudes confirmadas y
-  reportaje fotográfico publicable
-- `data/proyectos.borrador.json` — extracción detallada de presupuestos y registro
-  interno de confirmaciones; no se sirve públicamente
-- `data/proyectos.schema.json` — contrato de datos multiidioma de cada proyecto
-- `data/ofertas.json` — borradores internos de oferta y sus condiciones de salida;
-  existir en este fichero no vuelve una oferta publicable
-- `src/legal/` — borradores de aviso legal y privacidad; se generan como rutas
-  estáticas y permanecen `noindex` mientras el sitio esté en preview
-- `img/` — fotografias optimizadas para web; los originales se mantienen fuera
-  del repo. Las copias JPEG redundantes de los proyectos se retiraron despues de
-  validar los 18 WebP publicables.
-- `dist/` — **salida generada** por el build (portada, hub, seis casos, legales y activos).
-  Es lo único que se sirve; está en `.gitignore` (lo regenera el build).
+- `src/app/` — rutas App Router, metadata, robots y sitemap.
+- `src/components/` — secciones de portada, proyectos, navegación y páginas
+  legales.
+- `src/lib/` — carga tipada de identidad, proyectos y ofertas, imports de
+  imágenes y puertas de publicación.
+- `data/brand.json` — única fuente de identidad y estado de publicación.
+- `data/proyectos.json` — casos ejecutados, evidencia, datos confirmados y
+  trazabilidad de autorización.
+- `data/proyectos.schema.json` — contrato JSON equivalente para los casos.
+- `data/ofertas.json` — ofertas internas; solo `estadoPublicacion: publicable`
+  permite crear una ruta futura.
+- `css/` — tokens y estilos existentes consumidos por Next.
+- `img/` — activos optimizados e importados por el build.
+- `tests/` — Vitest y Playwright.
+- `.github/workflows/quality.yml` — gate obligatorio de GitHub Actions.
 
-## Build
+El generador Node y las plantillas HTML anteriores se retiraron tras alcanzar
+paridad. `npm run build`, CI y Vercel tienen ahora una sola implementación:
+Next.js.
+
+## Rutas actuales
+
+| Ruta | Estado |
+|---|---|
+| `/` | Portada prerenderizada |
+| `/proyectos/` | Hub de seis expedientes |
+| `/proyectos/{slug}/` | Seis fichas SSG mediante `generateStaticParams` |
+| `/aviso-legal/` | Borrador incompleto, no apto para publicación |
+| `/privacidad/` | Borrador incompleto, no apto para publicación |
+| `/robots.txt` | Bloquea rastreo mientras la preview esté cerrada |
+| `/sitemap.xml` | Vacío en preview; se completa solo al superar la puerta pública |
+| `/soluciones/` | 404 mientras no existan ofertas publicables |
+
+## Desarrollo y calidad
+
+Requiere Node `24.x`, fijado en `.nvmrc` y `package.json`.
 
 ```sh
-npm run build      # genera dist/ desde src/ + data/ + css/ + img/
-npm run check      # build + validación de datos, SEO, scripts, anclas y activos
-npm run check:next # lint + tipos + tests + build de la fundacion Next.js
-npm run check:all  # valida en conjunto la base estatica y la fundacion Next.js
-npm run test:e2e   # valida rutas, responsive, accesibilidad y foco en Chromium
-npm run lighthouse:ci # aplica los presupuestos móviles a tres rutas críticas
-npm run check:quality  # reproduce localmente el gate completo de GitHub Actions
+npm ci
+npm run dev          # servidor de desarrollo
+npm run build        # build de producción Next.js
+npm run start        # sirve el build ya generado
+npm run test         # pruebas unitarias y de render
+npm run test:e2e     # rutas, responsive, accesibilidad, foco y cabeceras
+npm run lighthouse:ci
+npm run check        # lint + tipos + unitarias + build
+npm run check:quality # gate completo local
 ```
 
-El entorno reproducible de la fundacion usa Node `24.x` (`.nvmrc`).
-`npm run dev:next` abre el App Router localmente y `npm run build:next` lo compila
-sin cambiar `vercel.json` ni sustituir la salida `dist/`.
+El gate remoto ejecuta el mismo `npm run check`, 36 pruebas Playwright y
+presupuestos Lighthouse móviles en portada, hub y un caso. Los informes se
+conservan como artefactos durante 14 días.
 
-La portada Next replica las ocho secciones y seis casos de la referencia. El hub
-y las seis fichas se prerenderizan desde `data/proyectos.json` mediante
-`generateStaticParams`, con 18 imagenes responsive y metadata propia. Las siete
-rutas de evidencia no añaden componentes cliente. La CSP ya elimina
-`unsafe-inline` de estilos; `script-src` lo mantiene de forma temporal por el
-bootstrap estatico de App Router. Se conserva de forma explícita mientras la
-salida sea prerenderizada: los nonces de Next.js exigen renderizado dinámico y
-romperían esta arquitectura sin aportar una mejora proporcional en preview.
+## Renderizado y Vercel
 
-## Calidad continua y previews
+Se usa el runtime estándar de Next/Vercel con rutas prerenderizadas; no se usa
+`output: "export"`. La exportación pura no admite `headers`, mientras que esta
+arquitectura conserva CSP, HSTS y las demás cabeceras sin convertir las páginas
+en render dinámico.
 
-`.github/workflows/quality.yml` ejecuta instalación reproducible, validación de
-ambas implementaciones, Playwright y Lighthouse en cada pull request y en los
-pushes a `main`. La rama `main` exige `Quality gate` en modo estricto, también
-para administradores. Los informes se conservan como artefactos durante 14 días.
-El repositorio de código es público por decisión expresa; esto no cambia el
-estado `noindex` ni habilita un despliegue web.
+`vercel.json` mantiene únicamente `git.deploymentEnabled: false`. El framework,
+build y salida se detectan como Next.js. El job de preview también está apagado:
+requiere entorno protegido, secretos, `ENABLE_VERCEL_PREVIEWS=true` y
+autorización expresa.
 
-El job de preview Vercel está preparado, pero permanece **apagado por defecto**.
-Solo puede ejecutarse en un pull request cuando exista el entorno protegido
-`preview`, estén configurados sus secretos y la variable del repositorio
-`ENABLE_VERCEL_PREVIEWS` sea exactamente `true`. Activarlo, verificar la
-protección de acceso de la URL y desplegar requieren autorización expresa; el
-workflow no cambia `vercel.json` ni habilita producción.
+La CSP mantiene `unsafe-inline` solo en `script-src` para el bootstrap generado
+por App Router. `script-src-attr 'none'` bloquea manejadores inline y
+`style-src` no permite estilos inline. Los nonces no se adoptan porque exigirían
+render dinámico; SRI se reevaluará cuando deje de ser experimental en Next.
 
-`<title>`, `meta`, Open Graph y JSON-LD se resuelven **en build**: el HTML servido
-es completamente estático (sin fetch ni inyección de marca en runtime).
+## Datos y puerta de publicación
 
-Como `dist/` es lo único servido (ver `outputDirectory` en `vercel.json`), los
-ficheros de trabajo (`src/`, `scripts/`, `data/`, `*.md`) **no se publican**:
-devuelven 404. `.vercelignore` complementa esto excluyendo `*.md`/`.gitignore`
-del paquete de subida (nunca `src/`/`scripts/`/`data/`: son entradas del build).
+Los valores desconocidos se representan como `null` y no se completan con
+estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 
-## Identidad de marca (punto único de verdad)
+- nombre comercial distinto del identificador temporal;
+- sociedad constituida, razón social, CIF y domicilio validado;
+- dominio, email y teléfono o WhatsApp reales;
+- aviso legal y privacidad revisados profesionalmente;
+- autorización documentada de cada caso para nombre y fotografías;
+- referencia verificable y revisión legal aprobada por caso.
 
-- **Renombrar la empresa** → editar solo `data/brand.json` y reconstruir. El
-  nombre, el logo, los contactos, el `<title>`, las metaetiquetas y el JSON-LD se
-  resuelven en build a partir de ese fichero. El nombre no aparece literalmente en
-  ningún otro fichero fuente (`src/` + `data/` → solo `brand.json`).
-- **Recolorear o cambiar la tipografía** → editar solo `css/tokens.css`.
-- **Navegación** → una única fuente (`NAV` en `scripts/build.mjs`) se renderiza a
-  las tres barras (móvil, sticky, hero).
-- Los datos aún sin definir usan `null` y no se renderizan. `publicar: true`
-  activa la validación estricta y exige identidad legal, contacto, políticas y
-  confirmación expresa de revisión legal (`legalRevisionAprobada`).
-- **Proyectos** → se publican automáticamente al añadir casos válidos a
-  `data/proyectos.json`; cada registro genera su resumen en portada, su expediente
-  en `/proyectos/` y su ruta `/proyectos/{slug}/` con breadcrumbs y navegación
-  entre casos. Mientras no haya contacto, navegación y CTA apuntan al hub.
-- **Soluciones** → `src/lib/solutions.ts` solo expone ofertas con
-  `estadoPublicacion: publicable`. Como las cuatro ofertas siguen siendo
-  borradores internos, `/soluciones/` no existe y responde 404.
+La situación actual de los seis casos es `confirmada_internamente`: existe una
+declaración del equipo para identificar al cliente, pero falta soporte documental,
+alcance para fotografías y revisión legal. Esto mantiene la publicación cerrada.
 
-### Retomar la identidad cuando esté decidida
+Canonical, URLs e imágenes sociales absolutas solo aparecen cuando existe un
+dominio real. El sitemap permanece vacío hasta que toda la puerta pública se
+complete.
 
-No hay que modificar plantillas ni buscar textos repartidos por el proyecto. El
-proceso queda dividido en tres cambios sobre `data/brand.json`:
+## Repositorio público
 
-1. **Nombre acordado:** completar `nombre`; después podrán definirse `dominio`,
-   `email`, `telefono` y/o `whatsapp`.
-2. **SL constituida:** completar `nombreLegal` y `cif`, y cambiar
-   `empresaConstituida` a `true`.
-3. **Publicación aprobada:** tras revisar los textos legales, cambiar
-   `legalRevisionAprobada` y `publicar` a `true` y ejecutar `npm run check`.
+La revisión vigente está en
+[`REPOSITORY_EXPOSURE.md`](REPOSITORY_EXPOSURE.md). No se detectaron secretos o
+credenciales versionados. Sí son visibles la estrategia, la coordinación y los
+datos de casos; cambiar la visibilidad o reescribir el historial requiere una
+decisión separada.
 
-El build bloqueará la publicación si falta cualquiera de esos datos, si se intenta
-usar “RemainOn” como nombre o si la sociedad continúa sin constituir.
+## Fuentes de verdad
 
-## Despliegue
-
-El proyecto permanece conectado a Vercel, pero los despliegues Git automáticos
-están desactivados en `vercel.json` mientras `brand.publicar` sea `false`. La
-versión pública antigua fue retirada el 14 de julio de 2026. Cuando se complete
-la identidad y se apruebe la publicación, el despliegue se reactivará de forma
-expresa después de ejecutar `npm run check`.
-
-## Documentación
-
-Cada tema tiene una única autoridad; los demás documentos enlazan en lugar de
-copiarla:
-
-| Tema | Fuente |
+| Tema | Documento |
 |---|---|
-| Dirección de empresa, mercado y oferta | `STRATEGY.md` |
-| Copy permitido y evidencia pendiente | `CONTENT_AUDIT.md` |
-| Rutas y crecimiento del sitio | `SITE_ARCHITECTURE.md` |
+| Empresa, mercado y oferta | `STRATEGY.md` |
+| Copy y evidencia | `CONTENT_AUDIT.md` |
+| Rutas | `SITE_ARCHITECTURE.md` |
 | Sistema visual | `DESIGN.md` |
 | Decisiones técnicas | `DECISIONS.md` |
-| Estado técnico medido | `TECHNICAL_AUDIT.md` |
-| Migración y entrega | `ROADMAP.md` |
+| Estado medido | `TECHNICAL_AUDIT.md` |
+| Fases | `ROADMAP.md` |
 | Publicación legal | `LEGAL_CHECKLIST.md` |
-| Selección y límites fotográficos | `PHOTO_AUDIT.md` |
+| Fotografías | `PHOTO_AUDIT.md` |
+| Exposición del repositorio | `REPOSITORY_EXPOSURE.md` |
 
-`AGENTS.md`, `COORDINATION.md` y `.coordination/` son documentación operativa de
-las tareas; no definen producto ni contenido público.
+`AGENTS.md`, `COORDINATION.md` y `.coordination/` gobiernan la colaboración entre
+tareas; no son contenido público del sitio.
 
-## Pendiente antes de producción
+## Próximo hito
 
-La lista operativa completa vive en [`LEGAL_CHECKLIST.md`](LEGAL_CHECKLIST.md) y
-la secuencia técnica en [`ROADMAP.md`](ROADMAP.md). La publicación continúa
-bloqueada hasta completar, como mínimo:
-
-- nombre, sociedad, CIF y dominio;
-- canales de contacto reales;
-- revisión profesional de aviso legal y privacidad;
-- consentimiento antes de GA4 o Clarity;
-- resultados y afirmaciones respaldados por evidencia aplicable;
-- auditoría final y autorización expresa para publicar.
-
-## Decisiones
-
-Ver [`DECISIONS.md`](DECISIONS.md): base estática, hero con evidencia propia,
-identidad centralizada, modelo de contenido, migración progresiva a Next.js y
-puerta automatizada de calidad.
+La siguiente fase técnica es la Fase 5: modelo y panel de consentimiento probado
+antes de incorporar GA4 o Clarity. Naming, sociedad, contacto, permisos, revisión
+legal, dominio, indexación y despliegue continúan bloqueados por decisiones y
+evidencia reales.

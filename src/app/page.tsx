@@ -7,7 +7,41 @@ import { ProjectsSection } from "@/components/projects-section";
 import { ServicesSection } from "@/components/services-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigation } from "@/components/site-navigation";
+import { brand } from "@/lib/brand";
 import { homepage, homepageJsonLd, navigationItems } from "@/lib/homepage";
+
+const homeTitle = brand.nombre ? `${brand.nombre} — ${brand.claim}` : brand.claim;
+const homeDescription =
+  "Reparación de pavimentos industriales: juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas para reducir el impacto en la actividad.";
+const homeImages = brand.dominio
+  ? [{
+      url: homepage.heroImage.src,
+      width: homepage.heroImage.width,
+      height: homepage.heroImage.height,
+      alt: "Pavimento de una instalación industrial",
+    }]
+  : [];
+
+export const metadata: Metadata = {
+  title: homeTitle,
+  description: homeDescription,
+  alternates: brand.dominio ? { canonical: "/" } : undefined,
+  openGraph: {
+    title: homeTitle,
+    description: homeDescription,
+    type: "website",
+    locale: "es_ES",
+    siteName: brand.nombre ?? brand.claim,
+    url: brand.dominio ? "/" : undefined,
+    images: homeImages,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: homeTitle,
+    description: homeDescription,
+    images: homeImages.map(({ url }) => url),
+  },
+};
 
 export default function HomePage() {
   return (
@@ -52,3 +86,4 @@ export default function HomePage() {
     </SiteNavigation>
   );
 }
+import type { Metadata } from "next";

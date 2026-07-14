@@ -9,6 +9,8 @@ const projects = JSON.parse(
 const contentRoutes = [
   { path: "/", images: 24 },
   { path: "/proyectos/", images: 18 },
+  { path: "/aviso-legal/", images: 0 },
+  { path: "/privacidad/", images: 0 },
   ...projects.map((project) => ({
     path: `/proyectos/${project.slug}/`,
     images: project.imagenes.length,
@@ -53,7 +55,13 @@ for (const route of contentRoutes) {
   });
 }
 
-for (const path of ["/", "/proyectos/", "/proyectos/blitz-bremen/"]) {
+for (const path of [
+  "/",
+  "/proyectos/",
+  "/proyectos/blitz-bremen/",
+  "/aviso-legal/",
+  "/privacidad/",
+]) {
   test(`${path} has no serious or critical accessibility violations`, async ({ page }) => {
     await page.goto(path, { waitUntil: "networkidle" });
     const results = await new AxeBuilder({ page }).analyze();
@@ -63,6 +71,15 @@ for (const path of ["/", "/proyectos/", "/proyectos/blitz-bremen/"]) {
     expect(blockingViolations).toEqual([]);
   });
 }
+
+test("homepage project links satisfy WCAG 2.5.3 label in name", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "La regla no depende del viewport");
+  await page.goto("/", { waitUntil: "networkidle" });
+  const results = await new AxeBuilder({ page })
+    .withRules(["label-content-name-mismatch"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
 
 test("mobile menu traps and restores focus", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Interacción exclusiva del viewport móvil");
@@ -101,10 +118,16 @@ test("closed routes, robots and security headers fail closed", async ({ page, re
   expect(robots.status()).toBe(200);
   expect(await robots.text()).toContain("Disallow: /");
 
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.status()).toBe(200);
+  expect(await sitemap.text()).not.toContain("<url>");
+
   const response = await page.goto("/", { waitUntil: "networkidle" });
   const headers = response?.headers() ?? {};
   expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["strict-transport-security"]).toBe("max-age=31536000");
   expect(headers["content-security-policy"]).toContain("style-src 'self'");
+  expect(headers["content-security-policy"]).toContain("script-src-attr 'none'");
   expect(headers["content-security-policy"]).not.toContain("style-src 'self' 'unsafe-inline'");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
