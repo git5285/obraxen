@@ -1,9 +1,9 @@
 # Auditoría técnica
 
-Última verificación: 14 de julio de 2026. Entorno: build estático local, portada
-Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. La Fase 2 ya demuestra
-paridad de portada; el hub, casos y legales permanecen en la base estatica hasta
-su migracion.
+Última verificación: 14 de julio de 2026. Entorno: build estático local,
+Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. Las Fases 2 y 3 ya
+demuestran paridad de portada, hub y casos; las rutas legales permanecen en la
+base estatica hasta su migracion.
 
 ## Resumen
 
@@ -22,6 +22,8 @@ su migracion.
 | Portada Next escritorio | 100 | 100 | 100 | 66 | 0,58 s | 0 ms | 0 |
 | Hub móvil | 100 | 100 | 100 | 66 | 1,1 s | 0 ms | 0 |
 | Caso Blitz móvil | 100 | 100 | 100 | 66 | 1,0 s | 0 ms | 0 |
+| Hub Next móvil | 99 | 100 | 100 | 66 | 2,21 s | 21 ms | 0 |
+| Caso Blitz Next móvil | 98 | 100 | 100 | 66 | 2,39 s | 3 ms | 0 |
 
 El 66 de SEO es intencionado. No debe perseguirse una puntuación de publicación
 mientras falten identidad, dominio, revisión legal y autorización expresa.
@@ -50,6 +52,9 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
   24 imagenes usan imports versionados y variantes responsive. El hero mantiene
   el JPEG original de 107 KiB porque la medicion repetida fue mejor que la ruta
   de optimizacion bajo demanda: 98/100 y LCP 2,47 s en movil.
+- El hub y los seis casos Next usan 18 imagenes con dimensiones, `sizes`,
+  `srcset` y cache versionada. Las siete rutas se prerenderizan sin JavaScript
+  cliente propio y mantienen la geometria exacta de la referencia.
 
 ### Accesibilidad
 
@@ -64,8 +69,6 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
 
 | Deuda | Riesgo actual | Resolución prevista |
 |---|---|---|
-| Activos de rutas estaticas sin hash | Medio en visitas repetidas | Sustituirlos al migrar las rutas en Fase 3; portada Next ya usa hashes |
-| Imágenes de hub y casos sin variantes responsive | Medio en transferencia | Migrarlas con dimensiones y `sizes` en Fase 3; portada completada |
 | `script-src` conserva `unsafe-inline` en Next | Medio para CSP | Definir hashes de build o nonces en Fase 4; `style-src` ya no lo necesita |
 | Sin CI ni checks remotos obligatorios | Medio para mantenimiento | Fase 4 del roadmap; TypeScript, lint y tests locales ya completados |
 | Minificación CSS pendiente | Bajo; ahorro estimado de 3–5 KiB por ruta | Resolver con el toolchain nuevo, sin añadir ahora una dependencia aislada |
@@ -85,12 +88,16 @@ de la base actual.
 - Las 18 fotografías cargan correctamente al hacer scroll.
 - Cabeceras CSP, `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy` y `Permissions-Policy` están preparadas para el hosting.
-- La portada Next supera ESLint, TypeScript estricto, 17 tests, build de
-  produccion y smoke test Chromium en 390 y 1.440 px.
+- La base Next supera ESLint, TypeScript estricto, 31 tests, build de produccion
+  y smoke test Chromium en 390 y 1.440 px.
 - `/`, `/robots.txt` y una ruta 404 de Next.js responden como se espera, sin
   errores de consola, overflow ni exposicion accidental a indexacion.
 - Next y la referencia miden exactamente 13.701 px de alto en movil y 8.117 px
   en escritorio, con 8 secciones, 6 casos y 24 imagenes cargadas correctamente.
+- El hub Next y su referencia miden exactamente 8.471 px en movil y 5.449 px en
+  escritorio; la ficha Blitz mide 4.646 y 3.322 px. Las seis fichas responden
+  200, el slug desconocido y `/soluciones/` responden 404, y no hay errores de
+  consola, imagenes rotas ni overflow.
 - El menu abre, atrapa foco, cierra con `Escape`, restaura el disparador y enfoca
   el destino al navegar; `style-src` excluye `unsafe-inline` sin violaciones CSP.
 
