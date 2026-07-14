@@ -194,10 +194,14 @@ precipitada.
 
 ### Fase 4 — Calidad de entrega
 
-- GitHub Actions, previews de Vercel y checks obligatorios.
-- Tests unitarios de reglas de publicacion y tests de navegador de rutas,
+- [x] Añadir GitHub Actions como check obligatorio y estricto de `main`, y dejar la preview de
+  Vercel preparada tras un entorno protegido, secretos y un interruptor apagado
+  por defecto; no se ha desplegado ni autorizado producción.
+- [x] Añadir tests unitarios de reglas de publicacion y tests de navegador de rutas,
   navegacion, foco, responsive y errores de consola.
-- Presupuestos de rendimiento y auditoria Lighthouse automatizada.
+- [x] Automatizar presupuestos Lighthouse móviles para portada, hub y un caso:
+  rendimiento >= 95, accesibilidad y buenas prácticas 100, TBT <= 200 ms,
+  CLS <= 0,1 y LCP de laboratorio <= 3 s. El objetivo de campo sigue en 2,5 s.
 
 ### Fase 5 — Analitica, SEO y consentimiento
 
@@ -230,10 +234,11 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Revisar e integrar la rama de **Fase 3 — Evidencia y soluciones**. Despues,
-abrir una reserva independiente para **Fase 4 — Calidad de entrega** y añadir CI,
-pruebas de navegador automatizadas y presupuestos. La web estatica continua como
-salida principal hasta que las rutas legales tengan paridad.
+Revisar e integrar la rama de **Fase 4 — Calidad de entrega** con su check verde.
+Después, abrir una reserva independiente para **Fase 5 — Analítica, SEO y
+consentimiento**, empezando por el modelo de consentimiento y sus pruebas sin
+cargar todavía GA4 ni Clarity. La web estática continúa como salida principal
+hasta que las rutas legales tengan paridad.
 
 ## Referencias oficiales de implementacion
 
