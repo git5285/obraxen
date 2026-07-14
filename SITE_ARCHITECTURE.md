@@ -115,9 +115,9 @@ graph TD
 | Página | URL | Acceso objetivo | Prioridad | Estado |
 |---|---|---|---|---|
 | Inicio | `/` | Cabecera | Alta | Existe |
-| Hub de proyectos | `/proyectos/` | Cabecera y CTA de preview | Alta | Existe; seis expedientes |
-| Caso | `/proyectos/{slug}/` | Portada, hub y anterior/siguiente | Alta | Seis rutas existentes |
-| Hub de soluciones | `/soluciones/` | Cabecera | Alta | Modelo preparado |
+| Hub de proyectos | `/proyectos/` | Cabecera y CTA de preview | Alta | Migrado a Next con paridad; seis expedientes |
+| Caso | `/proyectos/{slug}/` | Portada, hub y anterior/siguiente | Alta | Seis rutas Next prerenderizadas |
+| Hub de soluciones | `/soluciones/` | Cabecera | Alta | Puerta preparada; ruta cerrada sin ofertas publicables |
 | Solución | `/soluciones/{slug}/` | Hub y enlaces de problema | Alta | Borrador interno |
 | Hub de problemas | `/problemas/` | Cabecera | Alta | Planificada |
 | Problema | `/problemas/{slug}/` | Hub y enlaces contextuales | Media | Condicionada por evidencia |
@@ -222,10 +222,12 @@ revisión legal y autorización expresa.
 
 1. ~~Consolidar el nuevo cierre de los seis casos.~~ Completado.
 2. ~~Construir `/proyectos/` como hub de evidencia.~~ Completado.
-3. Migrar la base, portada y proyectos a Next.js con paridad, siguiendo las
-   Fases 1–3 de `ROADMAP.md`.
-4. Preparar `/soluciones/` desde `data/ofertas.json` dentro de esa arquitectura.
-5. Construir únicamente las soluciones que superen su condición de salida.
+3. ~~Migrar la base, portada y proyectos a Next.js con paridad, siguiendo las
+   Fases 1–3 de `ROADMAP.md`.~~ Completado.
+4. ~~Conectar `data/ofertas.json` a una puerta tipada `publicable`.~~ Completado;
+   ninguna oferta la supera todavía.
+5. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
+   condición de salida.
 6. Crear `/problemas/` y las primeras páginas respaldadas por casos.
 7. Separar Método y Empresa cuando sus contenidos estén cerrados.
 8. Añadir Logística como primer sector si supera la revisión específica.
