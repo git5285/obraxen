@@ -202,3 +202,41 @@ cliente. Reutilizan los estilos de referencia y los imports de imagen versionado
 durante la convivencia. Metadata y Open Graph son propios de cada ruta; canonical,
 URL e imagen absoluta solo se emiten cuando `data/brand.json` contenga un dominio
 real.
+
+---
+
+## ADR-006 — Puerta automatizada y preview desactivada por defecto
+
+**Estado:** Aceptada · **fecha 2026-07-14**
+
+**Contexto.** La migración ya tiene dos builds, reglas de publicación, rutas
+prerenderizadas y una interacción cliente. Las verificaciones manuales locales
+no bastan para proteger futuras integraciones ni deben habilitar un despliegue
+por accidente.
+
+**Decisión.** Cada pull request ejecuta en GitHub Actions `check:all`, Playwright
+en móvil y escritorio y presupuestos Lighthouse móviles sobre portada, hub y un
+caso. La preview Vercel vive en un job separado, dependiente del gate, y requiere
+simultáneamente entorno `preview`, secretos y la variable explícita
+`ENABLE_VERCEL_PREVIEWS=true`. El valor por defecto es apagado.
+
+La CSP mantiene `unsafe-inline` solo en `script-src` mientras App Router sea
+prerenderizado. Los nonces documentados por Next.js fuerzan renderizado dinámico;
+adoptarlos ahora eliminaría la ventaja estática y no se justifica para una web
+sin scripts de terceros. `style-src` continúa cerrado.
+
+**Consecuencias.**
+
+- (+) El mismo comando reproduce localmente el check remoto.
+- (+) `main` exige `Quality gate` actualizado y bloquea fuerza y borrado,
+  también para administradores.
+- (+) Rutas, responsive, accesibilidad, foco, consola, red y presupuestos quedan
+  cubiertos antes de integrar.
+- (+) Ningún pull request despliega mientras el interruptor permanezca apagado.
+- (−) Lighthouse usa 3 s como tolerancia estable de laboratorio; la meta de
+  campo continúa siendo LCP < 2,5 s.
+- (−) Una preview solo puede considerarse protegida tras verificar también el
+  control de acceso en Vercel; preparar el job no equivale a publicarla.
+- (±) El repositorio pasó a público por orden expresa del usuario para habilitar
+  la protección disponible en el plan actual; la visibilidad del código no
+  autoriza publicar la web.

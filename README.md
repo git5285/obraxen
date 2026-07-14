@@ -63,6 +63,9 @@ npm run build      # genera dist/ desde src/ + data/ + css/ + img/
 npm run check      # build + validación de datos, SEO, scripts, anclas y activos
 npm run check:next # lint + tipos + tests + build de la fundacion Next.js
 npm run check:all  # valida en conjunto la base estatica y la fundacion Next.js
+npm run test:e2e   # valida rutas, responsive, accesibilidad y foco en Chromium
+npm run lighthouse:ci # aplica los presupuestos móviles a tres rutas críticas
+npm run check:quality  # reproduce localmente el gate completo de GitHub Actions
 ```
 
 El entorno reproducible de la fundacion usa Node `24.x` (`.nvmrc`).
@@ -74,8 +77,25 @@ y las seis fichas se prerenderizan desde `data/proyectos.json` mediante
 `generateStaticParams`, con 18 imagenes responsive y metadata propia. Las siete
 rutas de evidencia no añaden componentes cliente. La CSP ya elimina
 `unsafe-inline` de estilos; `script-src` lo mantiene de forma temporal por el
-bootstrap estatico de App Router y se resolvera junto con la politica de hashes
-o nonces de la Fase 4.
+bootstrap estatico de App Router. Se conserva de forma explícita mientras la
+salida sea prerenderizada: los nonces de Next.js exigen renderizado dinámico y
+romperían esta arquitectura sin aportar una mejora proporcional en preview.
+
+## Calidad continua y previews
+
+`.github/workflows/quality.yml` ejecuta instalación reproducible, validación de
+ambas implementaciones, Playwright y Lighthouse en cada pull request y en los
+pushes a `main`. La rama `main` exige `Quality gate` en modo estricto, también
+para administradores. Los informes se conservan como artefactos durante 14 días.
+El repositorio de código es público por decisión expresa; esto no cambia el
+estado `noindex` ni habilita un despliegue web.
+
+El job de preview Vercel está preparado, pero permanece **apagado por defecto**.
+Solo puede ejecutarse en un pull request cuando exista el entorno protegido
+`preview`, estén configurados sus secretos y la variable del repositorio
+`ENABLE_VERCEL_PREVIEWS` sea exactamente `true`. Activarlo, verificar la
+protección de acceso de la URL y desplegar requieren autorización expresa; el
+workflow no cambia `vercel.json` ni habilita producción.
 
 `<title>`, `meta`, Open Graph y JSON-LD se resuelven **en build**: el HTML servido
 es completamente estático (sin fetch ni inyección de marca en runtime).
@@ -164,4 +184,5 @@ bloqueada hasta completar, como mínimo:
 ## Decisiones
 
 Ver [`DECISIONS.md`](DECISIONS.md): base estática, hero con evidencia propia,
-identidad centralizada, modelo de contenido y migración progresiva a Next.js.
+identidad centralizada, modelo de contenido, migración progresiva a Next.js y
+puerta automatizada de calidad.

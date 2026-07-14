@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 19:23 Europe/Madrid.
+Actualizado: 2026-07-14 20:09 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -59,6 +59,14 @@ cambios staged sin propietario.
 - Fase 3 completada en `codex/phase-3-evidence`: hub y seis fichas Next
   prerenderizadas desde datos, metadata por ruta, 18 imagenes responsive,
   puerta de soluciones cerrada, 31 tests y paridad geometrica exacta.
+- Fase 3 integrada en GitHub mediante la PR `#4`; `main` queda en el merge
+  `117ad9a`.
+- Fase 4 completada en `codex/phase-4-quality`: workflow reproducible,
+  31 tests unitarios, 24 pruebas Playwright, presupuestos Lighthouse en tres
+  rutas y preview Vercel preparada tras un interruptor apagado por defecto. La
+  PR `#5` está abierta con `Quality gate` verde; `main` exige ese contexto en
+  modo estricto incluso a administradores. Por orden expresa del usuario, el
+  repositorio es público; la web no se ha desplegado ni publicado.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -76,8 +84,10 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Revisar e integrar `codex/phase-3-evidence` mediante el flujo GitHub.
-2. Abrir una claim nueva para la Fase 4 de calidad de entrega.
+1. Revisar e integrar la PR `#5` de Fase 4, ya validada por el check obligatorio,
+   y mantener previews apagadas.
+2. Abrir Fase 5 por el modelo de consentimiento y sus pruebas, sin cargar
+   analítica antes de una aceptación válida.
 3. Mantener la base estática hasta que las rutas legales alcancen paridad.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
