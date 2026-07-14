@@ -302,6 +302,10 @@ ${magnitudeHtml}
   </section>`;
 }
 const projectsSection = renderProjects(projects);
+const hasContactChannel = Boolean(email || phone || whatsapp);
+const ctaHref = hasContactChannel ? '#contacto' : (projects.length ? '#proyectos' : '#servicios');
+const ctaText = hasContactChannel ? 'Pide una evaluación' : (projects.length ? 'Ver proyectos' : 'Ver servicios');
+const capaCtaText = hasContactChannel ? 'Pedir evaluación →' : (projects.length ? 'Ver proyectos →' : 'Ver servicios →');
 
 // Navegación: única fuente de los enlaces → se renderiza a 3 variantes.
 // Añadir aquí un item lo publica en las tres barras (móvil, sticky y hero).
@@ -319,8 +323,9 @@ const navMobileLinks = NAV.map(([id, l]) => `<a href="#${id}">${l}</a>`).join('\
 const ctx = {
   brand,
   logoInner,
-  ctaText: 'Pide una evaluación',
-  capaCtaText: 'Pedir evaluación →',
+  ctaHref,
+  ctaText,
+  capaCtaText,
   titleText,
   descText,
   ogTitle: titleText,
