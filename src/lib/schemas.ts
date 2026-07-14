@@ -65,6 +65,47 @@ const projectTranslation = z.object({
   resultado: text,
 }).strict();
 
+const projectPublicationAuthorizationSchema = z.object({
+  estado: z.enum([
+    "pendiente",
+    "confirmada_internamente",
+    "documentada",
+    "denegada",
+  ]),
+  alcanceDeclarado: z.array(z.enum([
+    "nombre_cliente",
+    "fotografias_web",
+    "logotipo",
+  ])).refine(
+    (items) => new Set(items).size === items.length,
+    "El alcance de publicación no puede contener duplicados",
+  ),
+  fuente: nullableText,
+  confirmadoEl: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  referenciaDocumento: nullableText,
+  revisionLegal: z.enum(["pendiente", "aprobada", "no_aplica"]),
+}).strict().superRefine((authorization, context) => {
+  if (
+    ["confirmada_internamente", "documentada"].includes(authorization.estado) &&
+    (!authorization.fuente || !authorization.confirmadoEl)
+  ) {
+    context.addIssue({
+      code: "custom",
+      message: "Una autorización confirmada necesita fuente y fecha",
+    });
+  }
+
+  if (
+    authorization.estado === "documentada" &&
+    (!authorization.referenciaDocumento || authorization.revisionLegal !== "aprobada")
+  ) {
+    context.addIssue({
+      code: "custom",
+      message: "La publicación documentada necesita referencia y revisión legal aprobada",
+    });
+  }
+});
+
 export const projectSchema = z.object({
   slug,
   referencia: z.string().regex(/^E[0-9]{6}$/),
@@ -78,7 +119,7 @@ export const projectSchema = z.object({
   materiales: z.array(text),
   magnitudes: z.array(text).min(1),
   ejecucionConfirmada: z.literal(true),
-  permisoPublicarCliente: z.literal(true),
+  autorizacionPublicacion: projectPublicationAuthorizationSchema,
   plazoPrevisto: nullableText,
   cierre: z.object({
     entregaConforme: z.boolean(),

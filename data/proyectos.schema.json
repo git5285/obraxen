@@ -19,7 +19,7 @@
       "materiales",
       "magnitudes",
       "ejecucionConfirmada",
-      "permisoPublicarCliente",
+      "autorizacionPublicacion",
       "plazoPrevisto",
       "cierre",
       "imagenes",
@@ -67,7 +67,32 @@
         "items": { "type": "string", "minLength": 1 }
       },
       "ejecucionConfirmada": { "const": true },
-      "permisoPublicarCliente": { "const": true },
+      "autorizacionPublicacion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "estado",
+          "alcanceDeclarado",
+          "fuente",
+          "confirmadoEl",
+          "referenciaDocumento",
+          "revisionLegal"
+        ],
+        "properties": {
+          "estado": {
+            "enum": ["pendiente", "confirmada_internamente", "documentada", "denegada"]
+          },
+          "alcanceDeclarado": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "enum": ["nombre_cliente", "fotografias_web", "logotipo"] }
+          },
+          "fuente": { "type": ["string", "null"], "minLength": 1 },
+          "confirmadoEl": { "type": ["string", "null"], "format": "date" },
+          "referenciaDocumento": { "type": ["string", "null"], "minLength": 1 },
+          "revisionLegal": { "enum": ["pendiente", "aprobada", "no_aplica"] }
+        }
+      },
       "plazoPrevisto": {
         "type": ["string", "null"],
         "description": "Plazo indicado en la documentación previa; no implica duración real ni cumplimiento."

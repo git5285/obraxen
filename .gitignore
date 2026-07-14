@@ -10,7 +10,10 @@ playwright-report/
 test-results/
 .lighthouseci/
 *.tsbuildinfo
+AUDITORIA-EXTERNA-*.md
 
 # Configuración local de herramientas
 .claude/
 .vercel/
+.env.local
+.env.*.local
