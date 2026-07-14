@@ -1,8 +1,9 @@
 # Auditoría técnica
 
 Última verificación: 14 de julio de 2026. Entorno: build estático local,
-Lighthouse 13.4.0 y Chromium headless. Es una fotografía de la base previa a
-Next.js; no sustituye las pruebas que deberán repetirse durante la migración.
+fundacion Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. Las metricas
+Lighthouse siguen describiendo la base estatica; la fundacion Next.js se valida
+por separado hasta que la Fase 2 migre la portada con paridad.
 
 ## Resumen
 
@@ -60,7 +61,7 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
 | Activos sin nombres versionados ni caché larga | Medio en visitas repetidas | Hashes del build de Next.js y cabeceras verificadas en Vercel |
 | Imágenes sin variantes responsive | Medio en transferencia | `next/image` con dimensiones y `sizes` por composición |
 | JavaScript de portada todavía inline | Medio para CSP | Isla cliente externa en la Fase 2; retirar `unsafe-inline` después |
-| Sin TypeScript, lint, tests ni CI | Medio para mantenimiento | Fases 1 y 4 del roadmap |
+| Sin CI ni checks remotos obligatorios | Medio para mantenimiento | Fase 4 del roadmap; TypeScript, lint y tests locales ya completados |
 | Minificación CSS pendiente | Bajo; ahorro estimado de 3–5 KiB por ruta | Resolver con el toolchain nuevo, sin añadir ahora una dependencia aislada |
 | Reflow de navegación de unos 34 ms | Bajo | Simplificar la isla cliente y volver a perfilar |
 
@@ -78,11 +79,16 @@ de la base actual.
 - Las 18 fotografías cargan correctamente al hacer scroll.
 - Cabeceras CSP, `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy` y `Permissions-Policy` están preparadas para el hosting.
+- La fundacion Next.js supera ESLint, TypeScript estricto, 10 tests unitarios,
+  build de produccion y smoke test Chromium en 390 y 1.440 px.
+- `/`, `/robots.txt` y una ruta 404 de Next.js responden como se espera, sin
+  errores de consola, overflow ni exposicion accidental a indexacion.
 
 Comandos de cierre:
 
 ```sh
 npm run check
+npm run check:next
 node --check scripts/build.mjs
 node --check scripts/check.mjs
 git diff --check
