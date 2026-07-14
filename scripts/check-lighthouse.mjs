@@ -70,6 +70,7 @@ async function auditRoute(route) {
       cwd: root,
       env: { ...process.env, CHROME_PATH: chromium.executablePath() },
       maxBuffer: 20 * 1024 * 1024,
+      timeout: 120_000,
     },
   );
 
