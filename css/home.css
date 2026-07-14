@@ -328,8 +328,8 @@ section[id],.cierre{scroll-margin-top:76px}
 .sticky-nav .menu-btn span{background:var(--brand-ink)}
 .movil-menu{position:fixed;inset:0;z-index:var(--z-modal);background:rgb(from var(--brand-overlay-menu) r g b / .97);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  opacity:0;visibility:hidden;transition:opacity var(--dur-base) var(--ease-standard),visibility var(--dur-base) var(--ease-standard)}
-.movil-menu.abierto{opacity:1;visibility:visible}
+  opacity:0;visibility:hidden;transition:opacity var(--dur-base) var(--ease-standard),visibility 0s linear var(--dur-base)}
+.movil-menu.abierto{opacity:1;visibility:visible;transition-delay:0s}
 .movil-menu a{color:var(--brand-on-dark);text-decoration:none;font-size:1.5rem;font-weight:800;padding:10px 18px}
 .movil-menu .btn{margin-top:16px;font-size:1rem}
 .movil-menu .cerrar{position:absolute;top:20px;right:24px;background:none;border:0;
