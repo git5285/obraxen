@@ -2,8 +2,39 @@
   "name": "pavimentos-industriales-web",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node scripts/check.mjs"
+    "build:legacy": "node scripts/build.mjs",
+    "build:next": "next build",
+    "check": "node scripts/check.mjs",
+    "check:legacy": "node scripts/check.mjs",
+    "check:next": "npm run lint && npm run typecheck && npm run test && npm run build:next",
+    "check:all": "npm run check:legacy && npm run check:next",
+    "dev:next": "next dev",
+    "lint": "eslint .",
+    "start:next": "next start",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.2.10",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  },
+  "overrides": {
+    "postcss": "8.5.19"
   }
 }
