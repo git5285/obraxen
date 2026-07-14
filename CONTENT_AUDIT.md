@@ -21,8 +21,9 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 | Servicios descritos como una lista de técnicas | Bajo valor para el decisor | Cada servicio conecta el daño con el criterio de intervención |
 | La sección de proyectos sonaba defensiva | Restaba fuerza a la evidencia | Se presenta qué acredita cada ficha sin añadir resultados no medidos |
 | Equipo y contacto mostraban datos pendientes | Expone una web incompleta | Los bloques permanecen preparados, pero no se generan hasta disponer de datos |
-| Los resultados repetían «la obra fue ejecutada» | Redundancia | La confirmación queda en la ficha y el resultado se centra en la evidencia fotográfica |
+| Los resultados repetían «la obra fue ejecutada» | Redundancia | La ejecución queda en la ficha; el resultado combina la evidencia fotográfica con el cierre ahora confirmado por el equipo |
 | La oferta podía interpretarse como cuatro técnicas aisladas | No explica el valor de una rehabilitación completa | La página aclara que una intervención puede combinar preparación, reparación, nivelación y tratamiento según el diagnóstico |
+| Las técnicas no formaban ofertas comprensibles para el comprador | Dificulta saber qué se contrata y para qué | Se preparan cuatro ofertas internas con comprador, problema, alcance, límites, evidencia y condiciones de salida |
 
 ## Afirmaciones publicables
 
@@ -31,6 +32,8 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Primera respuesta en menos de 48 horas, cuando haya un canal activo.
 - Trabajo en la Unión Europea y mercados principales confirmados.
 - Ejecución, clientes, ubicaciones y magnitudes de los seis casos documentados.
+- Entrega conforme y ausencia de correcciones posteriores registradas por el
+  equipo en los seis casos, confirmadas el 14 de julio de 2026.
 - Valoración inicial a partir de fotografías o vídeo.
 
 ## Afirmaciones condicionadas
@@ -39,7 +42,8 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
   el sistema y la circulación de la instalación lo permiten.
 - Plazo de reapertura: depende del sistema y se define para cada caso.
 - Inspección in situ: se plantea cuando hace falta concretar el alcance.
-- Resultado de un caso: se limita a lo que acreditan las fotografías aportadas.
+- Resultado de un caso: distingue lo visible en las fotografías del cierre
+  confirmado por el equipo y de cualquier resultado operativo todavía pendiente.
 - Preparación, reparación, nivelación y tratamiento pueden combinarse en una
   intervención, pero solo se incluyen las partidas que determine el diagnóstico.
 
@@ -48,6 +52,8 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Garantías, hasta que se tome una decisión específica.
 - Presupuestos cerrados o universales.
 - Cumplimiento de plazos no documentado.
+- Duración real, fecha de ejecución o ausencia de incidencias durante la obra
+  mientras no exista confirmación específica.
 - Continuidad operativa garantizada o «cero paradas».
 - Mejoras porcentuales de rendimiento, durabilidad o ahorro.
 - Certificaciones, homologaciones o protocolos no aportados.
@@ -85,6 +91,26 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Antes de nombrarlos o describir prestaciones se documentarán sus capas,
   proceso, productos compatibles, fabricantes, mantenimiento y condiciones de uso.
 
+## Arquitectura inicial de la oferta
+
+Las siguientes ofertas son borradores internos; no implican que sus páginas ya
+sean publicables:
+
+1. **Inspección y plan de intervención:** ordenar daños, restricciones,
+   alternativas y controles antes de prescribir.
+2. **Reparaciones localizadas por zonas:** coordinar fisuras, juntas, huecos,
+   anclajes, parches y desniveles acotados.
+3. **Rehabilitación integral de pavimentos de hormigón:** integrar retirada,
+   preparación, reparación, corrección y acabado en un único alcance.
+4. **Recuperación por cambio de inquilino o uso:** preparar una condición de
+   entrega acordada; los casos relacionados acreditan técnicas, no el contexto
+   contractual de cambio de inquilino.
+
+El detalle, los límites y las condiciones de salida viven en
+`data/ofertas.json`. Una oferta solo pasa a página cuando existe capacidad
+confirmada, explicación técnica propia, evidencia aplicable, límites y una
+acción útil.
+
 ## Hero
 
 **Versión aplicada:** «Reparaciones planificadas para reducir el impacto
@@ -99,7 +125,8 @@ Alternativas reservadas para una futura prueba:
 
 ## Pendientes de evidencia
 
-- Resultados cuantificados por proyecto: plazo, reapertura, continuidad o vida útil.
+- Fecha de ejecución, duración real, cumplimiento de plazo, continuidad,
+  reapertura y resultados adicionales de cada proyecto.
 - Protocolos de ejecución y control ambiental o de polvo.
 - Certificaciones y sistemas/materiales homologados.
 - Productos y sistemas exactos que aplicará la empresa, con fichas vigentes y
