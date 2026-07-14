@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 21:12 Europe/Madrid.
+Actualizado: 2026-07-14 21:29 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -65,13 +65,14 @@ cambios staged sin propietario.
   31 tests unitarios, 24 pruebas Playwright, presupuestos Lighthouse en tres
   rutas y preview Vercel preparada tras un interruptor apagado por defecto.
   `main` exige ese contexto en modo estricto incluso a administradores.
-- Fase 4.5 en `codex/phase-4-5-consolidation`: WCAG 2.5.3 corregido y probado,
+- Fase 4.5 integrada mediante la PR `#6`; `main` queda en el merge `8bbd68c`.
+  WCAG 2.5.3 queda corregido y probado,
   permisos trazables, datos desconocidos normalizados, exposición revisada,
   rutas legales y sitemap migrados, y builder/HTML legacy retirados. Next.js es
   la única implementación; el preset remoto de Vercel también reconoce Next con
-  salida autodetectada y `vercel build` pasa sin desplegar. La PR borrador `#6`
-  contiene la entrega completa, su `Quality gate` está verde y la claim
-  `042123c8...` está liberada.
+  salida autodetectada y `vercel build` pasa sin desplegar. El gate posterior al
+  merge, run `29361794598`, está verde y la preview Vercel fue omitida; las claims
+  `042123c8...` y `b376296c...` están liberadas.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -93,9 +94,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Revisar la PR `#6` de Fase 4.5 y mantener previews apagadas.
-2. Marcarla lista o integrarla solo con `Quality gate` verde.
-3. Abrir Fase 5 por el modelo de consentimiento y sus pruebas, sin cargar
+1. Mantener previews, indexación y publicación apagadas.
+2. Abrir una claim independiente para la Fase 5 cuando se autorice su inicio.
+3. Implementar el modelo de consentimiento y sus pruebas, sin cargar
    analítica antes de una aceptación válida.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
