@@ -78,9 +78,14 @@ for (const [label, pattern] of [
 for (const project of projects) {
   const route = `/proyectos/${project.slug}/`;
   const caseHtml = generatedHtml.find(([name]) => name === `proyectos/${project.slug}`)?.[1] || '';
+  const nonWebpImages = project.imagenes.filter((image) => !String(image.src || '').endsWith('.webp'));
   if (!html.includes(`href="${route}"`)) errors.push(`La portada no enlaza el caso ${project.slug}`);
   if ((caseHtml.match(/<h1(?:\s|>)/g) || []).length !== 1) errors.push(`${project.slug}: debe existir un único h1`);
   if ((caseHtml.match(/<figure>/g) || []).length !== project.imagenes.length) errors.push(`${project.slug}: número de fotografías incorrecto`);
+  if (nonWebpImages.length) errors.push(`${project.slug}: las fotografías publicadas deben usar derivados WebP`);
+  if (/<link[^>]+rel="preload"[^>]+proyectos\//.test(caseHtml) || /fetchpriority="high"/.test(caseHtml)) {
+    errors.push(`${project.slug}: las fotografías bajo el pliegue no deben competir con el contenido inicial`);
+  }
   for (const marker of ['class="breadcrumbs"', 'class="scope-rail"', 'class="case-narrative"']) {
     if (!caseHtml.includes(marker)) errors.push(`${project.slug}: falta ${marker}`);
   }
@@ -88,6 +93,12 @@ for (const project of projects) {
     errors.push(`${project.slug}: debe permanecer noindex en preview`);
   }
 }
+
+const titles = generatedHtml.map(([route, output]) => [route, output.match(/<title>([^<]+)<\/title>/)?.[1]?.trim() || '']);
+const missingTitles = titles.filter(([, title]) => !title).map(([route]) => route);
+const duplicateTitles = titles.filter(([, title], index) => title && titles.findIndex(([, candidate]) => candidate === title) !== index);
+if (missingTitles.length) errors.push(`Falta title en: ${missingTitles.join(', ')}`);
+if (duplicateTitles.length) errors.push(`Titles duplicados en: ${duplicateTitles.map(([route]) => route).join(', ')}`);
 
 const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
 const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);

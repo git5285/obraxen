@@ -18,17 +18,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/delticom/resultado.jpg",
+        "src": "img/proyectos/delticom/resultado.webp",
         "alt": "Vista general del pavimento de Delticom tras el tratamiento",
         "etapa": "Resultado documentado"
       },
       {
-        "src": "img/proyectos/delticom/estado-inicial.jpg",
+        "src": "img/proyectos/delticom/estado-inicial.webp",
         "alt": "Pavimento de la nave de Hannover antes de retirar revestimientos y marcas",
         "etapa": "Estado inicial"
       },
       {
-        "src": "img/proyectos/delticom/tratamiento.jpg",
+        "src": "img/proyectos/delticom/tratamiento.webp",
         "alt": "Tratamiento superficial del pavimento en curso en la nave de Delticom",
         "etapa": "Intervención"
       }
@@ -61,17 +61,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/tp-link/resultado-general.jpg",
+        "src": "img/proyectos/tp-link/resultado-general.webp",
         "alt": "Vista general del pavimento intervenido en las instalaciones de TP-Link",
         "etapa": "Vista general"
       },
       {
-        "src": "img/proyectos/tp-link/resultado-zona.jpg",
+        "src": "img/proyectos/tp-link/resultado-zona.webp",
         "alt": "Segunda vista de la zona logística intervenida para TP-Link",
         "etapa": "Zona intervenida"
       },
       {
-        "src": "img/proyectos/tp-link/detalle-retiradas.jpg",
+        "src": "img/proyectos/tp-link/detalle-retiradas.webp",
         "alt": "Detalle de puntos del pavimento tras el rebaje y la retirada localizada",
         "etapa": "Detalle técnico"
       }
@@ -104,17 +104,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/dadada/detalle-refuerzo.jpg",
+        "src": "img/proyectos/dadada/detalle-refuerzo.webp",
         "alt": "Detalle del refuerzo mecánico instalado junto a una junta del pavimento",
         "etapa": "Refuerzo instalado"
       },
       {
-        "src": "img/proyectos/dadada/estado-inicial.jpg",
+        "src": "img/proyectos/dadada/estado-inicial.webp",
         "alt": "Junta abierta en el pavimento antes de la reparación en Euskirchen",
         "etapa": "Estado inicial"
       },
       {
-        "src": "img/proyectos/dadada/refuerzo-junta.jpg",
+        "src": "img/proyectos/dadada/refuerzo-junta.webp",
         "alt": "Proceso de preparación y refuerzo mecánico de una junta",
         "etapa": "Intervención"
       }
@@ -147,17 +147,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/loreal/resultado.jpg",
+        "src": "img/proyectos/loreal/resultado.webp",
         "alt": "Resultado del tratamiento superficial del pavimento en la planta de L’Oréal",
         "etapa": "Resultado documentado"
       },
       {
-        "src": "img/proyectos/loreal/estado-inicial.jpg",
+        "src": "img/proyectos/loreal/estado-inicial.webp",
         "alt": "Superficie industrial de L’Oréal antes de completar el tratamiento",
         "etapa": "Estado inicial"
       },
       {
-        "src": "img/proyectos/loreal/tratamiento.jpg",
+        "src": "img/proyectos/loreal/tratamiento.webp",
         "alt": "Zona de trabajo durante el tratamiento del pavimento en Gauchy",
         "etapa": "Intervención"
       }
@@ -191,17 +191,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/blitz/resultado-pasillo.jpg",
+        "src": "img/proyectos/blitz/resultado-pasillo.webp",
         "alt": "Pasillo logístico de Blitz tras la intervención en el pavimento",
         "etapa": "Resultado documentado"
       },
       {
-        "src": "img/proyectos/blitz/estado-inicial-junta.jpg",
+        "src": "img/proyectos/blitz/estado-inicial-junta.webp",
         "alt": "Junta dañada en el pavimento antes de la reparación en Bremen",
         "etapa": "Estado inicial"
       },
       {
-        "src": "img/proyectos/blitz/reparacion.jpg",
+        "src": "img/proyectos/blitz/reparacion.webp",
         "alt": "Detalle de una zona reparada durante la intervención para Blitz",
         "etapa": "Intervención"
       }
@@ -236,17 +236,17 @@
     "plazo": null,
     "imagenes": [
       {
-        "src": "img/proyectos/hologram/resultado.jpg",
+        "src": "img/proyectos/hologram/resultado.webp",
         "alt": "Resultado pulido del pavimento intervenido por Hologram Bâtiment en París",
         "etapa": "Resultado documentado"
       },
       {
-        "src": "img/proyectos/hologram/estado-inicial-huecos.jpg",
+        "src": "img/proyectos/hologram/estado-inicial-huecos.webp",
         "alt": "Huecos y puntos de anclaje visibles antes del tratamiento del pavimento",
         "etapa": "Estado inicial"
       },
       {
-        "src": "img/proyectos/hologram/maquinaria-tratamiento.jpg",
+        "src": "img/proyectos/hologram/maquinaria-tratamiento.webp",
         "alt": "Maquinaria de lijado y tratamiento sobre el pavimento de la obra de París",
         "etapa": "Intervención"
       }

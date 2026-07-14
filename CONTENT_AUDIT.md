@@ -22,6 +22,7 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 | La sección de proyectos sonaba defensiva | Restaba fuerza a la evidencia | Se presenta qué acredita cada ficha sin añadir resultados no medidos |
 | Equipo y contacto mostraban datos pendientes | Expone una web incompleta | Los bloques permanecen preparados, pero no se generan hasta disponer de datos |
 | Los resultados repetían «la obra fue ejecutada» | Redundancia | La confirmación queda en la ficha y el resultado se centra en la evidencia fotográfica |
+| La oferta podía interpretarse como cuatro técnicas aisladas | No explica el valor de una rehabilitación completa | La página aclara que una intervención puede combinar preparación, reparación, nivelación y tratamiento según el diagnóstico |
 
 ## Afirmaciones publicables
 
@@ -39,6 +40,8 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Plazo de reapertura: depende del sistema y se define para cada caso.
 - Inspección in situ: se plantea cuando hace falta concretar el alcance.
 - Resultado de un caso: se limita a lo que acreditan las fotografías aportadas.
+- Preparación, reparación, nivelación y tratamiento pueden combinarse en una
+  intervención, pero solo se incluyen las partidas que determine el diagnóstico.
 
 ## Afirmaciones que no se publican
 
@@ -48,7 +51,39 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Continuidad operativa garantizada o «cero paradas».
 - Mejoras porcentuales de rendimiento, durabilidad o ahorro.
 - Certificaciones, homologaciones o protocolos no aportados.
+- Certificaciones, ensayos, garantías o resultados pertenecientes a otra marca,
+  fabricante, muestra u obra, salvo autorización y aplicabilidad documentadas.
+- Los nombres BECOSAN y deepEX como marcas, sistemas ofrecidos o respaldo de los
+  futuros sistemas propios.
+- Fabricación química propia, formulaciones propias o titularidad sobre productos
+  fabricados por terceros.
 - Nombre, razón social, CIF, dominio o contacto provisionales.
+
+## Regla de evidencia técnica
+
+- Una ficha de fabricante acredita el producto y la versión que identifica; no
+  acredita automáticamente todas las obras ni a la nueva empresa.
+- Un ensayo acredita la muestra, el lugar, el método y las condiciones descritas.
+  No se generaliza a otros soportes o acabados.
+- La resistencia al deslizamiento se formula con especial cautela: humedad,
+  contaminación, desgaste, limpieza y uso pueden cambiar el resultado.
+- Un plan APPCC/ACCPP de producto no se presenta como certificación independiente
+  de una empresa, instalación o pavimento completo.
+- Los documentos de precios, márgenes, acuerdos, empleados, banca y clientes se
+  consideran información interna y nunca se copian al contenido público.
+
+## Decisión sobre sistemas propios
+
+- Confirmado: la empresa trabajará con sistemas propios todavía sin nombre.
+- “Propio” designa el método, la especificación, la combinación de procesos y la
+  ejecución; no la fabricación de productos químicos.
+- Los productos químicos serán de fabricantes externos y se seleccionarán según
+  el soporte, el uso y los requisitos de cada proyecto.
+- Referencia técnica interna: experiencia acumulada con BECOSAN/deepEX.
+- Regla pública: los futuros sistemas se comunicarán como independientes, sin
+  trasladar marcas, textos, ensayos, certificados ni garantías históricas.
+- Antes de nombrarlos o describir prestaciones se documentarán sus capas,
+  proceso, productos compatibles, fabricantes, mantenimiento y condiciones de uso.
 
 ## Hero
 
@@ -67,5 +102,11 @@ Alternativas reservadas para una futura prueba:
 - Resultados cuantificados por proyecto: plazo, reapertura, continuidad o vida útil.
 - Protocolos de ejecución y control ambiental o de polvo.
 - Certificaciones y sistemas/materiales homologados.
+- Productos y sistemas exactos que aplicará la empresa, con fichas vigentes y
+  autorización para utilizar sus ensayos o declaraciones de prestaciones.
+- Matriz de productos externos compatibles con cada capa del sistema, incluyendo
+  fabricante, ficha vigente, restricciones y evidencia aplicable.
+- Naming independiente para cada sistema o para una familia común de sistemas.
+- Garantía propia, con duración, mantenimiento, exclusiones y soporte admisible.
 - Testimonios o citas autorizadas de clientes.
 - Identidad y datos del equipo fundador.
