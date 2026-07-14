@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 18:30 Europe/Madrid.
+Actualizado: 2026-07-14 18:44 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -43,6 +43,11 @@ cambios staged sin propietario.
   `ae28903`, portada y accesibilidad en `fdcde7d`, y limpieza estructural en
   `78e7d9c`; documentación y estrategia en `57c4268`; foco del menú móvil
   estabilizado en `0120a46` y verificado dos veces de extremo a extremo.
+- Fase 0 integrada en GitHub mediante la PR `#1`; `main` queda en el merge
+  `2ec10f3`.
+- Fase 1 completada en `codex/next-foundation`: App Router, TypeScript estricto,
+  ESLint, Node 24, validacion Zod, 10 tests y puerta de publicacion tipada; la
+  salida estatica y el bloqueo de despliegue permanecen vigentes.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -60,9 +65,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Revisar e integrar `codex/phase-0-baseline` mediante el flujo GitHub cuando se
+1. Revisar e integrar `codex/next-foundation` mediante el flujo GitHub cuando se
    autorice el push y la pull request.
-2. Abrir una claim nueva y una rama propia para la Fase 1 de `ROADMAP.md`.
+2. Abrir una claim y una rama nuevas para la Fase 2 de `ROADMAP.md`.
 3. Mantener la base estática hasta alcanzar paridad en Next.js.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
