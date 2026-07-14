@@ -153,8 +153,10 @@ test("analytics providers load only after acceptance and stop after revocation",
   await expect(analyticsToggle).toBeChecked();
   await analyticsToggle.uncheck();
   const requestsBeforeRevocation = analyticsRequests.length;
-  await page.getByRole("button", { name: "Guardar preferencias" }).click();
-  await page.waitForLoadState("networkidle");
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: "networkidle" }),
+    page.getByRole("button", { name: "Guardar preferencias" }).click(),
+  ]);
 
   expect(await page.evaluate(() => JSON.parse(
     localStorage.getItem("site_privacy_preferences") ?? "null",
