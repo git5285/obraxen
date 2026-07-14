@@ -25,6 +25,7 @@ for (const file of ['data/brand.json', 'data/proyectos.json', 'data/proyectos.sc
   }
 }
 const brand = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'brand.json'), 'utf8'));
+const projects = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'proyectos.json'), 'utf8'));
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
 const temporaryName = String(brand.nombreTemporalNoPublicable || '').trim();
 if (temporaryName && html.toLocaleLowerCase('es').includes(temporaryName.toLocaleLowerCase('es'))) {
@@ -32,6 +33,15 @@ if (temporaryName && html.toLocaleLowerCase('es').includes(temporaryName.toLocal
 }
 if (brand.publicar !== true && vercelConfig.git?.deploymentEnabled !== false) {
   errors.push('Los despliegues automáticos deben permanecer desactivados mientras brand.publicar no sea true');
+}
+const hasContactChannel = ['email', 'telefono', 'whatsapp'].some((key) => String(brand[key] || '').trim());
+const expectedCtaHref = hasContactChannel ? '#contacto' : (projects.length ? '#proyectos' : '#servicios');
+const ctaTargets = [...html.matchAll(/<a class="(?:btn btn-acento|capa-cta)" href="([^"]+)"/g)].map((match) => match[1]);
+if (!ctaTargets.length || ctaTargets.some((href) => href !== expectedCtaHref)) {
+  errors.push(`Los CTA deben apuntar a ${expectedCtaHref} en el estado actual`);
+}
+if (!hasContactChannel && /Pide una evaluación|Pedir evaluación/.test(html)) {
+  errors.push('La preview no debe pedir una evaluación mientras no exista un canal de contacto');
 }
 const requiredFiles = ['index.html', 'aviso-legal/index.html', 'privacidad/index.html', 'robots.txt', 'css/tokens.css', 'img/hero-nave.jpg'];
 if (brand.dominio) requiredFiles.push('sitemap.xml');

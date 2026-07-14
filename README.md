@@ -108,6 +108,9 @@ expresa después de ejecutar `npm run check`.
       resuelto o indicador de cierre— antes de publicar esas afirmaciones
 - [ ] Activar el formulario cuando exista un email; hasta entonces muestra un estado
       de preparación sin campos ni enlaces ficticios
+- [x] Mientras no exista ningún canal de contacto, los CTA llevan a los proyectos
+      reales; al confirmar email, teléfono o WhatsApp cambian automáticamente a
+      «Pide una evaluación» y enlazan con Contacto
 - [ ] Completar y someter a revisión profesional `aviso-legal` y `privacidad`;
       después establecer `legalRevisionAprobada: true`
 - [ ] Cambiar `publicar` a `true` únicamente después de completar los puntos anteriores;
