@@ -1,9 +1,9 @@
 # Auditoría técnica
 
-Última verificación: 14 de julio de 2026. Entorno: build estático local,
-fundacion Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. Las metricas
-Lighthouse siguen describiendo la base estatica; la fundacion Next.js se valida
-por separado hasta que la Fase 2 migre la portada con paridad.
+Última verificación: 14 de julio de 2026. Entorno: build estático local, portada
+Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. La Fase 2 ya demuestra
+paridad de portada; el hub, casos y legales permanecen en la base estatica hasta
+su migracion.
 
 ## Resumen
 
@@ -11,13 +11,15 @@ por separado hasta que la Fase 2 migre la portada con paridad.
 - Problemas de prioridad alta pendientes: **0**.
 - Preview deliberadamente cerrada: `noindex,nofollow`, sin dominio y sin
   despliegues Git automáticos.
-- Sin dependencias cliente, recursos de terceros, secretos detectados ni errores
-  de consola en las rutas comprobadas.
+- Sin recursos de terceros, secretos detectados ni errores de consola en las
+  rutas comprobadas; el unico componente cliente propio es la navegacion.
 
 | Página y perfil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Portada móvil | 99 | 100 | 100 | 66 | 1,8 s | 0 ms | 0 |
-| Portada escritorio | 100 | 100 | 100 | 66 | 0,5 s | 0 ms | 0 |
+| Portada estática móvil | 99 | 100 | 100 | 66 | 1,8 s | 0 ms | 0 |
+| Portada estática escritorio | 100 | 100 | 100 | 66 | 0,5 s | 0 ms | 0 |
+| Portada Next móvil | 98 | 100 | 100 | 66 | 2,47 s | 0 ms | 0 |
+| Portada Next escritorio | 100 | 100 | 100 | 66 | 0,58 s | 0 ms | 0 |
 | Hub móvil | 100 | 100 | 100 | 66 | 1,1 s | 0 ms | 0 |
 | Caso Blitz móvil | 100 | 100 | 100 | 66 | 1,0 s | 0 ms | 0 |
 
@@ -44,6 +46,10 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
   `src/partials/home-script.html`; `src/index.html` bajó de 870 a 312 líneas.
 - La separación mantuvo la portada en 99/100 de rendimiento móvil/escritorio y
   mejoró su LCP móvil de 2,0 a 1,8 s.
+- La portada Next conserva las ocho secciones y seis casos en Server Components;
+  24 imagenes usan imports versionados y variantes responsive. El hero mantiene
+  el JPEG original de 107 KiB porque la medicion repetida fue mejor que la ruta
+  de optimizacion bajo demanda: 98/100 y LCP 2,47 s en movil.
 
 ### Accesibilidad
 
@@ -58,9 +64,9 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
 
 | Deuda | Riesgo actual | Resolución prevista |
 |---|---|---|
-| Activos sin nombres versionados ni caché larga | Medio en visitas repetidas | Hashes del build de Next.js y cabeceras verificadas en Vercel |
-| Imágenes sin variantes responsive | Medio en transferencia | `next/image` con dimensiones y `sizes` por composición |
-| JavaScript de portada todavía inline | Medio para CSP | Isla cliente externa en la Fase 2; retirar `unsafe-inline` después |
+| Activos de rutas estaticas sin hash | Medio en visitas repetidas | Sustituirlos al migrar las rutas en Fase 3; portada Next ya usa hashes |
+| Imágenes de hub y casos sin variantes responsive | Medio en transferencia | Migrarlas con dimensiones y `sizes` en Fase 3; portada completada |
+| `script-src` conserva `unsafe-inline` en Next | Medio para CSP | Definir hashes de build o nonces en Fase 4; `style-src` ya no lo necesita |
 | Sin CI ni checks remotos obligatorios | Medio para mantenimiento | Fase 4 del roadmap; TypeScript, lint y tests locales ya completados |
 | Minificación CSS pendiente | Bajo; ahorro estimado de 3–5 KiB por ruta | Resolver con el toolchain nuevo, sin añadir ahora una dependencia aislada |
 | Reflow de navegación de unos 34 ms | Bajo | Simplificar la isla cliente y volver a perfilar |
@@ -79,10 +85,14 @@ de la base actual.
 - Las 18 fotografías cargan correctamente al hacer scroll.
 - Cabeceras CSP, `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy` y `Permissions-Policy` están preparadas para el hosting.
-- La fundacion Next.js supera ESLint, TypeScript estricto, 10 tests unitarios,
-  build de produccion y smoke test Chromium en 390 y 1.440 px.
+- La portada Next supera ESLint, TypeScript estricto, 17 tests, build de
+  produccion y smoke test Chromium en 390 y 1.440 px.
 - `/`, `/robots.txt` y una ruta 404 de Next.js responden como se espera, sin
   errores de consola, overflow ni exposicion accidental a indexacion.
+- Next y la referencia miden exactamente 13.701 px de alto en movil y 8.117 px
+  en escritorio, con 8 secciones, 6 casos y 24 imagenes cargadas correctamente.
+- El menu abre, atrapa foco, cierra con `Escape`, restaura el disparador y enfoca
+  el destino al navegar; `style-src` excluye `unsafe-inline` sin violaciones CSP.
 
 Comandos de cierre:
 
