@@ -1,0 +1,57 @@
+{
+  "nombreTemporalNoPublicable": null,
+  "nombre": "Obraxen",
+  "nombreRevisionAprobada": false,
+  "nombreLegal": null,
+  "cif": null,
+  "empresaConstituida": true,
+  "formaJuridicaPrevista": "Sociedad Limitada",
+  "dominio": "obraxen.com",
+  "email": null,
+  "emailPrivacidad": null,
+  "telefono": null,
+  "whatsapp": null,
+  "direccion": null,
+  "fundadorNombre": null,
+  "fundadorCargo": null,
+  "experienciaAnios": 10,
+  "respuestaHoras": null,
+  "equiposPropios": true,
+  "horarioSchema": "Mo-Fr 09:00-18:00",
+  "legalRevisionAprobada": false,
+  "formularioProveedor": "Resend",
+  "formularioRevisionAprobada": false,
+  "revisionTraducciones": {
+    "en": { "estado": "pendiente", "revisor": null, "fecha": null },
+    "de": { "estado": "pendiente", "revisor": null, "fecha": null },
+    "es": { "estado": "pendiente", "revisor": null, "fecha": null },
+    "fr": { "estado": "pendiente", "revisor": null, "fecha": null }
+  },
+  "traducciones": {
+    "en": {
+      "claim": "Industrial floor repair",
+      "areasServicio": ["European Union"],
+      "mercadosPrioritarios": ["Germany", "the Netherlands", "Belgium", "France", "Spain", "Portugal", "Italy"],
+      "horarioTexto": "Business hours: Monday to Friday, 09:00–18:00 CET"
+    },
+    "de": {
+      "claim": "Reparatur von Industrieböden",
+      "areasServicio": ["Europäische Union"],
+      "mercadosPrioritarios": ["Deutschland", "den Niederlanden", "Belgien", "Frankreich", "Spanien", "Portugal", "Italien"],
+      "horarioTexto": "Erreichbarkeit: Montag bis Freitag, 09:00–18:00 Uhr MEZ/MESZ"
+    },
+    "es": {
+      "claim": "Reparación de pavimentos industriales",
+      "areasServicio": ["Unión Europea"],
+      "mercadosPrioritarios": ["Alemania", "Países Bajos", "Bélgica", "Francia", "España", "Portugal", "Italia"],
+      "horarioTexto": "Horario de atención: lunes a viernes, 9:00–18:00 CET"
+    },
+    "fr": {
+      "claim": "Réparation de sols industriels",
+      "areasServicio": ["Union européenne"],
+      "mercadosPrioritarios": ["Allemagne", "Pays-Bas", "Belgique", "France", "Espagne", "Portugal", "Italie"],
+      "horarioTexto": "Horaires : du lundi au vendredi, 09:00–18:00 CET"
+    }
+  },
+  "publicar": false
+}
