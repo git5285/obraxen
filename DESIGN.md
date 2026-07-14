@@ -36,12 +36,12 @@ numérico, `cubic-bezier`/`ease` a pelo).
 `--fs-base 1` · `--fs-md 1.25` · `--fs-lg 1.563` · `--fs-xl 1.953` ·
 `--fs-2xl 2.441` · `--fs-3xl 3.052` · `--fs-4xl 3.815` rem.
 
-**Regla B — Emparejamiento de fuentes (exactamente 2 familias).**
-- **Display** (`--font-display`, *Space Grotesk*): **solo** en `h1`, `h2`,
+**Regla B — Emparejamiento de fuentes (exactamente 2 stacks del sistema).**
+- **Display** (`--font-display`): **solo** en `h1`, `h2`,
   `.relato .linea` y `.logo`.
-- **Cuerpo/UI** (`--font-sans`, *Inter*): todo lo demás.
-- Nunca una tercera familia. Nunca *Space Grotesk* en texto corrido, nunca
-  *Inter* en un `h1`/`h2`.
+- **Cuerpo/UI** (`--font-sans`): todo lo demás.
+- No se cargan fuentes externas. Una tipografía de marca podrá autoalojarse cuando
+  la identidad visual definitiva esté aprobada.
 
 - **Cómo verificar (emparejamiento):**
   ```sh
@@ -107,9 +107,8 @@ escala; no se inventa un número.
 ## 5. Motion
 
 **Regla A — Curva.** Toda transición/animación usa `--ease-standard`
-(`cubic-bezier(0.16, 1, 0.3, 1)`, **ease-out exponencial**). En GSAP, el
-equivalente es `expo.out`. Los `scrub` ligados a scroll son la única excepción y
-usan `ease:"none"` (lineal, por definición del scrub).
+(`cubic-bezier(0.16, 1, 0.3, 1)`, **ease-out exponencial**). El trazado de la
+fisura usa transición lineal por representar un recorrido continuo.
 
 **Regla B — Sin bounce.** Prohibido *overshoot*: nada de `back`, `elastic`,
 `bounce`, ni `cubic-bezier` con componente Y fuera de `[0,1]`. `--ease-standard`
@@ -128,10 +127,10 @@ esenciales, y el JS debe envolver la animación en
   grep -c "prefers-reduced-motion" index.html          # ≥ 2 (CSS + JS)
   grep -noE "ease:[^,}]+|transition:[^;}]+" index.html  # curvas/duraciones en uso
   ```
-- **Estado:** **CUMPLE**. Las transiciones CSS usan la escala `--dur-*` y
-  `--ease-standard`; GSAP lee las duraciones desde CSS y usa `expo.out`. Los
-  scrubs siguen siendo lineales y `prefers-reduced-motion` cubre CSS y JS. La
-  aurora ambiental de 16 s es la excepción documentada a la escala de interacción.
+- **Estado:** **CUMPLE**. Las entradas usan `IntersectionObserver`, transform y
+  opacidad, se ejecutan una sola vez y liberan `will-change` al terminar.
+  `prefers-reduced-motion` cubre CSS y JS. La aurora ambiental de 16 s es la
+  excepción documentada a la escala de interacción.
 
 ---
 
@@ -214,7 +213,7 @@ bandas full-bleed oscuras y **sombras estratificadas**. Rastreable en:
 
 **Apple** · *Qué tomamos:* la **tipografía display sobredimensionada** y la
 **restricción editorial**: titulares enormes (`clamp` hasta `6.2rem`/`9rem` en
-Space Grotesk), ritmo de espaciado amplio y paleta casi acromática con un único
+tipografía display), ritmo de espaciado amplio y paleta casi acromática con un único
 acento. Rastreable en: `.hero h1`, `.relato .linea`, el uso de `--font-display`
 y el `padding` vertical generoso de las secciones.
 

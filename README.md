@@ -1,6 +1,6 @@
 # Web corporativa — reparación de pavimentos industriales
 
-Web estática (HTML + CSS + GSAP) de reparación de pavimentos industriales.
+Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos industriales.
 **Build mínimo sin dependencias**: `src/index.html` + `data/brand.json` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
@@ -77,9 +77,11 @@ usar “RemainOn” como nombre o si la sociedad continúa sin constituir.
 
 ## Despliegue
 
-Conectado a Vercel con despliegue automático: cada push a `main` ejecuta
-`node scripts/check.mjs` (`vercel.json`) y solo publica una salida validada.
-Vercel añade CSP y cabeceras de seguridad desde `vercel.json`.
+El proyecto permanece conectado a Vercel, pero los despliegues Git automáticos
+están desactivados en `vercel.json` mientras `brand.publicar` sea `false`. La
+versión pública antigua fue retirada el 14 de julio de 2026. Cuando se complete
+la identidad y se apruebe la publicación, el despliegue se reactivará de forma
+expresa después de ejecutar `npm run check`.
 
 ## Pendiente antes de producción
 
@@ -97,6 +99,8 @@ Vercel añade CSP y cabeceras de seguridad desde `vercel.json`.
       viernes de 9:00 a 18:00,
       primera respuesta inferior a 48 h y equipos propios
 - [x] Sustituir afirmaciones absolutas por formulaciones condicionadas y verificables
+- [x] Eliminar dependencias externas de Google Fonts, GSAP y cdnjs; la preview usa
+      tipografías del sistema y animación CSS/JavaScript nativo
 - [x] Incorporar seis proyectos ejecutados a `data/proyectos.json`
 - [x] Confirmar ejecución, unidades principales, ubicación de obra y permiso para
       identificar clientes

@@ -29,9 +29,9 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
   arañazos y desconchones, sellado de juntas de dilatación, pulido en grandes
   superficies.
 - **Modelo de ejecución:** equipos propios.
-- **Posicionamiento declarado:** «Oficio de siempre, empresa nueva» — proyecto de
-  nueva creación cuyo equipo declara **más de 10 años de experiencia acumulada**
-  en ejecución de pavimentos industriales.
+- **Posicionamiento declarado:** experiencia de obra aplicada a cada reparación,
+  respaldada por **más de 10 años de experiencia acumulada** del equipo en
+  ejecución de pavimentos industriales.
 - **Horario de atención confirmado:** lunes a viernes, 9:00–18:00. El valor
   `Mo-Fr 09:00-18:00` queda preparado en `brand.json` para incorporarse al
   JSON-LD cuando se confirme el nombre comercial.
@@ -44,8 +44,8 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
 - **Modelo:** B2B — empresas con pavimento industrial de hormigón en uso.
 - **Segmentos / sectores** (cinta de Sectores): Logística, Alimentación,
   Automoción, Retail, Farmacéutico, Aparcamientos.
-- **Tipo de instalación:** plantas / naves industriales en operación (copy: «Tu
-  planta no se detiene», «tu operativa», «la instalación»).
+- **Tipo de instalación:** plantas / naves industriales en operación (copy:
+  «intervenciones por fases», «tu operativa», «la instalación»).
 - **Decisores / comprador:** «responsables de mantenimiento y operaciones»
   (introducción de la FAQ, literal). No aparecen otros roles (compras,
   dirección de planta, facility managers): `«FALTA»` confirmar.
@@ -133,9 +133,10 @@ el repo):
 
 ## Platform: web
 
-- **Sitio web estático** (HTML + CSS + GSAP), **una sola página**, con build y
+- **Sitio web estático** (HTML + CSS + JavaScript nativo), **una sola página**, con build y
   validación en Node sin dependencias de terceros.
-- **Despliegue:** Vercel con auto-deploy en cada push a `main` (README).
+- **Despliegue:** proyecto Vercel conservado, sin despliegue público y con
+  auto-deploy desactivado hasta aprobar la publicación (README).
 - **Estado actual:** preview `noindex,nofollow`; sin nombre, dominio ni canales de
   contacto inventados; datos desconocidos omitidos y publicación estricta
   bloqueada hasta completarlos.
