@@ -21,7 +21,14 @@
     "plazoPrevisto": "30 días laborables",
     "equipoPrevisto": 5,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
     ]
@@ -45,7 +52,14 @@
     "plazoPrevisto": null,
     "equipoPrevisto": null,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
     ]
@@ -69,7 +83,14 @@
     "plazoPrevisto": null,
     "equipoPrevisto": null,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Aportar una fotografía del acabado final y un dato operativo verificable si se quiere ampliar el resultado público."
     ]
@@ -91,7 +112,14 @@
     "plazoPrevisto": "6 días laborables",
     "equipoPrevisto": null,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
     ]
@@ -122,7 +150,14 @@
     "plazoPrevisto": "35 días laborables",
     "equipoPrevisto": 8,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
     ]
@@ -160,7 +195,14 @@
     "plazoPrevisto": null,
     "equipoPrevisto": null,
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "confirmacionesPendientes": [
       "Confirmar la unidad del recrecido líquido y aportar un dato operativo verificable si se quiere ampliar el resultado público."
     ]

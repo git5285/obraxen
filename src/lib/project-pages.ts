@@ -110,11 +110,7 @@ export function getProjectNeighbors(project: Project) {
 }
 
 export function getExecutionFacts(project: Project) {
-  const publicExecutionDate =
-    project.cierre.fechaEjecucion &&
-    !/pendiente de confirmar/i.test(project.cierre.fechaEjecucion)
-      ? project.cierre.fechaEjecucion
-      : null;
+  const publicExecutionDate = project.cierre.fechaEjecucion;
 
   return [
     publicExecutionDate ? ["Ejecución", publicExecutionDate] : null,

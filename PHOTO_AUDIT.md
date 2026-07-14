@@ -29,7 +29,12 @@ La auditoría técnica no encontró archivos ilegibles ni coordenadas GPS. Detec
   convertido a WebP con calidad 82 y limpiado de metadatos EXIF. No se añadieron
   ni eliminaron elementos de la escena.
 
-## Selección publicada
+## Selección web preparada
+
+Esta selección acredita calidad técnica y ausencia de metadatos sensibles; no
+acredita por sí sola titularidad o autorización comercial. La publicación final
+de cada fotografía queda bloqueada hasta registrar su alcance documental y la
+revisión legal del caso.
 
 | Proyecto | Originales seleccionados | Copias web |
 | --- | --- | --- |

@@ -20,6 +20,26 @@ constitución sigue pendiente y no deben rellenarse datos provisionales.
 - Proveedor definitivo del formulario y contrato de encargo de tratamiento.
 - Proveedores definitivos de alojamiento, correo y recursos técnicos.
 
+## Autorizaciones de casos y fotografías
+
+Los seis casos registran una confirmación interna para identificar al cliente,
+pero ninguno dispone todavía de referencia documental ni revisión legal aprobada.
+El alcance declarado no cubre las fotografías web. Por tanto, los casos no
+superan todavía la puerta de publicación final aunque puedan utilizarse en la
+preview local cerrada.
+
+Antes de publicar cada caso se debe registrar:
+
+- entidad que autoriza y relación con la obra ejecutada;
+- alcance exacto: nombre del cliente, fotografías y, si aparece, logotipo;
+- fecha, fuente y referencia verificable del documento o contrato;
+- titularidad o licencia suficiente sobre las fotografías;
+- revisión legal aprobada o anonimización del caso.
+
+`autorizacionPublicacion.estado` solo puede pasar a `documentada` cuando exista
+ese soporte. Una confirmación interna o la entrega de archivos no se convierte
+automáticamente en autorización comercial.
+
 ## Decisiones técnicas pendientes
 
 - Formspree no debe activarse hasta disponer de cuenta, endpoint, email y revisión
@@ -36,8 +56,9 @@ constitución sigue pendiente y no deben rellenarse datos provisionales.
 
 1. Completar `data/brand.json`.
 2. Revisar los dos textos con asesoría legal.
-3. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
-4. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
+3. Documentar o anonimizar cada caso y sus fotografías.
+4. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
+5. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
 
 ## Fuentes oficiales consultadas
 
