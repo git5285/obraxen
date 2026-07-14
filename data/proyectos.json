@@ -25,7 +25,14 @@
       "5.362 m² de revestimiento retirado"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": "30 días laborables",
     "cierre": {
       "entregaConforme": true,
@@ -87,7 +94,14 @@
       "Retirada localizada de señalización"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": null,
     "cierre": {
       "entregaConforme": true,
@@ -148,14 +162,21 @@
       "20 huecos reparados"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": null,
     "cierre": {
       "entregaConforme": true,
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": "Junio (año pendiente de confirmar)",
+      "fechaEjecucion": null,
       "duracionReal": "3 días",
       "continuidadOperativa": "total",
       "resultadoAdicional": null
@@ -210,14 +231,21 @@
       "Tratamiento superficial LitoBrillant"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": "6 días laborables",
     "cierre": {
       "entregaConforme": true,
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": "Mayo (año pendiente de confirmar)",
+      "fechaEjecucion": null,
       "duracionReal": "1 semana",
       "continuidadOperativa": "total",
       "resultadoAdicional": null
@@ -274,7 +302,14 @@
       "465 huecos reparados"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": "35 días laborables",
     "cierre": {
       "entregaConforme": true,
@@ -340,14 +375,21 @@
       "1.943 anclajes y 357 huecos"
     ],
     "ejecucionConfirmada": true,
-    "permisoPublicarCliente": true,
+    "autorizacionPublicacion": {
+      "estado": "confirmada_internamente",
+      "alcanceDeclarado": ["nombre_cliente"],
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "referenciaDocumento": null,
+      "revisionLegal": "pendiente"
+    },
     "plazoPrevisto": null,
     "cierre": {
       "entregaConforme": true,
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": "Febrero (año pendiente de confirmar)",
+      "fechaEjecucion": null,
       "duracionReal": "1 mes",
       "continuidadOperativa": "sin_actividad",
       "resultadoAdicional": null

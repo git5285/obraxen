@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import type { Brand } from "./schemas";
+import type { Brand, Project } from "./schemas";
 
 const requiredPublicTextFields = [
   "nombre",
@@ -33,7 +33,36 @@ export class PublicationConfigurationError extends Error {
   }
 }
 
-export function getPublicationIssues(brand: Brand): string[] {
+const requiredProjectScopes = ["nombre_cliente", "fotografias_web"] as const;
+
+export function getProjectPublicationIssues(projects: readonly Project[]): string[] {
+  return projects.flatMap((project) => {
+    const authorization = project.autorizacionPublicacion;
+    const issues: string[] = [];
+
+    if (authorization.estado !== "documentada") {
+      issues.push(`${project.slug}: la autorización de publicación debe estar documentada`);
+    }
+    for (const scope of requiredProjectScopes) {
+      if (!authorization.alcanceDeclarado.includes(scope)) {
+        issues.push(`${project.slug}: la autorización no cubre ${scope}`);
+      }
+    }
+    if (!authorization.referenciaDocumento) {
+      issues.push(`${project.slug}: falta la referencia documental de la autorización`);
+    }
+    if (authorization.revisionLegal !== "aprobada") {
+      issues.push(`${project.slug}: la autorización necesita revisión legal aprobada`);
+    }
+
+    return issues;
+  });
+}
+
+export function getPublicationIssues(
+  brand: Brand,
+  projects: readonly Project[],
+): string[] {
   const issues = requiredPublicTextFields.flatMap((field) =>
     brand[field] ? [] : [`brand.${field} es obligatorio para publicar`],
   );
@@ -55,11 +84,16 @@ export function getPublicationIssues(brand: Brand): string[] {
     }
   }
 
+  issues.push(...getProjectPublicationIssues(projects));
+
   return issues;
 }
 
-export function getPublicationState(brand: Brand): PublicationState {
-  const issues = getPublicationIssues(brand);
+export function getPublicationState(
+  brand: Brand,
+  projects: readonly Project[],
+): PublicationState {
+  const issues = getPublicationIssues(brand, projects);
 
   if (!brand.publicar) {
     return {
@@ -80,8 +114,11 @@ export function getPublicationState(brand: Brand): PublicationState {
   };
 }
 
-export function buildRobotsPolicy(brand: Brand): MetadataRoute.Robots {
-  const publication = getPublicationState(brand);
+export function buildRobotsPolicy(
+  brand: Brand,
+  projects: readonly Project[],
+): MetadataRoute.Robots {
+  const publication = getPublicationState(brand, projects);
 
   if (!publication.isPublic) {
     return {

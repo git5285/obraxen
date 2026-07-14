@@ -20,4 +20,28 @@ describe("structured data", () => {
     expect(offers.every(({ estadoPublicacion }) => estadoPublicacion !== "publicable"))
       .toBe(true);
   });
+
+  it("keeps client publication evidence explicit and fail-closed", () => {
+    for (const project of projects) {
+      expect(project.autorizacionPublicacion).toMatchObject({
+        estado: "confirmada_internamente",
+        alcanceDeclarado: ["nombre_cliente"],
+        referenciaDocumento: null,
+        revisionLegal: "pendiente",
+      });
+    }
+  });
+
+  it("represents unknown execution dates as null", () => {
+    const unknownDates = projects
+      .filter(({ slug }) => [
+        "dadada-euskirchen",
+        "loreal-gauchy",
+        "hologram-paris",
+      ].includes(slug))
+      .map(({ cierre }) => cierre.fechaEjecucion);
+
+    expect(unknownDates).toEqual([null, null, null]);
+    expect(JSON.stringify(projects)).not.toContain("pendiente de confirmar");
+  });
 });

@@ -31,7 +31,9 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Equipos propios.
 - Primera respuesta en menos de 48 horas, cuando haya un canal activo.
 - Trabajo en la Unión Europea y mercados principales confirmados.
-- Ejecución, clientes, ubicaciones y magnitudes de los seis casos documentados.
+- Ejecución, ubicaciones y magnitudes de los seis casos documentados. La
+  identificación de clientes y las fotografías quedan condicionadas a soporte
+  documental y revisión legal antes de la publicación final.
 - Entrega conforme y ausencia de correcciones posteriores registradas por el
   equipo en los seis casos, confirmadas el 14 de julio de 2026.
 - Duración real y tamaño aproximado del equipo en los seis casos, confirmados por
@@ -51,6 +53,9 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Inspección in situ: se plantea cuando hace falta concretar el alcance.
 - Resultado de un caso: distingue lo visible en las fotografías del cierre
   confirmado por el equipo y de cualquier resultado operativo todavía pendiente.
+- Nombre del cliente y fotografías: solo después de que el caso registre alcance,
+  referencia documental y revisión legal aprobada; la confirmación interna actual
+  no basta para producción.
 - Preparación, reparación, nivelación y tratamiento pueden combinarse en una
   intervención, pero solo se incluyen las partidas que determine el diagnóstico.
 

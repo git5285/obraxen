@@ -2,18 +2,18 @@
 
 Fecha de referencia: 14 de julio de 2026.
 
-Este plan parte de la web existente y de su evidencia real. La migracion no debe
-recrear el proyecto desde cero ni convertirlo en una plantilla generica: debe
-conservar contenido, datos, rutas, direccion industrial, controles de
-publicacion y rendimiento, y mejorar la mantenibilidad, la calidad de entrega y
-la medicion.
+Este plan parte de la evidencia real y del cutover ya completado a Next.js. Los
+siguientes hitos deben conservar contenido, datos, rutas, dirección industrial,
+controles de publicación y rendimiento sin volver a introducir una segunda
+implementación.
 
 ## Stack objetivo
 
 - **Web:** Next.js con App Router, TypeScript y React Server Components por
   defecto.
-- **Repositorio:** GitHub privado, ramas de trabajo y pull requests con checks
-  obligatorios antes de integrar en `main`.
+- **Repositorio:** GitHub público por decisión expresa, ramas de trabajo y pull
+  requests con checks obligatorios antes de integrar en `main`; la exposición se
+  controla en `REPOSITORY_EXPOSURE.md`.
 - **Hosting:** Vercel, previews protegidas por pull request y produccion cerrada
   hasta superar la puerta de publicacion.
 - **Analitica:** Google Analytics 4 y Microsoft Clarity solo tras consentimiento
@@ -32,9 +32,10 @@ la medicion.
    distintos, con proteccion y variables separadas.
 5. Cada ruta debe funcionar sin JavaScript cliente salvo la interaccion que lo
    necesite. El sitio es contenido tecnico, no una aplicacion pesada.
-6. La migracion se hace ruta a ruta y se compara contra la linea base actual.
+6. Cada ruta nueva se valida contra las puertas actuales de contenido, datos,
+   accesibilidad, seguridad y rendimiento.
 
-## Arquitectura propuesta
+## Arquitectura actual
 
 ```text
 src/
@@ -43,32 +44,27 @@ src/
     page.tsx
     proyectos/page.tsx
     proyectos/[slug]/page.tsx
-    soluciones/page.tsx
-    aviso-legal/page.tsx
-    privacidad/page.tsx
+    (legal)/aviso-legal/page.tsx
+    (legal)/privacidad/page.tsx
     robots.ts
     sitemap.ts
-    opengraph-image.tsx
   components/
-    layout/
-    projects/
-    solutions/
-    consent/
+    site-navigation.tsx
+    projects-section.tsx
+    project-case.tsx
+    legal-page.tsx
   lib/
     brand.ts
     projects.ts
     offers.ts
     publication.ts
-    analytics.ts
-  styles/
-    tokens.css
-    globals.css
 data/
   brand.json
   proyectos.json
   ofertas.json
-public/
-  img/
+css/
+img/
+tests/
 ```
 
 - Las paginas se prerenderizan en build. No se necesita SSR para contenido que
@@ -80,24 +76,24 @@ public/
   explicitas. Los masters permanecen fuera de `public/`.
 - Metadatos, canonical, Open Graph, `robots.ts` y `sitemap.ts` se derivan del
   estado de publicacion y del dominio real.
-- El CSS actual se migra primero a tokens globales y CSS Modules. Componentes
-  externos solo se incorporan cuando resuelven una necesidad concreta; el panel
-  de consentimiento es un buen candidato, la maquetacion editorial no.
+- El CSS actual conserva tokens y hojas por área consumidas por Next. No se
+  incorpora una librería visual sin una necesidad concreta; el consentimiento
+  debe empezar por su modelo y pruebas, no por un componente externo.
 
 ## Flujo GitHub y Vercel
 
 1. Crear una rama por hito y abrir pull request.
 2. Ejecutar en GitHub Actions: instalacion reproducible, lint, TypeScript,
    validacion de datos, tests, build y smoke test de rutas.
-3. Vercel crea una preview protegida por pull request.
+3. Vercel solo crea una preview si el entorno protegido, los secretos y
+   `ENABLE_VERCEL_PREVIEWS=true` están configurados expresamente.
 4. Revisar visualmente escritorio y movil, teclado, consola y red.
 5. Integrar en `main` solo con checks verdes.
 6. Mantener produccion desactivada o protegida hasta que naming, dominio,
    contacto, legal y consentimiento esten aprobados.
 
-No se necesita un workflow de despliegue personalizado al principio: la
-integracion oficial GitHub-Vercel ya aporta previews por push y pull request. Si
-mas adelante se requiere una aprobacion manual adicional, se incorpora entonces.
+El workflow ya separa calidad y preview. La preview está apagada por defecto y
+su activación no autoriza producción.
 
 ## Analitica y privacidad
 
@@ -147,7 +143,7 @@ La puntuacion usa `(impacto + riesgo) x (6 - esfuerzo)`, con valores de 1 a 5.
 | Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Fase 5, antes de scripts |
 | Retirar JPEG y asset huerfano | 4 | 3 | 1 | 35 | Completado |
 | Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada, hub y casos completados |
-| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Portada completada; politica de scripts en Fase 4 |
+| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Completado salvo bootstrap App Router; decisión en ADR-006 |
 | Tipado, tests y CI | 5 | 4 | 5 | 9 | Fases 1 y 4 |
 
 La puntuacion no convierte una migracion grande en urgente por si sola: el sitio
@@ -203,6 +199,22 @@ precipitada.
   rendimiento >= 95, accesibilidad y buenas prácticas 100, TBT <= 200 ms,
   CLS <= 0,1 y LCP de laboratorio <= 3 s. El objetivo de campo sigue en 2,5 s.
 
+### Fase 4.5 — Consolidación y cutover
+
+- [x] Fusionar la PR 5 y mantener la preview Vercel apagada.
+- [x] Corregir WCAG 2.5.3 en los seis enlaces de portada y añadir una regresión
+  específica de `label-content-name-mismatch`.
+- [x] Sustituir el booleano de permiso por trazabilidad de estado, alcance,
+  fuente, fecha, referencia documental y revisión legal.
+- [x] Convertir fechas incompletas y domicilio no validado a `null`.
+- [x] Revisar la exposición del repositorio y bloquear auditorías e informes
+  locales en `.gitignore`.
+- [x] Migrar aviso legal, privacidad, sitemap y metadatos de portada.
+- [x] Adoptar Next/Vercel con prerenderizado y cabeceras como salida única;
+  retirar builder, checker y plantillas legacy.
+- [x] Verificar 41 pruebas unitarias, 36 ejecuciones Playwright y los tres
+  presupuestos Lighthouse sin desplegar.
+
 ### Fase 5 — Analitica, SEO y consentimiento
 
 - Implementar el panel de consentimiento y sus pruebas antes de GA4 o Clarity.
@@ -234,11 +246,10 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Revisar e integrar la rama de **Fase 4 — Calidad de entrega** con su check verde.
-Después, abrir una reserva independiente para **Fase 5 — Analítica, SEO y
-consentimiento**, empezando por el modelo de consentimiento y sus pruebas sin
-cargar todavía GA4 ni Clarity. La web estática continúa como salida principal
-hasta que las rutas legales tengan paridad.
+Revisar e integrar la **Fase 4.5 — Consolidación y cutover**. Después, abrir una
+reserva independiente para **Fase 5 — Analítica, SEO y consentimiento**, empezando
+por el modelo de consentimiento y sus pruebas sin cargar todavía GA4 ni Clarity.
+Next.js es la única salida; no se reabre la base legacy.
 
 ## Referencias oficiales de implementacion
 

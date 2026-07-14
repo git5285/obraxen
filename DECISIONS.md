@@ -8,20 +8,19 @@
 
 ## ADR-001 — Generador estático mínimo sin framework
 
-**Estado:** Aceptada como línea base · **sustitución planificada en ADR-005**
+**Estado:** Sustituida por ADR-007 · **fecha de sustitución 2026-07-14**
 
-> **Actualización (2026-07-14).** `scripts/build.mjs` genera la portada, el hub
-> `/proyectos/`, seis páginas de caso, dos páginas legales y los activos de
-> `dist/`. Los proyectos proceden de `data/proyectos.json`; no se mantienen
-> páginas duplicadas a mano.
+> **Cierre (2026-07-14).** Esta decisión documenta la línea base histórica. El
+> generador, el checker y las plantillas HTML se retiraron después de verificar
+> la paridad completa de Next.js. No debe reactivarse una segunda implementación.
 
 **Contexto.** La web necesita HTML estático, una colección de proyectos y varias
 rutas, pero no necesita runtime, base de datos ni framework cliente. Los tokens
 viven en `css/tokens.css`, la identidad en `data/brand.json` y los casos en
 `data/proyectos.json`.
 
-**Decisión.** Mantener un generador estático pequeño en Node puro, sin dependencias
-de compilación. Vercel servirá únicamente `dist/` cuando se reactive la publicación.
+**Decisión histórica.** Mantener temporalmente un generador estático pequeño en
+Node puro, sin dependencias de compilación, hasta alcanzar la paridad de Next.js.
 
 **Consecuencias.**
 - (+) Cero mantenimiento de framework o toolchain externo.
@@ -31,9 +30,8 @@ de compilación. Vercel servirá únicamente `dist/` cuando se reactive la publi
 - (−→✓) ~~Bloques repetidos (nav ×3, etc.) se mantienen a mano~~ → **resuelto**:
   nav, logotipo, CTA y contacto viven como parciales/constantes en `src/`.
 
-La base se conserva como referencia funcional hasta alcanzar paridad en Next.js.
-La decisión de migrar ya no depende de un disparador futuro ni contempla Astro:
-queda adoptada y secuenciada en [ADR-005](#adr-005--migración-progresiva-a-nextjs).
+La base cumplió su función de referencia y fue retirada al completar la Fase 4.5.
+El resultado se formaliza en [ADR-007](#adr-007--cutover-a-nextjs-como-implementación-única).
 
 Relacionada con [ADR-004](#adr-004--modelo-de-contenido-antes-que-páginas).
 
@@ -84,7 +82,7 @@ sido una edición dispersa y propensa a error.
 `telefono`, `direccion`). El nombre no aparece **literalmente en ningún otro
 fichero fuente** (`src/` + `data/` → solo `brand.json`). Recolorear = editar solo
 `tokens.css`; renombrar = editar solo `brand.json`. La resolución pasó de runtime
-(JS) a **build** (`scripts/build.mjs`) al ejecutarse el disparador 3 de ADR-001.
+a build y ahora se realiza en los Server Components y metadatos de Next.js.
 
 **Consecuencias.**
 - (+) Renombrar la empresa es cambiar un fichero (verificado en build: sustitución
@@ -118,12 +116,10 @@ de definir la forma del contenido suele generar reescrituras.
 **Decisión.** **Modelo-primero (Opción A).** Antes de construir Proyectos/Equipo/
 Recursos, se define el **esquema** de cada colección (p. ej. Proyecto = título,
 sector, m², ubicación, problema, solución, resultado, fotos) y las claves **i18n**;
-el contenido se renderiza desde datos, no se maqueta a mano. El build introducido
-en [ADR-001](#adr-001--generador-estático-mínimo-sin-framework) es la base
-natural: hoy ya
-renderiza la navegación desde una única fuente de datos (`NAV` en
-`scripts/build.mjs`) y la identidad desde `data/brand.json`; las colecciones
-seguirán el mismo patrón (`data/*.json` → plantilla).
+el contenido se renderiza desde datos, no se maqueta a mano. Next.js renderiza la
+navegación desde una única fuente en `src/lib/homepage.ts` y la identidad desde
+`data/brand.json`; las colecciones siguen el patrón `data/*.json` → componentes
+y rutas prerenderizadas.
 
 *Motivo de cerrarla ahora:* el build ya existe y demuestra el patrón datos→plantilla;
 comprometerse con «modelo-primero» evita crear páginas a mano que habría que
@@ -138,10 +134,14 @@ rehacer al activar i18n.
 - Las plantillas vacías dejaron de enviarse en el HTML; una colección aparece
   únicamente cuando contiene datos reales válidos.
 
-**Estado actualizado:** los seis proyectos recibidos ya se publican desde
-`data/proyectos.json` tras confirmar ejecución, unidades principales, ubicaciones y
-permiso para identificar clientes. Las 18 imágenes seleccionadas pasaron una auditoría
-de calidad y privacidad documentada en `PHOTO_AUDIT.md`.
+**Estado actualizado:** los seis proyectos recibidos se preparan desde
+`data/proyectos.json` tras confirmar ejecución, unidades principales y ubicaciones.
+La autorización para identificar clientes deja de ser un booleano: cada caso
+registra estado, alcance, fuente, fecha, referencia y revisión legal. La situación
+actual es confirmación interna para el nombre, sin soporte documental ni alcance
+para fotografías, de modo que la publicación final permanece bloqueada. Las 18
+imágenes seleccionadas pasaron una auditoría de calidad y privacidad documentada
+en `PHOTO_AUDIT.md`, que no sustituye la autorización de uso.
 
 **Actualización de cierre:** los seis proyectos registran entrega conforme y
 ausencia de correcciones posteriores como datos confirmados. La iteración de
@@ -179,8 +179,8 @@ visual, responsive y accesible. `data/brand.json`, `data/proyectos.json` y
 - (+) Metadatos, canonical, sitemap, robots y Open Graph derivados del estado de
   publicación.
 - (+) Integración controlada de consentimiento, GA4 y Clarity por entorno.
-- (−) Migración temporal con dos implementaciones; exige comparar ruta a ruta y
-  no retirar la base estática antes de la paridad.
+- (✓) La convivencia temporal terminó tras comparar todas las rutas y retirar la
+  base estática en la Fase 4.5.
 - (−) Se incorpora una dependencia de framework que debe mantenerse con lockfile,
   versión de Node fijada y actualizaciones revisadas.
 
@@ -193,15 +193,14 @@ dividida en secciones servidoras. Solo `src/components/site-navigation.tsx` usa
 importa `css/home.css` en el bundle Next para garantizar paridad sin duplicar el
 sistema visual. Las imagenes usan props responsive de Next sin atributos de
 estilo inline, lo que permite retirar `unsafe-inline` de `style-src`. La excepcion
-permanece temporalmente en `script-src` por los bloques de arranque RSC que genera
-el prerender de App Router; la Fase 4 decidira hashes de build o nonces sin romper
-el objetivo estatico.
+permanece en `script-src` por los bloques de arranque RSC que genera el prerender
+de App Router; ADR-006 documenta por qué los nonces no compensan el render
+dinámico y por qué SRI debe esperar a dejar de ser experimental.
 
 El hub y las seis fichas se mantienen como Server Components sin nuevas islas
-cliente. Reutilizan los estilos de referencia y los imports de imagen versionados
-durante la convivencia. Metadata y Open Graph son propios de cada ruta; canonical,
-URL e imagen absoluta solo se emiten cuando `data/brand.json` contenga un dominio
-real.
+cliente. Metadata y Open Graph son propios de cada ruta; canonical, URL e imagen
+absoluta solo se emiten cuando `data/brand.json` contenga un dominio real. Las
+rutas legales y el sitemap alcanzaron paridad antes del cutover.
 
 ---
 
@@ -209,12 +208,10 @@ real.
 
 **Estado:** Aceptada · **fecha 2026-07-14**
 
-**Contexto.** La migración ya tiene dos builds, reglas de publicación, rutas
-prerenderizadas y una interacción cliente. Las verificaciones manuales locales
-no bastan para proteger futuras integraciones ni deben habilitar un despliegue
-por accidente.
+**Contexto.** La migración necesitaba una puerta reproducible para integrar el
+cutover y proteger cambios futuros sin habilitar despliegues por accidente.
 
-**Decisión.** Cada pull request ejecuta en GitHub Actions `check:all`, Playwright
+**Decisión.** Cada pull request ejecuta en GitHub Actions `npm run check`, Playwright
 en móvil y escritorio y presupuestos Lighthouse móviles sobre portada, hub y un
 caso. La preview Vercel vive en un job separado, dependiente del gate, y requiere
 simultáneamente entorno `preview`, secretos y la variable explícita
@@ -240,3 +237,60 @@ sin scripts de terceros. `style-src` continúa cerrado.
 - (±) El repositorio pasó a público por orden expresa del usuario para habilitar
   la protección disponible en el plan actual; la visibilidad del código no
   autoriza publicar la web.
+
+---
+
+## ADR-007 — Cutover a Next.js como implementación única
+
+**Estado:** Aceptada · **fecha 2026-07-14**
+
+**Contexto.** Portada, hub, seis casos, navegación, legal, robots, sitemap,
+metadata, tests y presupuestos ya tienen paridad en App Router. Mantener el
+generador Node duplicaría validaciones, copy, rutas y cualquier futura fase de
+consentimiento. La web necesita cabeceras CSP y de seguridad, prerenderizado y
+despliegue bloqueado por defecto.
+
+**Decisión.** Next.js App Router es la única implementación. `npm run build`, CI
+y Vercel usan `next build`; el generador, checker y HTML legacy se eliminan.
+Vercel usa el runtime estándar de Next con rutas prerenderizadas y
+`git.deploymentEnabled: false`.
+
+El preset remoto del proyecto se actualiza de `Other` a `Next.js`; build y
+directorio de salida vuelven a autodetección. Este cambio corrige la antigua
+expectativa de una carpeta `public` sin crear un despliegue.
+
+### Opciones consideradas
+
+| Opción | Evaluación |
+|---|---|
+| Next/Vercel con prerenderizado | Aceptada: una sola herramienta, cabeceras de Next y rutas estáticas/SSG |
+| `output: "export"` | Rechazada: la exportación pura no admite `headers` de Next |
+| Mantener legacy y Next | Rechazada: duplica código, pruebas y futuras integraciones |
+| Nonces con render dinámico | Rechazada ahora: desactiva optimización estática y CDN por defecto |
+
+**Trade-off.** Se acepta depender del runtime de despliegue de Next para aplicar
+cabeceras aunque las páginas se generen estáticamente. A cambio se evita mantener
+un servidor dinámico por petición y se conserva una única ruta de build.
+
+**Consecuencias.**
+
+- (+) Una sola fuente funcional para portada, proyectos, legal y metadata.
+- (+) 41 pruebas unitarias, 36 ejecuciones Playwright y Lighthouse protegen el
+  cutover.
+- (+) La Fase 5 se implementará una sola vez.
+- (−) La CSP de scripts mantiene `unsafe-inline` para el bootstrap de App Router.
+- (−) Un hosting estático genérico requeriría reproducir las cabeceras fuera de
+  Next; no es la plataforma objetivo actual.
+
+**Referencias.**
+
+- [Exportación estática y funciones no compatibles](https://nextjs.org/docs/app/guides/static-exports#unsupported-features)
+- [CSP estática frente a nonces dinámicos](https://nextjs.org/docs/app/guides/content-security-policy#static-vs-dynamic-rendering-with-csp)
+
+**Acciones completadas.**
+
+- [x] Migrar aviso legal, privacidad, sitemap y metadata de portada.
+- [x] Cambiar scripts, CI, Playwright y Vercel a Next.
+- [x] Retirar builder, checker y plantillas legacy.
+- [x] Verificar rutas, datos, accesibilidad, cabeceras y presupuestos.
+- [x] Mantener despliegue e indexación desactivados.

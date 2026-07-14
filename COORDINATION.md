@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 20:09 Europe/Madrid.
+Actualizado: 2026-07-14 21:12 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -52,8 +52,7 @@ cambios staged sin propietario.
   `216e4b8`.
 - Fase 2 completada en `codex/phase-2-homepage`: portada dividida en Server
   Components, navegacion como unica isla cliente, 17 tests, 24 imagenes
-  responsive y paridad geometrica/visual verificada; `dist/` sigue siendo la
-  salida principal.
+  responsive y paridad geometrica/visual verificada.
 - Fase 2 integrada en GitHub mediante la PR `#3`; `main` queda en el merge
   `2fba606`.
 - Fase 3 completada en `codex/phase-3-evidence`: hub y seis fichas Next
@@ -61,12 +60,18 @@ cambios staged sin propietario.
   puerta de soluciones cerrada, 31 tests y paridad geometrica exacta.
 - Fase 3 integrada en GitHub mediante la PR `#4`; `main` queda en el merge
   `117ad9a`.
-- Fase 4 completada en `codex/phase-4-quality`: workflow reproducible,
+- Fase 4 integrada mediante la PR `#5`; `main` queda en el merge `d010e82` con
+  workflow reproducible,
   31 tests unitarios, 24 pruebas Playwright, presupuestos Lighthouse en tres
-  rutas y preview Vercel preparada tras un interruptor apagado por defecto. La
-  PR `#5` está abierta con `Quality gate` verde; `main` exige ese contexto en
-  modo estricto incluso a administradores. Por orden expresa del usuario, el
-  repositorio es público; la web no se ha desplegado ni publicado.
+  rutas y preview Vercel preparada tras un interruptor apagado por defecto.
+  `main` exige ese contexto en modo estricto incluso a administradores.
+- Fase 4.5 en `codex/phase-4-5-consolidation`: WCAG 2.5.3 corregido y probado,
+  permisos trazables, datos desconocidos normalizados, exposición revisada,
+  rutas legales y sitemap migrados, y builder/HTML legacy retirados. Next.js es
+  la única implementación; el preset remoto de Vercel también reconoce Next con
+  salida autodetectada y `vercel build` pasa sin desplegar. La PR borrador `#6`
+  contiene la entrega completa, su `Quality gate` está verde y la claim
+  `042123c8...` está liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -78,17 +83,20 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - `ROADMAP.md` controla la migración a Next.js y la entrega.
 - `data/brand.json`, `data/proyectos.json` y `data/ofertas.json` siguen siendo las
   fuentes estructuradas de identidad, casos y ofertas.
+- ADR-007 fija Next.js con prerenderizado y cabeceras como implementación única;
+  no se usa `output: export` ni se mantiene la base legacy.
+- `REPOSITORY_EXPOSURE.md` controla los riesgos derivados de la visibilidad
+  pública del código y datos.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - Naming está abierto solo como investigación. Selección, sociedad, dominio y
   contacto siguen pendientes.
 
 ## Orden siguiente
 
-1. Revisar e integrar la PR `#5` de Fase 4, ya validada por el check obligatorio,
-   y mantener previews apagadas.
-2. Abrir Fase 5 por el modelo de consentimiento y sus pruebas, sin cargar
+1. Revisar la PR `#6` de Fase 4.5 y mantener previews apagadas.
+2. Marcarla lista o integrarla solo con `Quality gate` verde.
+3. Abrir Fase 5 por el modelo de consentimiento y sus pruebas, sin cargar
    analítica antes de una aceptación válida.
-3. Mantener la base estática hasta que las rutas legales alcancen paridad.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
 efecto lateral de esta coordinación.
