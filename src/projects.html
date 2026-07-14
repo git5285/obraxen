@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{projectsTitle}}</title>
+<meta name="description" content="{{projectsDescription}}">
+<meta name="robots" content="{{robotsDirective}}">
+<meta property="og:title" content="{{projectsTitle}}">
+<meta property="og:description" content="{{projectsDescription}}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="{{siteName}}">
+<meta name="twitter:card" content="summary_large_image">
+{{{projectsAbsoluteMetaHtml}}}
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/projects.css">
+{{{projectsJsonLdHtml}}}
+</head>
+<body>
+<a class="skip" href="#projects-content">Saltar al contenido</a>
+
+<header class="projects-header">
+  <nav class="projects-nav" aria-label="Navegación de proyectos">
+    {{> logo}}
+    <a class="back-link" href="/">Volver a la web <span aria-hidden="true">→</span></a>
+  </nav>
+</header>
+
+<main id="projects-content">
+  <section class="projects-hero" aria-labelledby="projects-title">
+    <div class="projects-wrap">
+      <nav class="breadcrumbs" aria-label="Migas de pan">
+        <ol>
+          <li><a href="/">Inicio</a></li>
+          <li aria-current="page">Proyectos</li>
+        </ol>
+      </nav>
+
+      <div class="projects-hero-grid">
+        <div>
+          <p class="projects-kicker">Archivo de proyectos</p>
+          <h1 id="projects-title">Obras ejecutadas, explicadas desde la evidencia.</h1>
+        </div>
+        <div class="projects-hero-copy">
+          <p>Cada expediente separa la situación inicial, la intervención, las magnitudes confirmadas y el cierre documentado. Las fotografías muestran lo visible; los datos que aún no están acreditados permanecen fuera.</p>
+          <p class="archive-note"><strong>{{projectsCount}} obras publicables</strong> · Todas con permiso para identificar al cliente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects-archive" aria-label="Archivo de obras ejecutadas">
+    <div class="projects-wrap">
+{{{projectsHubHtml}}}
+    </div>
+  </section>
+</main>
+
+<footer class="projects-footer">
+  <div class="projects-wrap">
+    <p>{{copyrightText}}</p>
+    <p>{{{legalLinksHtml}}}</p>
+  </div>
+</footer>
+</body>
+</html>

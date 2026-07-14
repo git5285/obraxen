@@ -14,10 +14,13 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 
 - `src/index.html` — **plantilla** (maquetación y JS); usa placeholders
   `{{brand.*}}` y parciales `{{> …}}`. No contiene el nombre literal.
+- `src/projects.html` — plantilla del archivo `/proyectos/`; presenta cada obra
+  como un expediente de evidencia generado desde datos
 - `src/project.html` — plantilla común de los seis casos individuales
 - `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`)
 - `scripts/build.mjs` — render estático (sin dependencias)
 - `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
+- `css/projects.css` — estilos propios del hub técnico de proyectos
 - `data/brand.json` — **único punto de verdad de la identidad de marca**
   (nombre, razón social, claim, dominio, contactos, fundador y estado de publicación)
 - `data/proyectos.json` — seis proyectos ejecutados con magnitudes confirmadas y
@@ -30,7 +33,7 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 - `img/` — fotografías optimizadas para web; los originales se mantienen fuera del repo
 - `SITE_ARCHITECTURE.md` — jerarquía, rutas, navegación y enlaces internos
 - `CONTENT_AUDIT.md` — reglas de copy, afirmaciones permitidas y datos pendientes
-- `dist/` — **salida generada** por el build (portada, seis casos, legales y activos).
+- `dist/` — **salida generada** por el build (portada, hub, seis casos, legales y activos).
   Es lo único que se sirve; está en `.gitignore` (lo regenera el build).
 
 ## Build
@@ -61,8 +64,9 @@ del paquete de subida (nunca `src/`/`scripts/`/`data/`: son entradas del build).
   activa la validación estricta y exige identidad legal, contacto, políticas y
   confirmación expresa de revisión legal (`legalRevisionAprobada`).
 - **Proyectos** → se publican automáticamente al añadir casos válidos a
-  `data/proyectos.json`; cada registro genera su resumen en portada y su ruta
-  `/proyectos/{slug}/` con breadcrumbs y navegación entre casos.
+  `data/proyectos.json`; cada registro genera su resumen en portada, su expediente
+  en `/proyectos/` y su ruta `/proyectos/{slug}/` con breadcrumbs y navegación
+  entre casos. Mientras no haya contacto, navegación y CTA apuntan al hub.
 
 ### Retomar la identidad cuando esté decidida
 
@@ -106,6 +110,7 @@ expresa después de ejecutar `npm run check`.
 - [x] Eliminar dependencias externas de Google Fonts, GSAP y cdnjs; la preview usa
       tipografías del sistema y animación CSS/JavaScript nativo
 - [x] Incorporar seis proyectos ejecutados a `data/proyectos.json`
+- [x] Construir `/proyectos/` como archivo de evidencia enlazado desde portada y casos
 - [x] Confirmar ejecución, unidades principales, ubicación de obra y permiso para
       identificar clientes
 - [ ] Obtener resultados operativos verificables —plazo real, continuidad, problema

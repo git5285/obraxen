@@ -1,8 +1,8 @@
 # Arquitectura del sitio
 
 Estado documentado: 14 de julio de 2026. La web continúa en preview
-`noindex,nofollow`; naming, sociedad, dominio, contacto, interfaz nueva y
-publicación quedan fuera de este hito.
+`noindex,nofollow`; naming, sociedad, dominio, contacto y publicación continúan
+aplazados.
 
 Este documento distingue la estructura que ya existe de la arquitectura futura.
 Una ruta planificada no se construye ni se publica hasta superar su puerta de
@@ -23,7 +23,7 @@ los detalles a un segundo nivel. Las seis rutas de proyecto actuales se conserva
 Portada (/)
 ├── Proceso (/#proceso)
 ├── Servicios (/#servicios)
-├── Proyectos (/#proyectos)
+├── Proyectos (/proyectos/)
 │   ├── Delticom Hannover (/proyectos/delticom-hannover/)
 │   ├── TP-Link Düsseldorf (/proyectos/tp-link-dusseldorf/)
 │   ├── dadada Euskirchen (/proyectos/dadada-euskirchen/)
@@ -36,8 +36,8 @@ Portada (/)
 └── Privacidad (/privacidad/)
 ```
 
-Los seis casos reciben enlace desde la portada y navegación anterior/siguiente;
-no existen páginas huérfanas.
+Los seis casos reciben enlace desde la portada y el hub. Cada ficha vuelve al
+archivo y mantiene navegación anterior/siguiente; no existen páginas huérfanas.
 
 ## 3. Arquitectura objetivo
 
@@ -114,8 +114,8 @@ graph TD
 | Página | URL | Acceso objetivo | Prioridad | Estado |
 |---|---|---|---|---|
 | Inicio | `/` | Cabecera | Alta | Existe |
-| Hub de proyectos | `/proyectos/` | Cabecera | Alta | Siguiente implementación |
-| Caso | `/proyectos/{slug}/` | Hub, contexto y anterior/siguiente | Alta | Seis rutas existentes |
+| Hub de proyectos | `/proyectos/` | Cabecera y CTA de preview | Alta | Existe; seis expedientes |
+| Caso | `/proyectos/{slug}/` | Portada, hub y anterior/siguiente | Alta | Seis rutas existentes |
 | Hub de soluciones | `/soluciones/` | Cabecera | Alta | Modelo preparado |
 | Solución | `/soluciones/{slug}/` | Hub y enlaces de problema | Alta | Borrador interno |
 | Hub de problemas | `/problemas/` | Cabecera | Alta | Planificada |
@@ -135,10 +135,11 @@ base permanece sin prefijo o migra a `/es/` con redirecciones.
 
 ## 6. Navegación
 
-### Mientras no existan las nuevas rutas
+### Navegación actual
 
-- Se conservan Proceso, Servicios, Proyectos, Empresa y FAQ como anclas.
-- El CTA lleva a Proyectos porque no existe un canal real de contacto.
+- Se conservan Proceso, Servicios, Empresa y FAQ como anclas de portada.
+- Proyectos y los CTA de preview llevan al hub `/proyectos/` porque no existe
+  un canal real de contacto.
 - El logotipo vuelve al inicio.
 
 ### Navegación objetivo
@@ -218,8 +219,8 @@ revisión legal y autorización expresa.
 
 ## 9. Orden de implementación
 
-1. Consolidar el nuevo cierre de los seis casos.
-2. Construir `/proyectos/` como hub de evidencia.
+1. ~~Consolidar el nuevo cierre de los seis casos.~~ Completado.
+2. ~~Construir `/proyectos/` como hub de evidencia.~~ Completado.
 3. Preparar `/soluciones/` desde `data/ofertas.json`.
 4. Construir únicamente las soluciones que superen su condición de salida.
 5. Crear `/problemas/` y las primeras páginas respaldadas por casos.

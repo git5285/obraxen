@@ -329,22 +329,121 @@ ${magnitudeHtml}
   </section>`;
 }
 const projectsSection = renderProjects(projects);
-const ctaHref = hasContactChannel ? '#contacto' : (projects.length ? '#proyectos' : '#servicios');
+
+function renderProjectsHub(items) {
+  return items.map((project) => {
+    const t = project.traducciones.es;
+    const galleryHtml = project.imagenes.map((image) => `              <figure>
+                <img src="/${esc(image.src)}" alt="${esc(image.alt)}" loading="lazy" decoding="async">
+                <figcaption>${esc(image.etapa)}</figcaption>
+              </figure>`).join('\n');
+    const magnitudeHtml = project.magnitudes
+      .map((magnitude) => `              <li>${esc(magnitude)}</li>`)
+      .join('\n');
+    const hasConfirmedPositiveClose = project.cierre?.entregaConforme === true
+      && project.cierre?.correccionesPosteriores === false;
+    const closeHtml = hasConfirmedPositiveClose ? `
+          <div class="dossier-close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>
+            <p><strong>Cierre confirmado</strong> Entrega conforme y sin correcciones posteriores.</p>
+          </div>
+` : '';
+
+    return `      <article class="project-dossier" id="${esc(project.slug)}">
+        <header class="dossier-header">
+          <p class="dossier-reference">Obra ${esc(project.referencia)}</p>
+          <dl>
+            <div><dt>Cliente</dt><dd>${esc(project.cliente)}</dd></div>
+            <div><dt>Sector</dt><dd>${esc(project.sector)}</dd></div>
+            <div><dt>Ubicación</dt><dd>${esc(project.ubicacion.ciudad)}, ${esc(project.ubicacion.pais)}</dd></div>
+          </dl>
+        </header>
+
+        <a class="dossier-media" href="/proyectos/${esc(project.slug)}/" aria-label="Abrir la ficha completa de ${esc(project.cliente)}">
+          <div class="contact-sheet" role="group" aria-label="Evidencia fotográfica de ${esc(project.cliente)}">
+${galleryHtml}
+          </div>
+        </a>
+
+        <div class="dossier-body">
+          <div class="dossier-intro">
+            <p class="projects-kicker">Situación documentada</p>
+            <h2>${esc(t.titulo)}</h2>
+            <p>${esc(t.problema)}</p>
+          </div>
+
+          <div class="dossier-intervention">
+            <h3>Intervención ejecutada</h3>
+            <p>${esc(t.solucion)}</p>
+            <ul aria-label="Magnitudes confirmadas">
+${magnitudeHtml}
+            </ul>
+          </div>
+
+${closeHtml}
+          <a class="dossier-link" href="/proyectos/${esc(project.slug)}/" aria-label="Ver el caso completo de ${esc(project.cliente)}">Abrir ficha de obra <span aria-hidden="true">→</span></a>
+        </div>
+      </article>`;
+  }).join('\n');
+}
+
+const projectsHubHtml = renderProjectsHub(projects);
+const projectsTitle = `Proyectos ejecutados — ${claim}`;
+const projectsDescription = 'Archivo de obras ejecutadas con fotografías, alcance, magnitudes confirmadas y cierre documentado de cada intervención.';
+const projectsPath = '/proyectos/';
+const projectsUrl = siteUrl ? `${siteUrl}${projectsPath}` : '';
+const projectsOgImage = projects.length ? `/${projects[0].imagenes[0].src}` : '/img/hero-nave.jpg';
+const projectsOgImageAlt = projects.length ? projects[0].imagenes[0].alt : 'Pavimento industrial';
+const projectsAbsoluteMetaHtml = projectsUrl ? `<link rel="canonical" href="${esc(projectsUrl)}">
+<meta property="og:url" content="${esc(projectsUrl)}">
+<meta property="og:image" content="${esc(siteUrl + projectsOgImage)}">
+<meta property="og:image:alt" content="${esc(projectsOgImageAlt)}">` : '';
+const projectsJsonLdHtml = `<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: 'Proyectos ejecutados',
+      description: projectsDescription,
+      ...(projectsUrl ? { url: projectsUrl } : {}),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: siteUrl ? `${siteUrl}/` : '/' },
+        { '@type': 'ListItem', position: 2, name: 'Proyectos', item: projectsUrl || projectsPath },
+      ],
+    },
+    {
+      '@type': 'ItemList',
+      numberOfItems: projects.length,
+      itemListElement: projects.map((project, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: project.traducciones.es.titulo,
+        url: `${siteUrl}/proyectos/${project.slug}/`,
+      })),
+    },
+  ],
+}, null, 2).replace(/</g, '\\u003c')}
+</script>`;
+const ctaHref = hasContactChannel ? '#contacto' : (projects.length ? '/proyectos/' : '#servicios');
 const ctaText = hasContactChannel ? 'Pide una evaluación' : (projects.length ? 'Ver proyectos' : 'Ver servicios');
 const capaCtaText = hasContactChannel ? 'Pedir evaluación →' : (projects.length ? 'Ver proyectos →' : 'Ver servicios →');
 
 // Navegación: única fuente de los enlaces → se renderiza a 3 variantes.
 // Añadir aquí un item lo publica en las tres barras (móvil, sticky y hero).
 const NAV = [
-  ['proceso', 'Proceso'],
-  ['servicios', 'Servicios'],
-  ...(projects.length ? [['proyectos', 'Proyectos']] : []),
-  ['empresa', 'Empresa'],
-  ['faq', 'FAQ'],
+  { href: '#proceso', label: 'Proceso', section: 'proceso' },
+  { href: '#servicios', label: 'Servicios', section: 'servicios' },
+  ...(projects.length ? [{ href: '/proyectos/', label: 'Proyectos' }] : []),
+  { href: '#empresa', label: 'Empresa', section: 'empresa' },
+  { href: '#faq', label: 'FAQ', section: 'faq' },
 ];
-const navHeroLinks = NAV.map(([id, l]) => `<li><a href="#${id}">${l}</a></li>`).join('\n      ');
-const navStickyLinks = NAV.map(([id, l]) => `<li><a href="#${id}" data-sec="${id}">${l}</a></li>`).join('\n      ');
-const navMobileLinks = NAV.map(([id, l]) => `<a href="#${id}">${l}</a>`).join('\n  ');
+const navHeroLinks = NAV.map((item) => `<li><a href="${item.href}">${item.label}</a></li>`).join('\n      ');
+const navStickyLinks = NAV.map((item) => `<li><a href="${item.href}"${item.section ? ` data-sec="${item.section}"` : ''}>${item.label}</a></li>`).join('\n      ');
+const navMobileLinks = NAV.map((item) => `<a href="${item.href}">${item.label}</a>`).join('\n  ');
 
 const ctx = {
   brand,
@@ -383,6 +482,12 @@ const ctx = {
   legalDomain,
   legalUpdatedAt,
   projectsSection,
+  projectsHubHtml,
+  projectsTitle,
+  projectsDescription,
+  projectsAbsoluteMetaHtml,
+  projectsJsonLdHtml,
+  projectsCount: projects.length,
   navHeroLinks,
   navStickyLinks,
   navMobileLinks,
@@ -406,6 +511,10 @@ function render(str, renderCtx = ctx) {
 }
 
 const out = render(fs.readFileSync(path.join(SRC, 'index.html'), 'utf8'));
+const projectsOut = render(fs.readFileSync(path.join(SRC, 'projects.html'), 'utf8'), {
+  ...ctx,
+  logoHref: '/',
+});
 const legalPages = [
   ['aviso-legal', 'aviso-legal.html'],
   ['privacidad', 'privacidad.html'],
@@ -451,7 +560,7 @@ ${JSON.stringify({
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${siteUrl}/` },
-      { '@type': 'ListItem', position: 2, name: 'Proyectos', item: `${siteUrl}/#proyectos` },
+      { '@type': 'ListItem', position: 2, name: 'Proyectos', item: `${siteUrl}/proyectos/` },
       { '@type': 'ListItem', position: 3, name: project.cliente, item: caseUrl },
     ],
   }, null, 2).replace(/</g, '\\u003c')}
@@ -482,6 +591,7 @@ ${JSON.stringify({
 // Ninguna marca de plantilla debe quedar sin resolver.
 const renderedHtml = [
   ['inicio', out],
+  ['proyectos', projectsOut],
   ...renderedLegalPages,
   ...renderedProjectPages.map(([slug, html]) => [`proyectos/${slug}`, html]),
 ];
@@ -498,6 +608,9 @@ for (const [route, html] of renderedHtml) {
 fs.rmSync(OUT_DIR, { recursive: true, force: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(path.join(OUT_DIR, 'index.html'), out);
+const projectsDir = path.join(OUT_DIR, 'proyectos');
+fs.mkdirSync(projectsDir, { recursive: true });
+fs.writeFileSync(path.join(projectsDir, 'index.html'), projectsOut);
 for (const [route, html] of renderedLegalPages) {
   const dir = path.join(OUT_DIR, route);
   fs.mkdirSync(dir, { recursive: true });
@@ -514,9 +627,9 @@ const robots = brand.publicar && siteUrl
 fs.writeFileSync(path.join(OUT_DIR, 'robots.txt'), robots);
 if (siteUrl) {
   const projectUrls = projects.map((project) => `  <url><loc>${siteUrl}/proyectos/${project.slug}/</loc></url>`).join('\n');
-  fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${siteUrl}/</loc></url>\n${projectUrls}\n  <url><loc>${siteUrl}/aviso-legal/</loc></url>\n  <url><loc>${siteUrl}/privacidad/</loc></url>\n</urlset>\n`);
+  fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${siteUrl}/</loc></url>\n  <url><loc>${siteUrl}/proyectos/</loc></url>\n${projectUrls}\n  <url><loc>${siteUrl}/aviso-legal/</loc></url>\n  <url><loc>${siteUrl}/privacidad/</loc></url>\n</urlset>\n`);
 }
 for (const dir of ASSETS) {
   fs.cpSync(path.join(ROOT, dir), path.join(OUT_DIR, dir), { recursive: true });
 }
-console.log(`build OK → dist/ (${brand.publicar ? 'PUBLICACIÓN' : 'PREVIEW NOINDEX'}) · portada + ${renderedProjectPages.length} casos + legales + ${ASSETS.join('/ + ')}/`);
+console.log(`build OK → dist/ (${brand.publicar ? 'PUBLICACIÓN' : 'PREVIEW NOINDEX'}) · portada + hub de proyectos + ${renderedProjectPages.length} casos + legales + ${ASSETS.join('/ + ')}/`);
