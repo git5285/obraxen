@@ -111,7 +111,14 @@ viven en [`TECHNICAL_AUDIT.md`](TECHNICAL_AUDIT.md), no se duplican aquí.
 
 ## Migración a Next.js
 
-La Fase 1 trasladará los tokens a estilos globales y cada composición a CSS
-Modules sin rediseñar la web. La base estática seguirá siendo la referencia hasta
-alcanzar paridad visual, responsive y accesible por ruta. Cualquier cambio de
-dirección visual se decide aparte de la migración técnica.
+Las Fases 1 y 2 trasladaron tokens, portada e imagenes a Next.js sin rediseñar la
+web. Para evitar deriva durante la convivencia, `src/app/globals.css` importa el
+`css/home.css` canonico y solo añade adaptadores sin estilos inline. La portada se
+divide en Server Components y la navegacion es la unica isla cliente.
+
+La comparacion Chromium confirma exactamente 13.701 px de alto a 390x844 y 8.117
+px a 1440x1000 tanto en la referencia como en Next, sin overflow. La base estatica
+seguira siendo la salida principal hasta que las rutas restantes alcancen paridad.
+Los CSS Modules se introduciran por composicion cuando una ruta deje de necesitar
+compartir su hoja con el generador heredado; no se duplican ahora 371 lineas para
+cumplir una preferencia de estructura.

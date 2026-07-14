@@ -7,6 +7,9 @@ const requiredRouteFiles = [
   "src/app/layout.tsx",
   "src/app/page.tsx",
   "src/app/robots.ts",
+  "src/components/site-navigation.tsx",
+  "src/components/projects-section.tsx",
+  "src/components/site-footer.tsx",
 ];
 
 describe("foundation routes", () => {
