@@ -11,6 +11,7 @@
 <!-- QUITAR noindex cuando se completen los placeholders y el formulario -->
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="img/hero-nave.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -132,9 +133,8 @@
   .hero{
     position:relative;border-radius:0;overflow:hidden;color:var(--blanco);
     background:
-      radial-gradient(120% 90% at 85% 8%,rgba(234,88,12,.22) 0%,transparent 52%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E"),
-      linear-gradient(140deg,#202124 0%,#17181B 55%,#0F1012 100%);
+      linear-gradient(95deg,rgba(15,16,18,.96) 0%,rgba(23,24,27,.88) 42%,rgba(23,24,27,.42) 100%),
+      url("img/hero-nave.jpg") center/cover no-repeat;
     max-width:none;
   }
   .hero::before{content:"";position:absolute;inset:-25%;pointer-events:none;
@@ -233,12 +233,12 @@
   .servicios h2{font-size:clamp(1.8rem,3.6vw,2.5rem)}
   .serv-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}
   .serv{
-    border-radius:var(--r-md);min-height:280px;
+    border-radius:var(--r-md);min-height:320px;
     display:flex;align-items:flex-end;
   }
   .serv .capa{
     position:relative;z-index:1;width:100%;padding:22px 24px;
-    background:linear-gradient(transparent,rgba(15,16,18,.85));
+    background:linear-gradient(rgba(15,16,18,0) 8%,rgba(15,16,18,.55) 42%,rgba(15,16,18,.93) 100%);
     color:var(--blanco);
   }
   .serv .capa .ic{color:var(--acento-claro);margin-bottom:10px;width:28px;height:28px}
@@ -303,8 +303,8 @@
   .porque .panel{
     border-radius:var(--r-lg);overflow:hidden;color:var(--blanco);
     background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E"),
-      linear-gradient(120deg,#202124 0%,#0F1012 100%);
+      linear-gradient(120deg,rgba(23,24,27,.95) 0%,rgba(15,16,18,.88) 100%),
+      url("img/diagnostico.jpg") center/cover no-repeat;
     display:grid;grid-template-columns:1fr 1fr;gap:40px;
     padding:56px;
   }
@@ -570,7 +570,7 @@
       </div>
       <div class="serv-grid">
         <div class="serv foto" data-stagger role="img" aria-label="Operarios sellando juntas y fisuras en el pavimento de una nave industrial">
-          <div class="tex"></div>
+          <div class="tex" style="background:url('img/juntas.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h7M14 12h7M10 12l2-3 2 3-2 3z"/><path d="M3 7v10M21 7v10"/></svg>
             <h3>Reparación de juntas</h3>
@@ -579,7 +579,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Losa de hormigón con fisuras durante la inspección de una nave">
-          <div class="tex"></div>
+          <div class="tex" style="background:url('img/fisuras.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L9 14l3 2 4-6 5 4"/><path d="M3 20h18"/></svg>
             <h3>Tratamiento de fisuras</h3>
@@ -588,7 +588,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Fresadora de pavimento trabajando sobre la solera de hormigón">
-          <div class="tex"></div>
+          <div class="tex" style="background:url('img/recrecidos.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M4 20h16"/><path d="M6 16V9l6-4 6 4v7"/></svg>
             <h3>Recrecidos y nivelación</h3>
@@ -597,7 +597,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Aplicación de sellador con rodillo sobre pavimento industrial">
-          <div class="tex"></div>
+          <div class="tex" style="background:url('img/pulido.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>
             <h3>Tratamientos superficiales</h3>
