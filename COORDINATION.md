@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 18:24 Europe/Madrid.
+Actualizado: 2026-07-14 18:30 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -17,11 +17,10 @@ Los cinco archivos funcionales de evidencia se transfirieron secuencialmente a
 la tarea de cierre de Fase 0 por orden expresa del usuario; el handoff funcional
 ya estaba terminado y se preservó el checksum del índice antes de intervenir.
 
-El índice de Git todavía contiene las versiones staged históricas de
-`PRODUCT.md`, `CONTENT_AUDIT.md` y `STRATEGY.md`; no se modificó para preservar el
-trabajo ajeno. La tarea de Fase 0 debe preparar un manifiesto nuevo con solo los
-cinco archivos funcionales de evidencia antes de su primer commit y no usar el
-índice actual de forma global.
+El índice heredado se resolvió mediante manifiestos exactos: los cinco archivos
+funcionales de evidencia se integraron solos, los tres Markdown conservaron su
+contenido final y las demás entregas se separaron por procedencia. No quedan
+cambios staged sin propietario.
 
 ## Entregas cerradas
 
@@ -42,7 +41,8 @@ cinco archivos funcionales de evidencia antes de su primer commit y no usar el
   `STRATEGY.md` y `research/sector-map.csv`.
 - Fase 0 cerrada en la rama `codex/phase-0-baseline`: evidencia integrada en
   `ae28903`, portada y accesibilidad en `fdcde7d`, y limpieza estructural en
-  `78e7d9c`; documentación, estrategia y coordinación forman el cierre final.
+  `78e7d9c`; documentación y estrategia en `57c4268`; foco del menú móvil
+  estabilizado en `0120a46` y verificado dos veces de extremo a extremo.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
