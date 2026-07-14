@@ -336,6 +336,9 @@ const projectsSection = renderProjects(projects);
 function renderProjectsHub(items) {
   return items.map((project) => {
     const t = project.traducciones.es;
+    const galleryAccessibleLabel = project.imagenes
+      .map((image) => image.etapa)
+      .join(' ');
     const galleryHtml = project.imagenes.map((image) => `              <figure>
                 <img src="/${esc(image.src)}" alt="${esc(image.alt)}" loading="lazy" decoding="async">
                 <figcaption>${esc(image.etapa)}</figcaption>
@@ -362,7 +365,7 @@ function renderProjectsHub(items) {
           </dl>
         </header>
 
-        <a class="dossier-media" href="/proyectos/${esc(project.slug)}/" aria-label="Abrir la ficha completa de ${esc(project.cliente)}">
+        <a class="dossier-media" href="/proyectos/${esc(project.slug)}/" aria-label="${esc(galleryAccessibleLabel)}. Abrir la ficha completa de ${esc(project.cliente)}">
           <div class="contact-sheet" role="group" aria-label="Evidencia fotográfica de ${esc(project.cliente)}">
 ${galleryHtml}
           </div>
@@ -384,7 +387,7 @@ ${magnitudeHtml}
           </div>
 
 ${closeHtml}
-          <a class="dossier-link" href="/proyectos/${esc(project.slug)}/" aria-label="Ver el caso completo de ${esc(project.cliente)}">Abrir ficha de obra <span aria-hidden="true">→</span></a>
+          <a class="dossier-link" href="/proyectos/${esc(project.slug)}/" aria-label="Abrir ficha de obra: ${esc(project.cliente)}">Abrir ficha de obra <span aria-hidden="true">→</span></a>
         </div>
       </article>`;
   }).join('\n');
