@@ -10,9 +10,10 @@
 
 **Estado:** Aceptada · **actualizada 2026-07-14**
 
-> **Actualización (2026-07-14).** `scripts/build.mjs` genera la portada, seis
-> páginas de caso, dos páginas legales y los activos de `dist/`. Los proyectos
-> proceden de `data/proyectos.json`; no se mantienen páginas duplicadas a mano.
+> **Actualización (2026-07-14).** `scripts/build.mjs` genera la portada, el hub
+> `/proyectos/`, seis páginas de caso, dos páginas legales y los activos de
+> `dist/`. Los proyectos proceden de `data/proyectos.json`; no se mantienen
+> páginas duplicadas a mano.
 
 **Contexto.** La web necesita HTML estático, una colección de proyectos y varias
 rutas, pero no necesita runtime, base de datos ni framework cliente. Los tokens
@@ -130,7 +131,7 @@ rehacer al activar i18n.
 - (+) Cada colección tendrá un esquema explícito y una única fuente de datos.
 - (+) i18n encaja desde el principio (claves por idioma), alineado con la vocación europea.
 - (✓) Proyecto ya tiene esquema multiidioma (`data/proyectos.schema.json`),
-  fuente (`data/proyectos.json`) y render condicional en el build.
+  fuente (`data/proyectos.json`) y render condicional en portada, hub y detalle.
 - (−) Equipo y Recursos todavía necesitan esquema propio antes de publicarse.
 - Las plantillas vacías dejaron de enviarse en el HTML; una colección aparece
   únicamente cuando contiene datos reales válidos.
@@ -140,6 +141,11 @@ rehacer al activar i18n.
 permiso para identificar clientes. Las 18 imágenes seleccionadas pasaron una auditoría
 de calidad y privacidad documentada en `PHOTO_AUDIT.md`.
 
-**Siguiente paso concreto:** obtener para cada proyecto al menos un dato de cierre
-verificable —plazo real, continuidad operativa, problema resuelto o validación del
-cliente— antes de ampliar las afirmaciones de resultado.
+**Actualización de cierre:** los seis proyectos registran entrega conforme y
+ausencia de correcciones posteriores como datos confirmados. Fecha, duración real,
+continuidad operativa y beneficios adicionales permanecen `null`; el hub no los
+infiere ni los presenta.
+
+**Siguiente paso concreto:** preparar el hub de soluciones desde
+`data/ofertas.json` y publicar únicamente las ofertas que superen sus condiciones
+de salida.
