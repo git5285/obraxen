@@ -4,22 +4,31 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 **Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
+La base actual es la referencia funcional y visual. El stack objetivo aprobado
+es Next.js App Router + TypeScript, GitHub, Vercel, GA4, Search Console y Clarity;
+la migracion por fases, sus puertas de calidad y el modelo de consentimiento se
+detallan en [`ROADMAP.md`](ROADMAP.md). Hasta completar esa migracion, los comandos
+y la estructura descritos aqui siguen siendo los vigentes.
+
 > **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
 > temporal heredada del nombre de la carpeta. No es la marca, no es una opción
 > definitiva y el build impide utilizarla como nombre público. La empresa aún no
 > está constituida; la forma jurídica prevista es una sociedad limitada. El
-> naming y la constitución están **aplazados por decisión de los socios**.
+> análisis de naming puede continuar como investigación, pero la selección,
+> integración y constitución siguen pendientes de decisión expresa.
 
 ## Estructura
 
-- `src/index.html` — **plantilla** (maquetación y JS); usa placeholders
+- `src/index.html` — **plantilla** de la portada; usa placeholders
   `{{brand.*}}` y parciales `{{> …}}`. No contiene el nombre literal.
 - `src/projects.html` — plantilla del archivo `/proyectos/`; presenta cada obra
   como un expediente de evidencia generado desde datos
 - `src/project.html` — plantilla común de los seis casos individuales
-- `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`)
+- `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`) y el
+  comportamiento cliente aislado de la portada (`home-script`)
 - `scripts/build.mjs` — render estático (sin dependencias)
 - `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
+- `css/home.css` — estilos propios de la portada, separados de su estructura HTML
 - `css/projects.css` — estilos propios del hub técnico de proyectos
 - `data/brand.json` — **único punto de verdad de la identidad de marca**
   (nombre, razón social, claim, dominio, contactos, fundador y estado de publicación)
@@ -28,11 +37,13 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 - `data/proyectos.borrador.json` — extracción detallada de presupuestos y registro
   interno de confirmaciones; no se sirve públicamente
 - `data/proyectos.schema.json` — contrato de datos multiidioma de cada proyecto
+- `data/ofertas.json` — borradores internos de oferta y sus condiciones de salida;
+  existir en este fichero no vuelve una oferta publicable
 - `src/legal/` — borradores de aviso legal y privacidad; se generan como rutas
   estáticas y permanecen `noindex` mientras el sitio esté en preview
-- `img/` — fotografías optimizadas para web; los originales se mantienen fuera del repo
-- `SITE_ARCHITECTURE.md` — jerarquía, rutas, navegación y enlaces internos
-- `CONTENT_AUDIT.md` — reglas de copy, afirmaciones permitidas y datos pendientes
+- `img/` — fotografias optimizadas para web; los originales se mantienen fuera
+  del repo. Las copias JPEG redundantes de los proyectos se retiraron despues de
+  validar los 18 WebP publicables.
 - `dist/` — **salida generada** por el build (portada, hub, seis casos, legales y activos).
   Es lo único que se sirve; está en `.gitignore` (lo regenera el build).
 
@@ -91,41 +102,40 @@ versión pública antigua fue retirada el 14 de julio de 2026. Cuando se complet
 la identidad y se apruebe la publicación, el despliegue se reactivará de forma
 expresa después de ejecutar `npm run check`.
 
+## Documentación
+
+Cada tema tiene una única autoridad; los demás documentos enlazan en lugar de
+copiarla:
+
+| Tema | Fuente |
+|---|---|
+| Dirección de empresa, mercado y oferta | `STRATEGY.md` |
+| Copy permitido y evidencia pendiente | `CONTENT_AUDIT.md` |
+| Rutas y crecimiento del sitio | `SITE_ARCHITECTURE.md` |
+| Sistema visual | `DESIGN.md` |
+| Decisiones técnicas | `DECISIONS.md` |
+| Estado técnico medido | `TECHNICAL_AUDIT.md` |
+| Migración y entrega | `ROADMAP.md` |
+| Publicación legal | `LEGAL_CHECKLIST.md` |
+| Selección y límites fotográficos | `PHOTO_AUDIT.md` |
+
+`AGENTS.md`, `COORDINATION.md` y `.coordination/` son documentación operativa de
+las tareas; no definen producto ni contenido público.
+
 ## Pendiente antes de producción
 
-**Aplazado por decisión de los socios:**
+La lista operativa completa vive en [`LEGAL_CHECKLIST.md`](LEGAL_CHECKLIST.md) y
+la secuencia técnica en [`ROADMAP.md`](ROADMAP.md). La publicación continúa
+bloqueada hasta completar, como mínimo:
 
-- [ ] Elegir el nombre comercial definitivo
-- [ ] Constituir la sociedad limitada e incorporar razón social, CIF y, cuando
-      corresponda, datos registrales
-
-**Resto del cierre de producción:**
-
-- [ ] Completar fundador, dominio, email, teléfono/WhatsApp y URLs legales
-- [x] Incorporar domicilio y más de 10 años de experiencia acumulada del equipo
-- [x] Incorporar cobertura en toda la UE, mercados principales, horario de lunes a
-      viernes de 9:00 a 18:00,
-      primera respuesta inferior a 48 h y equipos propios
-- [x] Sustituir afirmaciones absolutas por formulaciones condicionadas y verificables
-- [x] Eliminar dependencias externas de Google Fonts, GSAP y cdnjs; la preview usa
-      tipografías del sistema y animación CSS/JavaScript nativo
-- [x] Incorporar seis proyectos ejecutados a `data/proyectos.json`
-- [x] Construir `/proyectos/` como archivo de evidencia enlazado desde portada y casos
-- [x] Confirmar ejecución, unidades principales, ubicación de obra y permiso para
-      identificar clientes
-- [ ] Obtener resultados operativos verificables —plazo real, continuidad, problema
-      resuelto o indicador de cierre— antes de publicar esas afirmaciones
-- [ ] Activar el formulario cuando exista un email; hasta entonces muestra un estado
-      de preparación sin campos ni enlaces ficticios
-- [x] Mientras no exista ningún canal de contacto, los CTA llevan a los proyectos
-      reales; al confirmar email, teléfono o WhatsApp cambian automáticamente a
-      «Pide una evaluación» y enlazan con Contacto
-- [ ] Completar y someter a revisión profesional `aviso-legal` y `privacidad`;
-      después establecer `legalRevisionAprobada: true`
-- [ ] Cambiar `publicar` a `true` únicamente después de completar los puntos anteriores;
-      el build sustituirá `noindex,nofollow` por `index,follow`
+- nombre, sociedad, CIF y dominio;
+- canales de contacto reales;
+- revisión profesional de aviso legal y privacidad;
+- consentimiento antes de GA4 o Clarity;
+- resultados y afirmaciones respaldados por evidencia aplicable;
+- auditoría final y autorización expresa para publicar.
 
 ## Decisiones
 
-Ver `DECISIONS.md` (ADR-001 build estático mínimo · ADR-002 hero de vídeo
-aplazado · ADR-003 identidad en `brand.json` · ADR-004 modelo-primero).
+Ver [`DECISIONS.md`](DECISIONS.md): base estática, hero con evidencia propia,
+identidad centralizada, modelo de contenido y migración progresiva a Next.js.
