@@ -16,6 +16,8 @@
       "magnitudes",
       "ejecucionConfirmada",
       "permisoPublicarCliente",
+      "plazoPrevisto",
+      "cierre",
       "imagenes",
       "traducciones"
     ],
@@ -45,7 +47,36 @@
       },
       "ejecucionConfirmada": { "const": true },
       "permisoPublicarCliente": { "const": true },
-      "plazo": { "type": ["string", "null"] },
+      "plazoPrevisto": {
+        "type": ["string", "null"],
+        "description": "Plazo indicado en la documentación previa; no implica duración real ni cumplimiento."
+      },
+      "cierre": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entregaConforme",
+          "correccionesPosteriores",
+          "fuente",
+          "confirmadoEl",
+          "fechaEjecucion",
+          "duracionReal",
+          "continuidadOperativa",
+          "resultadoAdicional"
+        ],
+        "properties": {
+          "entregaConforme": { "type": "boolean" },
+          "correccionesPosteriores": { "type": "boolean" },
+          "fuente": { "type": "string", "minLength": 1 },
+          "confirmadoEl": { "type": "string", "format": "date" },
+          "fechaEjecucion": { "type": ["string", "null"] },
+          "duracionReal": { "type": ["string", "null"] },
+          "continuidadOperativa": {
+            "enum": [null, "total", "parcial", "detenida"]
+          },
+          "resultadoAdicional": { "type": ["string", "null"] }
+        }
+      },
       "imagenes": {
         "type": "array",
         "minItems": 3,

@@ -29,6 +29,11 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
   retirada de anclajes/tornillos, bacheo y parcheo de hormigón, reparación de
   arañazos y desconchones, sellado de juntas de dilatación, pulido en grandes
   superficies.
+- **Arquitectura inicial de la oferta:** inspección y plan de intervención,
+  reparaciones localizadas por zonas, rehabilitación integral de pavimentos de
+  hormigón y recuperación por cambio de inquilino o uso. Las cuatro viven como
+  borradores internos en `data/ofertas.json`; no se presentan todavía como
+  páginas ni servicios públicos cerrados.
 - **Unidad real de la oferta:** una intervención puede combinar preparación,
   reparaciones localizadas, nivelación y tratamiento superficial. El diagnóstico
   determina las partidas necesarias; no se prescribe un sistema único para todos
@@ -111,14 +116,20 @@ Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
 
 ## Competencia y referencias
 
-- **Competencia:** `«FALTA»` — el repo no menciona competidores ni
-  posicionamiento comparativo.
+- **Investigación competitiva interna:** `STRATEGY.md` y
+  `research/sector-map.csv` reúnen el aprendizaje sectorial y 108 organizaciones
+  clasificadas. Sirven para decidir posicionamiento, capacidades y alianzas; no
+  autorizan comparativas públicas ni el uso de marcas como respaldo.
+- **Posicionamiento de trabajo:** recuperación técnica de pavimentos industriales
+  en uso, coordinando diagnóstico, preparación, reparación, corrección y acabado
+  en lugar de presentarse como aplicador de un único producto.
 - **Proyectos ejecutados:** Delticom, TP-Link, dadada GmbH, L’Oréal, Blitz y
   Hologram Bâtiment están publicados desde `data/proyectos.json`, con ejecución,
   ubicación, unidades principales y permiso para identificar al cliente confirmados.
-  La redacción distingue alcance ejecutado de resultado documentado: solo describe
-  lo visible en las fotografías y no afirma plazos, continuidad ni rendimiento sin
-  una confirmación específica.
+  El equipo ha confirmado además que las seis intervenciones se entregaron
+  conforme y no requirieron correcciones posteriores. La redacción distingue ese
+  cierre de lo visible en las fotografías y no afirma cumplimiento de plazo,
+  continuidad, durabilidad ni rendimiento sin una confirmación específica.
 - **Auditoría de imágenes:** `PHOTO_AUDIT.md` registra la revisión de 640 fotos y
   un vídeo, las exclusiones de privacidad, la selección de 18 imágenes y la decisión
   de no alterar evidencia de obra mediante IA generativa.

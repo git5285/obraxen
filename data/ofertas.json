@@ -1,0 +1,215 @@
+[
+  {
+    "slug": "inspeccion-plan-intervencion",
+    "prioridad": 1,
+    "estadoInterno": "preparar_ahora",
+    "estadoPublicacion": "borrador_interno",
+    "compradores": [
+      "Propiedad",
+      "Operaciones",
+      "Mantenimiento",
+      "Facility management"
+    ],
+    "problemas": [
+      "Daños cuyo alcance o causa todavía no están definidos",
+      "Necesidad de comparar reparación, recuperación o sustitución",
+      "Intervenciones que deben coordinarse con restricciones de uso"
+    ],
+    "alcance": [
+      "Recogida de información y restricciones operativas",
+      "Inspección visual y mediciones proporcionadas al riesgo",
+      "Clasificación de daños y zonas",
+      "Alternativas, límites y propuesta de intervención",
+      "Criterios de aceptación y puesta en servicio"
+    ],
+    "limites": [
+      "No sustituye un cálculo estructural, ensayo o dictamen especializado cuando resulte necesario",
+      "No prescribe una solución universal antes de conocer soporte, uso y restricciones",
+      "Los plazos, productos y mediciones se concretan para cada proyecto"
+    ],
+    "evidencia": [],
+    "condicionesSalida": [
+      "Aprobar un protocolo de inspección y sus límites",
+      "Preparar un informe tipo",
+      "Definir qué mediciones se realizan internamente y cuáles mediante especialistas",
+      "Documentar una inspección completa como caso propio"
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Inspección y plan de intervención",
+        "entradilla": "Ordenar el problema antes de decidir la reparación.",
+        "propuesta": "Analizamos el estado visible, el uso y las restricciones de la instalación para definir alternativas, alcance y controles antes de ejecutar.",
+        "cta": "Ver cómo planteamos una intervención"
+      }
+    }
+  },
+  {
+    "slug": "reparaciones-por-zonas",
+    "prioridad": 2,
+    "estadoInterno": "preparar_ahora",
+    "estadoPublicacion": "borrador_interno",
+    "compradores": [
+      "Operaciones",
+      "Mantenimiento",
+      "Facility management"
+    ],
+    "problemas": [
+      "Fisuras y juntas dañadas",
+      "Huecos, parches y desconchones",
+      "Anclajes o puntos singulares que interfieren con el nuevo uso",
+      "Daños concentrados en zonas concretas"
+    ],
+    "alcance": [
+      "Delimitación y preparación de las zonas",
+      "Tratamiento de fisuras y juntas según su comportamiento",
+      "Relleno, parcheo, refuerzo o nivelación localizada",
+      "Retirada o rebaje de anclajes",
+      "Comprobación visual y entrega de las zonas intervenidas"
+    ],
+    "limites": [
+      "La reparación localizada no corrige causas generales del soporte que queden fuera del alcance",
+      "La reapertura depende de la preparación y del sistema seleccionado",
+      "El trabajo por fases solo se plantea cuando la circulación y la seguridad lo permiten"
+    ],
+    "evidencia": [
+      {
+        "proyecto": "dadada-euskirchen",
+        "acredita": "Fisuras, huecos y refuerzo mecánico localizado"
+      },
+      {
+        "proyecto": "blitz-bremen",
+        "acredita": "Fisuras, anclajes, huecos y reparaciones de distintos tamaños"
+      },
+      {
+        "proyecto": "tp-link-dusseldorf",
+        "acredita": "Rebaje de anclajes y retiradas localizadas"
+      }
+    ],
+    "condicionesSalida": [
+      "Confirmar el catálogo inicial de patologías que asumirá el equipo",
+      "Definir familias de materiales externos y tiempos condicionados",
+      "Preparar criterios de aceptación y mantenimiento"
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Reparaciones localizadas por zonas",
+        "entradilla": "Intervenir donde está el daño sin perder de vista su causa.",
+        "propuesta": "Delimitamos fisuras, juntas, huecos, anclajes y desniveles para combinar la preparación y la reparación que requiera cada zona.",
+        "cta": "Ver reparaciones ejecutadas"
+      }
+    }
+  },
+  {
+    "slug": "rehabilitacion-integral-hormigon",
+    "prioridad": 3,
+    "estadoInterno": "oferta_central",
+    "estadoPublicacion": "borrador_interno",
+    "compradores": [
+      "Propiedad",
+      "Operaciones",
+      "Mantenimiento",
+      "Facility management",
+      "Operadores logísticos e industriales"
+    ],
+    "problemas": [
+      "Superficies extensas con daños y acabados heterogéneos",
+      "Revestimientos, marcas o reparaciones anteriores que deben retirarse",
+      "Necesidad de coordinar preparación, reparación, nivelación y acabado"
+    ],
+    "alcance": [
+      "Inspección y zonificación del soporte",
+      "Retirada y preparación mecánica",
+      "Reparación de fisuras, juntas, huecos y puntos singulares",
+      "Corrección localizada de niveles cuando procede",
+      "Pulido, densificación, sellado o revestimiento compatible con el uso",
+      "Control final y documentación de entrega"
+    ],
+    "limites": [
+      "El acabado se selecciona según soporte, exposición, limpieza y uso; el hormigón pulido no es una solución universal",
+      "Las prestaciones pertenecen al sistema, producto y condiciones realmente ejecutados",
+      "La planificación por fases depende de accesos, tráfico, curado y seguridad"
+    ],
+    "evidencia": [
+      {
+        "proyecto": "delticom-hannover",
+        "acredita": "Retirada de revestimiento y tratamientos diferenciados en una superficie extensa"
+      },
+      {
+        "proyecto": "hologram-paris",
+        "acredita": "Combinación de lijado, retirada, fisuras, juntas, anclajes, huecos y nivelación"
+      },
+      {
+        "proyecto": "loreal-gauchy",
+        "acredita": "Tratamiento superficial sobre 4.200 m²"
+      }
+    ],
+    "condicionesSalida": [
+      "Confirmar las capacidades que se ejecutan con medios propios y las que requieren socio",
+      "Definir la matriz multifabricante y compatibilidades",
+      "Preparar controles finales y recomendaciones de mantenimiento"
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Rehabilitación integral de pavimentos de hormigón",
+        "entradilla": "Coordinar todas las capas de la intervención como un único alcance.",
+        "propuesta": "Integramos retirada, preparación, reparaciones, correcciones y acabado según el estado del soporte y el uso previsto.",
+        "cta": "Ver rehabilitaciones documentadas"
+      }
+    }
+  },
+  {
+    "slug": "recuperacion-cambio-inquilino",
+    "prioridad": 4,
+    "estadoInterno": "oferta_central",
+    "estadoPublicacion": "borrador_interno",
+    "compradores": [
+      "Propiedad logística",
+      "Gestión de activos",
+      "Facility management"
+    ],
+    "problemas": [
+      "Marcas, anclajes y adaptaciones del uso anterior",
+      "Revestimientos o reparaciones que dificultan la nueva implantación",
+      "Necesidad de inspeccionar, sanear y documentar la entrega de una nave"
+    ],
+    "alcance": [
+      "Inventario por zonas y criterios de entrega",
+      "Retirada de señalización, adhesivos, revestimientos y puntos de anclaje",
+      "Reparación de fisuras, juntas, huecos y parches",
+      "Preparación, limpieza técnica y acabado acordado",
+      "Reportaje de cierre"
+    ],
+    "limites": [
+      "Los casos relacionados acreditan intervenciones compatibles, pero no confirman por sí solos que el encargo respondiera a un cambio de inquilino",
+      "El estándar de entrega debe acordarse con propiedad y futuro uso",
+      "Las responsabilidades contractuales o de dilapidaciones requieren revisión específica"
+    ],
+    "evidencia": [
+      {
+        "proyecto": "delticom-hannover",
+        "acredita": "Retirada de señalización y revestimiento"
+      },
+      {
+        "proyecto": "tp-link-dusseldorf",
+        "acredita": "Rebaje de anclajes y retirada de señalización"
+      },
+      {
+        "proyecto": "blitz-bremen",
+        "acredita": "Saneado de fisuras, anclajes y huecos"
+      }
+    ],
+    "condicionesSalida": [
+      "Validar la oferta con propietarios o facility managers",
+      "Preparar un modelo de inspección y estándar de entrega",
+      "Documentar un proyecto cuyo contexto de cambio de uso pueda publicarse"
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Recuperación por cambio de inquilino o uso",
+        "entradilla": "Preparar el pavimento para la siguiente etapa del activo.",
+        "propuesta": "Inspeccionamos y coordinamos las retiradas y reparaciones necesarias para acordar una condición de entrega compatible con el nuevo uso.",
+        "cta": "Ver alcances relacionados"
+      }
+    }
+  }
+]

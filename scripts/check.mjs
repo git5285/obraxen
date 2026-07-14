@@ -17,17 +17,109 @@ if (build.status !== 0) {
 
 const html = fs.readFileSync(path.join(ROOT, 'dist', 'index.html'), 'utf8');
 const errors = [];
-for (const file of ['data/brand.json', 'data/proyectos.json', 'data/proyectos.schema.json', 'vercel.json']) {
+
+function readJson(file, fallback) {
   try {
-    JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
+    return JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
   } catch (error) {
     errors.push(`${file} no contiene JSON válido: ${error.message}`);
+    return fallback;
   }
 }
-const brand = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'brand.json'), 'utf8'));
-const projects = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'proyectos.json'), 'utf8'));
-const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+
+const brand = readJson('data/brand.json', {});
+const projects = readJson('data/proyectos.json', []);
+const projectSchema = readJson('data/proyectos.schema.json', {});
+const offers = readJson('data/ofertas.json', []);
+const offerSchema = readJson('data/ofertas.schema.json', {});
+const vercelConfig = readJson('vercel.json', {});
 const temporaryName = String(brand.nombreTemporalNoPublicable || '').trim();
+
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const nullableText = (value) => value === null || (typeof value === 'string' && value.trim().length > 0);
+const nonEmptyText = (value) => typeof value === 'string' && value.trim().length > 0;
+const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
+const validDate = (value) => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
+};
+const projectRequired = new Set(projectSchema?.items?.required || []);
+for (const field of ['plazoPrevisto', 'cierre']) {
+  if (!projectRequired.has(field)) errors.push(`data/proyectos.schema.json debe exigir ${field}`);
+}
+const offerRequired = new Set(offerSchema?.items?.required || []);
+for (const field of ['slug', 'prioridad', 'estadoInterno', 'estadoPublicacion', 'evidencia', 'traducciones']) {
+  if (!offerRequired.has(field)) errors.push(`data/ofertas.schema.json debe exigir ${field}`);
+}
+
+if (!Array.isArray(projects)) errors.push('data/proyectos.json debe contener un array');
+if (!Array.isArray(offers)) errors.push('data/ofertas.json debe contener un array');
+const projectSlugs = new Set();
+for (const project of Array.isArray(projects) ? projects : []) {
+  const label = nonEmptyText(project?.slug) ? project.slug : 'proyecto sin slug';
+  if (!slugPattern.test(String(project?.slug || ''))) errors.push(`${label}: slug de proyecto inválido`);
+  if (projectSlugs.has(project?.slug)) errors.push(`${label}: slug de proyecto duplicado`);
+  projectSlugs.add(project?.slug);
+  if (!own(project, 'plazoPrevisto') || !nullableText(project.plazoPrevisto)) {
+    errors.push(`${label}: plazoPrevisto debe ser texto no vacío o null`);
+  }
+  const closure = project?.cierre;
+  if (!closure || typeof closure !== 'object' || Array.isArray(closure)) {
+    errors.push(`${label}: cierre debe ser un objeto`);
+    continue;
+  }
+  for (const field of ['entregaConforme', 'correccionesPosteriores']) {
+    if (typeof closure[field] !== 'boolean') errors.push(`${label}: cierre.${field} debe ser booleano`);
+  }
+  if (!nonEmptyText(closure.fuente)) errors.push(`${label}: cierre.fuente es obligatorio`);
+  if (!validDate(closure.confirmadoEl)) errors.push(`${label}: cierre.confirmadoEl debe ser una fecha YYYY-MM-DD válida`);
+  for (const field of ['fechaEjecucion', 'duracionReal', 'resultadoAdicional']) {
+    if (!own(closure, field) || !nullableText(closure[field])) {
+      errors.push(`${label}: cierre.${field} debe ser texto no vacío o null`);
+    }
+  }
+  if (!own(closure, 'continuidadOperativa') || ![null, 'total', 'parcial', 'detenida'].includes(closure.continuidadOperativa)) {
+    errors.push(`${label}: cierre.continuidadOperativa debe ser total, parcial, detenida o null`);
+  }
+}
+
+const validInternalStates = new Set(['preparar_ahora', 'oferta_central', 'desarrollo_controlado']);
+const validPublicationStates = new Set(['borrador_interno', 'preparada_preview', 'publicable']);
+const offerSlugs = new Set();
+const offerPriorities = new Set();
+for (const offer of Array.isArray(offers) ? offers : []) {
+  const label = nonEmptyText(offer?.slug) ? offer.slug : 'oferta sin slug';
+  if (!slugPattern.test(String(offer?.slug || ''))) errors.push(`${label}: slug de oferta inválido`);
+  if (offerSlugs.has(offer?.slug)) errors.push(`${label}: slug de oferta duplicado`);
+  offerSlugs.add(offer?.slug);
+  if (!Number.isInteger(offer?.prioridad) || offer.prioridad < 1) {
+    errors.push(`${label}: prioridad debe ser un entero positivo`);
+  } else if (offerPriorities.has(offer.prioridad)) {
+    errors.push(`${label}: prioridad de oferta duplicada`);
+  }
+  offerPriorities.add(offer?.prioridad);
+  if (!validInternalStates.has(offer?.estadoInterno)) errors.push(`${label}: estadoInterno inválido`);
+  if (!validPublicationStates.has(offer?.estadoPublicacion)) errors.push(`${label}: estadoPublicacion inválido`);
+  for (const field of ['compradores', 'problemas', 'alcance', 'limites', 'condicionesSalida']) {
+    if (!Array.isArray(offer?.[field]) || !offer[field].length || offer[field].some((item) => !nonEmptyText(item))) {
+      errors.push(`${label}: ${field} debe contener textos no vacíos`);
+    }
+  }
+  if (!Array.isArray(offer?.evidencia)) {
+    errors.push(`${label}: evidencia debe ser un array`);
+  } else {
+    for (const item of offer.evidencia) {
+      if (!projectSlugs.has(item?.proyecto)) errors.push(`${label}: evidencia referencia un proyecto inexistente (${item?.proyecto || 'vacío'})`);
+      if (!nonEmptyText(item?.acredita)) errors.push(`${label}: cada evidencia debe explicar qué acredita`);
+    }
+  }
+  const es = offer?.traducciones?.es;
+  for (const field of ['titulo', 'entradilla', 'propuesta', 'cta']) {
+    if (!nonEmptyText(es?.[field])) errors.push(`${label}: traducciones.es.${field} es obligatorio`);
+  }
+}
+
 if (brand.publicar !== true && vercelConfig.git?.deploymentEnabled !== false) {
   errors.push('Los despliegues automáticos deben permanecer desactivados mientras brand.publicar no sea true');
 }

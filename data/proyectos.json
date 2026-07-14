@@ -15,7 +15,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": "30 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/delticom/resultado.webp",
@@ -38,7 +48,7 @@
         "titulo": "Delticom · renovación de pavimento en Hannover",
         "problema": "Una superficie logística extensa conservaba revestimientos y señalización, con una entreplanta que requería un tratamiento diferenciado.",
         "solucion": "Retirada de 5.362 m² de revestimiento y tratamiento de 18.084 m² entre la planta principal y la entreplanta mediante sistemas húmedo y seco.",
-        "resultado": "El reportaje aportado documenta la retirada de marcas y una superficie continua, limpia y pulida al cierre de la intervención."
+        "resultado": "El reportaje aportado documenta la retirada de marcas y una superficie continua, limpia y pulida. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -58,7 +68,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/tp-link/resultado-general.webp",
@@ -81,7 +101,7 @@
         "titulo": "TP-Link · retirada de anclajes y señalización en Düsseldorf",
         "problema": "La instalación requería retirar anclajes, señalización pintada y adhesiva, además de varios parches de pintura.",
         "solucion": "Rebaje de 1.730 anclajes y retirada localizada de señalización y parches de pintura en las zonas indicadas.",
-        "resultado": "Las fotografías aportadas muestran las áreas intervenidas y el detalle de los puntos rebajados en el pavimento."
+        "resultado": "Las fotografías aportadas muestran las áreas intervenidas y el detalle de los puntos rebajados. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -101,7 +121,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/dadada/detalle-refuerzo.webp",
@@ -124,7 +154,7 @@
         "titulo": "dadada GmbH · reparación localizada en Euskirchen",
         "problema": "El pavimento presentaba fisuras abiertas, huecos y desniveles localizados que requerían una intervención técnica puntual.",
         "solucion": "Reparación de 44 m lineales de fisuras XL, relleno de 20 huecos y refuerzo mecánico de las zonas documentadas.",
-        "resultado": "El reportaje técnico documenta el estado inicial y las distintas fases de preparación, cosido y refuerzo mecánico."
+        "resultado": "El reportaje técnico documenta el estado inicial y las distintas fases de preparación, cosido y refuerzo mecánico. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -144,7 +174,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": "6 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/loreal/resultado.webp",
@@ -167,7 +207,7 @@
         "titulo": "L’Oréal · tratamiento superficial en Gauchy",
         "problema": "La planta necesitaba renovar una gran superficie de hormigón y recuperar un acabado uniforme en el área de trabajo.",
         "solucion": "Aplicación del tratamiento superficial LitoBrillant sobre 4.200 m² de pavimento industrial.",
-        "resultado": "El reportaje final muestra una superficie homogénea y pulida en el área tratada."
+        "resultado": "El reportaje final muestra una superficie homogénea y pulida en el área tratada. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -188,7 +228,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": "35 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/blitz/resultado-pasillo.webp",
@@ -211,7 +261,7 @@
         "titulo": "Blitz · restauración de pavimento logístico en Bremen",
         "problema": "El centro presentaba una red extensa de fisuras, puntos de anclaje y huecos, además de reparaciones localizadas de distinto tamaño.",
         "solucion": "Tratamiento de 1.121 m lineales de fisuras, retirada o rebaje de 5.000 anclajes y reparación de 465 huecos.",
-        "resultado": "La secuencia aportada documenta el daño inicial, la reparación localizada y el estado posterior de uno de los pasillos logísticos."
+        "resultado": "La secuencia aportada documenta el daño inicial, la reparación localizada y el estado posterior de uno de los pasillos logísticos. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -233,7 +283,17 @@
     ],
     "ejecucionConfirmada": true,
     "permisoPublicarCliente": true,
-    "plazo": null,
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": null,
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
     "imagenes": [
       {
         "src": "img/proyectos/hologram/resultado.webp",
@@ -256,7 +316,7 @@
         "titulo": "Hologram Bâtiment · rehabilitación integral en París",
         "problema": "La superficie combinaba revestimiento existente, fisuras, juntas, anclajes, huecos y zonas que requerían nivelación.",
         "solucion": "Tratamiento y lijado de 2.700 m², retirada de 201 m² de revestimiento, reparación de 21 m de fisuras y 808 m de juntas, además del saneado de anclajes y huecos.",
-        "resultado": "El reportaje final documenta una superficie saneada, homogénea y pulida tras la intervención."
+        "resultado": "El reportaje final documenta una superficie saneada, homogénea y pulida tras la intervención. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   }
