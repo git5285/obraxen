@@ -50,6 +50,13 @@ function validateBrand() {
     if (value && value.replace(/\D/g, '').length < 9) errors.push(`brand.${key} no es válido`);
   }
   if (!Array.isArray(projects)) errors.push('data/proyectos.json debe contener un array');
+  if (Array.isArray(projects)) {
+    const slugs = projects.map((project) => project?.slug);
+    const invalidSlugs = slugs.filter((slug) => !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(slug || '')));
+    const duplicateSlugs = slugs.filter((slug, index) => slugs.indexOf(slug) !== index);
+    if (invalidSlugs.length) errors.push(`slugs de proyecto no válidos: ${invalidSlugs.join(', ')}`);
+    if (duplicateSlugs.length) errors.push(`slugs de proyecto duplicados: ${[...new Set(duplicateSlugs)].join(', ')}`);
+  }
   if (!Array.isArray(brand.areasServicio) || !brand.areasServicio.length || brand.areasServicio.some((area) => !clean(area))) {
     errors.push('brand.areasServicio debe contener al menos un mercado válido');
   }
@@ -289,11 +296,11 @@ ${galleryHtml}
             <ul class="proy-cifras" aria-label="Magnitudes confirmadas">
 ${magnitudeHtml}
             </ul>
-            <dl>
-              <dt>Problema</dt><dd>${esc(t.problema)}</dd>
-              <dt>Solución</dt><dd>${esc(t.solucion)}</dd>
-              <dt>Resultado documentado</dt><dd>${esc(t.resultado)}</dd>
-            </dl>
+            <div class="proy-resumen">
+              <strong>Situación</strong>
+              <p>${esc(t.problema)}</p>
+            </div>
+            <a class="proy-enlace" href="/proyectos/${esc(project.slug)}/" aria-label="Ver el caso completo de ${esc(project.cliente)}">Ver caso completo <span aria-hidden="true">→</span></a>
           </div>
         </article>`;
 }).join('\n')}
@@ -323,6 +330,7 @@ const navMobileLinks = NAV.map(([id, l]) => `<a href="#${id}">${l}</a>`).join('\
 const ctx = {
   brand,
   logoInner,
+  logoHref: '#inicio',
   ctaHref,
   ctaText,
   capaCtaText,
@@ -373,10 +381,10 @@ function inlinePartials(str, depth = 0) {
 }
 const get = (obj, p) => p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 
-function render(str) {
+function render(str, renderCtx = ctx) {
   str = inlinePartials(str);
-  str = str.replace(/\{\{\{\s*([\w.]+)\s*\}\}\}/g, (_, p) => { const v = get(ctx, p); return v == null ? '' : String(v); });
-  str = str.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, p) => { const v = get(ctx, p); return v == null ? '' : esc(v); });
+  str = str.replace(/\{\{\{\s*([\w.]+)\s*\}\}\}/g, (_, p) => { const v = get(renderCtx, p); return v == null ? '' : String(v); });
+  str = str.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, p) => { const v = get(renderCtx, p); return v == null ? '' : esc(v); });
   return str;
 }
 
@@ -389,12 +397,83 @@ const renderedLegalPages = legalPages.map(([route, file]) => [
   route,
   render(fs.readFileSync(path.join(SRC, 'legal', file), 'utf8')),
 ]);
+const projectTemplate = fs.readFileSync(path.join(SRC, 'project.html'), 'utf8');
+const shorten = (value, max = 158) => {
+  const text = String(value).trim();
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1).replace(/\s+\S*$/, '') + '…';
+};
+const renderedProjectPages = projects.map((project, index) => {
+  const t = project.traducciones.es;
+  const casePath = `/proyectos/${project.slug}/`;
+  const caseUrl = siteUrl ? `${siteUrl}${casePath}` : '';
+  const heroImage = `/${project.imagenes[0].src}`;
+  const absoluteHeroImage = siteUrl ? `${siteUrl}${heroImage}` : '';
+  const caseTitle = `${t.titulo} — Caso ejecutado`;
+  const caseDescription = shorten(`${t.problema} ${t.solucion}`);
+  const caseMagnitudesHtml = project.magnitudes
+    .map((magnitude) => `          <li>${esc(magnitude)}</li>`)
+    .join('\n');
+  const caseImagesHtml = project.imagenes.map((image, imageIndex) => `        <figure>
+          <img src="/${esc(image.src)}" alt="${esc(image.alt)}" ${imageIndex === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">
+          <figcaption>${esc(image.etapa)}</figcaption>
+        </figure>`).join('\n');
+  const previous = projects[index - 1];
+  const next = projects[index + 1];
+  const casePaginationHtml = [
+    previous ? `    <a class="previous" href="/proyectos/${esc(previous.slug)}/"><span>← Caso anterior</span><strong>${esc(previous.cliente)} · ${esc(previous.ubicacion.ciudad)}</strong></a>` : '',
+    next ? `    <a class="next" href="/proyectos/${esc(next.slug)}/"><span>Siguiente caso →</span><strong>${esc(next.cliente)} · ${esc(next.ubicacion.ciudad)}</strong></a>` : '',
+  ].filter(Boolean).join('\n');
+  const caseAbsoluteMetaHtml = caseUrl ? `<link rel="canonical" href="${esc(caseUrl)}">
+<meta property="og:url" content="${esc(caseUrl)}">
+<meta property="og:image" content="${esc(absoluteHeroImage)}">
+<meta property="og:image:alt" content="${esc(project.imagenes[0].alt)}">` : '';
+  const caseJsonLdHtml = caseUrl ? `<script type="application/ld+json">
+${JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${siteUrl}/` },
+      { '@type': 'ListItem', position: 2, name: 'Proyectos', item: `${siteUrl}/#proyectos` },
+      { '@type': 'ListItem', position: 3, name: project.cliente, item: caseUrl },
+    ],
+  }, null, 2).replace(/</g, '\\u003c')}
+</script>` : '';
+  const caseCtx = {
+    ...ctx,
+    logoHref: '/',
+    caseTitle,
+    caseDescription,
+    caseAbsoluteMetaHtml,
+    caseJsonLdHtml,
+    caseHeroSrc: heroImage,
+    caseReference: project.referencia,
+    caseClient: project.cliente,
+    caseSector: project.sector,
+    caseLocation: `${project.ubicacion.ciudad}, ${project.ubicacion.pais}`,
+    caseHeading: t.titulo,
+    caseProblem: t.problema,
+    caseSolution: t.solucion,
+    caseResult: t.resultado,
+    caseMagnitudesHtml,
+    caseImagesHtml,
+    casePaginationHtml,
+  };
+  return [project.slug, render(projectTemplate, caseCtx)];
+});
 
 // Ninguna marca de plantilla debe quedar sin resolver.
-const leftover = out.match(/\{\{[^}]*\}\}/g);
-if (leftover) throw new Error('Placeholders sin resolver: ' + leftover.join(', '));
-if (/«PENDIENTE»|\[Nombre Apellido\]|\[B-00000000\]|\[Calle, nº, CP, Ciudad\]/.test(out)) {
-  throw new Error('La salida contiene datos ficticios visibles');
+const renderedHtml = [
+  ['inicio', out],
+  ...renderedLegalPages,
+  ...renderedProjectPages.map(([slug, html]) => [`proyectos/${slug}`, html]),
+];
+for (const [route, html] of renderedHtml) {
+  const leftover = html.match(/\{\{[^}]*\}\}/g);
+  if (leftover) throw new Error(`${route}: placeholders sin resolver: ${leftover.join(', ')}`);
+  if (/«PENDIENTE»|\[Nombre Apellido\]|\[B-00000000\]|\[Calle, nº, CP, Ciudad\]/.test(html)) {
+    throw new Error(`${route}: la salida contiene datos ficticios visibles`);
+  }
 }
 
 // dist/ contiene SOLO lo que se sirve (index.html + activos). Ni src/ ni
@@ -407,14 +486,20 @@ for (const [route, html] of renderedLegalPages) {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), html);
 }
+for (const [slug, html] of renderedProjectPages) {
+  const dir = path.join(OUT_DIR, 'proyectos', slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), html);
+}
 const robots = brand.publicar && siteUrl
   ? `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`
   : 'User-agent: *\nDisallow: /\n';
 fs.writeFileSync(path.join(OUT_DIR, 'robots.txt'), robots);
 if (siteUrl) {
-  fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${siteUrl}/</loc></url>\n  <url><loc>${siteUrl}/aviso-legal/</loc></url>\n  <url><loc>${siteUrl}/privacidad/</loc></url>\n</urlset>\n`);
+  const projectUrls = projects.map((project) => `  <url><loc>${siteUrl}/proyectos/${project.slug}/</loc></url>`).join('\n');
+  fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${siteUrl}/</loc></url>\n${projectUrls}\n  <url><loc>${siteUrl}/aviso-legal/</loc></url>\n  <url><loc>${siteUrl}/privacidad/</loc></url>\n</urlset>\n`);
 }
 for (const dir of ASSETS) {
   fs.cpSync(path.join(ROOT, dir), path.join(OUT_DIR, dir), { recursive: true });
 }
-console.log(`build OK → dist/ (${brand.publicar ? 'PUBLICACIÓN' : 'PREVIEW NOINDEX'}) · index.html ${out.length} bytes + ${ASSETS.join('/ + ')}/`);
+console.log(`build OK → dist/ (${brand.publicar ? 'PUBLICACIÓN' : 'PREVIEW NOINDEX'}) · portada + ${renderedProjectPages.length} casos + legales + ${ASSETS.join('/ + ')}/`);

@@ -134,16 +134,15 @@ el repo):
 
 ## Platform: web
 
-- **Sitio web estático** (HTML + CSS + JavaScript nativo), **una sola página**, con build y
-  validación en Node sin dependencias de terceros.
+- **Sitio web estático** (HTML + CSS + JavaScript nativo), con portada-hub, seis
+  páginas de caso y validación en Node sin dependencias de terceros.
 - **Despliegue:** proyecto Vercel conservado, sin despliegue público y con
   auto-deploy desactivado hasta aprobar la publicación (README).
 - **Estado actual:** preview `noindex,nofollow`; sin nombre, dominio ni canales de
   contacto inventados; datos desconocidos omitidos y publicación estricta
   bloqueada hasta completarlos.
-- **Evolución prevista** (README, «Decisiones»): migración a generador estático
-  (Astro) con i18n para Europa cuando se activen Proyectos/Recursos; hero de
-  vídeo solo con metraje propio de obra.
+- **Evolución prevista** (README, «Decisiones»): valorar Astro cuando se active
+  i18n o crezcan nuevas colecciones; hero de vídeo solo con metraje propio de obra.
 - Otras plataformas (app, redes sociales, landing de campañas, portal de
   cliente): `«FALTA»`.
 

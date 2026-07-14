@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{caseTitle}}</title>
+<meta name="description" content="{{caseDescription}}">
+<meta name="robots" content="{{robotsDirective}}">
+<meta property="og:title" content="{{caseTitle}}">
+<meta property="og:description" content="{{caseDescription}}">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+{{{caseAbsoluteMetaHtml}}}
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="{{caseHeroSrc}}" fetchpriority="high">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/case.css">
+{{{caseJsonLdHtml}}}
+</head>
+<body>
+<a class="skip" href="#case-content">Saltar al contenido</a>
+
+<header class="case-header">
+  <nav class="case-nav" aria-label="Navegación del caso">
+    {{> logo}}
+    <a class="back-link" href="/#proyectos">Todos los proyectos <span aria-hidden="true">→</span></a>
+  </nav>
+</header>
+
+<main id="case-content">
+  <section class="case-hero">
+    <span class="reference-mark" aria-hidden="true">{{caseReference}}</span>
+    <div class="case-wrap">
+      <nav class="breadcrumbs" aria-label="Migas de pan">
+        <ol>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/#proyectos">Proyectos</a></li>
+          <li aria-current="page">{{caseClient}}</li>
+        </ol>
+      </nav>
+
+      <div class="case-heading">
+        <div>
+          <p class="case-kicker">Caso ejecutado · {{caseReference}}</p>
+          <h1>{{caseHeading}}</h1>
+          <p class="case-lede">{{caseProblem}}</p>
+        </div>
+        <dl class="case-facts">
+          <div><dt>Cliente</dt><dd>{{caseClient}}</dd></div>
+          <div><dt>Sector</dt><dd>{{caseSector}}</dd></div>
+          <div><dt>Ubicación</dt><dd>{{caseLocation}}</dd></div>
+        </dl>
+      </div>
+
+      <div class="scope-rail">
+        <p>Alcance confirmado</p>
+        <ul>
+{{{caseMagnitudesHtml}}}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-evidence" aria-labelledby="evidence-title">
+    <div class="case-wrap">
+      <div class="section-heading">
+        <div>
+          <p class="case-kicker">Evidencia fotográfica</p>
+          <h2 id="evidence-title">Estado documentado de la intervención</h2>
+        </div>
+        <p>Las fotografías acreditan el estado visible y la ejecución mostrada. No se atribuyen plazos, continuidad operativa ni mejoras cuantificadas sin documentación adicional.</p>
+      </div>
+      <div class="evidence-grid">
+{{{caseImagesHtml}}}
+      </div>
+    </div>
+  </section>
+
+  <section class="case-story" aria-labelledby="story-title">
+    <div class="case-wrap story-layout">
+      <aside class="case-dossier" aria-label="Ficha del proyecto">
+        <p>Ficha de obra</p>
+        <dl>
+          <div><dt>Referencia</dt><dd>{{caseReference}}</dd></div>
+          <div><dt>Estado</dt><dd>Obra ejecutada</dd></div>
+          <div><dt>Publicación</dt><dd>Cliente autorizado</dd></div>
+          <div><dt>Resultado</dt><dd>Documentado mediante fotografías</dd></div>
+        </dl>
+      </aside>
+
+      <div class="case-narrative">
+        <p class="case-kicker">Lectura técnica</p>
+        <h2 id="story-title">Problema, intervención y resultado</h2>
+        <article>
+          <span>01</span>
+          <div><h3>Situación inicial</h3><p>{{caseProblem}}</p></div>
+        </article>
+        <article>
+          <span>02</span>
+          <div><h3>Intervención ejecutada</h3><p>{{caseSolution}}</p></div>
+        </article>
+        <article>
+          <span>03</span>
+          <div><h3>Resultado documentado</h3><p>{{caseResult}}</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <nav class="case-pagination case-wrap" aria-label="Otros casos">
+{{{casePaginationHtml}}}
+  </nav>
+</main>
+
+<footer class="case-footer">
+  <div class="case-wrap">
+    <p>{{copyrightText}}</p>
+    <p>{{{legalLinksHtml}}}</p>
+  </div>
+</footer>
+</body>
+</html>

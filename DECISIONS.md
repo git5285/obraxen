@@ -6,44 +6,33 @@
 
 ---
 
-## ADR-001 — HTML estático sin build
+## ADR-001 — Generador estático mínimo sin framework
 
-**Estado:** Aceptada · **actualizada 2026-07-14 (disparador 3 ejecutado)**
+**Estado:** Aceptada · **actualizada 2026-07-14**
 
-> **Actualización (2026-07-14).** Se ejecutó el **disparador 3** (SEO real): se
-> añadió un **build estático mínimo sin dependencias** (`scripts/build.mjs`) que
-> renderiza `dist/` (index.html estático + `css/` + `img/`) desde `src/index.html`
-> + `data/brand.json`; Vercel sirve solo `dist/` (`outputDirectory`). `<title>`,
-> `meta`, Open Graph y JSON-LD se resuelven **en build** (HTML 100% estático, sin
-> fetch ni inyección en runtime). No se adoptó framework: sigue siendo HTML/CSS/JS
-> servido, ahora con un paso de render de ~120 líneas de Node puro. Vercel ejecuta
-> `node scripts/build.mjs` (`vercel.json`). La decisión original («sin framework»)
-> se mantiene; lo que cambia es que ya **sí hay un paso de build**. Disparadores 1
-> (colecciones) y 2 (i18n) siguen pendientes → ver [ADR-004](#adr-004--modelo-de-contenido-antes-que-páginas).
+> **Actualización (2026-07-14).** `scripts/build.mjs` genera la portada, seis
+> páginas de caso, dos páginas legales y los activos de `dist/`. Los proyectos
+> proceden de `data/proyectos.json`; no se mantienen páginas duplicadas a mano.
 
-**Contexto.** El sitio es una sola página (`index.html`) con estilos y JS
-embebidos; los tokens viven en `css/tokens.css` y la identidad en
-`data/brand.json`. El alcance actual (un landing con hero, servicios, proceso,
-FAQ y contacto) no justifica tooling: no hay rutas, ni colecciones, ni i18n
-activo. El despliegue es un push a `main` → Vercel.
+**Contexto.** La web necesita HTML estático, una colección de proyectos y varias
+rutas, pero no necesita runtime, base de datos ni framework cliente. Los tokens
+viven en `css/tokens.css`, la identidad en `data/brand.json` y los casos en
+`data/proyectos.json`.
 
-**Decisión.** No introducir build ni framework. Mantener HTML/CSS/JS servidos tal
-cual, sin dependencias de compilación.
+**Decisión.** Mantener un generador estático pequeño en Node puro, sin dependencias
+de compilación. Vercel servirá únicamente `dist/` cuando se reactive la publicación.
 
 **Consecuencias.**
-- (+) Cero mantenimiento de toolchain; edición y despliegue triviales.
-- (+) Sin superficie de fallo de build; el fichero servido es el fichero fuente.
+- (+) Cero mantenimiento de framework o toolchain externo.
+- (+) Un solo modelo genera el resumen y el detalle de cada proyecto.
 - (−→✓) ~~La identidad se inyecta en runtime por JS~~ → **resuelto** por el build
   (ver actualización arriba y ADR-003): cabecera estática.
 - (−→✓) ~~Bloques repetidos (nav ×3, etc.) se mantienen a mano~~ → **resuelto**:
   nav, logotipo, CTA y contacto viven como parciales/constantes en `src/`.
 
-**Disparador para migrar** (a generador estático, p. ej. Astro) — basta **uno**:
-1. Activar secciones que hoy están `hidden` con contenido real (Proyectos,
-   Equipo, Recursos) → aparecen colecciones repetibles.
-2. Necesidad de **i18n** para operar en Europa.
-3. **SEO real**: antes de quitar el `noindex`, servir las etiquetas de cabecera
-   en HTML (build/SSR) en lugar de por JS.
+**Disparador para migrar** a un generador como Astro: activar i18n, incorporar
+varias colecciones nuevas o necesitar componentes compartidos que hagan crecer
+de forma desproporcionada el generador actual.
 
 Relacionada con [ADR-004](#adr-004--modelo-de-contenido-antes-que-páginas).
 
