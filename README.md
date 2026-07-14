@@ -4,11 +4,12 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 **Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
-La base actual es la referencia funcional y visual. El stack objetivo aprobado
-es Next.js App Router + TypeScript, GitHub, Vercel, GA4, Search Console y Clarity;
-la migracion por fases, sus puertas de calidad y el modelo de consentimiento se
-detallan en [`ROADMAP.md`](ROADMAP.md). Hasta completar esa migracion, los comandos
-y la estructura descritos aqui siguen siendo los vigentes.
+La base actual es la referencia funcional y visual. La Fase 1 ya incorpora una
+fundacion paralela con Next.js App Router, TypeScript, validacion Zod, ESLint y
+Vitest. La migracion por fases, sus puertas de calidad y el modelo de
+consentimiento se detallan en [`ROADMAP.md`](ROADMAP.md). Hasta alcanzar paridad,
+el build estatico sigue siendo la salida principal y no se despliega la base
+Next.js.
 
 > **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
 > temporal heredada del nombre de la carpeta. No es la marca, no es una opción
@@ -27,6 +28,11 @@ y la estructura descritos aqui siguen siendo los vigentes.
 - `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`) y el
   comportamiento cliente aislado de la portada (`home-script`)
 - `scripts/build.mjs` — render estático (sin dependencias)
+- `src/app/` — fundacion App Router; por ahora solo expone una ruta interna de
+  control y conserva los tokens visuales existentes
+- `src/lib/` — carga tipada de identidad, proyectos, ofertas y estado de
+  publicacion
+- `tests/` — reglas de datos, publicacion y rutas de la fundacion Next.js
 - `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
 - `css/home.css` — estilos propios de la portada, separados de su estructura HTML
 - `css/projects.css` — estilos propios del hub técnico de proyectos
@@ -52,7 +58,13 @@ y la estructura descritos aqui siguen siendo los vigentes.
 ```sh
 npm run build      # genera dist/ desde src/ + data/ + css/ + img/
 npm run check      # build + validación de datos, SEO, scripts, anclas y activos
+npm run check:next # lint + tipos + tests + build de la fundacion Next.js
+npm run check:all  # valida en conjunto la base estatica y la fundacion Next.js
 ```
+
+El entorno reproducible de la fundacion usa Node `24.x` (`.nvmrc`).
+`npm run dev:next` abre el App Router localmente y `npm run build:next` lo compila
+sin cambiar `vercel.json` ni sustituir la salida `dist/`.
 
 `<title>`, `meta`, Open Graph y JSON-LD se resuelven **en build**: el HTML servido
 es completamente estático (sin fetch ni inyección de marca en runtime).

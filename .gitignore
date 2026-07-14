@@ -6,6 +6,7 @@ node_modules/
 .next/
 dist/
 coverage/
+*.tsbuildinfo
 
 # Configuración local de herramientas
 .claude/
