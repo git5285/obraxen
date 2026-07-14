@@ -1,0 +1,99 @@
+/* =====================================================================
+   tokens.css — Único punto de verdad del color y la tipografía de marca.
+   Recolorear la marca = editar SOLO este fichero.
+   Los colores están en OKLCH y son equivalentes exactos (round-trip) a los
+   valores sRGB originales; el hex de referencia va en el comentario.
+   ===================================================================== */
+:root{
+  /* ---- Color · núcleo de marca (nombres del brief) ---- */
+  --brand-primary: oklch(64.607% 0.1943 41.116);  /* #EA580C naranja */
+  --brand-ink:     oklch(20.924% 0.006 271.116);  /* #17181B texto principal */
+  --brand-bg:      oklch(100% 0 0);                /* #FFFFFF fondo */
+  --brand-surface: oklch(100% 0 0);               /* #FFFFFF tarjetas/paneles claros */
+  --brand-muted:   oklch(54.543% 0.01 271.239);   /* #6E7076 texto atenuado */
+
+  /* ---- Color · escala del primario ---- */
+  --brand-primary-dark:        oklch(55.343% 0.174 38.402);  /* #C2410C */
+  --brand-primary-light:       oklch(75.764% 0.159 55.934);  /* #FB923C */
+  --brand-primary-tint:        oklch(97.962% 0.016 73.684);  /* #FFF7ED fondo tinte */
+  --brand-primary-tint-border: oklch(90.146% 0.073 70.697);  /* #FED7AA borde tinte */
+  --brand-selection:           oklch(95.42% 0.037 75.164);   /* #FFEDD5 ::selection */
+
+  /* ---- Color · neutros / superficies oscuras ---- */
+  --brand-ink-2:        oklch(25.676% 0.008 274.653);  /* #222327 */
+  --brand-ink-deep:     oklch(17.28% 0.004 264.452);   /* #0F1012 */
+  --brand-ink-panel:    oklch(24.794% 0.006 271.176);  /* #202124 */
+  --brand-overlay-menu: oklch(18.02% 0.032 266.625);   /* #0B1120 velo menú móvil */
+  --brand-muted-2:      oklch(69.56% 0.006 264.522);   /* #9B9DA1 */
+  --brand-line:         oklch(93.8% 0.01 252.813);     /* #E6EBF1 líneas/bordes */
+  --brand-line-strong:  oklch(89.895% 0.015 260.729);  /* #D8DEE8 borde hover */
+  --brand-input-border: oklch(86.898% 0.02 252.894);   /* #CBD5E1 borde inputs */
+
+  /* ---- Color · bases para superposiciones con alfa (relative color) ---- */
+  --brand-on-dark:     oklch(100% 0 0);               /* #FFFFFF blanco sobre oscuro */
+  --brand-shadow:      oklch(0% 0 0);                 /* #000000 sombras */
+  --brand-shadow-blue: oklch(33.447% 0.061 282.594); /* rgb(50,50,93) sombra tarjetas */
+  --brand-aurora:      oklch(35.575% 0.007 264.474); /* rgb(58,60,64) aurora hero */
+  --brand-fisura:      oklch(69.479% 0.007 255.491); /* rgb(154,157,161) fisura rota */
+
+  /* ---- Color · textura decorativa de foto placeholder ---- */
+  --brand-tex-a: oklch(72.122% 0.005 258.33);  /* #A3A5A8 */
+  --brand-tex-b: oklch(61.965% 0.006 264.517); /* #84868A */
+  --brand-tex-c: oklch(52.038% 0.007 264.507); /* #67696D */
+
+  /* ---- Tipografía · familias ---- */
+  --font-sans:    'Inter', -apple-system, 'SF Pro Text', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+
+  /* ---- Tipografía · escala modular (base 1rem · razón 1.25) ---- */
+  --fs-xs:   0.64rem;
+  --fs-sm:   0.8rem;
+  --fs-base: 1rem;
+  --fs-md:   1.25rem;
+  --fs-lg:   1.563rem;
+  --fs-xl:   1.953rem;
+  --fs-2xl:  2.441rem;
+  --fs-3xl:  3.052rem;
+  --fs-4xl:  3.815rem;
+  --lh-tight: 1.1;
+  --lh-base:  1.6;
+  --tracking-tight: -0.03em;
+
+  /* ---- Espaciado (base 4px) ---- */
+  --space-2xs: 4px;
+  --space-xs:  8px;
+  --space-sm:  12px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* ---- Radios ---- */
+  --radius-sm:   12px;
+  --radius-md:   18px;
+  --radius-lg:   28px;
+  --radius-pill: 999px;
+
+  /* ---- Layout ---- */
+  --maxw: 1180px;
+  --gutter: 24px;            /* canalón del contenedor .wrap */
+  --bp-mobile: 860px;        /* único breakpoint activo */
+
+  /* ---- z-index · escala semántica (prohibido cualquier valor literal) ---- */
+  --z-base:            0;
+  --z-dropdown:     1000;
+  --z-sticky:       1100;
+  --z-modal-backdrop:1200;
+  --z-modal:        1300;
+  --z-toast:        1400;
+  --z-tooltip:      1500;
+  --z-skip-link:    1600;    /* enlace "saltar al contenido": siempre por encima */
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1); /* ease-out exponencial · sin overshoot/bounce */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+}

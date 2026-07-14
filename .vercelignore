@@ -1,0 +1,7 @@
+# Ficheros que no hacen falta en el paquete de Vercel (higiene de subida).
+# NO se listan src/, scripts/ ni data/: son ENTRADAS del build
+# (node scripts/build.mjs las lee); excluirlas rompería el build.
+# Lo que se sirve es dist/ (outputDirectory en vercel.json), así que src/,
+# scripts/, data/ y *.md quedan fuera de lo servido igualmente → 404.
+*.md
+.gitignore
