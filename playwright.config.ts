@@ -33,6 +33,10 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run start -- --hostname 127.0.0.1 --port 3000",
+    env: {
+      GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID ?? "G-TEST123456",
+      CLARITY_PROJECT_ID: process.env.CLARITY_PROJECT_ID ?? "testclarity1",
+    },
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !isCi,
     timeout: 120_000,

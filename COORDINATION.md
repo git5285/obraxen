@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 21:29 Europe/Madrid.
+Actualizado: 2026-07-14 22:12 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -73,6 +73,12 @@ cambios staged sin propietario.
   salida autodetectada y `vercel build` pasa sin desplegar. El gate posterior al
   merge, run `29361794598`, está verde y la preview Vercel fue omitida; las claims
   `042123c8...` y `b376296c...` están liberadas.
+- Fase 5 entregada mediante la PR `#8`: consentimiento básico con rechazo y
+  aceptación equivalentes, preferencia revocable a 180 días, configuración de
+  GA4/Clarity por entorno, política `/cookies/`, CSP acotada y carga posterior a
+  aceptación. El gate local completo pasa con 50 unitarias, 46 ejecuciones
+  Playwright y Lighthouse 97/97/98; no hay IDs reales, despliegue ni indexación.
+  La claim `19c89a6e...` está liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -88,6 +94,8 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   no se usa `output: export` ni se mantiene la base legacy.
 - `REPOSITORY_EXPOSURE.md` controla los riesgos derivados de la visibilidad
   pública del código y datos.
+- ADR-008 fija consentimiento básico: no se consulta configuración ni se carga
+  GA4 o Clarity antes de aceptar; publicidad permanece siempre denegada.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - Naming está abierto solo como investigación. Selección, sociedad, dominio y
   contacto siguen pendientes.
@@ -95,9 +103,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 ## Orden siguiente
 
 1. Mantener previews, indexación y publicación apagadas.
-2. Abrir una claim independiente para la Fase 5 cuando se autorice su inicio.
-3. Implementar el modelo de consentimiento y sus pruebas, sin cargar
-   analítica antes de una aceptación válida.
+2. No configurar IDs reales hasta aprobar proveedores, textos y entornos.
+3. Esperar al dominio definitivo para canonical, sitemap público, Search Console
+   y datos estructurados finales.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
 efecto lateral de esta coordinación.

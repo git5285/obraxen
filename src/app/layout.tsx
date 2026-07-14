@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { ConsentManager } from "@/components/consent-manager";
 import { brand } from "@/lib/brand";
 import { projects } from "@/lib/projects";
 import { getPublicationState } from "@/lib/publication";
 import "./globals.css";
+import "../../css/consent.css";
 
 const publication = getPublicationState(brand, projects);
 
@@ -32,7 +34,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ConsentManager />
+      </body>
     </html>
   );
 }

@@ -1,8 +1,9 @@
 # Web corporativa — reparación de pavimentos industriales
 
 Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. La portada, el hub, seis fichas de proyecto y los dos borradores
-legales se prerenderizan en build; la navegación es la única isla cliente propia.
+Components. La portada, el hub, seis fichas de proyecto y los tres borradores
+legales se prerenderizan en build; navegación y consentimiento son las dos islas
+cliente propias.
 
 La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
 con los despliegues Git de Vercel desactivados. La visibilidad pública del
@@ -16,8 +17,8 @@ repositorio no autoriza publicar o desplegar el sitio.
 ## Arquitectura
 
 - `src/app/` — rutas App Router, metadata, robots y sitemap.
-- `src/components/` — secciones de portada, proyectos, navegación y páginas
-  legales.
+- `src/components/` — secciones de portada, proyectos, navegación, consentimiento
+  y páginas legales.
 - `src/lib/` — carga tipada de identidad, proyectos y ofertas, imports de
   imágenes y puertas de publicación.
 - `data/brand.json` — única fuente de identidad y estado de publicación.
@@ -44,6 +45,8 @@ Next.js.
 | `/proyectos/{slug}/` | Seis fichas SSG mediante `generateStaticParams` |
 | `/aviso-legal/` | Borrador incompleto, no apto para publicación |
 | `/privacidad/` | Borrador incompleto, no apto para publicación |
+| `/cookies/` | Borrador técnico de cookies y almacenamiento |
+| `/api/analytics-config/` | Configuración del entorno, consultada solo tras aceptar |
 | `/robots.txt` | Bloquea rastreo mientras la preview esté cerrada |
 | `/sitemap.xml` | Vacío en preview; se completa solo al superar la puerta pública |
 | `/soluciones/` | 404 mientras no existan ofertas publicables |
@@ -64,7 +67,7 @@ npm run check        # lint + tipos + unitarias + build
 npm run check:quality # gate completo local
 ```
 
-El gate remoto ejecuta el mismo `npm run check`, 36 pruebas Playwright y
+El gate remoto ejecuta el mismo `npm run check`, 46 pruebas Playwright y
 presupuestos Lighthouse móviles en portada, hub y un caso. Los informes se
 conservan como artefactos durante 14 días.
 
@@ -84,6 +87,27 @@ La CSP mantiene `unsafe-inline` solo en `script-src` para el bootstrap generado
 por App Router. `script-src-attr 'none'` bloquea manejadores inline y
 `style-src` no permite estilos inline. Los nonces no se adoptan porque exigirían
 render dinámico; SRI se reevaluará cuando deje de ser experimental en Next.
+Los orígenes de GA4 y Clarity están declarados de forma explícita en `script-src`,
+`connect-src` e `img-src`; la allowlist no carga recursos por sí sola y excluye
+los endpoints publicitarios de Google.
+
+## Consentimiento y analítica
+
+La web usa consentimiento básico: no descarga GA4 o Clarity, no consulta sus IDs
+y no envía pings cookieless antes de aceptar. La preferencia se guarda durante
+180 días en `localStorage`, puede modificarse desde un control permanente y se
+invalida si cambia su versión o caduca.
+
+Los IDs se configuran por entorno como `GA_MEASUREMENT_ID` y
+`CLARITY_PROJECT_ID`; `.env.example` documenta las claves sin incorporar valores.
+La ruta interna valida el formato y devuelve `null` cuando faltan. No hay IDs
+reales configurados en el repositorio ni autorización para activarlos.
+
+Consent Mode v2 mantiene publicidad, personalización y datos publicitarios
+denegados incluso al aceptar analítica. Clarity usa ConsentV2, no recibe IDs
+personalizados y los formularios quedan enmascarados. Al retirar una aceptación
+se deniega el estado, se limpian cookies detectables y se reinicia la página si
+las etiquetas ya estaban ejecutándose.
 
 ## Datos y puerta de publicación
 
@@ -93,7 +117,7 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 - nombre comercial distinto del identificador temporal;
 - sociedad constituida, razón social, CIF y domicilio validado;
 - dominio, email y teléfono o WhatsApp reales;
-- aviso legal y privacidad revisados profesionalmente;
+- aviso legal, privacidad y cookies revisados profesionalmente;
 - autorización documentada de cada caso para nombre y fotografías;
 - referencia verificable y revisión legal aprobada por caso.
 
@@ -133,7 +157,8 @@ tareas; no son contenido público del sitio.
 
 ## Próximo hito
 
-La siguiente fase técnica es la Fase 5: modelo y panel de consentimiento probado
-antes de incorporar GA4 o Clarity. Naming, sociedad, contacto, permisos, revisión
-legal, dominio, indexación y despliegue continúan bloqueados por decisiones y
-evidencia reales.
+La base técnica de Fase 5 está terminada. Configurar IDs reales requiere aprobar
+proveedores, textos y entornos; canonical, sitemap público, Search Console y datos
+estructurados finales requieren el dominio definitivo. Naming, sociedad,
+contacto, permisos, revisión legal, indexación y despliegue continúan bloqueados
+por decisiones y evidencia reales.

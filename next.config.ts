@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-attr 'none'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-src 'none'; frame-ancestors 'none'; manifest-src 'self'; upgrade-insecure-requests",
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://*.clarity.ms; script-src-attr 'none'; style-src 'self'; font-src 'self'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-src 'none'; frame-ancestors 'none'; manifest-src 'self'; upgrade-insecure-requests",
   },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -11,7 +11,7 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=31536000" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=(), attribution-reporting=()",
   },
 ];
 

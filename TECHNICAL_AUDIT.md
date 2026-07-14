@@ -6,7 +6,7 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 ## Estado
 
 - Implementación única: Next.js App Router.
-- Portada, hub, seis casos, aviso legal, privacidad, robots y sitemap
+- Portada, hub, seis casos, aviso legal, privacidad, cookies, robots y sitemap
   prerenderizados; no queda builder o plantilla HTML legacy.
 - Preview cerrada: `noindex,nofollow`, sitemap vacío, sin dominio y sin
   despliegues Git automáticos.
@@ -14,14 +14,16 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
   secretos o credenciales en los archivos versionados.
 - La puerta pública falla por identidad, sociedad, contacto, revisión legal y
   autorizaciones documentales de los casos, como está previsto.
+- Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
+  permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
 
 ## Resultados actuales
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/` | 97 | 100 | 100 | 66 | 2.556 ms | 11 ms | 0 |
-| `/proyectos/` | 97 | 100 | 100 | 66 | 2.686 ms | 2 ms | 0 |
-| `/proyectos/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.309 ms | 2 ms | 0 |
+| `/` | 97 | 100 | 100 | 66 | 2.553 ms | 10 ms | 0 |
+| `/proyectos/` | 97 | 100 | 100 | 66 | 2.687 ms | 3 ms | 0 |
+| `/proyectos/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.459 ms | 2 ms | 0 |
 
 El SEO 66 es deliberado mientras la preview siga noindex. Los tres perfiles
 superan el presupuesto de rendimiento 95, accesibilidad y buenas prácticas 100,
@@ -30,18 +32,25 @@ siendo inferior a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 41 pruebas Vitest y build de producción.
-- Build: 14 páginas generadas; todas las rutas de contenido son estáticas o SSG.
-- Playwright: 36 ejecuciones, 33 correctas y 3 omisiones intencionales de pruebas
+- `npm run check`: ESLint, TypeScript, 50 pruebas Vitest y build de producción.
+- Build: 15 páginas generadas; todas las rutas de contenido son estáticas o SSG.
+  Solo `/api/analytics-config/` es dinámico y no se consulta antes de aceptar.
+- Playwright: 46 ejecuciones, 42 correctas y 4 omisiones intencionales de pruebas
   exclusivas de móvil en el proyecto de escritorio.
-- Diez rutas de contenido verificadas a 390 × 844 y 1.440 × 1.000.
+- Once rutas de contenido verificadas a 390 × 844 y 1.440 × 1.000.
 - Cero errores de consola o red, imágenes rotas u overflow horizontal.
-- Axe sin hallazgos serios o críticos en portada, hub, un caso y las dos rutas
+- Axe sin hallazgos serios o críticos en portada, hub, un caso y las tres rutas
   legales.
 - WCAG 2.5.3 comprobado expresamente con `label-content-name-mismatch`: cero
   violaciones en los seis enlaces de casos de la portada.
 - Menú móvil con foco inicial, trampa de foco, cierre con `Escape`, restauración
   del disparador y foco en la sección de destino.
+- Panel de privacidad con trampa y restauración de foco; aceptar y rechazar tienen
+  la misma jerarquía y targets mínimos de 44 px.
+- Rechazar y volver con una preferencia denegada genera cero solicitudes al
+  endpoint interno, Google Analytics, Google Tag Manager, Clarity o Bing.
+- Aceptar carga únicamente los dos scripts simulados por el test; retirar envía
+  denegación, elimina etiquetas y deja la visita siguiente sin requests externos.
 - `/soluciones/` y slugs desconocidos responden 404.
 - `robots.txt` bloquea rastreo y `sitemap.xml` no contiene URLs en preview.
 
@@ -49,12 +58,15 @@ siendo inferior a 2,5 s.
 
 - CSP: `style-src 'self'`, `script-src-attr 'none'`, bloqueo de objetos, frames y
   orígenes no declarados. `script-src` mantiene `unsafe-inline` para el bootstrap
-  de App Router.
+  de App Router y permite solo los hosts técnicos de GA4 y Clarity; no se permiten
+  endpoints publicitarios.
 - HSTS de aplicación: `max-age=31536000`; Vercel añade su política de perímetro
   cuando existe una URL servida.
 - `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y
   `Permissions-Policy` se prueban en navegador.
-- No se cargan fuentes, analítica, publicidad o scripts de terceros.
+- Sin consentimiento no se cargan fuentes, analítica, publicidad o scripts de
+  terceros. Los defaults de Consent Mode v2 mantienen siempre denegada la
+  publicidad; Clarity usa ConsentV2 y el formulario queda enmascarado.
 - La dirección provisional se retiró de `brand.json` y permanece `null` hasta
   disponer de un domicilio empresarial validado.
 - Los informes locales y auditorías externas están ignorados.
@@ -103,7 +115,8 @@ eliminó después de verificarlo.
 
 | Elemento | Estado | Siguiente condición |
 |---|---|---|
-| Consentimiento | No implementado | Fase 5 antes de GA4 o Clarity |
+| Consentimiento | Implementado y probado | Mantener antes de GA4 o Clarity |
+| IDs de GA4 y Clarity | Sin dato | Proveedores, textos y entornos aprobados |
 | CSP sin `unsafe-inline` de script | Aplazado | SRI estable o cambio justificado a render dinámico |
 | Permisos de clientes y fotografías | Bloqueo público | Documento, alcance y revisión por caso |
 | Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
