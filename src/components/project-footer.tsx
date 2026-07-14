@@ -17,6 +17,8 @@ export function ProjectFooter({ variant }: ProjectFooterProps) {
           {brand.legalUrl ? <a href={brand.legalUrl}>Aviso legal</a> : null}
           {brand.legalUrl && brand.privacidadUrl ? " · " : null}
           {brand.privacidadUrl ? <a href={brand.privacidadUrl}>Privacidad</a> : null}
+          {brand.legalUrl || brand.privacidadUrl ? " · " : null}
+          <a href="/cookies/">Cookies</a>
         </p>
       </div>
     </footer>
