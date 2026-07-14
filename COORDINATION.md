@@ -10,7 +10,6 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
-| Fase 4.5 (`042123c8...`) | Consolidación, evidencia y cutover Next | Implementación verificada; preparando PR |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -70,7 +69,8 @@ cambios staged sin propietario.
   permisos trazables, datos desconocidos normalizados, exposición revisada,
   rutas legales y sitemap migrados, y builder/HTML legacy retirados. Next.js es
   la única implementación; el preset remoto de Vercel también reconoce Next con
-  salida autodetectada y `vercel build` pasa sin desplegar. Falta integrar la rama.
+  salida autodetectada y `vercel build` pasa sin desplegar. La PR borrador `#6`
+  contiene la entrega completa y la claim `042123c8...` está liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -92,8 +92,8 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Cerrar verificaciones, handoff y PR de la Fase 4.5; mantener previews apagadas.
-2. Integrar la Fase 4.5 solo con `Quality gate` verde.
+1. Revisar la PR `#6` de Fase 4.5 y mantener previews apagadas.
+2. Marcarla lista o integrarla solo con `Quality gate` verde.
 3. Abrir Fase 5 por el modelo de consentimiento y sus pruebas, sin cargar
    analítica antes de una aceptación válida.
 
