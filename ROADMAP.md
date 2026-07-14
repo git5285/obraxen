@@ -45,7 +45,9 @@ src/
     proyectos/page.tsx
     proyectos/[slug]/page.tsx
     (legal)/aviso-legal/page.tsx
+    (legal)/cookies/page.tsx
     (legal)/privacidad/page.tsx
+    api/analytics-config/route.ts
     robots.ts
     sitemap.ts
   components/
@@ -53,11 +55,14 @@ src/
     projects-section.tsx
     project-case.tsx
     legal-page.tsx
+    consent-manager.tsx
   lib/
     brand.ts
     projects.ts
     offers.ts
     publication.ts
+    analytics-config.ts
+    consent.ts
 data/
   brand.json
   proyectos.json
@@ -108,12 +113,14 @@ su activación no autoriza producción.
 ### Google Analytics 4
 
 - Usar un ID `G-...` por entorno; produccion y previews no comparten datos.
-- Implementar consentimiento basico: la etiqueta no se carga antes de que el
-  usuario acepte analitica.
+- Consentimiento basico implementado: la etiqueta no se carga ni se consulta su
+  configuración antes de que el usuario acepte analitica.
 - Configurar Consent Mode v2 con analitica y publicidad denegadas por defecto;
   no activar funciones publicitarias en la primera version.
 - No enviar nombres, emails, telefonos, textos de formularios ni identificadores
   de cliente como parametros de evento.
+- `GA_MEASUREMENT_ID` se resuelve en servidor por entorno y falla cerrado si
+  falta o no cumple el formato; no existe un ID real en el repositorio.
 
 ### Microsoft Clarity
 
@@ -122,6 +129,9 @@ su activación no autoriza producción.
   ConsentV2.
 - Mantener enmascarados formularios, datos de contacto y cualquier contenido que
   pueda identificar a una persona.
+- `CLARITY_PROJECT_ID` sigue el mismo modelo por entorno; la retirada envía el
+  estado denegado, limpia cookies detectables y detiene la etiqueta mediante una
+  recarga controlada si ya estaba activa.
 
 ### Eventos iniciales
 
@@ -140,7 +150,7 @@ La puntuacion usa `(impacto + riesgo) x (6 - esfuerzo)`, con valores de 1 a 5.
 |---|---:|---:|---:|---:|---|
 | Mantener cerrada la puerta de publicacion | 5 | 5 | 1 | 50 | Protegido; conservar |
 | Corregir nombres accesibles del hub | 4 | 4 | 1 | 40 | Completado |
-| Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Fase 5, antes de scripts |
+| Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Completado técnicamente; activación bloqueada |
 | Retirar JPEG y asset huerfano | 4 | 3 | 1 | 35 | Completado |
 | Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada, hub y casos completados |
 | Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Completado salvo bootstrap App Router; decisión en ADR-006 |
@@ -217,10 +227,13 @@ precipitada.
 
 ### Fase 5 — Analitica, SEO y consentimiento
 
-- Implementar el panel de consentimiento y sus pruebas antes de GA4 o Clarity.
-- Configurar IDs por entorno y comprobar que una negativa genera cero requests
-  de analitica.
-- Con dominio definitivo, activar canonical, sitemap, Search Console y datos
+- [x] Implementar el panel de consentimiento y sus pruebas antes de GA4 o Clarity.
+- [x] Definir IDs por entorno con validación cerrada y comprobar que una negativa
+  genera cero requests de configuración o analitica.
+- [x] Añadir información permanente, retirada, caducidad a 180 días, Consent Mode
+  v2 con publicidad denegada y Clarity ConsentV2.
+- [ ] Configurar IDs reales solo después de aprobar proveedores, textos y entornos.
+- [ ] Con dominio definitivo, activar canonical, sitemap, Search Console y datos
   estructurados finales.
 
 ### Fase 6 — Publicacion controlada
@@ -246,10 +259,11 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Revisar e integrar la **Fase 4.5 — Consolidación y cutover**. Después, abrir una
-reserva independiente para **Fase 5 — Analítica, SEO y consentimiento**, empezando
-por el modelo de consentimiento y sus pruebas sin cargar todavía GA4 ni Clarity.
-Next.js es la única salida; no se reabre la base legacy.
+Integrar la base técnica de la **Fase 5 — Analítica, SEO y consentimiento** sin
+añadir IDs reales ni habilitar despliegues. La activación de proveedores queda
+sujeta a revisión legal y configuración separada por entorno; canonical, sitemap
+público, Search Console y datos estructurados finales esperan al dominio real.
+Next.js sigue siendo la única salida y no se reabre la base legacy.
 
 ## Referencias oficiales de implementacion
 

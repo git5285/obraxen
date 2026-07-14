@@ -31,6 +31,10 @@ describe("Next.js homepage", () => {
     expect(html).not.toContain("style=");
   });
 
+  it("keeps cookie information permanently available from the footer", () => {
+    expect(html).toContain('<a href="/cookies/">Cookies</a>');
+  });
+
   it("keeps the visible project link text inside its accessible name", () => {
     expect(html.match(/>Ver el caso completo <span aria-hidden="true">/g))
       .toHaveLength(projects.length);
