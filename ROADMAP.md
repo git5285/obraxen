@@ -259,11 +259,12 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Integrar la base técnica de la **Fase 5 — Analítica, SEO y consentimiento** sin
-añadir IDs reales ni habilitar despliegues. La activación de proveedores queda
-sujeta a revisión legal y configuración separada por entorno; canonical, sitemap
-público, Search Console y datos estructurados finales esperan al dominio real.
-Next.js sigue siendo la única salida y no se reabre la base legacy.
+Cerrar las condiciones externas pendientes antes de la **Fase 6 — Publicación
+controlada**: aprobar identidad y textos legales; decidir proveedores y configurar
+sus IDs por entorno; y disponer del dominio definitivo para canonical, sitemap,
+Search Console y datos estructurados finales. Hasta entonces, despliegues,
+indexación y analítica real permanecen apagados. Next.js sigue siendo la única
+salida y no se reabre la base legacy.
 
 ## Referencias oficiales de implementacion
 
