@@ -150,9 +150,10 @@ situación operativa en cinco; algunos años, la continuidad de TP-Link, los
 tiempos de reapertura y los resultados medidos siguen sin dato. El build omite
 cualquier campo desconocido en lugar de inferirlo.
 
-**Siguiente paso concreto:** conservar modelos, slugs y puertas de evidencia al
-migrar proyectos y ofertas durante la Fase 3. Ninguna oferta se publica por el
-hecho de existir en `data/ofertas.json`.
+**Actualización de Fase 3:** el hub y las seis fichas Next se prerenderizan desde
+el mismo modelo mediante `generateStaticParams`. La puerta tipada de soluciones
+filtra exclusivamente `estadoPublicacion: publicable`; como el resultado actual
+es cero, no se crea `/soluciones/` ni se expone contenido interno.
 
 ---
 
@@ -186,7 +187,7 @@ visual, responsive y accesible. `data/brand.json`, `data/proyectos.json` y
 El orden, las puertas de calidad y la estrategia de publicación se mantienen en
 [`ROADMAP.md`](ROADMAP.md), evitando duplicarlos en este ADR.
 
-**Actualización tras Fases 1 y 2.** La portada App Router queda prerenderizada y
+**Actualización tras Fases 1–3.** La portada App Router queda prerenderizada y
 dividida en secciones servidoras. Solo `src/components/site-navigation.tsx` usa
 `use client`; gestiona menu, foco y navegacion sticky. Durante la convivencia se
 importa `css/home.css` en el bundle Next para garantizar paridad sin duplicar el
@@ -195,3 +196,9 @@ estilo inline, lo que permite retirar `unsafe-inline` de `style-src`. La excepci
 permanece temporalmente en `script-src` por los bloques de arranque RSC que genera
 el prerender de App Router; la Fase 4 decidira hashes de build o nonces sin romper
 el objetivo estatico.
+
+El hub y las seis fichas se mantienen como Server Components sin nuevas islas
+cliente. Reutilizan los estilos de referencia y los imports de imagen versionados
+durante la convivencia. Metadata y Open Graph son propios de cada ruta; canonical,
+URL e imagen absoluta solo se emiten cuando `data/brand.json` contenga un dominio
+real.

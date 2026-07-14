@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 19:08 Europe/Madrid.
+Actualizado: 2026-07-14 19:23 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -54,6 +54,11 @@ cambios staged sin propietario.
   Components, navegacion como unica isla cliente, 17 tests, 24 imagenes
   responsive y paridad geometrica/visual verificada; `dist/` sigue siendo la
   salida principal.
+- Fase 2 integrada en GitHub mediante la PR `#3`; `main` queda en el merge
+  `2fba606`.
+- Fase 3 completada en `codex/phase-3-evidence`: hub y seis fichas Next
+  prerenderizadas desde datos, metadata por ruta, 18 imagenes responsive,
+  puerta de soluciones cerrada, 31 tests y paridad geometrica exacta.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -71,10 +76,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Revisar e integrar `codex/phase-2-homepage` mediante el flujo GitHub cuando se
-   autorice el push y la pull request.
-2. Abrir una claim y una rama nuevas para la Fase 3 de `ROADMAP.md`.
-3. Mantener la base estática hasta alcanzar paridad en Next.js.
+1. Revisar e integrar `codex/phase-3-evidence` mediante el flujo GitHub.
+2. Abrir una claim nueva para la Fase 4 de calidad de entrega.
+3. Mantener la base estática hasta que las rutas legales alcancen paridad.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
 efecto lateral de esta coordinación.
