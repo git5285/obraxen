@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -29,10 +29,10 @@
 <style>
   :root{
     --fondo:#FFFFFF;
-    --carbon:#0F172A;
-    --carbon-2:#1E293B;
-    --pizarra:#64748B;
-    --pizarra-2:#94A3B8;
+    --carbon:#17181B;
+    --carbon-2:#222327;
+    --pizarra:#6E7076;
+    --pizarra-2:#9B9DA1;
     --acento:#EA580C;
     --acento-osc:#C2410C;
     --acento-claro:#FB923C;
@@ -55,6 +55,7 @@
     padding:0;
   }
   h1,h2,h3{line-height:1.1;font-weight:700;letter-spacing:-.03em}
+  h1,h2,.relato .linea,.logo{font-family:'Space Grotesk','Inter',sans-serif}
   a{color:inherit}
   :focus-visible{outline:3px solid var(--acento);outline-offset:2px;border-radius:4px}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
@@ -78,7 +79,7 @@
     position:absolute;inset:0;
     background:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"),
-      linear-gradient(135deg,#94A3B8 0%,#7C8798 45%,#64748B 100%);
+      linear-gradient(135deg,#A3A5A8 0%,#84868A 45%,#67696D 100%);
     background-blend-mode:overlay;
     transition:transform .45s ease;
   }
@@ -94,13 +95,14 @@
     display:inline-flex;align-items:center;gap:8px;
     padding:11px 22px;border-radius:999px;border:0;cursor:pointer;
     font-family:inherit;font-weight:700;font-size:.95rem;text-decoration:none;
-    transition:background .15s ease;
+    transition:background .15s ease,transform .15s ease;
   }
   .btn-acento{background:var(--acento);color:var(--blanco);
     box-shadow:0 1px 2px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.14)}
   .btn-acento::after{content:"\2192";font-weight:600;transition:transform .18s ease}
   .btn-acento:hover::after{transform:translateX(3px)}
-  .btn-acento:hover{background:var(--acento-osc)}
+  .btn-acento:hover{background:var(--acento-osc);transform:translateY(-1px)}
+  .btn:active{transform:scale(.97)}
   .btn-borde{border:1.5px solid rgba(255,255,255,.45);color:var(--blanco);background:transparent}
   .btn-borde:hover{border-color:var(--blanco)}
 
@@ -132,14 +134,14 @@
     background:
       radial-gradient(120% 90% at 85% 8%,rgba(234,88,12,.22) 0%,transparent 52%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E"),
-      linear-gradient(140deg,#1E293B 0%,#0F172A 55%,#0B1120 100%);
+      linear-gradient(140deg,#202124 0%,#17181B 55%,#0F1012 100%);
     max-width:none;
   }
   .hero::before{content:"";position:absolute;inset:-25%;pointer-events:none;
     background:
       radial-gradient(640px 420px at 76% 12%,rgba(234,88,12,.38),transparent 62%),
       radial-gradient(720px 520px at 12% 88%,rgba(251,146,60,.16),transparent 60%),
-      radial-gradient(900px 620px at 50% 55%,rgba(37,58,95,.55),transparent 65%);
+      radial-gradient(900px 620px at 50% 55%,rgba(58,60,64,.55),transparent 65%);
     filter:blur(46px);
     animation:aurora 16s ease-in-out infinite alternate;
   }
@@ -156,11 +158,10 @@
     padding:8px 16px;border-radius:999px;opacity:.85;display:block;
   }
   .hero-nav ul a:hover{opacity:1;background:rgba(255,255,255,.1)}
-  .hero-body{
-    display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:end;
-    padding:72px 56px 40px;
-  }
-  .hero h1{font-size:clamp(2.7rem,5.8vw,4.7rem);max-width:15ch;font-weight:750}
+  .hero-body{padding:130px 56px 64px}
+  .kicker-hero{color:var(--acento-claro)}
+  .kicker-hero::before{background:var(--acento-claro)}
+  .hero h1{font-size:clamp(3rem,7.6vw,6.2rem);max-width:12ch;font-weight:700;letter-spacing:-.025em}
   .hero h1 em{font-style:normal;color:var(--acento-claro)}
   .hero-sub{margin:22px 0 30px;max-width:46ch;color:rgba(255,255,255,.75)}
   .hero-badge{
@@ -177,8 +178,8 @@
 
   .fisura-wrap{padding:0 56px 34px}
   .fisura{width:100%;height:56px;display:block}
-  .fisura .f-rota{fill:none;stroke:rgba(148,163,184,.55);stroke-width:2.5;stroke-dasharray:5 6}
-  .fisura .f-fija{fill:none;stroke:var(--acento);stroke-width:5;stroke-linecap:round}
+  .fisura .f-rota{fill:none;stroke:rgba(154,157,161,.55);stroke-width:2.5;stroke-dasharray:5 6}
+  .fisura .f-fija{fill:none;stroke:var(--acento);stroke-width:6;stroke-linecap:round}
   .fisura-label{display:flex;justify-content:space-between;margin-top:6px;
     font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
 
@@ -187,10 +188,17 @@
   .intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
   .stat{border-left:2px solid var(--linea);padding-left:20px}
-  .stat b{font-size:2.5rem;font-weight:800;display:block;letter-spacing:-.02em}
+  .stat b{font-size:3.2rem;font-weight:800;display:block;letter-spacing:-.02em}
   .stat b i{font-style:normal;color:var(--acento)}
   .stat span{font-size:.82rem;color:var(--pizarra)}
 
+  .relato{background:var(--carbon);color:var(--blanco);padding:150px 0;overflow:hidden}
+  .relato .linea{font-weight:700;font-size:clamp(3.2rem,11vw,9rem);line-height:1.02;letter-spacing:-.03em}
+  .relato .linea:nth-of-type(2){margin-left:8vw}
+  .relato .linea:nth-of-type(3){margin-left:16vw}
+  .relato .pie{margin-left:16vw}
+  .relato .acento{color:var(--acento)}
+  .relato .pie{margin-top:34px;color:rgba(255,255,255,.55);max-width:44ch;font-size:1rem}
   .proceso{padding:60px 0 40px}
   .proceso .cab{margin-bottom:30px}
   .tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
@@ -209,10 +217,11 @@
   .tarjeta p{font-size:.9rem;color:var(--pizarra)}
 
   .sectores{padding:34px 0 10px}
-  .sectores .fila{
-    display:flex;flex-wrap:wrap;justify-content:center;gap:12px 14px;
-    padding:26px 0;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
-  }
+  .sectores .cinta{display:flex;overflow:hidden;padding:22px 0;
+    border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+  .sectores .grupo{display:flex;gap:14px;padding-right:14px;flex:none;
+    animation:cinta 28s linear infinite}
+  @keyframes cinta{to{transform:translateX(-100%)}}
   .sector{
     font-weight:700;font-size:.92rem;color:var(--pizarra);
     padding:8px 18px;border:1px solid var(--linea);
@@ -229,12 +238,15 @@
   }
   .serv .capa{
     position:relative;z-index:1;width:100%;padding:22px 24px;
-    background:linear-gradient(transparent,rgba(11,17,32,.85));
+    background:linear-gradient(transparent,rgba(15,16,18,.85));
     color:var(--blanco);
   }
   .serv .capa .ic{color:var(--acento-claro);margin-bottom:10px;width:28px;height:28px}
   .serv h3{font-size:1.15rem;margin-bottom:4px}
   .serv p{font-size:.85rem;color:rgba(255,255,255,.75)}
+  .capa-cta{display:inline-block;margin-top:12px;color:var(--blanco);font-weight:700;font-size:.85rem;
+    text-decoration:none;border-bottom:2px solid var(--acento);padding-bottom:2px}
+  .capa-cta:hover{color:var(--acento-claro)}
 
   .catalogo{margin-top:36px;background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r-md);padding:28px 30px}
   .catalogo h3{font-size:1rem;margin-bottom:16px}
@@ -292,7 +304,7 @@
     border-radius:var(--r-lg);overflow:hidden;color:var(--blanco);
     background:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E"),
-      linear-gradient(120deg,#1E293B 0%,#0B1120 100%);
+      linear-gradient(120deg,#202124 0%,#0F1012 100%);
     display:grid;grid-template-columns:1fr 1fr;gap:40px;
     padding:56px;
   }
@@ -341,7 +353,7 @@
     border-radius:0;overflow:hidden;color:var(--blanco);
     background:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E"),
-      linear-gradient(140deg,#1E293B 0%,#0B1120 100%);
+      linear-gradient(140deg,#202124 0%,#0F1012 100%);
     max-width:none;padding:88px 56px 40px;
   }
   .cierre .cta-fila,.cierre .foot,.cierre .legal{max-width:var(--maxw);margin-left:auto;margin-right:auto}
@@ -402,6 +414,7 @@
     .btn,.tarjeta,.foto > .tex,.sticky-nav{transition:none}
     .fisura .f-fija{stroke-dashoffset:0 !important;stroke-dasharray:none !important}
     .hero::before{animation:none}
+    .sectores .grupo{animation:none}
   }
 </style>
 </head>
@@ -456,17 +469,10 @@
   </div>
   <div class="hero-body">
     <div>
-      <h1 data-reveal>Tu pavimento vuelve a rendir. <em>Tu planta no se detiene.</em></h1>
-      <p class="hero-sub" data-reveal>Reparación de juntas, fisuras y superficies degradadas en naves logísticas, plantas de producción y aparcamientos industriales. Intervenciones por fases, compatibles con tu operativa.</p>
-      <span data-reveal style="display:inline-block">
-        <a class="btn btn-acento" href="#contacto">Pide una evaluación</a>
-        <a class="btn btn-borde" href="#servicios">Ver servicios</a>
-      </span>
-    </div>
-    <div class="hero-badge" data-reveal>
-      <span class="chip">Equipo veterano</span>
-      <strong>Oficio de siempre, empresa nueva</strong>
-      Fundada por profesionales con amplia trayectoria en pavimentos industriales.
+      <p class="kicker kicker-hero" data-reveal>Reparación de pavimentos industriales</p>
+      <h1 data-reveal>Tu planta no se detiene.</h1>
+      <p class="hero-sub" data-reveal>Juntas, fisuras y superficies degradadas — reparadas por fases, sin parar tu producción.</p>
+      <span data-reveal style="display:inline-block"><a class="btn btn-acento" href="#contacto">Pide una evaluación</a></span>
     </div>
   </div>
   <div class="fisura-wrap" aria-hidden="true">
@@ -490,6 +496,15 @@
         <div class="stat" data-reveal><b><i data-counter="48">48</i>&nbsp;h</b><span>Respuesta a cada solicitud de evaluación</span></div>
         <div class="stat" data-reveal><b><i data-counter="100">100</i>%</b><span>Presupuestos cerrados, sin sorpresas</span></div>
       </div>
+    </div>
+  </section>
+
+  <section class="relato" aria-label="Nuestro método en tres palabras">
+    <div class="wrap">
+      <p class="linea" data-relato>Diagnosticar.</p>
+      <p class="linea" data-relato>Reparar.</p>
+      <p class="linea acento" data-relato>Rendir.</p>
+      <p class="pie" data-relato>Tres palabras, un método: encontrar la causa, ejecutarla bien a la primera y devolver el pavimento al trabajo.</p>
     </div>
   </section>
 
@@ -526,13 +541,23 @@
 
   <section class="sectores">
     <div class="wrap">
-      <div class="fila" aria-label="Sectores en los que trabajamos">
-        <span class="sector" data-stagger>Logística</span>
-        <span class="sector" data-stagger>Alimentación</span>
-        <span class="sector" data-stagger>Automoción</span>
-        <span class="sector" data-stagger>Retail</span>
-        <span class="sector" data-stagger>Farmacéutico</span>
-        <span class="sector" data-stagger>Aparcamientos</span>
+      <div class="cinta" aria-label="Sectores en los que trabajamos">
+        <div class="grupo" aria-hidden="false">
+          <span class="sector">Logística</span>
+          <span class="sector">Alimentación</span>
+          <span class="sector">Automoción</span>
+          <span class="sector">Retail</span>
+          <span class="sector">Farmacéutico</span>
+          <span class="sector">Aparcamientos</span>
+        </div>
+        <div class="grupo" aria-hidden="true">
+          <span class="sector">Logística</span>
+          <span class="sector">Alimentación</span>
+          <span class="sector">Automoción</span>
+          <span class="sector">Retail</span>
+          <span class="sector">Farmacéutico</span>
+          <span class="sector">Aparcamientos</span>
+        </div>
       </div>
     </div>
   </section>
@@ -549,7 +574,8 @@
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h7M14 12h7M10 12l2-3 2 3-2 3z"/><path d="M3 7v10M21 7v10"/></svg>
             <h3>Reparación de juntas</h3>
-            <p>Reconstrucción y sellado de juntas dañadas por el tráfico de carretillas y maquinaria pesada.</p>
+            <p>Reconstrucción y sellado de juntas dañadas por el tráfico pesado.</p>
+            <a class="capa-cta" href="#contacto">Pedir evaluación →</a>
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Losa de hormigón con fisuras durante la inspección de una nave">
@@ -557,7 +583,8 @@
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L9 14l3 2 4-6 5 4"/><path d="M3 20h18"/></svg>
             <h3>Tratamiento de fisuras</h3>
-            <p>Reparación estructural o superficial con resinas y morteros técnicos.</p>
+            <p>Reparación estructural o superficial con resinas técnicas.</p>
+            <a class="capa-cta" href="#contacto">Pedir evaluación →</a>
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Fresadora de pavimento trabajando sobre la solera de hormigón">
@@ -565,7 +592,8 @@
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M4 20h16"/><path d="M6 16V9l6-4 6 4v7"/></svg>
             <h3>Recrecidos y nivelación</h3>
-            <p>Recuperación de planimetría con morteros autonivelantes en zonas hundidas o desgastadas.</p>
+            <p>Planimetría recuperada con morteros autonivelantes.</p>
+            <a class="capa-cta" href="#contacto">Pedir evaluación →</a>
           </div>
         </div>
         <div class="serv foto" data-stagger role="img" aria-label="Aplicación de sellador con rodillo sobre pavimento industrial">
@@ -573,7 +601,8 @@
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>
             <h3>Tratamientos superficiales</h3>
-            <p>Pulido, endurecimiento y recubrimientos continuos, más señalización vial interior.</p>
+            <p>Pulido, endurecimiento y recubrimientos continuos.</p>
+            <a class="capa-cta" href="#contacto">Pedir evaluación →</a>
           </div>
         </div>
       </div>
@@ -929,6 +958,13 @@ if (window.gsap && window.ScrollTrigger) {
       onLeaveBack: (targets) => gsap.set(targets, { opacity: 0, y: 10, overwrite: true })
     });
 
+    gsap.utils.toArray("[data-relato]").forEach((l) => {
+      gsap.from(l, {
+        yPercent: 55, opacity: 0, ease: "none",
+        scrollTrigger: { trigger: l, start: "top 96%", end: "top 55%", scrub: 0.6 }
+      });
+    });
+
     document.querySelectorAll("[data-counter]").forEach((el) => {
       const fin = parseInt(el.dataset.counter, 10);
       if (Number.isNaN(fin)) return;
@@ -946,4 +982,3 @@ if (window.gsap && window.ScrollTrigger) {
 </script>
 </body>
 </html>
-
