@@ -47,6 +47,7 @@ export function SiteFooter({
               method="post"
               encType="text/plain"
               aria-describedby="contacto-ayuda"
+              data-clarity-mask="true"
             >
               <label htmlFor="f-nombre">Nombre</label>
               <input id="f-nombre" name="nombre" type="text" autoComplete="name" required />
@@ -141,6 +142,8 @@ export function SiteFooter({
           {legal.legalUrl ? <a href={legal.legalUrl}>Aviso legal</a> : null}
           {legal.legalUrl && legal.privacyUrl ? " · " : null}
           {legal.privacyUrl ? <a href={legal.privacyUrl}>Privacidad</a> : null}
+          {legal.legalUrl || legal.privacyUrl ? " · " : null}
+          <a href="/cookies/">Cookies</a>
         </span>
       </div>
     </footer>
