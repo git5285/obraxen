@@ -25,9 +25,13 @@ for (const file of ['data/brand.json', 'data/proyectos.json', 'data/proyectos.sc
   }
 }
 const brand = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'brand.json'), 'utf8'));
+const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
 const temporaryName = String(brand.nombreTemporalNoPublicable || '').trim();
 if (temporaryName && html.toLocaleLowerCase('es').includes(temporaryName.toLocaleLowerCase('es'))) {
   errors.push(`La salida pública contiene el nombre temporal no publicable: ${temporaryName}`);
+}
+if (brand.publicar !== true && vercelConfig.git?.deploymentEnabled !== false) {
+  errors.push('Los despliegues automáticos deben permanecer desactivados mientras brand.publicar no sea true');
 }
 const requiredFiles = ['index.html', 'aviso-legal/index.html', 'privacidad/index.html', 'robots.txt', 'css/tokens.css', 'img/hero-nave.jpg'];
 if (brand.dominio) requiredFiles.push('sitemap.xml');
@@ -72,6 +76,15 @@ for (const marker of seoMarkers) {
 const externalScripts = [...html.matchAll(/<script[^>]+src="https:[^"]+"[^>]*>/g)].map((match) => match[0]);
 if (externalScripts.some((tag) => !tag.includes('integrity=') || !tag.includes('crossorigin='))) {
   errors.push('Hay scripts externos sin SRI/crossorigin');
+}
+const externalStyles = [...html.matchAll(/<link[^>]+href="https:[^"]+"[^>]*>/g)].map((match) => match[0]);
+if (externalScripts.length || externalStyles.length) {
+  errors.push('La preview no debe depender de scripts ni estilos de terceros');
+}
+for (const claim of ['Tu planta no se detiene', 'Mínima parada de actividad', 'sin compromiso', 'empresa nueva']) {
+  if (html.toLocaleLowerCase('es').includes(claim.toLocaleLowerCase('es'))) {
+    errors.push(`La salida contiene una afirmación no aprobada: ${claim}`);
+  }
 }
 
 if (errors.length) {

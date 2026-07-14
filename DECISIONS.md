@@ -53,7 +53,7 @@ Relacionada con [ADR-004](#adr-004--modelo-de-contenido-antes-que-páginas).
 
 **Estado:** Aceptada
 
-**Contexto.** Un hero en vídeo refuerza el mensaje («tu planta no se detiene»),
+**Contexto.** Un hero en vídeo puede reforzar el mensaje de intervención por fases,
 pero solo funciona con metraje **propio y real de obra**. El material de stock
 contradiría el posicionamiento de oficio («conocemos los suelos porque los hemos
 construido») y resta credibilidad en un contexto B2B técnico.

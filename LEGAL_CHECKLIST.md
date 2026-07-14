@@ -24,9 +24,8 @@ rellenarse con datos provisionales.
 
 - Formspree no debe activarse hasta disponer de cuenta, endpoint, email y revisión
   de su ubicación, conservación, contrato y transferencias internacionales.
-- La preview utiliza Google Fonts y cdnjs. Antes de producción se deben autoalojar
-  esos recursos o incluir a los proveedores en el análisis de privacidad y
-  transferencias.
+- La preview no solicita fuentes ni scripts a terceros: utiliza tipografías del
+  sistema y animación CSS/JavaScript nativo.
 - Actualmente no hay analítica, publicidad ni cookies propias no esenciales. Si
   se añade alguna herramienta que las utilice, habrá que implementar información,
   rechazo y configuración antes de activarla.

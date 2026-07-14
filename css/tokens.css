@@ -41,9 +41,9 @@
   --brand-tex-b: oklch(61.965% 0.006 264.517); /* #84868A */
   --brand-tex-c: oklch(52.038% 0.007 264.507); /* #67696D */
 
-  /* ---- Tipografía · familias ---- */
-  --font-sans:    'Inter', -apple-system, 'SF Pro Text', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  /* ---- Tipografía · familias del sistema (sin peticiones a terceros) ---- */
+  --font-sans:    -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Avenir Next', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
 
   /* ---- Tipografía · escala modular (base 1rem · razón 1.25) ---- */
   --fs-xs:   0.64rem;
