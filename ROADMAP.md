@@ -170,10 +170,10 @@ precipitada.
 
 ### Fase 1 — Fundacion Next.js
 
-- Crear App Router con TypeScript, ESLint, lockfile y version de Node fijada.
-- Migrar tokens, layout, fuentes y cabeceras sin alterar el aspecto.
-- Implementar las puertas `preview`/`publicar` antes de migrar contenido.
-- Añadir tests de datos y rutas desde el primer commit.
+- [x] Crear App Router con TypeScript, ESLint, lockfile y version de Node fijada.
+- [x] Migrar tokens, layout, fuentes y cabeceras sin alterar el aspecto.
+- [x] Implementar las puertas `preview`/`publicar` antes de migrar contenido.
+- [x] Añadir tests de datos y rutas desde el primer commit.
 
 ### Fase 2 — Portada y sistema de componentes
 
@@ -227,10 +227,10 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Cerrar primero la iteracion concurrente de evidencia. Despues, en una rama y una
-reserva nuevas, ejecutar **Fase 1 — Fundacion Next.js** manteniendo la web actual
-como referencia hasta que portada, proyectos y legales tengan paridad funcional
-y visual.
+Revisar e integrar la rama de **Fase 1 — Fundacion Next.js**. Despues, abrir una
+reserva nueva para **Fase 2 — Portada y sistema de componentes**, manteniendo la
+web estatica como salida principal hasta demostrar paridad funcional, visual y
+de rendimiento.
 
 ## Referencias oficiales de implementacion
 
