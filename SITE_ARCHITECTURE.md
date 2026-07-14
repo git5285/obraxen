@@ -2,7 +2,8 @@
 
 Estado documentado: 14 de julio de 2026. La web continúa en preview
 `noindex,nofollow`; naming, sociedad, dominio, contacto y publicación continúan
-aplazados.
+sin integrar. La investigación de nombres no modifica rutas ni identidad hasta
+que exista una selección expresa.
 
 Este documento distingue la estructura que ya existe de la arquitectura futura.
 Una ruta planificada no se construye ni se publica hasta superar su puerta de
@@ -221,12 +222,14 @@ revisión legal y autorización expresa.
 
 1. ~~Consolidar el nuevo cierre de los seis casos.~~ Completado.
 2. ~~Construir `/proyectos/` como hub de evidencia.~~ Completado.
-3. Preparar `/soluciones/` desde `data/ofertas.json`.
-4. Construir únicamente las soluciones que superen su condición de salida.
-5. Crear `/problemas/` y las primeras páginas respaldadas por casos.
-6. Separar Método y Empresa cuando sus contenidos estén cerrados.
-7. Añadir Logística como primer sector si supera la revisión específica.
-8. Activar Contacto, legal, SEO e indexación al completar la identidad.
+3. Migrar la base, portada y proyectos a Next.js con paridad, siguiendo las
+   Fases 1–3 de `ROADMAP.md`.
+4. Preparar `/soluciones/` desde `data/ofertas.json` dentro de esa arquitectura.
+5. Construir únicamente las soluciones que superen su condición de salida.
+6. Crear `/problemas/` y las primeras páginas respaldadas por casos.
+7. Separar Método y Empresa cuando sus contenidos estén cerrados.
+8. Añadir Logística como primer sector si supera la revisión específica.
+9. Activar Contacto, legal, SEO e indexación al completar la identidad.
 
 ## 10. Reglas de crecimiento
 

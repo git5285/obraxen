@@ -8,7 +8,7 @@
 
 ## ADR-001 — Generador estático mínimo sin framework
 
-**Estado:** Aceptada · **actualizada 2026-07-14**
+**Estado:** Aceptada como línea base · **sustitución planificada en ADR-005**
 
 > **Actualización (2026-07-14).** `scripts/build.mjs` genera la portada, el hub
 > `/proyectos/`, seis páginas de caso, dos páginas legales y los activos de
@@ -31,9 +31,9 @@ de compilación. Vercel servirá únicamente `dist/` cuando se reactive la publi
 - (−→✓) ~~Bloques repetidos (nav ×3, etc.) se mantienen a mano~~ → **resuelto**:
   nav, logotipo, CTA y contacto viven como parciales/constantes en `src/`.
 
-**Disparador para migrar** a un generador como Astro: activar i18n, incorporar
-varias colecciones nuevas o necesitar componentes compartidos que hagan crecer
-de forma desproporcionada el generador actual.
+La base se conserva como referencia funcional hasta alcanzar paridad en Next.js.
+La decisión de migrar ya no depende de un disparador futuro ni contempla Astro:
+queda adoptada y secuenciada en [ADR-005](#adr-005--migración-progresiva-a-nextjs).
 
 Relacionada con [ADR-004](#adr-004--modelo-de-contenido-antes-que-páginas).
 
@@ -75,9 +75,9 @@ Antes, el nombre, el dominio y los contactos estaban hardcodeados en ~18 puntos
 del HTML (título, meta, JSON-LD, logo, footer, formulario…). Renombrar habría
 sido una edición dispersa y propensa a error.
 
-> **Actualización 2026-07-14:** el naming y la constitución quedan aplazados por
-> decisión de los socios. No se desarrollarán propuestas de nombre ni se simularán
-> datos societarios hasta que ambos asuntos se reabran expresamente.
+> **Actualización 2026-07-14:** la investigación de nombres se ha reabierto, pero
+> no existe una selección. Ningún candidato se integra y no se simulan datos
+> societarios mientras la decisión y la constitución sigan pendientes.
 
 **Decisión.** Aislar toda la identidad en un único punto de verdad,
 `data/brand.json` (`nombre`, `nombreLegal`, `claim`, `dominio`, `email`,
@@ -97,7 +97,8 @@ fichero fuente** (`src/` + `data/` → solo `brand.json`). Recolorear = editar s
 - (✓ **resuelto 2026-07-14**) ~~Inyección por JS ⇒ crawlers/scrapers sin JS no ven
   el nombre en cabecera~~ → el nombre, `<title>`, `meta`, `og` y JSON-LD se
   resuelven **en build** y viven en el HTML estático servido. Ejecutado el
-  **disparador 3 de [ADR-001](#adr-001--html-estático-sin-build)**.
+  **disparador 3 de
+  [ADR-001](#adr-001--generador-estático-mínimo-sin-framework)**.
 - (✓ **resuelto**) ~~Breve *flash* hasta que resuelve el `fetch`~~ → sin fetch: el
   contenido ya está en el HTML.
 - (−) Excepción conocida que persiste: el color del favicon (`%23EA580C`,
@@ -118,7 +119,8 @@ de definir la forma del contenido suele generar reescrituras.
 Recursos, se define el **esquema** de cada colección (p. ej. Proyecto = título,
 sector, m², ubicación, problema, solución, resultado, fotos) y las claves **i18n**;
 el contenido se renderiza desde datos, no se maqueta a mano. El build introducido
-en [ADR-001](#adr-001--html-estático-sin-build) es la base natural: hoy ya
+en [ADR-001](#adr-001--generador-estático-mínimo-sin-framework) es la base
+natural: hoy ya
 renderiza la navegación desde una única fuente de datos (`NAV` en
 `scripts/build.mjs`) y la identidad desde `data/brand.json`; las colecciones
 seguirán el mismo patrón (`data/*.json` → plantilla).
@@ -142,10 +144,44 @@ permiso para identificar clientes. Las 18 imágenes seleccionadas pasaron una au
 de calidad y privacidad documentada en `PHOTO_AUDIT.md`.
 
 **Actualización de cierre:** los seis proyectos registran entrega conforme y
-ausencia de correcciones posteriores como datos confirmados. Fecha, duración real,
-continuidad operativa y beneficios adicionales permanecen `null`; el hub no los
-infiere ni los presenta.
+ausencia de correcciones posteriores como datos confirmados. La iteración de
+evidencia incorpora duración, equipo y medios principales en los seis casos y
+situación operativa en cinco; algunos años, la continuidad de TP-Link, los
+tiempos de reapertura y los resultados medidos siguen sin dato. El build omite
+cualquier campo desconocido en lugar de inferirlo.
 
-**Siguiente paso concreto:** preparar el hub de soluciones desde
-`data/ofertas.json` y publicar únicamente las ofertas que superen sus condiciones
-de salida.
+**Siguiente paso concreto:** conservar modelos, slugs y puertas de evidencia al
+migrar proyectos y ofertas durante la Fase 3. Ninguna oferta se publica por el
+hecho de existir en `data/ofertas.json`.
+
+---
+
+## ADR-005 — Migración progresiva a Next.js
+
+**Estado:** Aceptada · **fecha 2026-07-14**
+
+**Contexto.** La web estática ya es rápida y segura, pero ampliar colecciones,
+consentimiento, metadatos, imágenes responsive, tipado, pruebas y CI dentro del
+generador manual aumentaría el coste de mantenimiento. El stack objetivo acordado
+es Next.js App Router, TypeScript, GitHub y Vercel.
+
+**Decisión.** Migrar por fases a Next.js con prerenderizado, React Server
+Components por defecto y JavaScript cliente solo para interacción. La web actual
+permanece intacta como referencia hasta que cada ruta alcance paridad funcional,
+visual, responsive y accesible. `data/brand.json`, `data/proyectos.json` y
+`data/ofertas.json` conservan su autoridad durante la transición.
+
+**Consecuencias.**
+
+- (+) Tipado, lint, tests, CI, activos versionados e imágenes responsive dentro
+  de un único toolchain.
+- (+) Metadatos, canonical, sitemap, robots y Open Graph derivados del estado de
+  publicación.
+- (+) Integración controlada de consentimiento, GA4 y Clarity por entorno.
+- (−) Migración temporal con dos implementaciones; exige comparar ruta a ruta y
+  no retirar la base estática antes de la paridad.
+- (−) Se incorpora una dependencia de framework que debe mantenerse con lockfile,
+  versión de Node fijada y actualizaciones revisadas.
+
+El orden, las puertas de calidad y la estrategia de publicación se mantienen en
+[`ROADMAP.md`](ROADMAP.md), evitando duplicarlos en este ADR.
