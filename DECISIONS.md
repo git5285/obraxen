@@ -228,6 +228,8 @@ sin scripts de terceros. `style-src` continúa cerrado.
 **Consecuencias.**
 
 - (+) El mismo comando reproduce localmente el check remoto.
+- (+) `main` exige `Quality gate` actualizado y bloquea fuerza y borrado,
+  también para administradores.
 - (+) Rutas, responsive, accesibilidad, foco, consola, red y presupuestos quedan
   cubiertos antes de integrar.
 - (+) Ningún pull request despliega mientras el interruptor permanezca apagado.
@@ -235,3 +237,6 @@ sin scripts de terceros. `style-src` continúa cerrado.
   campo continúa siendo LCP < 2,5 s.
 - (−) Una preview solo puede considerarse protegida tras verificar también el
   control de acceso en Vercel; preparar el job no equivale a publicarla.
+- (±) El repositorio pasó a público por orden expresa del usuario para habilitar
+  la protección disponible en el plan actual; la visibilidad del código no
+  autoriza publicar la web.
