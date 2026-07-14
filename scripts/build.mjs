@@ -227,9 +227,12 @@ const contactLeadHtml = hasContactChannel ? `<div class="cta-fila">
     </div>
     ${contactFormHtml}
   </div>` : '';
-const naturalList = (items) => items.length < 2
-  ? (items[0] || '')
-  : `${items.slice(0, -1).join(', ')} e ${items.at(-1)}`;
+const naturalList = (items) => {
+  if (items.length < 2) return items[0] || '';
+  const last = items.at(-1);
+  const conjunction = /^(?:i|hi(?!e))/i.test(last) ? 'e' : 'y';
+  return `${items.slice(0, -1).join(', ')} ${conjunction} ${last}`;
+};
 const serviceAreas = brand.areasServicio.map(clean).filter(Boolean);
 const serviceAreaLabel = serviceAreas.length === 1 && serviceAreas[0] === 'Unión Europea'
   ? 'la Unión Europea'
@@ -540,6 +543,34 @@ const renderedProjectPages = projects.map((project, index) => {
   const caseMagnitudesHtml = project.magnitudes
     .map((magnitude) => `          <li>${esc(magnitude)}</li>`)
     .join('\n');
+  const continuityLabels = {
+    total: 'La actividad continuó en paralelo',
+    parcial: 'La actividad continuó parcialmente',
+    detenida: 'La actividad no continuó durante la intervención',
+    sin_actividad: 'Instalación sin actividad concurrente',
+  };
+  const publicExecutionDate = project.cierre.fechaEjecucion
+    && !/pendiente de confirmar/i.test(project.cierre.fechaEjecucion)
+    ? project.cierre.fechaEjecucion
+    : '';
+  const executionFacts = [
+    publicExecutionDate ? ['Ejecución', publicExecutionDate] : null,
+    project.cierre.duracionReal ? ['Duración real', project.cierre.duracionReal] : null,
+    project.superficieInstalacionM2 ? ['Instalación aprox.', `${project.superficieInstalacionM2.toLocaleString('es-ES')} m²`] : null,
+    project.equipoOperarios ? ['Equipo', `${project.equipoOperarios} operarios`] : null,
+    project.cierre.continuidadOperativa ? ['Operativa', continuityLabels[project.cierre.continuidadOperativa]] : null,
+  ].filter(Boolean);
+  const caseExecutionFactsHtml = executionFacts
+    .map(([label, value]) => `          <div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`)
+    .join('\n');
+  const resourceParts = [
+    project.maquinaria.length ? `<strong>Maquinaria:</strong> ${esc(naturalList(project.maquinaria))}.` : '',
+    project.materiales.length ? `<strong>Materiales:</strong> ${esc(naturalList(project.materiales))}.` : '',
+  ].filter(Boolean);
+  const caseResourcesHtml = resourceParts.length ? `        <article class="case-resources">
+          <span>04</span>
+          <div><h3>Medios confirmados</h3><p>${resourceParts.join(' ')}</p></div>
+        </article>` : '';
   const caseImagesHtml = project.imagenes.map((image) => `        <figure>
           <img src="/${esc(image.src)}" alt="${esc(image.alt)}" loading="lazy" decoding="async">
           <figcaption>${esc(image.etapa)}</figcaption>
@@ -582,6 +613,8 @@ ${JSON.stringify({
     caseSolution: t.solucion,
     caseResult: t.resultado,
     caseMagnitudesHtml,
+    caseExecutionFactsHtml,
+    caseResourcesHtml,
     caseImagesHtml,
     casePaginationHtml,
   };
