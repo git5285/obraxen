@@ -38,20 +38,24 @@
       "problemas": {
         "type": "array",
         "minItems": 1,
+        "uniqueItems": true,
         "items": { "type": "string", "minLength": 1 }
       },
       "alcance": {
         "type": "array",
         "minItems": 1,
+        "uniqueItems": true,
         "items": { "type": "string", "minLength": 1 }
       },
       "limites": {
         "type": "array",
         "minItems": 1,
+        "uniqueItems": true,
         "items": { "type": "string", "minLength": 1 }
       },
       "evidencia": {
         "type": "array",
+        "uniqueItems": true,
         "items": {
           "type": "object",
           "additionalProperties": false,
@@ -65,6 +69,7 @@
       "condicionesSalida": {
         "type": "array",
         "minItems": 1,
+        "uniqueItems": true,
         "items": { "type": "string", "minLength": 1 }
       },
       "traducciones": {
