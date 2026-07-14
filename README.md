@@ -4,12 +4,13 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 **Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
-La base actual es la referencia funcional y visual. Las Fases 1 y 2 ya incorporan
-una portada paralela con Next.js App Router, Server Components, TypeScript,
-validacion Zod, ESLint y Vitest. La migracion por fases, sus puertas de calidad y
-el modelo de consentimiento se detallan en [`ROADMAP.md`](ROADMAP.md). Hasta que
-proyectos y legales alcancen paridad, el build estatico sigue siendo la salida
-principal y no se despliega la base Next.js.
+La base actual es la referencia funcional y visual. Las Fases 1–3 ya incorporan
+en paralelo la portada, el hub y las seis fichas de proyecto con Next.js App
+Router, Server Components, TypeScript, validacion Zod, ESLint y Vitest. La
+migracion por fases, sus puertas de calidad y el modelo de consentimiento se
+detallan en [`ROADMAP.md`](ROADMAP.md). Hasta que las rutas legales alcancen
+paridad, el build estatico sigue siendo la salida principal y no se despliega la
+base Next.js.
 
 > **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
 > temporal heredada del nombre de la carpeta. No es la marca, no es una opción
@@ -28,9 +29,10 @@ principal y no se despliega la base Next.js.
 - `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`) y el
   comportamiento cliente aislado de la portada (`home-script`)
 - `scripts/build.mjs` — render estático (sin dependencias)
-- `src/app/` — App Router, metadata, robots y portada migrada con paridad visual
-- `src/components/` — secciones servidoras de portada y una unica isla cliente
-  para menu movil y navegacion sticky
+- `src/app/` — App Router, metadata, robots, portada, hub y seis casos migrados
+  con paridad visual
+- `src/components/` — secciones servidoras de portada y proyectos; una unica
+  isla cliente para menu movil y navegacion sticky
 - `src/lib/` — carga tipada de identidad, proyectos, ofertas y estado de
   publicacion, ademas del modelo de portada e imports responsive de imagen
 - `tests/` — reglas de datos, publicacion, portada y rutas Next.js
@@ -67,11 +69,13 @@ El entorno reproducible de la fundacion usa Node `24.x` (`.nvmrc`).
 `npm run dev:next` abre el App Router localmente y `npm run build:next` lo compila
 sin cambiar `vercel.json` ni sustituir la salida `dist/`.
 
-La portada Next replica las ocho secciones y seis casos de la referencia, usa 24
-imagenes reales y conserva `data/brand.json` como puerta de identidad y contacto.
-La CSP ya elimina `unsafe-inline` de estilos; `script-src` lo mantiene de forma
-temporal por el bootstrap estatico de App Router y se resolvera junto con la
-politica de hashes o nonces de la Fase 4.
+La portada Next replica las ocho secciones y seis casos de la referencia. El hub
+y las seis fichas se prerenderizan desde `data/proyectos.json` mediante
+`generateStaticParams`, con 18 imagenes responsive y metadata propia. Las siete
+rutas de evidencia no añaden componentes cliente. La CSP ya elimina
+`unsafe-inline` de estilos; `script-src` lo mantiene de forma temporal por el
+bootstrap estatico de App Router y se resolvera junto con la politica de hashes
+o nonces de la Fase 4.
 
 `<title>`, `meta`, Open Graph y JSON-LD se resuelven **en build**: el HTML servido
 es completamente estático (sin fetch ni inyección de marca en runtime).
@@ -97,6 +101,9 @@ del paquete de subida (nunca `src/`/`scripts/`/`data/`: son entradas del build).
   `data/proyectos.json`; cada registro genera su resumen en portada, su expediente
   en `/proyectos/` y su ruta `/proyectos/{slug}/` con breadcrumbs y navegación
   entre casos. Mientras no haya contacto, navegación y CTA apuntan al hub.
+- **Soluciones** → `src/lib/solutions.ts` solo expone ofertas con
+  `estadoPublicacion: publicable`. Como las cuatro ofertas siguen siendo
+  borradores internos, `/soluciones/` no existe y responde 404.
 
 ### Retomar la identidad cuando esté decidida
 
