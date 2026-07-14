@@ -38,8 +38,24 @@ jobs:
       - name: Browser tests
         run: npm run test:e2e
 
+      - name: Restore isolated Lighthouse runner
+        uses: actions/cache@v5
+        with:
+          path: ${{ runner.temp }}/remainon-lighthouse-13.4.0
+          key: lighthouse-${{ runner.os }}-node24-13.4.0
+
+      - name: Install isolated Lighthouse runner
+        env:
+          LIGHTHOUSE_HOME: ${{ runner.temp }}/remainon-lighthouse-13.4.0
+        run: |
+          if [ ! -x "$LIGHTHOUSE_HOME/node_modules/.bin/lighthouse" ]; then
+            npm install --prefix "$LIGHTHOUSE_HOME" --no-save --package-lock=false --ignore-scripts --audit=false --fund=false lighthouse@13.4.0
+          fi
+
       - name: Lighthouse budgets
-        timeout-minutes: 8
+        timeout-minutes: 5
+        env:
+          LIGHTHOUSE_BIN: ${{ runner.temp }}/remainon-lighthouse-13.4.0/node_modules/.bin/lighthouse
         run: npm run lighthouse:ci
 
       - name: Store quality reports

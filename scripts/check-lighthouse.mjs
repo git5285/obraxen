@@ -53,13 +53,35 @@ function auditValue(report, audit) {
 
 async function auditRoute(route) {
   const reportPath = path.join(outputDirectory, `${route.name}.json`);
-  const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+  const projectLighthouse = path.join(
+    root,
+    "node_modules",
+    ".bin",
+    process.platform === "win32" ? "lighthouse.cmd" : "lighthouse",
+  );
+  const lighthouseCandidates = [process.env.LIGHTHOUSE_BIN, projectLighthouse].filter(Boolean);
+  let command;
+  let commandArguments = [`${baseUrl}${route.path}`];
+
+  for (const candidate of lighthouseCandidates) {
+    try {
+      await fs.access(candidate);
+      command = candidate;
+      break;
+    } catch {
+      // Prueba el siguiente binario configurado.
+    }
+  }
+
+  if (!command) {
+    command = process.platform === "win32" ? "npx.cmd" : "npx";
+    commandArguments = ["--yes", "lighthouse@13.4.0", `${baseUrl}${route.path}`];
+  }
+
   await execFileAsync(
-    npx,
+    command,
     [
-      "--yes",
-      "lighthouse@13.4.0",
-      `${baseUrl}${route.path}`,
+      ...commandArguments,
       "--quiet",
       "--chrome-flags=--headless --no-sandbox",
       "--only-categories=performance,accessibility,best-practices,seo",
