@@ -109,8 +109,9 @@ Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
 Inferido de rasgos observables del copy (no existe guía de estilo documentada en
 el repo):
 
-- **Tuteo / segunda persona** constante («tu planta», «cuéntanos», «pide una
-  evaluación»).
+- **Tuteo / segunda persona** constante («tu operativa», «cuéntanos»). El CTA es
+  contextual: «Ver proyectos» mientras no exista contacto y «Pide una evaluación»
+  cuando se confirme al menos un canal.
 - **Directo y conciso**, con imperativos y frases nominales cortas
   («Diagnosticar. Reparar. Rendir.»).
 - **Técnico pero traducido a beneficio operativo** (habla de resinas y morteros,
