@@ -11,6 +11,9 @@ del usuario; la web continúa sin autorización de despliegue o publicación.
   existe todavía una sociedad ni un domicilio empresarial validado para publicar.
 - Los informes locales de Lighthouse, Playwright y las auditorías externas quedan
   ignorados para evitar incorporarlos accidentalmente al repositorio público.
+- `.env.example` solo documenta `GA_MEASUREMENT_ID` y `CLARITY_PROJECT_ID` con
+  valores vacíos. No se ha versionado ningún ID real ni se reutiliza uno entre
+  preview y producción.
 - Los seis casos contienen nombres de clientes, ubicaciones, magnitudes y
   fotografías. La confirmación interna para identificar al cliente no equivale a
   soporte documental para publicar nombre y fotografías.
@@ -29,6 +32,10 @@ del usuario; la web continúa sin autorización de despliegue o publicación.
    años incompletos.
 4. `vercel.json` mantiene los despliegues Git desactivados. La visibilidad del
    código no autoriza la visibilidad de la web.
+5. Los IDs de medición son identificadores públicos, no secretos de autenticación,
+   pero se configuran por entorno y el navegador solo los solicita tras aceptar.
+   Cualquier secreto administrativo de Google, Microsoft o Vercel queda fuera del
+   repositorio y nunca debe exponerse desde `/api/analytics-config/`.
 
 ## Decisión de visibilidad
 

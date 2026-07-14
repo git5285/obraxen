@@ -19,6 +19,8 @@ constitución sigue pendiente y no deben rellenarse datos provisionales.
 - Datos del Registro Mercantil, si resultan aplicables.
 - Proveedor definitivo del formulario y contrato de encargo de tratamiento.
 - Proveedores definitivos de alojamiento, correo y recursos técnicos.
+- IDs y propiedades definitivas de GA4 y Microsoft Clarity por entorno.
+- Revisión de conservación, transferencias y configuración de ambos proveedores.
 
 ## Autorizaciones de casos y fotografías
 
@@ -46,16 +48,24 @@ automáticamente en autorización comercial.
   de su ubicación, conservación, contrato y transferencias internacionales.
 - La preview no solicita fuentes ni scripts a terceros: utiliza tipografías del
   sistema y animación CSS/JavaScript nativo.
-- Actualmente no hay analítica, publicidad ni cookies propias no esenciales. Si
-  se añade alguna herramienta que las utilice, habrá que implementar información,
-  rechazo y configuración antes de activarla.
-- GA4 y Microsoft Clarity permanecerán desactivados hasta implementar y probar
-  consentimiento. Search Console se configurará cuando exista dominio.
+- El panel, la ruta `/cookies/` y las pruebas de consentimiento están
+  implementados. La preferencia se conserva 180 días en almacenamiento local;
+  aceptar y rechazar tienen igual visibilidad y la retirada permanece accesible.
+- GA4 y Microsoft Clarity no se cargan antes de aceptar. Los IDs reales siguen
+  ausentes, la publicidad permanece denegada y las pruebas demuestran cero
+  solicitudes de analítica cuando se rechaza.
+- La CSP permite únicamente los orígenes técnicos necesarios para una futura
+  activación; permitir un origen no activa el proveedor. Search Console se
+  configurará cuando exista dominio.
+- Antes de activar Clarity debe confirmarse en su panel el modo de consentimiento,
+  el enmascarado y la configuración separada de producción. Antes de activar GA4
+  debe revisarse la propiedad, retención, señales de Google y ausencia de
+  funciones publicitarias.
 
 ## Comprobación final
 
 1. Completar `data/brand.json`.
-2. Revisar los dos textos con asesoría legal.
+2. Revisar aviso legal, privacidad y cookies con asesoría legal.
 3. Documentar o anonimizar cada caso y sus fotografías.
 4. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
 5. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.

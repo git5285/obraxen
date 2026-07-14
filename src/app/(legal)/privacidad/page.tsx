@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LegalPage } from "@/components/legal-page";
 import { brand } from "@/lib/brand";
 
@@ -53,7 +54,7 @@ export default function PrivacyPage() {
       <p>Los datos podrán ser tratados por proveedores necesarios para alojamiento, correo, soporte técnico o gestión de formularios, siempre bajo el correspondiente contrato de encargo. También podrán comunicarse a administraciones, juzgados o autoridades cuando exista obligación legal.</p>
 
       <h2>5. Transferencias internacionales</h2>
-      <p>La configuración definitiva debe identificar si algún proveedor trata datos fuera del Espacio Económico Europeo y, en ese caso, documentar el mecanismo legal aplicable. La versión actual no carga fuentes, analítica ni scripts de terceros.</p>
+      <p>La configuración definitiva debe identificar si algún proveedor trata datos fuera del Espacio Económico Europeo y, en ese caso, documentar el mecanismo legal aplicable. La integración técnica de GA4 y Clarity permanece bloqueada antes del consentimiento y sin identificadores reales en el código; su activación exige completar esta revisión.</p>
 
       <h2>6. Derechos</h2>
       <p>Las personas interesadas pueden solicitar acceso, rectificación, supresión, oposición, limitación y portabilidad cuando corresponda, así como retirar su consentimiento sin efectos retroactivos. El canal para ejercerlos permanece sin dato. También puede presentarse una reclamación ante la <a href="https://www.aepd.es/" rel="noopener">Agencia Española de Protección de Datos</a>.</p>
@@ -62,7 +63,7 @@ export default function PrivacyPage() {
       <p>Quien facilite datos de otra persona debe estar autorizado para hacerlo. Los servicios se dirigen a profesionales y empresas, no a menores de edad.</p>
 
       <h2>8. Cookies</h2>
-      <p>La versión actual no incorpora analítica, publicidad ni cookies propias no esenciales. Si se añaden herramientas que requieran consentimiento, se implementará previamente el mecanismo de información, rechazo y configuración correspondiente.</p>
+      <p>La web guarda localmente la preferencia de privacidad durante 180 días. GA4 y Clarity solo pueden cargarse tras aceptar analítica; rechazar no genera solicitudes a esos proveedores y la publicidad permanece denegada. La información técnica, la retirada y los proveedores previstos se detallan en <Link href="/cookies/">Cookies y almacenamiento</Link>.</p>
 
       <h2>9. Cambios en esta política</h2>
       <p>Esta política podrá actualizarse cuando cambien los canales, proveedores, tratamientos o requisitos legales. La fecha de revisión se indicará al final del documento.</p>

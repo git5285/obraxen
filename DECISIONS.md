@@ -294,3 +294,51 @@ un servidor dinámico por petición y se conserva una única ruta de build.
 - [x] Retirar builder, checker y plantillas legacy.
 - [x] Verificar rutas, datos, accesibilidad, cabeceras y presupuestos.
 - [x] Mantener despliegue e indexación desactivados.
+
+---
+
+## ADR-008 — Consentimiento básico con bloqueo previo de proveedores
+
+**Estado:** Aceptada · **fecha 2026-07-14**
+
+**Contexto.** La Fase 5 prepara GA4 y Microsoft Clarity, pero la preview sigue
+cerrada, no existen IDs reales aprobados y el proyecto exige que rechazar genere
+cero solicitudes de analítica. Los modos avanzados de ambos proveedores pueden
+enviar mediciones sin cookies aun cuando el almacenamiento esté denegado, lo que
+no satisface esa política más estricta.
+
+**Decisión.** Adoptar consentimiento básico y bloquear cualquier etiqueta antes
+de una aceptación expresa. La preferencia se guarda durante 180 días en
+`localStorage`, con versión y caducidad. Aceptar y rechazar aparecen al mismo
+nivel; el panel se puede reabrir y retirar la aceptación.
+
+Los parámetros de Consent Mode v2 parten de `denied`. Solo
+`analytics_storage` pasa a `granted` al aceptar; `ad_storage`, `ad_user_data` y
+`ad_personalization` permanecen siempre denegados. Clarity recibe ConsentV2 con
+almacenamiento publicitario denegado. Los formularios se marcan para enmascarado
+y no se envían identificadores personalizados.
+
+Los IDs se leen en servidor desde `GA_MEASUREMENT_ID` y
+`CLARITY_PROJECT_ID`. El navegador solo consulta el endpoint interno después de
+aceptar; valores ausentes o inválidos se convierten en `null`. La retirada envía
+el estado denegado, borra cookies analíticas detectables, elimina las etiquetas
+y recarga únicamente si un proveedor ya se estaba ejecutando.
+
+**Consecuencias.**
+
+- (+) Rechazar o no decidir produce cero solicitudes a Google, Microsoft y al
+  endpoint de configuración.
+- (+) Los IDs pueden separarse por entorno sin versionarlos ni exponerlos antes
+  del consentimiento.
+- (+) 50 pruebas unitarias y 46 ejecuciones Playwright cubren formato, caducidad,
+  red, persistencia, revocación, teclado y accesibilidad.
+- (+) La política de cookies es accesible con o sin JavaScript.
+- (−) Se renuncia a la modelización cookieless de los modos avanzados.
+- (−) Retirar después de cargar un proveedor requiere recarga para detener con
+  certeza el código de terceros ya ejecutado.
+- (±) La CSP permite únicamente los orígenes técnicos de GA4 y Clarity, pero esa
+  allowlist no activa ni descarga recursos por sí sola.
+
+**Pendiente externo.** No se configuran IDs reales ni Search Console hasta que
+existan revisión legal, entornos aprobados y dominio definitivo. Esta ADR no
+autoriza preview, producción, indexación o publicación.

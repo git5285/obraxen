@@ -38,7 +38,8 @@ Portada (/)
 ├── Empresa (/#empresa)
 ├── FAQ (/#faq)
 ├── Aviso legal (/aviso-legal/)
-└── Privacidad (/privacidad/)
+├── Privacidad (/privacidad/)
+└── Cookies y almacenamiento (/cookies/)
 ```
 
 Los seis casos reciben enlace desde la portada y el hub. Cada ficha vuelve al
@@ -69,7 +70,8 @@ Inicio (/)
 │   ├── Logística (/sectores/logistica/)
 │   └── Industria y fabricación (/sectores/industria-fabricacion/) [por validar]
 ├── Aviso legal (/aviso-legal/)
-└── Privacidad (/privacidad/)
+├── Privacidad (/privacidad/)
+└── Cookies y almacenamiento (/cookies/)
 ```
 
 Las páginas individuales de problema son candidatas, no compromisos de
@@ -133,6 +135,7 @@ graph TD
 | Guías | `/guias/` | Contexto y pie | Baja | Fase posterior |
 | Aviso legal | `/aviso-legal/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
 | Privacidad | `/privacidad/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
+| Cookies y almacenamiento | `/cookies/` | Pie y panel de privacidad | Obligatoria si se activa medición | Ruta Next; borrador técnico pendiente de revisión |
 
 No se introducirán prefijos de idioma hasta cerrar la versión española y decidir
 la estrategia internacional. En ese momento deberá documentarse si la versión
@@ -232,12 +235,15 @@ revisión legal y autorización expresa.
    ninguna oferta la supera todavía.
 5. ~~Completar legal, sitemap y cutover a Next como implementación única.~~
    Completado en la Fase 4.5.
-6. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
+6. ~~Implementar consentimiento básico, información de cookies y pruebas de red
+   antes de cargar GA4 o Clarity.~~ Completado técnicamente en Fase 5; IDs reales,
+   dominio y activación permanecen bloqueados.
+7. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
    condición de salida.
-7. Crear `/problemas/` y las primeras páginas respaldadas por casos.
-8. Separar Método y Empresa cuando sus contenidos estén cerrados.
-9. Añadir Logística como primer sector si supera la revisión específica.
-10. Activar Contacto, legal, SEO e indexación al completar la identidad.
+8. Crear `/problemas/` y las primeras páginas respaldadas por casos.
+9. Separar Método y Empresa cuando sus contenidos estén cerrados.
+10. Añadir Logística como primer sector si supera la revisión específica.
+11. Activar Contacto, legal, SEO e indexación al completar la identidad.
 
 ## 10. Reglas de crecimiento
 

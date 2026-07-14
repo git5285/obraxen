@@ -17,5 +17,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     { url: `${origin}/aviso-legal/`, priority: 0.2 },
     { url: `${origin}/privacidad/`, priority: 0.2 },
+    { url: `${origin}/cookies/`, priority: 0.2 },
   ];
 }
