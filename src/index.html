@@ -7,19 +7,16 @@
 <meta name="description" content="{{descText}}">
 {{{absoluteMetaHtml}}}
 <meta property="og:title" content="{{ogTitle}}">
-<meta property="og:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
+<meta property="og:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas para reducir el impacto en la actividad.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="{{siteName}}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ogTitle}}">
-<meta name="twitter:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
+<meta name="twitter:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas para reducir el impacto en la actividad.">
 <meta name="robots" content="{{robotsDirective}}">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preload" as="image" href="img/hero-nave.jpg" fetchpriority="high">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tokens.css">
 <script type="application/ld+json">
 {{{jsonld}}}
@@ -61,6 +58,7 @@
   .foto{position:relative;overflow:hidden}
   .foto > .tex{
     position:absolute;inset:0;
+    width:100%;height:100%;object-fit:cover;
     background:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"),
       linear-gradient(135deg,var(--brand-tex-a) 0%,var(--brand-tex-b) 45%,var(--brand-tex-c) 100%);
@@ -292,13 +290,18 @@
 
   .porque{padding:60px 0}
   .porque .panel{
-    border-radius:var(--radius-lg);overflow:hidden;color:var(--brand-surface);
-    background:
-      linear-gradient(120deg,rgb(from var(--brand-ink) r g b / .95) 0%,rgb(from var(--brand-ink-deep) r g b / .88) 100%),
-      url("img/diagnostico.jpg") center/cover no-repeat;
+    position:relative;border-radius:var(--radius-lg);overflow:hidden;color:var(--brand-surface);
+    background:var(--brand-ink-deep);
     display:grid;grid-template-columns:1fr 1fr;gap:40px;
     padding:56px;
   }
+  .porque .panel::before{
+    content:"";position:absolute;inset:0;z-index:var(--z-content);
+    background:linear-gradient(120deg,rgb(from var(--brand-ink) r g b / .95) 0%,rgb(from var(--brand-ink-deep) r g b / .88) 100%);
+    pointer-events:none;
+  }
+  .porque .panel-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .porque .panel > :not(.panel-bg){position:relative;z-index:calc(var(--z-content) + 1)}
   .porque h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:16px}
   .porque .kicker{color:var(--brand-primary-light)}
   .porque .col-izq > p{color:rgb(from var(--brand-on-dark) r g b / .72);max-width:40ch;margin-bottom:34px}
@@ -392,6 +395,23 @@
   .movil-menu .btn{margin-top:16px;font-size:1rem}
   .movil-menu .cerrar{position:absolute;top:20px;right:24px;background:none;border:0;
     color:var(--brand-on-dark);font-size:2rem;cursor:pointer;line-height:1;padding:6px}
+  @media (prefers-reduced-motion:no-preference){
+    [data-reveal].reveal-ready,[data-stagger].reveal-ready,[data-relato].reveal-ready{
+      opacity:0;transform:translate3d(0,12px,0);
+      transition:opacity var(--dur-slow) var(--ease-standard),transform var(--dur-slow) var(--ease-standard);
+      will-change:opacity,transform;
+    }
+    [data-stagger].reveal-ready{transform:translate3d(0,10px,0);transition-duration:var(--dur-base)}
+    [data-relato].reveal-ready{transform:translate3d(0,35%,0)}
+    [data-reveal].reveal-ready.is-visible,[data-stagger].reveal-ready.is-visible,[data-relato].reveal-ready.is-visible{
+      opacity:1;transform:translate3d(0,0,0)
+    }
+    .fisura .f-fija.motion-ready{
+      stroke-dasharray:var(--line-length);stroke-dashoffset:var(--line-length);
+      transition:stroke-dashoffset 900ms linear;
+    }
+    .fisura .f-fija.motion-ready.is-visible{stroke-dashoffset:0}
+  }
   @media (max-width:860px){
     .menu-btn{display:block}
     .hero-nav ul,.sticky-nav ul{display:none}
@@ -445,10 +465,10 @@
   </nav>
   <div class="hero-body">
     <div>
-      <p class="kicker kicker-hero" data-reveal>Reparación de pavimentos industriales</p>
-      <h1 data-reveal>Tu planta no se detiene.</h1>
-      <p class="hero-sub" data-reveal>Juntas, fisuras y superficies degradadas — reparadas por fases para reducir el impacto en tu producción.</p>
-      <span data-reveal style="display:inline-block">{{> cta}}</span>
+      <p class="kicker kicker-hero">Reparación de pavimentos industriales</p>
+      <h1>Intervenciones por fases para reducir paradas.</h1>
+      <p class="hero-sub">Evaluamos juntas, fisuras y superficies degradadas para definir una reparación adaptada al pavimento y a la operativa de la instalación.</p>
+      <span style="display:inline-block">{{> cta}}</span>
     </div>
   </div>
   <div class="fisura-wrap" aria-hidden="true">
@@ -546,7 +566,7 @@
       </div>
       <div class="serv-grid">
         <div class="serv foto" data-stagger>
-          <div class="tex" style="background:url('img/juntas.jpg') center/cover no-repeat"></div>
+          <img class="tex" src="img/juntas.jpg" alt="" loading="lazy" decoding="async">
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h7M14 12h7M10 12l2-3 2 3-2 3z"/><path d="M3 7v10M21 7v10"/></svg>
             <h3>Reparación de juntas</h3>
@@ -555,7 +575,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger>
-          <div class="tex" style="background:url('img/fisuras.jpg') center/cover no-repeat"></div>
+          <img class="tex" src="img/fisuras.jpg" alt="" loading="lazy" decoding="async">
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L9 14l3 2 4-6 5 4"/><path d="M3 20h18"/></svg>
             <h3>Tratamiento de fisuras</h3>
@@ -564,7 +584,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger>
-          <div class="tex" style="background:url('img/recrecidos.jpg') center/cover no-repeat"></div>
+          <img class="tex" src="img/recrecidos.jpg" alt="" loading="lazy" decoding="async">
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M4 20h16"/><path d="M6 16V9l6-4 6 4v7"/></svg>
             <h3>Recrecidos y nivelación</h3>
@@ -573,7 +593,7 @@
           </div>
         </div>
         <div class="serv foto" data-stagger>
-          <div class="tex" style="background:url('img/pulido.jpg') center/cover no-repeat"></div>
+          <img class="tex" src="img/pulido.jpg" alt="" loading="lazy" decoding="async">
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>
             <h3>Tratamientos superficiales</h3>
@@ -603,10 +623,11 @@
   <section class="porque" id="empresa">
     <div class="wrap">
       <div class="panel">
+        <img class="panel-bg" src="img/diagnostico.jpg" alt="" loading="lazy" decoding="async">
         <div class="col-izq">
           <p class="kicker" data-reveal>{{whyKicker}}</p>
-          <h2 data-reveal>Oficio de siempre, empresa nueva</h2>
-          <p data-reveal>Combinamos oficio, planificación y materiales seleccionados para cada sistema, con el objetivo de que la reparación dure y tu actividad no se resienta.</p>
+          <h2 data-reveal>Experiencia de obra aplicada a cada reparación</h2>
+          <p data-reveal>Más de diez años de experiencia acumulada en ejecución y reparación nos permiten plantear cada intervención según el estado del pavimento y la operativa de la instalación.</p>
           <span data-reveal style="display:inline-block">{{> cta}}</span>
         </div>
         <div class="ventajas">
@@ -625,7 +646,7 @@
               <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
             </div>
             <div>
-              <h3>Mínima parada de actividad</h3>
+              <h3>Intervención adaptada a la actividad</h3>
               <p>Cuando el alcance lo permite, proponemos fases, zonas acotadas u horarios alternativos para reducir el impacto en tu operativa.</p>
             </div>
           </div>
@@ -671,7 +692,7 @@
     <div>
       <p class="kicker" data-reveal>Contacto</p>
       <h2 data-reveal>¿Tu pavimento está frenando tu operativa?</h2>
-      <p data-reveal>Cuéntanos qué le pasa y te responderemos con los próximos pasos para valorar la solución más adecuada, sin compromiso.</p>
+      <p data-reveal>Cuéntanos qué le pasa y recibirás una primera respuesta en menos de 48 horas con los próximos pasos para valorar el caso.</p>
     </div>
     {{{contactFormHtml}}}
   </div>
@@ -708,8 +729,6 @@
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const menu = document.getElementById("menuMovil");
 const openMenuButtons = document.querySelectorAll("[data-menu-open]");
@@ -775,90 +794,86 @@ if (contactForm) contactForm.addEventListener("submit", (event) => {
     + "&body=" + encodeURIComponent(data.get("mensaje") + "\n\nContacto: " + data.get("nombre") + " <" + data.get("email") + ">");
 });
 
-if (window.gsap && window.ScrollTrigger) {
-  gsap.registerPlugin(ScrollTrigger);
-  const mm = gsap.matchMedia();
-  const styles = getComputedStyle(document.documentElement);
-  const cssDuration = (name, fallback) => {
-    const raw = styles.getPropertyValue(name).trim();
-    if (!raw) return fallback;
-    return raw.endsWith("ms") ? parseFloat(raw) / 1000 : parseFloat(raw);
+const sticky = document.getElementById("stickyNav");
+const hero = document.querySelector(".hero");
+const setStickyVisible = (visible) => {
+  sticky.classList.toggle("visible", visible);
+  sticky.inert = !visible;
+  sticky.setAttribute("aria-hidden", String(!visible));
+};
+
+if ("IntersectionObserver" in window) {
+  const heroObserver = new IntersectionObserver(([entry]) => {
+    setStickyVisible(!entry.isIntersecting && entry.boundingClientRect.bottom <= 0);
+  });
+  heroObserver.observe(hero);
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const link = document.querySelector(`#stickyLinks a[data-sec="${entry.target.id}"]`);
+      if (!link) return;
+      link.classList.toggle("activo", entry.isIntersecting);
+      if (entry.isIntersecting) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
+  document.querySelectorAll("main section[id], .cierre").forEach((section) => sectionObserver.observe(section));
+} else {
+  const updateSticky = () => setStickyVisible(hero.getBoundingClientRect().bottom <= 0);
+  addEventListener("scroll", updateSticky, { passive: true });
+  updateSticky();
+}
+
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const revealItems = [...document.querySelectorAll("main [data-reveal], .cierre [data-reveal], [data-stagger], [data-relato]")];
+  revealItems.forEach((element) => element.classList.add("reveal-ready"));
+
+  const reveal = (element, delay = 0) => {
+    element.style.transitionDelay = `${delay}ms`;
+    requestAnimationFrame(() => element.classList.add("is-visible"));
+    const cleanup = () => {
+      element.classList.remove("reveal-ready", "is-visible");
+      element.style.removeProperty("transition-delay");
+    };
+    element.addEventListener("transitionend", cleanup, { once: true });
+    setTimeout(cleanup, delay + 800);
   };
-  const durationBase = cssDuration("--dur-base", 0.25);
-  const durationSlow = cssDuration("--dur-slow", 0.4);
-  const motionEase = "expo.out";
 
-  const sticky = document.getElementById("stickyNav");
-  const hero = document.querySelector(".hero");
-  ScrollTrigger.create({
-    trigger: hero, start: "bottom top",
-    onEnter: () => { sticky.classList.add("visible"); sticky.inert = false; sticky.setAttribute("aria-hidden","false"); },
-    onLeaveBack: () => { sticky.classList.remove("visible"); sticky.inert = true; sticky.setAttribute("aria-hidden","true"); }
-  });
-
-  document.querySelectorAll("main section[id], .cierre").forEach((sec) => {
-    const id = sec.id;
-    const link = document.querySelector(`#stickyLinks a[data-sec="${id}"]`);
-    if (!link) return;
-    ScrollTrigger.create({
-      trigger: sec, start: "top center", end: "bottom center",
-      onToggle: (self) => {
-        link.classList.toggle("activo", self.isActive);
-        if (self.isActive) link.setAttribute("aria-current", "location");
-        else link.removeAttribute("aria-current");
-      }
-    });
-  });
-
-  mm.add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.from(".hero [data-reveal]", {
-      opacity: 0, y: 12, duration: durationSlow, ease: motionEase, stagger: 0.08
-    });
-
-    const fija = document.getElementById("fisuraFija");
-    const largo = fija.getTotalLength();
-    gsap.fromTo(fija,
-      { strokeDasharray: largo, strokeDashoffset: largo },
-      { strokeDashoffset: 0, ease: "none",
-        scrollTrigger: { trigger: ".fisura-wrap", start: "top 85%", end: "top 25%", scrub: 0.5 } }
-    );
-
-    gsap.utils.toArray("main [data-reveal], .cierre [data-reveal]").forEach((el) => {
-      gsap.from(el, {
-        opacity: 0, y: 12, duration: durationSlow, ease: motionEase,
-        scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none reverse" }
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      let delay = 0;
+      entries.filter((entry) => entry.isIntersecting).forEach((entry) => {
+        reveal(entry.target, delay);
+        delay = Math.min(delay + 40, 160);
+        revealObserver.unobserve(entry.target);
       });
-    });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+    revealItems.forEach((element) => revealObserver.observe(element));
+  } else {
+    revealItems.forEach((element) => reveal(element));
+  }
 
-    gsap.set("[data-stagger]", { opacity: 0, y: 10 });
-    ScrollTrigger.batch("[data-stagger]", {
-      start: "top 88%",
-      onEnter: (targets) => gsap.to(targets, {
-        opacity: 1, y: 0, duration: durationBase, ease: motionEase, stagger: 0.04, overwrite: true
-      }),
-      onLeaveBack: (targets) => gsap.set(targets, { opacity: 0, y: 10, overwrite: true })
-    });
-
-    gsap.utils.toArray("[data-relato]").forEach((l) => {
-      gsap.from(l, {
-        yPercent: 55, opacity: 0, ease: "none",
-        scrollTrigger: { trigger: l, start: "top 96%", end: "top 55%", scrub: 0.6 }
-      });
-    });
-
-    document.querySelectorAll("[data-counter]").forEach((el) => {
-      const fin = parseInt(el.dataset.counter, 10);
-      if (Number.isNaN(fin)) return;
-      const obj = { v: 0 };
-      gsap.to(obj, {
-        v: fin, duration: durationSlow * 2, ease: motionEase,
-        scrollTrigger: { trigger: el, start: "top 90%" },
-        onUpdate: () => { el.textContent = Math.round(obj.v); }
-      });
-    });
-
-    return () => gsap.set("[data-stagger]", { clearProps: "all" });
-  });
+  const repairedLine = document.getElementById("fisuraFija");
+  const lineLength = repairedLine.getTotalLength();
+  repairedLine.style.setProperty("--line-length", lineLength);
+  repairedLine.classList.add("motion-ready");
+  const showRepairedLine = () => {
+    requestAnimationFrame(() => repairedLine.classList.add("is-visible"));
+    repairedLine.addEventListener("transitionend", () => {
+      repairedLine.classList.remove("motion-ready", "is-visible");
+      repairedLine.style.removeProperty("--line-length");
+    }, { once: true });
+  };
+  if ("IntersectionObserver" in window) {
+    const lineObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      showRepairedLine();
+      lineObserver.disconnect();
+    }, { threshold: 0.2 });
+    lineObserver.observe(repairedLine);
+  } else {
+    showRepairedLine();
+  }
 }
 </script>
 </body>
