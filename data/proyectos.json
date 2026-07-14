@@ -1,0 +1,263 @@
+[
+  {
+    "slug": "delticom-hannover",
+    "referencia": "E240002",
+    "cliente": "Delticom",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Hannover",
+      "pais": "Alemania"
+    },
+    "superficieM2": 18084,
+    "magnitudes": [
+      "18.084 m² tratados",
+      "5.362 m² de revestimiento retirado"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/delticom/resultado.jpg",
+        "alt": "Vista general del pavimento de Delticom tras el tratamiento",
+        "etapa": "Resultado documentado"
+      },
+      {
+        "src": "img/proyectos/delticom/estado-inicial.jpg",
+        "alt": "Pavimento de la nave de Hannover antes de retirar revestimientos y marcas",
+        "etapa": "Estado inicial"
+      },
+      {
+        "src": "img/proyectos/delticom/tratamiento.jpg",
+        "alt": "Tratamiento superficial del pavimento en curso en la nave de Delticom",
+        "etapa": "Intervención"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Delticom · renovación de pavimento en Hannover",
+        "problema": "Una superficie logística extensa conservaba revestimientos y señalización, con una entreplanta que requería un tratamiento diferenciado.",
+        "solucion": "Retirada de 5.362 m² de revestimiento y tratamiento de 18.084 m² entre la planta principal y la entreplanta mediante sistemas húmedo y seco.",
+        "resultado": "La obra fue ejecutada. El reportaje aportado documenta la retirada de marcas y una superficie continua, limpia y pulida al cierre de la intervención."
+      }
+    }
+  },
+  {
+    "slug": "tp-link-dusseldorf",
+    "referencia": "E250007",
+    "cliente": "TP-Link",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Düsseldorf",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "magnitudes": [
+      "1.730 anclajes rebajados",
+      "Retirada localizada de señalización"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/tp-link/resultado-general.jpg",
+        "alt": "Vista general del pavimento intervenido en las instalaciones de TP-Link",
+        "etapa": "Vista general"
+      },
+      {
+        "src": "img/proyectos/tp-link/resultado-zona.jpg",
+        "alt": "Segunda vista de la zona logística intervenida para TP-Link",
+        "etapa": "Zona intervenida"
+      },
+      {
+        "src": "img/proyectos/tp-link/detalle-retiradas.jpg",
+        "alt": "Detalle de puntos del pavimento tras el rebaje y la retirada localizada",
+        "etapa": "Detalle técnico"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "TP-Link · retirada de anclajes y señalización en Düsseldorf",
+        "problema": "La instalación requería retirar anclajes, señalización pintada y adhesiva, además de varios parches de pintura.",
+        "solucion": "Rebaje de 1.730 anclajes y retirada localizada de señalización y parches de pintura en las zonas indicadas.",
+        "resultado": "La obra fue ejecutada. Las fotografías aportadas muestran las áreas intervenidas y el detalle de los puntos rebajados en el pavimento."
+      }
+    }
+  },
+  {
+    "slug": "dadada-euskirchen",
+    "referencia": "E250006",
+    "cliente": "dadada GmbH",
+    "sector": "Industrial",
+    "ubicacion": {
+      "ciudad": "Euskirchen",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "magnitudes": [
+      "44 m lineales de fisuras XL",
+      "20 huecos reparados"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/dadada/detalle-refuerzo.jpg",
+        "alt": "Detalle del refuerzo mecánico instalado junto a una junta del pavimento",
+        "etapa": "Refuerzo instalado"
+      },
+      {
+        "src": "img/proyectos/dadada/estado-inicial.jpg",
+        "alt": "Junta abierta en el pavimento antes de la reparación en Euskirchen",
+        "etapa": "Estado inicial"
+      },
+      {
+        "src": "img/proyectos/dadada/refuerzo-junta.jpg",
+        "alt": "Proceso de preparación y refuerzo mecánico de una junta",
+        "etapa": "Intervención"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "dadada GmbH · reparación localizada en Euskirchen",
+        "problema": "El pavimento presentaba fisuras abiertas, huecos y desniveles localizados que requerían una intervención técnica puntual.",
+        "solucion": "Reparación de 44 m lineales de fisuras XL, relleno de 20 huecos y refuerzo mecánico de las zonas documentadas.",
+        "resultado": "La obra fue ejecutada. El reportaje técnico documenta el estado inicial y las distintas fases de preparación, cosido y refuerzo mecánico."
+      }
+    }
+  },
+  {
+    "slug": "loreal-gauchy",
+    "referencia": "E250013",
+    "cliente": "L’Oréal",
+    "sector": "Industria",
+    "ubicacion": {
+      "ciudad": "Gauchy",
+      "pais": "Francia"
+    },
+    "superficieM2": 4200,
+    "magnitudes": [
+      "4.200 m² tratados",
+      "Tratamiento superficial LitoBrillant"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/loreal/resultado.jpg",
+        "alt": "Resultado del tratamiento superficial del pavimento en la planta de L’Oréal",
+        "etapa": "Resultado documentado"
+      },
+      {
+        "src": "img/proyectos/loreal/estado-inicial.jpg",
+        "alt": "Superficie industrial de L’Oréal antes de completar el tratamiento",
+        "etapa": "Estado inicial"
+      },
+      {
+        "src": "img/proyectos/loreal/tratamiento.jpg",
+        "alt": "Zona de trabajo durante el tratamiento del pavimento en Gauchy",
+        "etapa": "Intervención"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "L’Oréal · tratamiento superficial en Gauchy",
+        "problema": "La planta necesitaba renovar una gran superficie de hormigón y recuperar un acabado uniforme en el área de trabajo.",
+        "solucion": "Aplicación del tratamiento superficial LitoBrillant sobre 4.200 m² de pavimento industrial.",
+        "resultado": "La obra fue ejecutada. El reportaje final muestra una superficie homogénea y pulida en el área tratada."
+      }
+    }
+  },
+  {
+    "slug": "blitz-bremen",
+    "referencia": "E240001",
+    "cliente": "Blitz",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Bremen",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "magnitudes": [
+      "1.121 m lineales de fisuras",
+      "5.000 anclajes retirados o rebajados",
+      "465 huecos reparados"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/blitz/resultado-pasillo.jpg",
+        "alt": "Pasillo logístico de Blitz tras la intervención en el pavimento",
+        "etapa": "Resultado documentado"
+      },
+      {
+        "src": "img/proyectos/blitz/estado-inicial-junta.jpg",
+        "alt": "Junta dañada en el pavimento antes de la reparación en Bremen",
+        "etapa": "Estado inicial"
+      },
+      {
+        "src": "img/proyectos/blitz/reparacion.jpg",
+        "alt": "Detalle de una zona reparada durante la intervención para Blitz",
+        "etapa": "Intervención"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Blitz · restauración de pavimento logístico en Bremen",
+        "problema": "El centro presentaba una red extensa de fisuras, puntos de anclaje y huecos, además de reparaciones localizadas de distinto tamaño.",
+        "solucion": "Tratamiento de 1.121 m lineales de fisuras, retirada o rebaje de 5.000 anclajes y reparación de 465 huecos.",
+        "resultado": "La obra fue ejecutada. La secuencia aportada documenta el daño inicial, la reparación localizada y el estado posterior de uno de los pasillos logísticos."
+      }
+    }
+  },
+  {
+    "slug": "hologram-paris",
+    "referencia": "E250005",
+    "cliente": "Hologram Bâtiment",
+    "sector": "Edificación",
+    "ubicacion": {
+      "ciudad": "París",
+      "pais": "Francia"
+    },
+    "superficieM2": 2700,
+    "magnitudes": [
+      "2.700 m² tratados y lijados",
+      "201 m² de revestimiento retirado",
+      "829 m lineales de fisuras y juntas",
+      "1.943 anclajes y 357 huecos"
+    ],
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "plazo": null,
+    "imagenes": [
+      {
+        "src": "img/proyectos/hologram/resultado.jpg",
+        "alt": "Resultado pulido del pavimento intervenido por Hologram Bâtiment en París",
+        "etapa": "Resultado documentado"
+      },
+      {
+        "src": "img/proyectos/hologram/estado-inicial-huecos.jpg",
+        "alt": "Huecos y puntos de anclaje visibles antes del tratamiento del pavimento",
+        "etapa": "Estado inicial"
+      },
+      {
+        "src": "img/proyectos/hologram/maquinaria-tratamiento.jpg",
+        "alt": "Maquinaria de lijado y tratamiento sobre el pavimento de la obra de París",
+        "etapa": "Intervención"
+      }
+    ],
+    "traducciones": {
+      "es": {
+        "titulo": "Hologram Bâtiment · rehabilitación integral en París",
+        "problema": "La superficie combinaba revestimiento existente, fisuras, juntas, anclajes, huecos y zonas que requerían nivelación.",
+        "solucion": "Tratamiento y lijado de 2.700 m², retirada de 201 m² de revestimiento, reparación de 21 m de fisuras y 808 m de juntas, además del saneado de anclajes y huecos.",
+        "resultado": "La obra fue ejecutada. El reportaje final documenta una superficie saneada, homogénea y pulida tras la intervención."
+      }
+    }
+  }
+]

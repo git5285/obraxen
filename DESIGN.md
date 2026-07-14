@@ -98,11 +98,9 @@ escala; no se inventa un número.
   ```sh
   grep -nE "z-index:[0-9]" index.html        # debe ser VACÍO (todo vía var())
   ```
-- **Estado:** **DESVÍO**. Hoy hay 6 literales: `z-index:100` (skip), `:80`
-  (menú móvil), `:60` (sticky-nav) y tres `z-index:1` (hero/tex/serv). Mapeo de
-  migración: skip→`--z-skip-link`, menú móvil→`--z-modal`, sticky→`--z-sticky`,
-  los `z-index:1` de contenido sobre fondo→`--z-base`+1 o eliminar (basta
-  `position:relative`). Los tokens ya existen en `tokens.css`.
+- **Estado:** **CUMPLE**. Skip, menú móvil, sticky y capas de contenido usan
+  `--z-skip-link`, `--z-modal`, `--z-sticky` y `--z-content`. No quedan valores
+  numéricos literales en `src/index.html`.
 
 ---
 
@@ -130,11 +128,10 @@ esenciales, y el JS debe envolver la animación en
   grep -c "prefers-reduced-motion" index.html          # ≥ 2 (CSS + JS)
   grep -noE "ease:[^,}]+|transition:[^;}]+" index.html  # curvas/duraciones en uso
   ```
-- **Estado:** Regla D **CUMPLE** (bloque CSS `reduce` en `index.html:385` + guard
-  GSAP `no-preference` en `:935`). Reglas A–C **DESVÍO**: hoy las transiciones CSS
-  usan `ease` (no `--ease-standard`), GSAP usa `power1.out` (no `expo.out`) y las
-  duraciones son literales (`.15s`–`.45s`). Sin bounce: **CUMPLE** (no hay
-  `back/elastic/bounce` en el repo).
+- **Estado:** **CUMPLE**. Las transiciones CSS usan la escala `--dur-*` y
+  `--ease-standard`; GSAP lee las duraciones desde CSS y usa `expo.out`. Los
+  scrubs siguen siendo lineales y `prefers-reduced-motion` cubre CSS y JS. La
+  aurora ambiental de 16 s es la excepción documentada a la escala de interacción.
 
 ---
 
@@ -157,7 +154,7 @@ hex de `tokens.css`):
 | `primary-dark` / `primary-tint` — etiqueta m² | 4.88:1 | 4.5 | ✅ |
 | `blanco` / `ink` — texto sobre bandas oscuras | 17.75:1 | 4.5 | ✅ |
 | `primary-light` / `ink` — kicker en hero (texto grande) | 7.84:1 | 3.0 | ✅ |
-| **`blanco` / `primary` — etiqueta del botón CTA (.95rem bold ≈15px)** | **3.56:1** | **4.5** | **❌ FALLA** |
+| `blanco` / `primary-dark` — etiqueta del botón CTA (.95rem bold ≈15px) | 5.18:1 | 4.5 | ✅ |
 | `primary` / `bg` — acento como texto | 3.56:1 | 4.5 (cuerpo) / 3.0 (grande) | ⚠️ solo válido en grande |
 
 **Reglas derivadas (comprobables):**
@@ -170,10 +167,9 @@ hex de `tokens.css`):
 - **Contraste sobre imagen** (hero-sub, labels sobre foto): no garantizable
   estáticamente; verificar en runtime con la imagen real.
 
-- **Estado:** **DESVÍO 1 (real):** el botón CTA primario incumple (3.56:1). Para
-  cumplir 4.5:1 con blanco, el fondo del botón debe oscurecerse a
-  `--brand-primary-dark` (5.18:1) o subir el tamaño/grosor del label a "grande".
-  Resto de texto de cuerpo: **CUMPLE**.
+- **Estado:** **CUMPLE** para los pares estáticos verificados. El CTA usa
+  `--brand-primary-dark` y alcanza 5.18:1. El contraste sobre fotografías debe
+  seguir comprobándose cuando se sustituyan imágenes.
 
 ---
 

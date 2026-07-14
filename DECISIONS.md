@@ -76,10 +76,18 @@ grabación propia (ver guía de grabación).
 
 **Estado:** Aceptada · **consecuencia negativa (SEO) resuelta 2026-07-14**
 
-**Contexto.** El **nombre comercial está pendiente de decisión** (podría cambiar).
+**Contexto.** El **nombre comercial está pendiente de decisión**. “RemainOn” es
+exclusivamente un identificador interno temporal, no es una marca candidata ni
+puede publicarse. `data/brand.json` mantiene `nombre: null` y registra este límite
+en `nombreTemporalNoPublicable`. La empresa tampoco está constituida todavía; la
+forma jurídica prevista es una sociedad limitada.
 Antes, el nombre, el dominio y los contactos estaban hardcodeados en ~18 puntos
 del HTML (título, meta, JSON-LD, logo, footer, formulario…). Renombrar habría
 sido una edición dispersa y propensa a error.
+
+> **Actualización 2026-07-14:** el naming y la constitución quedan aplazados por
+> decisión de los socios. No se desarrollarán propuestas de nombre ni se simularán
+> datos societarios hasta que ambos asuntos se reabran expresamente.
 
 **Decisión.** Aislar toda la identidad en un único punto de verdad,
 `data/brand.json` (`nombre`, `nombreLegal`, `claim`, `dominio`, `email`,
@@ -91,7 +99,11 @@ fichero fuente** (`src/` + `data/` → solo `brand.json`). Recolorear = editar s
 **Consecuencias.**
 - (+) Renombrar la empresa es cambiar un fichero (verificado en build: sustitución
   de prueba propagó título, logo, contactos y JSON-LD a la vez).
-- (+) Los datos aún no decididos se marcan `«PENDIENTE»` de forma visible.
+- (+) Los datos aún no decididos usan `null` y no se renderizan; el modo
+  `publicar: true` exige identidad legal, contacto y URLs legales.
+- (+) Mientras el nombre no exista, el logotipo se reduce a un símbolo neutral;
+  sin dominio no se generan canonical, Open Graph absoluto ni sitemap, y sin
+  email no se muestra un formulario que no pueda enviarse.
 - (✓ **resuelto 2026-07-14**) ~~Inyección por JS ⇒ crawlers/scrapers sin JS no ven
   el nombre en cabecera~~ → el nombre, `<title>`, `meta`, `og` y JSON-LD se
   resuelven **en build** y viven en el HTML estático servido. Ejecutado el
@@ -107,9 +119,8 @@ fichero fuente** (`src/` + `data/` → solo `brand.json`). Recolorear = editar s
 
 **Estado:** **Aceptada** (cerrada 2026-07-14 · «modelo-primero»)
 
-**Contexto.** Las secciones Proyectos, Equipo y Recursos existen como plantillas
-`hidden` con marcadores. La tentación es «rellenar y publicar» página a página.
-Pero esas secciones son **colecciones** (N proyectos, N personas, N artículos) y,
+**Contexto.** Proyectos, Equipo y Recursos son **colecciones** (N proyectos,
+N personas, N artículos) y,
 con la vocación europea, previsiblemente **multi-idioma**. Maquetar páginas antes
 de definir la forma del contenido suele generar reescrituras.
 
@@ -129,10 +140,17 @@ rehacer al activar i18n.
 **Consecuencias.**
 - (+) Cada colección tendrá un esquema explícito y una única fuente de datos.
 - (+) i18n encaja desde el principio (claves por idioma), alineado con la vocación europea.
-- (−) Activar Proyectos/Equipo/Recursos exige **primero** diseñar el esquema
-  (más trabajo inicial que maquetar una página suelta).
-- Proyectos/Equipo/Recursos permanecen `hidden` hasta que exista su esquema + datos.
+- (✓) Proyecto ya tiene esquema multiidioma (`data/proyectos.schema.json`),
+  fuente (`data/proyectos.json`) y render condicional en el build.
+- (−) Equipo y Recursos todavía necesitan esquema propio antes de publicarse.
+- Las plantillas vacías dejaron de enviarse en el HTML; una colección aparece
+  únicamente cuando contiene datos reales válidos.
 
-**Siguiente paso concreto:** definir el esquema de la colección **Proyecto** (la de
-mayor valor comercial) y su fuente `data/proyectos.json`, y renderizarla con el
-build actual.
+**Estado actualizado:** los seis proyectos recibidos ya se publican desde
+`data/proyectos.json` tras confirmar ejecución, unidades principales, ubicaciones y
+permiso para identificar clientes. Las 18 imágenes seleccionadas pasaron una auditoría
+de calidad y privacidad documentada en `PHOTO_AUDIT.md`.
+
+**Siguiente paso concreto:** obtener para cada proyecto al menos un dato de cierre
+verificable —plazo real, continuidad operativa, problema resuelto o validación del
+cliente— antes de ampliar las afirmaciones de resultado.

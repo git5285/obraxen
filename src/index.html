@@ -5,16 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{titleText}}</title>
 <meta name="description" content="{{descText}}">
+{{{absoluteMetaHtml}}}
 <meta property="og:title" content="{{ogTitle}}">
 <meta property="og:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
 <meta property="og:type" content="website">
-<!-- QUITAR noindex cuando se completen los placeholders y el formulario -->
-<meta name="robots" content="noindex">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="{{siteName}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ogTitle}}">
+<meta name="twitter:description" content="Juntas, fisuras, recrecidos y tratamientos superficiales. Mínima parada de actividad.">
+<meta name="robots" content="{{robotsDirective}}">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preload" as="image" href="img/hero-nave.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tokens.css">
 <script type="application/ld+json">
 {{{jsonld}}}
@@ -31,14 +36,16 @@
     font-size:16px;
     padding:0;
   }
+  body.menu-abierto{overflow:hidden}
   h1,h2,h3{line-height:1.1;font-weight:700;letter-spacing:-.03em}
   h1,h2,.relato .linea,.logo{font-family:var(--font-display)}
   a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   :focus-visible{outline:3px solid var(--brand-primary);outline-offset:2px;border-radius:4px}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
   .skip{
     position:absolute;left:-9999px;top:0;background:var(--brand-ink);color:var(--brand-surface);
-    padding:10px 18px;border-radius:0 0 12px 0;z-index:100;
+    padding:10px 18px;border-radius:0 0 12px 0;z-index:var(--z-skip-link);
   }
   .skip:focus{left:16px}
   section[id],.cierre{scroll-margin-top:76px}
@@ -58,12 +65,12 @@
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"),
       linear-gradient(135deg,var(--brand-tex-a) 0%,var(--brand-tex-b) 45%,var(--brand-tex-c) 100%);
     background-blend-mode:overlay;
-    transition:transform .45s ease;
+    transition:transform var(--dur-slow) var(--ease-standard);
   }
   .foto:hover > .tex{transform:scale(1.045)}
   .foto.ph::after{
     content:"Foto";
-    position:absolute;top:12px;right:14px;z-index:1;
+    position:absolute;top:12px;right:14px;z-index:var(--z-content);
     font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
     color:rgb(from var(--brand-on-dark) r g b / .55);
   }
@@ -72,11 +79,11 @@
     display:inline-flex;align-items:center;gap:8px;
     padding:11px 22px;border-radius:var(--radius-pill);border:0;cursor:pointer;
     font-family:inherit;font-weight:700;font-size:.95rem;text-decoration:none;
-    transition:background .15s ease,transform .15s ease;
+    transition:background var(--dur-fast) var(--ease-standard),transform var(--dur-fast) var(--ease-standard);
   }
   .btn-acento{background:var(--brand-primary-dark);color:var(--brand-surface);
     box-shadow:0 1px 2px rgb(from var(--brand-shadow) r g b / .22),inset 0 1px 0 rgb(from var(--brand-on-dark) r g b / .14)}
-  .btn-acento::after{content:"\2192";font-weight:600;transition:transform .18s ease}
+  .btn-acento::after{content:"\2192";font-weight:600;transition:transform var(--dur-fast) var(--ease-standard)}
   .btn-acento:hover::after{transform:translateX(3px)}
   .btn-acento:hover{background:oklch(from var(--brand-primary-dark) calc(l - .05) c h);transform:translateY(-1px)}
   .btn:active{transform:scale(.97)}
@@ -84,10 +91,10 @@
   .btn-borde:hover{border-color:var(--brand-surface)}
 
   .sticky-nav{
-    position:fixed;top:0;left:0;right:0;z-index:60;
+    position:fixed;top:0;left:0;right:0;z-index:var(--z-sticky);
     background:rgb(from var(--brand-on-dark) r g b / .72);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
     border-bottom:1px solid var(--brand-line);
-    transform:translateY(-100%);transition:transform .25s ease;
+    transform:translateY(-100%);transition:transform var(--dur-base) var(--ease-standard);
   }
   .sticky-nav.visible{transform:translateY(0)}
   .sticky-nav .inner{
@@ -105,6 +112,7 @@
   .sticky-nav .btn{padding:9px 20px;font-size:.85rem}
   .logo{font-weight:800;font-size:1.2rem;text-decoration:none;letter-spacing:-.01em}
   .logo span{color:var(--brand-primary)}
+  .logo-provisional{display:block;width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
   .hero{
     position:relative;border-radius:0;overflow:hidden;color:var(--brand-surface);
@@ -119,13 +127,13 @@
       radial-gradient(720px 520px at 12% 88%,rgb(from var(--brand-primary-light) r g b / .16),transparent 60%),
       radial-gradient(900px 620px at 50% 55%,rgb(from var(--brand-aurora) r g b / .55),transparent 65%);
     filter:blur(46px);
-    animation:aurora 16s ease-in-out infinite alternate;
+    animation:aurora 16s var(--ease-standard) infinite alternate;
   }
   @keyframes aurora{
     from{transform:translate3d(-2%,-1%,0) scale(1)}
     to{transform:translate3d(2%,2%,0) scale(1.07)}
   }
-  .hero-nav,.hero-body,.fisura-wrap{position:relative;z-index:1;max-width:calc(var(--maxw) + 112px);margin-left:auto;margin-right:auto}
+  .hero-nav,.hero-body,.fisura-wrap{position:relative;z-index:var(--z-content);max-width:calc(var(--maxw) + 112px);margin-left:auto;margin-right:auto}
   .hero-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 36px}
   .hero-nav .logo{font-size:1.25rem}
   .hero-nav ul{display:flex;gap:6px;list-style:none;background:rgb(from var(--brand-on-dark) r g b / .07);border-radius:var(--radius-pill);padding:6px}
@@ -162,7 +170,7 @@
   .intro{padding:120px 0 40px}
   .intro .fila{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
   .intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:24px;min-width:0}
   .stat{border-left:2px solid var(--brand-line);padding-left:20px}
   .stat b{font-size:3.2rem;font-weight:800;display:block;letter-spacing:-.02em}
   .stat b i{font-style:normal;color:var(--brand-primary)}
@@ -181,7 +189,7 @@
   .tarjeta{
     background:var(--brand-surface);border-radius:var(--radius-md);padding:26px 24px;
     border:1px solid var(--brand-line);
-    transition:transform .2s ease,box-shadow .2s ease;
+    transition:transform var(--dur-base) var(--ease-standard),box-shadow var(--dur-base) var(--ease-standard);
   }
   .tarjeta:hover{transform:translateY(-4px);border-color:var(--brand-line-strong);box-shadow:0 13px 27px -5px rgb(from var(--brand-shadow-blue) r g b / .16),0 8px 16px -8px rgb(from var(--brand-shadow) r g b / .18)}
   .tarjeta .num{
@@ -213,7 +221,7 @@
     display:flex;align-items:flex-end;
   }
   .serv .capa{
-    position:relative;z-index:1;width:100%;padding:22px 24px;
+    position:relative;z-index:var(--z-content);width:100%;padding:22px 24px;
     background:linear-gradient(rgb(from var(--brand-ink-deep) r g b / 0) 8%,rgb(from var(--brand-ink-deep) r g b / .55) 42%,rgb(from var(--brand-ink-deep) r g b / .93) 100%);
     color:var(--brand-surface);
   }
@@ -235,18 +243,25 @@
   [hidden]{display:none !important}
   .proyectos{padding:50px 0}
   .proyectos .cab{margin-bottom:30px}
-  .proy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .proy-intro{max-width:76ch;margin-top:12px;color:var(--brand-muted);font-size:.92rem}
+  .proy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
   .proy{background:var(--brand-surface);border:1px solid var(--brand-line);border-radius:var(--radius-md);overflow:hidden}
-  .proy .foto{min-height:190px}
+  .proy-media{display:grid;grid-template-columns:1.62fr 1fr;grid-template-rows:repeat(2,112px);gap:2px;background:var(--brand-line)}
+  .proy-media figure{position:relative;overflow:hidden;background:var(--brand-bg)}
+  .proy-media figure:first-child{grid-row:1 / span 2}
+  .proy-media img{display:block;width:100%;height:100%;object-fit:cover}
+  .proy-media figcaption{position:absolute;left:8px;bottom:8px;padding:4px 8px;border-radius:var(--radius-pill);background:rgb(from var(--brand-ink-deep) r g b / .82);color:var(--brand-on-dark);font-size:.66rem;font-weight:700;letter-spacing:.04em}
   .proy .cuerpo{padding:22px 24px}
   .proy .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
   .proy .meta span{
     font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
     background:var(--brand-bg);border:1px solid var(--brand-line);border-radius:var(--radius-pill);padding:4px 11px;color:var(--brand-muted);
   }
-  .proy .meta span.m2{background:var(--brand-primary-tint);border-color:var(--brand-primary-tint-border);color:var(--brand-primary-dark)}
+  .proy .meta span.ref{background:var(--brand-primary-tint);border-color:var(--brand-primary-tint-border);color:var(--brand-primary-dark)}
   .proy h3{font-size:1.05rem;margin-bottom:10px}
   .proy p{font-size:.88rem;color:var(--brand-muted)}
+  .proy-cifras{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:0 0 16px;padding:0}
+  .proy-cifras li{font-size:.76rem;font-weight:700;color:var(--brand-ink-2);background:var(--brand-bg);border-left:3px solid var(--brand-primary);padding:6px 9px}
   .proy dl{margin-top:14px;font-size:.85rem;display:grid;gap:6px}
   .proy dt{font-weight:700;color:var(--brand-ink)}
   .proy dd{color:var(--brand-muted);margin-bottom:4px}
@@ -267,7 +282,7 @@
   .rec{
     background:var(--brand-surface);border:1px solid var(--brand-line);border-radius:var(--radius-md);
     padding:24px;display:flex;flex-direction:column;gap:10px;text-decoration:none;
-    transition:transform .2s ease,box-shadow .2s ease;
+    transition:transform var(--dur-base) var(--ease-standard),box-shadow var(--dur-base) var(--ease-standard);
   }
   .rec:hover{transform:translateY(-4px);border-color:var(--brand-line-strong);box-shadow:0 13px 27px -5px rgb(from var(--brand-shadow-blue) r g b / .16),0 8px 16px -8px rgb(from var(--brand-shadow) r g b / .18)}
   .rec .tipo{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-primary-dark)}
@@ -348,10 +363,14 @@
   .form textarea{min-height:96px;resize:vertical}
   .form .btn{width:100%;justify-content:center;margin-top:18px}
   .form small{display:block;margin-top:10px;font-size:.75rem;color:var(--brand-muted)}
+  .form-pendiente{min-height:220px;display:flex;flex-direction:column;justify-content:center}
+  .form-pendiente h3{font-size:1.35rem;margin:7px 0 10px}
+  .form-pendiente p{color:var(--brand-muted);max-width:44ch}
+  .form-pendiente .form-estado{color:var(--brand-primary-dark);font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
   .foot{
     background:var(--brand-surface);color:var(--brand-ink);
     border-radius:var(--radius-md);padding:36px;
-    display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:32px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px;
   }
   .foot .marca p{font-size:.85rem;color:var(--brand-muted);margin:12px 0 0;max-width:26ch}
   .foot h3{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
@@ -362,12 +381,12 @@
   .legal{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
     padding-top:24px;font-size:.8rem;color:rgb(from var(--brand-on-dark) r g b / .5)}
 
-  .menu-btn{display:none;background:none;border:0;cursor:pointer;padding:8px}
+  .menu-btn{display:none;background:none;border:0;cursor:pointer;padding:8px;min-width:44px;min-height:44px}
   .menu-btn span{display:block;width:22px;height:2px;background:var(--brand-on-dark);margin:5px 0;border-radius:2px}
   .sticky-nav .menu-btn span{background:var(--brand-ink)}
-  .movil-menu{position:fixed;inset:0;z-index:80;background:rgb(from var(--brand-overlay-menu) r g b / .97);
+  .movil-menu{position:fixed;inset:0;z-index:var(--z-modal);background:rgb(from var(--brand-overlay-menu) r g b / .97);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-    opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease}
+    opacity:0;visibility:hidden;transition:opacity var(--dur-base) var(--ease-standard),visibility var(--dur-base) var(--ease-standard)}
   .movil-menu.abierto{opacity:1;visibility:visible}
   .movil-menu a{color:var(--brand-on-dark);text-decoration:none;font-size:1.5rem;font-weight:800;padding:10px 18px}
   .movil-menu .btn{margin-top:16px;font-size:1rem}
@@ -381,7 +400,7 @@
     .hero-badge{justify-self:start}
     .intro .fila,.porque .panel,.faq .fila,.cierre .cta-fila{grid-template-columns:1fr}
     .serv-grid{grid-template-columns:1fr}
-    .stats{grid-template-columns:1fr 1fr}
+    .proy-grid{grid-template-columns:1fr}
     .cierre{padding:44px 28px 28px}
     .foot{grid-template-columns:1fr 1fr}
   }
@@ -398,37 +417,37 @@
 
 <a class="skip" href="#contenido">Saltar al contenido</a>
 
-<nav class="movil-menu" id="menuMovil" aria-label="Menú móvil">
-  <button class="cerrar" aria-label="Cerrar menú" onclick="menuMovil.classList.remove('abierto')">&times;</button>
+<nav class="movil-menu" id="menuMovil" aria-label="Menú móvil" aria-hidden="true" inert>
+  <button class="cerrar" type="button" aria-label="Cerrar menú" data-menu-close>&times;</button>
   {{{navMobileLinks}}}
-  <a class="btn btn-acento" href="#contacto" onclick="menuMovil.classList.remove('abierto')">{{ctaText}}</a>
+  <a class="btn btn-acento" href="#contacto">{{ctaText}}</a>
 </nav>
 
-<div class="sticky-nav" id="stickyNav" aria-hidden="true">
+<nav class="sticky-nav" id="stickyNav" aria-label="Navegación principal" aria-hidden="true" inert>
   <div class="inner">
     {{> logo}}
     <ul id="stickyLinks">
       {{{navStickyLinks}}}
     </ul>
-    <button class="menu-btn" aria-label="Abrir menú" onclick="menuMovil.classList.add('abierto')"><span></span><span></span><span></span></button>
+    <button class="menu-btn" type="button" aria-label="Abrir menú" aria-controls="menuMovil" aria-expanded="false" data-menu-open><span></span><span></span><span></span></button>
     {{> cta}}
   </div>
-</div>
+</nav>
 
 <section class="hero" id="inicio">
-  <div class="hero-nav">
+  <nav class="hero-nav" aria-label="Navegación principal">
     {{> logo}}
     <ul>
       {{{navHeroLinks}}}
     </ul>
-    <button class="menu-btn" aria-label="Abrir menú" onclick="menuMovil.classList.add('abierto')"><span></span><span></span><span></span></button>
+    <button class="menu-btn" type="button" aria-label="Abrir menú" aria-controls="menuMovil" aria-expanded="false" data-menu-open><span></span><span></span><span></span></button>
     {{> cta}}
-  </div>
+  </nav>
   <div class="hero-body">
     <div>
       <p class="kicker kicker-hero" data-reveal>Reparación de pavimentos industriales</p>
       <h1 data-reveal>Tu planta no se detiene.</h1>
-      <p class="hero-sub" data-reveal>Juntas, fisuras y superficies degradadas — reparadas por fases, sin parar tu producción.</p>
+      <p class="hero-sub" data-reveal>Juntas, fisuras y superficies degradadas — reparadas por fases para reducir el impacto en tu producción.</p>
       <span data-reveal style="display:inline-block">{{> cta}}</span>
     </div>
   </div>
@@ -445,13 +464,13 @@
   <section class="intro">
     <div class="wrap fila">
       <div>
-        <p class="kicker" data-reveal>{{brand.nombre}}</p>
+        <p class="kicker" data-reveal>{{brandKicker}}</p>
         <h2 data-reveal>Soluciones para suelos que no pueden permitirse parar</h2>
       </div>
       <div class="stats">
-        <div class="stat" data-reveal><b>+<i data-counter="XX">XX</i></b><span>Años de experiencia acumulada del equipo</span></div>
-        <div class="stat" data-reveal><b><i data-counter="48">48</i>&nbsp;h</b><span>Respuesta a cada solicitud de evaluación</span></div>
-        <div class="stat" data-reveal><b><i data-counter="100">100</i>%</b><span>Presupuestos cerrados, sin sorpresas</span></div>
+        {{{experienceStatHtml}}}
+        {{{responseStatHtml}}}
+        <div class="stat" data-reveal><b><i>04</i></b><span>Entrega y seguimiento de la reparación</span></div>
       </div>
     </div>
   </section>
@@ -480,12 +499,12 @@
         <div class="tarjeta" data-stagger>
           <span class="num">02</span>
           <h3>Propuesta técnica</h3>
-          <p>Presupuesto cerrado con solución, materiales, plazos y plan de fases adaptado a tu actividad.</p>
+          <p>Propuesta detallada según el caso, con solución, alcance, materiales, plazos y plan de fases adaptado a tu actividad.</p>
         </div>
         <div class="tarjeta" data-stagger>
           <span class="num">03</span>
           <h3>Ejecución</h3>
-          <p>Intervención con equipos propios, señalización de zonas y control de polvo y residuos durante la obra.</p>
+          <p>Intervención planificada, señalización de zonas y control de polvo y residuos durante la obra.</p>
         </div>
         <div class="tarjeta" data-stagger>
           <span class="num">04</span>
@@ -499,7 +518,7 @@
   <section class="sectores">
     <div class="wrap">
       <div class="cinta" aria-label="Sectores en los que trabajamos">
-        <div class="grupo" aria-hidden="false">
+        <div class="grupo">
           <span class="sector">Logística</span>
           <span class="sector">Alimentación</span>
           <span class="sector">Automoción</span>
@@ -523,10 +542,10 @@
     <div class="wrap">
       <div class="cab">
         <p class="kicker" data-reveal style="justify-content:center;display:flex">Qué hacemos</p>
-        <h2 data-reveal>Reparaciones rápidas, duraderas y seguras</h2>
+        <h2 data-reveal>Soluciones definidas según el daño y la operativa</h2>
       </div>
       <div class="serv-grid">
-        <div class="serv foto" data-stagger role="img" aria-label="Operarios sellando juntas y fisuras en el pavimento de una nave industrial">
+        <div class="serv foto" data-stagger>
           <div class="tex" style="background:url('img/juntas.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h7M14 12h7M10 12l2-3 2 3-2 3z"/><path d="M3 7v10M21 7v10"/></svg>
@@ -535,7 +554,7 @@
             {{> capa-cta}}
           </div>
         </div>
-        <div class="serv foto" data-stagger role="img" aria-label="Losa de hormigón con fisuras durante la inspección de una nave">
+        <div class="serv foto" data-stagger>
           <div class="tex" style="background:url('img/fisuras.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L9 14l3 2 4-6 5 4"/><path d="M3 20h18"/></svg>
@@ -544,7 +563,7 @@
             {{> capa-cta}}
           </div>
         </div>
-        <div class="serv foto" data-stagger role="img" aria-label="Fresadora de pavimento trabajando sobre la solera de hormigón">
+        <div class="serv foto" data-stagger>
           <div class="tex" style="background:url('img/recrecidos.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M4 20h16"/><path d="M6 16V9l6-4 6 4v7"/></svg>
@@ -553,7 +572,7 @@
             {{> capa-cta}}
           </div>
         </div>
-        <div class="serv foto" data-stagger role="img" aria-label="Aplicación de sellador con rodillo sobre pavimento industrial">
+        <div class="serv foto" data-stagger>
           <div class="tex" style="background:url('img/pulido.jpg') center/cover no-repeat"></div>
           <div class="capa">
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>
@@ -579,135 +598,15 @@
     </div>
   </section>
 
-  <section class="proyectos" id="proyectos" hidden>
-    <div class="wrap">
-      <div class="cab">
-        <p class="kicker">Casos de éxito</p>
-        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Proyectos que hablan por nosotros</h2>
-      </div>
-      <div class="proy-grid">
-        <article class="proy">
-          <div class="foto ph"><div class="tex"></div></div>
-          <div class="cuerpo">
-            <div class="meta">
-              <span class="m2">[0.000] m²</span>
-              <span>[Sector]</span>
-              <span>[Ciudad, País]</span>
-            </div>
-            <h3>[Título del proyecto: qué se hizo y para quién]</h3>
-            <dl>
-              <dt>Problema</dt>
-              <dd>[Estado inicial del pavimento y cómo afectaba a la operativa]</dd>
-              <dt>Solución</dt>
-              <dd>[Intervención ejecutada: sistemas, fases, plazos]</dd>
-              <dt>Resultado</dt>
-              <dd>[Resultado medible: días de obra, paradas evitadas, garantía]</dd>
-            </dl>
-          </div>
-        </article>
-        <article class="proy">
-          <div class="foto ph"><div class="tex"></div></div>
-          <div class="cuerpo">
-            <div class="meta">
-              <span class="m2">[0.000] m²</span>
-              <span>[Sector]</span>
-              <span>[Ciudad, País]</span>
-            </div>
-            <h3>[Título del proyecto]</h3>
-            <dl>
-              <dt>Problema</dt><dd>[…]</dd>
-              <dt>Solución</dt><dd>[…]</dd>
-              <dt>Resultado</dt><dd>[…]</dd>
-            </dl>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="equipo" id="equipo" hidden>
-    <div class="wrap">
-      <div class="cab" style="margin-bottom:30px">
-        <p class="kicker">El equipo</p>
-        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Las personas detrás de cada obra</h2>
-      </div>
-      <div class="eq-grid">
-        <article class="persona">
-          <div class="foto ph"><div class="tex"></div></div>
-          <div class="cuerpo">
-            <h3>[Nombre Apellido]</h3>
-            <p class="cargo">[Cargo — p. ej. Socio fundador / Dirección técnica]</p>
-            <p>[Una línea sobre su responsabilidad: qué garantiza esta persona en cada proyecto]</p>
-            <ul>
-              <li><a href="mailto:[email]@{{brand.dominio}}">[email]@{{brand.dominio}}</a></li>
-              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
-            </ul>
-          </div>
-        </article>
-        <article class="persona">
-          <div class="foto ph"><div class="tex"></div></div>
-          <div class="cuerpo">
-            <h3>[Nombre Apellido]</h3>
-            <p class="cargo">[Cargo]</p>
-            <p>[Responsabilidad]</p>
-            <ul>
-              <li><a href="mailto:[email]@{{brand.dominio}}">[email]@{{brand.dominio}}</a></li>
-              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
-            </ul>
-          </div>
-        </article>
-        <article class="persona">
-          <div class="foto ph"><div class="tex"></div></div>
-          <div class="cuerpo">
-            <h3>[Nombre Apellido]</h3>
-            <p class="cargo">[Cargo]</p>
-            <p>[Responsabilidad]</p>
-            <ul>
-              <li><a href="mailto:[email]@{{brand.dominio}}">[email]@{{brand.dominio}}</a></li>
-              <li><a href="[URL LinkedIn]" rel="noopener">LinkedIn</a></li>
-            </ul>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="recursos" id="recursos" hidden>
-    <div class="wrap">
-      <div class="cab" style="margin-bottom:30px">
-        <p class="kicker">Recursos</p>
-        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem)">Conocimiento técnico del pavimento</h2>
-      </div>
-      <div class="rec-grid">
-        <a class="rec" href="#">
-          <span class="tipo">Guía técnica</span>
-          <h3>[Por qué fallan las juntas de dilatación en naves logísticas — y cómo evitarlo]</h3>
-          <p>[Resumen de dos líneas del artículo]</p>
-          <span class="leer">Leer artículo →</span>
-        </a>
-        <a class="rec" href="#">
-          <span class="tipo">Guía técnica</span>
-          <h3>[Fisuras en pavimento industrial: cuáles son estructurales y cuáles no]</h3>
-          <p>[Resumen de dos líneas del artículo]</p>
-          <span class="leer">Leer artículo →</span>
-        </a>
-        <a class="rec" href="#">
-          <span class="tipo">Mantenimiento</span>
-          <h3>[Plan de mantenimiento preventivo del pavimento: qué revisar cada trimestre]</h3>
-          <p>[Resumen de dos líneas del artículo]</p>
-          <span class="leer">Leer artículo →</span>
-        </a>
-      </div>
-    </div>
-  </section>
+  {{{projectsSection}}}
 
   <section class="porque" id="empresa">
     <div class="wrap">
       <div class="panel">
         <div class="col-izq">
-          <p class="kicker" data-reveal>Por qué {{brand.nombre}}</p>
+          <p class="kicker" data-reveal>{{whyKicker}}</p>
           <h2 data-reveal>Oficio de siempre, empresa nueva</h2>
-          <p data-reveal>Combinamos oficio, planificación y materiales homologados para que la reparación dure y tu actividad no se resienta.</p>
+          <p data-reveal>Combinamos oficio, planificación y materiales seleccionados para cada sistema, con el objetivo de que la reparación dure y tu actividad no se resienta.</p>
           <span data-reveal style="display:inline-block">{{> cta}}</span>
         </div>
         <div class="ventajas">
@@ -717,16 +616,17 @@
             </div>
             <div>
               <h3>Experiencia real</h3>
-              <p>Equipo con amplia trayectoria en ejecución y reparación de pavimentos industriales. Conocemos los suelos porque los hemos construido.</p>
+              <p>Experiencia de ejecución y reparación aplicada al diagnóstico de cada pavimento y a la planificación de la intervención.</p>
             </div>
           </div>
+          {{{ownTeamsAdvantageHtml}}}
           <div class="ventaja" data-stagger>
             <div class="ico" aria-hidden="true">
               <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
             </div>
             <div>
               <h3>Mínima parada de actividad</h3>
-              <p>Trabajos por fases y en horarios compatibles con tu operativa: noches, fines de semana o zonas acotadas.</p>
+              <p>Cuando el alcance lo permite, proponemos fases, zonas acotadas u horarios alternativos para reducir el impacto en tu operativa.</p>
             </div>
           </div>
           <div class="ventaja" data-stagger>
@@ -734,8 +634,8 @@
               <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18M12 3a15 15 0 000 18"/></svg>
             </div>
             <div>
-              <h3>Vocación europea</h3>
-              <p>Estándares y materiales homologados pensando en operar en toda Europa, con el mismo nivel de exigencia en cada obra.</p>
+              <h3>Cobertura europea</h3>
+              <p>Trabajamos en toda la Unión Europea, con actividad principal en {{priorityMarketsLabel}}.</p>
             </div>
           </div>
         </div>
@@ -747,8 +647,8 @@
     <div class="wrap">
       <p class="kicker" data-reveal style="justify-content:center;display:flex">El equipo</p>
       <h2 data-reveal>Quiénes estamos detrás</h2>
-      <blockquote data-reveal>«Hemos pasado años ejecutando pavimentos industriales. {{brand.nombre}} nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, sin que la planta lo pague.»</blockquote>
-      <cite data-reveal><b>[Nombre Apellido]</b>Socio fundador, {{brand.nombre}}</cite>
+      <blockquote data-reveal>«{{teamQuote}}»</blockquote>
+      <cite data-reveal>{{{founderAttributionHtml}}}</cite>
     </div>
   </section>
 
@@ -760,30 +660,7 @@
         <p data-reveal>Las dudas que más nos plantean responsables de mantenimiento y operaciones antes de una intervención.</p>
       </div>
       <div>
-        <details data-stagger>
-          <summary>¿Podéis darme una valoración sin venir a la instalación?</summary>
-          <p>Sí. Con fotos o un vídeo de la zona afectada y las medidas aproximadas podemos darte una primera valoración orientativa. La visita técnica solo es necesaria para el presupuesto cerrado definitivo.</p>
-        </details>
-        <details data-stagger>
-          <summary>¿Puedo seguir operando durante la reparación?</summary>
-          <p>Sí, en la mayoría de los casos. Planificamos por fases y acotamos zonas para que el resto de la instalación siga trabajando. Muchas intervenciones se ejecutan en turnos de noche o fin de semana.</p>
-        </details>
-        <details data-stagger>
-          <summary>¿Cuánto tarda en poder pisarse una zona reparada?</summary>
-          <p>Depende del sistema empleado: hay morteros y resinas de curado rápido que admiten tráfico peatonal en horas y tráfico de carretillas en 24–48 horas. Lo concretamos en la propuesta técnica.</p>
-        </details>
-        <details data-stagger>
-          <summary>¿Por qué se rompen las juntas y las fisuras vuelven a aparecer?</summary>
-          <p>Normalmente porque se repara el síntoma sin corregir la causa: juntas mal dimensionadas, soporte degradado o tráfico distinto al previsto en el diseño original. Nuestro diagnóstico empieza por ahí.</p>
-        </details>
-        <details data-stagger>
-          <summary>¿Ofrecéis garantía sobre las reparaciones?</summary>
-          <p>Sí. Cada propuesta incluye la garantía aplicable según el sistema y las condiciones de uso, junto con recomendaciones de mantenimiento para conservarla.</p>
-        </details>
-        <details data-stagger>
-          <summary>¿Trabajáis fuera de España?</summary>
-          <p>Sí, planteamos proyectos en el resto de Europa. Cuéntanos la ubicación y el alcance y te confirmamos disponibilidad y plazos.</p>
-        </details>
+{{{faqHtml}}}
       </div>
     </div>
   </section>
@@ -794,31 +671,16 @@
     <div>
       <p class="kicker" data-reveal>Contacto</p>
       <h2 data-reveal>¿Tu pavimento está frenando tu operativa?</h2>
-      <p data-reveal>Cuéntanos qué le pasa y te proponemos la solución más adecuada, sin compromiso. Respondemos en menos de 48 horas laborables.</p>
+      <p data-reveal>Cuéntanos qué le pasa y te responderemos con los próximos pasos para valorar la solución más adecuada, sin compromiso.</p>
     </div>
-    <!-- INTERINO: el envío abre el cliente de correo con los datos.
-     Sustituir por backend/Formspree cuando haya cuenta. -->
-    <form class="form" id="formContacto" action="#" method="post" data-reveal>
-      <label for="f-nombre">Nombre</label>
-      <input id="f-nombre" name="nombre" type="text" autocomplete="name" required>
-      <label for="f-email">Correo electrónico</label>
-      <input id="f-email" name="email" type="email" autocomplete="email" required>
-      <label for="f-msg">¿Qué le pasa a tu pavimento?</label>
-      <textarea id="f-msg" name="mensaje" required></textarea>
-      <button class="btn btn-acento" type="submit">Enviar solicitud</button>
-      <small>También puedes escribirnos a <a href="mailto:{{brand.email}}">{{brand.email}}</a> o llamar al <a href="tel:{{brand.telefono}}">{{brand.telefono}}</a>.</small>
-    </form>
+    {{{contactFormHtml}}}
   </div>
   <div class="foot">
     <div class="marca">
       <a class="logo" style="color:var(--brand-ink)" href="#inicio">{{{logoInner}}}</a>
-      <p>Reparación de pavimentos industriales en España y Europa.</p>
-      <p style="margin-top:14px;font-size:.75rem;line-height:1.7">
-        <strong>Razón social:</strong> {{brand.nombreLegal}}<br>
-        <strong>CIF:</strong> [B-00000000]<br>
-        <strong>Domicilio:</strong> [Calle, nº, CP, Ciudad]<br>
-        <strong>Actividad:</strong> Reparación y tratamiento técnico de pavimentos industriales de hormigón
-      </p>
+      <p>Reparación de pavimentos industriales en {{serviceAreaLabel}}.</p>
+      <p>Mercados principales: {{priorityMarketsLabel}}.</p>
+      <p style="margin-top:14px;font-size:.75rem;line-height:1.7">{{{legalDetailsHtml}}}</p>
     </div>
     <div>
       <h3>General</h3>
@@ -838,42 +700,100 @@
         <li><a href="#servicios">Superficiales</a></li>
       </ul>
     </div>
-    <div>
-      <h3>Contacto</h3>
-      <ul>
-        <li><a href="mailto:{{brand.email}}">{{brand.email}}</a></li>
-        <li><a href="tel:{{brand.telefono}}">{{brand.telefono}}</a></li>
-        <li>L–V, 8:00–18:00</li>
-      </ul>
-    </div>
+    {{{footerContactColumnHtml}}}
   </div>
   <div class="legal">
-    <span>© 2026 {{brand.nombre}}. Todos los derechos reservados.</span>
-    <span>Aviso legal · Privacidad</span>
+    <span>{{copyrightText}}</span>
+    <span>{{{legalLinksHtml}}}</span>
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+const menu = document.getElementById("menuMovil");
+const openMenuButtons = document.querySelectorAll("[data-menu-open]");
+const closeMenuButton = menu.querySelector("[data-menu-close]");
+let menuTrigger = null;
+
+function setMenu(open, restoreFocus = true) {
+  if (open) {
+    menuTrigger = document.activeElement;
+    menu.classList.add("abierto");
+    menu.inert = false;
+    menu.setAttribute("aria-hidden", "false");
+    document.body.classList.add("menu-abierto");
+    openMenuButtons.forEach((button) => button.setAttribute("aria-expanded", "true"));
+    setTimeout(() => closeMenuButton.focus({ preventScroll: true }), 0);
+    return;
+  }
+  menu.classList.remove("abierto");
+  menu.inert = true;
+  menu.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("menu-abierto");
+  openMenuButtons.forEach((button) => button.setAttribute("aria-expanded", "false"));
+  if (restoreFocus && menuTrigger instanceof HTMLElement) menuTrigger.focus();
+}
+
+openMenuButtons.forEach((button) => button.addEventListener("click", () => setMenu(true)));
+closeMenuButton.addEventListener("click", () => setMenu(false));
+menu.querySelectorAll("a[href^='#']").forEach((link) => link.addEventListener("click", () => {
+  const target = document.querySelector(link.hash);
+  setMenu(false, false);
+  if (!target) return;
+  target.setAttribute("tabindex", "-1");
+  setTimeout(() => target.focus({ preventScroll: true }), 0);
+  target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+}));
+document.addEventListener("keydown", (event) => {
+  if (!menu.classList.contains("abierto")) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    setMenu(false);
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const focusable = [...menu.querySelectorAll("a[href],button:not([disabled])")];
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
+const contactForm = document.getElementById("formContacto");
+if (contactForm) contactForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!contactForm.reportValidity()) return;
+  const data = new FormData(contactForm);
+  location.href = contactForm.action
+    + "?subject=" + encodeURIComponent("Solicitud de evaluación — " + data.get("nombre"))
+    + "&body=" + encodeURIComponent(data.get("mensaje") + "\n\nContacto: " + data.get("nombre") + " <" + data.get("email") + ">");
+});
+
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
   const mm = gsap.matchMedia();
+  const styles = getComputedStyle(document.documentElement);
+  const cssDuration = (name, fallback) => {
+    const raw = styles.getPropertyValue(name).trim();
+    if (!raw) return fallback;
+    return raw.endsWith("ms") ? parseFloat(raw) / 1000 : parseFloat(raw);
+  };
+  const durationBase = cssDuration("--dur-base", 0.25);
+  const durationSlow = cssDuration("--dur-slow", 0.4);
+  const motionEase = "expo.out";
 
   const sticky = document.getElementById("stickyNav");
   const hero = document.querySelector(".hero");
   ScrollTrigger.create({
     trigger: hero, start: "bottom top",
-    onEnter: () => { sticky.classList.add("visible"); sticky.setAttribute("aria-hidden","false"); },
-    onLeaveBack: () => { sticky.classList.remove("visible"); sticky.setAttribute("aria-hidden","true"); }
-  });
-  const fc = document.getElementById("formContacto");
-  if (fc) fc.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const d = new FormData(fc);
-    location.href = "mailto:{{brand.email}}"
-      + "?subject=" + encodeURIComponent("Solicitud de evaluación — " + d.get("nombre"))
-      + "&body=" + encodeURIComponent(d.get("mensaje") + "\n\nContacto: " + d.get("nombre") + " <" + d.get("email") + ">");
+    onEnter: () => { sticky.classList.add("visible"); sticky.inert = false; sticky.setAttribute("aria-hidden","false"); },
+    onLeaveBack: () => { sticky.classList.remove("visible"); sticky.inert = true; sticky.setAttribute("aria-hidden","true"); }
   });
 
   document.querySelectorAll("main section[id], .cierre").forEach((sec) => {
@@ -882,13 +802,17 @@ if (window.gsap && window.ScrollTrigger) {
     if (!link) return;
     ScrollTrigger.create({
       trigger: sec, start: "top center", end: "bottom center",
-      onToggle: (self) => link.classList.toggle("activo", self.isActive)
+      onToggle: (self) => {
+        link.classList.toggle("activo", self.isActive);
+        if (self.isActive) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      }
     });
   });
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     gsap.from(".hero [data-reveal]", {
-      opacity: 0, y: 12, duration: 0.35, ease: "power1.out", stagger: 0.08
+      opacity: 0, y: 12, duration: durationSlow, ease: motionEase, stagger: 0.08
     });
 
     const fija = document.getElementById("fisuraFija");
@@ -901,7 +825,7 @@ if (window.gsap && window.ScrollTrigger) {
 
     gsap.utils.toArray("main [data-reveal], .cierre [data-reveal]").forEach((el) => {
       gsap.from(el, {
-        opacity: 0, y: 12, duration: 0.35, ease: "power1.out",
+        opacity: 0, y: 12, duration: durationSlow, ease: motionEase,
         scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none reverse" }
       });
     });
@@ -910,7 +834,7 @@ if (window.gsap && window.ScrollTrigger) {
     ScrollTrigger.batch("[data-stagger]", {
       start: "top 88%",
       onEnter: (targets) => gsap.to(targets, {
-        opacity: 1, y: 0, duration: 0.3, ease: "power1.out", stagger: 0.04, overwrite: true
+        opacity: 1, y: 0, duration: durationBase, ease: motionEase, stagger: 0.04, overwrite: true
       }),
       onLeaveBack: (targets) => gsap.set(targets, { opacity: 0, y: 10, overwrite: true })
     });
@@ -927,7 +851,7 @@ if (window.gsap && window.ScrollTrigger) {
       if (Number.isNaN(fin)) return;
       const obj = { v: 0 };
       gsap.to(obj, {
-        v: fin, duration: 0.9, ease: "power1.out",
+        v: fin, duration: durationSlow * 2, ease: motionEase,
         scrollTrigger: { trigger: el, start: "top 90%" },
         onUpdate: () => { el.textContent = Math.round(obj.v); }
       });

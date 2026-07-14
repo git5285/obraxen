@@ -1,0 +1,168 @@
+[
+  {
+    "referencia": "E240002",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Renovación integral de pavimento en un centro logístico de Hannover",
+    "fechaPresupuesto": "2025-03-20",
+    "ubicacion": {
+      "ciudad": "Hannover",
+      "pais": "Alemania",
+      "evidencia": "El presupuesto identifica el proyecto como Hannover DC6."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Retirada de señalización pintada, unidad izquierda", "cantidad": 2826, "unidad": null },
+      { "concepto": "Retirada de señalización pintada, unidad central", "cantidad": 3067, "unidad": null },
+      { "concepto": "Retirada de señalización pintada, unidad derecha", "cantidad": 1488, "unidad": null },
+      { "concepto": "Retirada de revestimiento", "cantidad": 5362, "unidad": "m²" },
+      { "concepto": "Tratamiento LithoClean húmedo", "cantidad": 16086, "unidad": "m²" },
+      { "concepto": "Tratamiento LithoShine seco en entreplanta", "cantidad": 1998, "unidad": "m²" },
+      { "concepto": "Contenedor y gestión de residuos", "cantidad": 1, "unidad": "servicio" }
+    ],
+    "plazoPrevisto": "30 días laborables",
+    "equipoPrevisto": 5,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
+    ]
+  },
+  {
+    "referencia": "E250007",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Retirada de señalización y rebaje de anclajes en Düsseldorf",
+    "fechaPresupuesto": "2025-02-03",
+    "ubicacion": {
+      "ciudad": "Düsseldorf",
+      "pais": "Alemania",
+      "evidencia": "La cabecera del alcance identifica Düsseldorf."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Rebaje de anclajes", "cantidad": 1730, "unidad": "unidad" },
+      { "concepto": "Retirada de señalización pintada", "cantidad": 3285, "unidad": null },
+      { "concepto": "Retirada de señalización adhesiva", "cantidad": 335, "unidad": null },
+      { "concepto": "Retirada de parches de pintura", "cantidad": 16, "unidad": null }
+    ],
+    "plazoPrevisto": null,
+    "equipoPrevisto": null,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
+    ]
+  },
+  {
+    "referencia": "E250006",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Reparación localizada de fisuras, huecos y desniveles en Alemania",
+    "fechaPresupuesto": "2025-02-02",
+    "ubicacion": {
+      "ciudad": "Euskirchen",
+      "pais": "Alemania",
+      "evidencia": "El usuario confirmó que Euskirchen fue la ubicación real de la obra."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Fisuras XL de 5 mm o más", "cantidad": 44, "unidad": "m lineal" },
+      { "concepto": "Parches pequeños de 10 × 10", "cantidad": 2, "unidad": null },
+      { "concepto": "Relleno de huecos", "cantidad": 20, "unidad": "unidad" },
+      { "concepto": "Nivelación pequeña de 1 mm o más", "cantidad": 64, "unidad": null }
+    ],
+    "plazoPrevisto": null,
+    "equipoPrevisto": null,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Aportar una fotografía del acabado final y un dato operativo verificable si se quiere ampliar el resultado público."
+    ]
+  },
+  {
+    "referencia": "E250013",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Tratamiento superficial de pavimento en una planta industrial francesa",
+    "fechaPresupuesto": "2025-02-26",
+    "ubicacion": {
+      "ciudad": "Gauchy",
+      "pais": "Francia",
+      "evidencia": "El usuario confirmó que Gauchy fue la ubicación real de la obra."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Tratamiento LitoBrillant", "cantidad": 4200, "unidad": "m²" },
+      { "concepto": "Contenedor de obra y gestión de residuos", "cantidad": 1, "unidad": "servicio" }
+    ],
+    "plazoPrevisto": "6 días laborables",
+    "equipoPrevisto": null,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
+    ]
+  },
+  {
+    "referencia": "E240001",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Restauración de fisuras, parcheos y anclajes en un centro logístico de Bremen",
+    "fechaPresupuesto": "2024-12-18",
+    "ubicacion": {
+      "ciudad": "Bremen",
+      "pais": "Alemania",
+      "evidencia": "La nota del presupuesto identifica Restoration project Bremen."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Fisuras L", "cantidad": 373, "unidad": "m lineal" },
+      { "concepto": "Fisuras XL", "cantidad": 464, "unidad": "m lineal" },
+      { "concepto": "Fisuras XL en entreplanta", "cantidad": 170, "unidad": "m lineal" },
+      { "concepto": "Fisuras XXL", "cantidad": 114, "unidad": "m lineal" },
+      { "concepto": "Parches S", "cantidad": 27, "unidad": null },
+      { "concepto": "Parches L", "cantidad": 7, "unidad": null },
+      { "concepto": "Parches XL", "cantidad": 2, "unidad": null },
+      { "concepto": "Parches XXL", "cantidad": 58.5, "unidad": null },
+      { "concepto": "Retirada o rebaje de anclajes en unidad 4", "cantidad": 800, "unidad": "unidad" },
+      { "concepto": "Retirada o rebaje de anclajes en unidad 5", "cantidad": 4200, "unidad": "unidad" },
+      { "concepto": "Huecos", "cantidad": 465, "unidad": "unidad" }
+    ],
+    "plazoPrevisto": "35 días laborables",
+    "equipoPrevisto": 8,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Aportar un dato operativo verificable si se quiere publicar cumplimiento de plazo, continuidad de actividad o mejora de rendimiento."
+    ]
+  },
+  {
+    "referencia": "E250005",
+    "estado": "confirmado_ejecutado",
+    "tituloPublicoProvisional": "Reparación integral y tratamiento superficial de pavimento industrial en Francia",
+    "fechaPresupuesto": "2025-01-14",
+    "ubicacion": {
+      "ciudad": "París",
+      "pais": "Francia",
+      "evidencia": "El usuario confirmó que París fue la ubicación real de la obra."
+    },
+    "alcancePresupuestado": [
+      { "concepto": "Tratamiento LithoClean seco", "cantidad": 1300, "unidad": "m²" },
+      { "concepto": "Tratamiento LithoClean húmedo", "cantidad": 1400, "unidad": "m²" },
+      { "concepto": "Lijado con grano 80", "cantidad": 2700, "unidad": "m²" },
+      { "concepto": "Fisuras L", "cantidad": 6, "unidad": "m lineal" },
+      { "concepto": "Fisuras XL", "cantidad": 15, "unidad": "m lineal" },
+      { "concepto": "Parches S", "cantidad": 79, "unidad": null },
+      { "concepto": "Parches L", "cantidad": 25, "unidad": null },
+      { "concepto": "Parches XL", "cantidad": 2, "unidad": null },
+      { "concepto": "Rebaje de anclajes", "cantidad": 1943, "unidad": "unidad" },
+      { "concepto": "Huecos", "cantidad": 357, "unidad": "unidad" },
+      { "concepto": "Nivelación L", "cantidad": 8, "unidad": null },
+      { "concepto": "Decapado de revestimiento", "cantidad": 201, "unidad": "m²" },
+      { "concepto": "Recrecido líquido", "cantidad": 110, "unidad": null },
+      { "concepto": "Retirada de parches de pintura", "cantidad": 2, "unidad": null },
+      { "concepto": "Retirada de líneas pintadas", "cantidad": 300, "unidad": null },
+      { "concepto": "Sellado de juntas existentes", "cantidad": 800, "unidad": "m lineal" },
+      { "concepto": "Sellado de juntas XL", "cantidad": 8, "unidad": "m lineal" },
+      { "concepto": "Gestión de residuos y contenedores", "cantidad": 2, "unidad": "servicio" }
+    ],
+    "plazoPrevisto": null,
+    "equipoPrevisto": null,
+    "ejecucionConfirmada": true,
+    "permisoPublicarCliente": true,
+    "confirmacionesPendientes": [
+      "Confirmar la unidad del recrecido líquido y aportar un dato operativo verificable si se quiere ampliar el resultado público."
+    ]
+  }
+]
