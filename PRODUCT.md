@@ -24,10 +24,24 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
   (morteros autonivelantes), tratamientos superficiales (pulido, endurecimiento,
   recubrimientos continuos).
 - **Catálogo extendido** (sección Servicios → catálogo): retirada de pavimento
-  epoxi, reparación de suelos de resina, eliminación de señalización vial,
+  epoxi, preparación mecánica de superficies, reparación de suelos de resina,
+  eliminación de señalización vial,
   retirada de anclajes/tornillos, bacheo y parcheo de hormigón, reparación de
   arañazos y desconchones, sellado de juntas de dilatación, pulido en grandes
   superficies.
+- **Unidad real de la oferta:** una intervención puede combinar preparación,
+  reparaciones localizadas, nivelación y tratamiento superficial. El diagnóstico
+  determina las partidas necesarias; no se prescribe un sistema único para todos
+  los soportes o usos.
+- **Estrategia de sistemas confirmada:** la empresa utilizará sistemas propios,
+  todavía sin nombre, desarrollados a partir de la experiencia técnica acumulada
+  con soluciones como BECOSAN/deepEX, pero presentados y documentados como sistemas
+  independientes. Las marcas históricas son referencia interna y no forman parte
+  de la futura identidad de producto.
+- **Alcance de “propio” confirmado:** se refiere al método, la especificación
+  técnica, la combinación de procesos y la ejecución. La empresa no fabricará
+  productos químicos; seleccionará productos de fabricantes externos según las
+  necesidades de cada sistema y proyecto.
 - **Modelo de ejecución:** equipos propios.
 - **Posicionamiento declarado:** experiencia de obra aplicada a cada reparación,
   respaldada por **más de 10 años de experiencia acumulada** del equipo en
@@ -72,12 +86,19 @@ Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
 - **Propuesta de intervención por fases para reducir el impacto**, cuando el daño,
   el sistema y la circulación de la instalación lo permiten.
 - **Diagnóstico de causa raíz**, no solo del síntoma.
+- **Lectura conjunta de soporte, daño, tráfico y operativa** antes de definir la
+  intervención.
 - **Valoración inicial sin visita** (con fotos/vídeo) + inspección in situ para
   el presupuesto definitivo.
 - **Propuesta adaptada a cada caso:** solución, alcance, materiales, plazos y
   fases se concretan según el diagnóstico; no se promete un formato universal
   de presupuesto cerrado.
-- **Materiales seleccionados según el sistema**; homologaciones concretas: `«FALTA»`.
+- **Intervención combinada cuando procede:** preparación, reparación, nivelación
+  y tratamiento se coordinan como un único alcance técnico.
+- **Materiales de terceros seleccionados según el sistema.** Los nombres de los
+  sistemas, productos compatibles, fabricantes, fichas técnicas y de seguridad,
+  ensayos aplicables, homologaciones y garantía de ejecución permanecen `«FALTA»`
+  hasta documentarlos.
 - **Primera respuesta en menos de 48 horas.**
 - Las medidas específicas de control de polvo, residuos o protección se mantienen
   como `«FALTA»` hasta disponer de un protocolo verificable.

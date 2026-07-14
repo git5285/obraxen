@@ -431,8 +431,8 @@ const renderedProjectPages = projects.map((project, index) => {
   const caseMagnitudesHtml = project.magnitudes
     .map((magnitude) => `          <li>${esc(magnitude)}</li>`)
     .join('\n');
-  const caseImagesHtml = project.imagenes.map((image, imageIndex) => `        <figure>
-          <img src="/${esc(image.src)}" alt="${esc(image.alt)}" ${imageIndex === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">
+  const caseImagesHtml = project.imagenes.map((image) => `        <figure>
+          <img src="/${esc(image.src)}" alt="${esc(image.alt)}" loading="lazy" decoding="async">
           <figcaption>${esc(image.etapa)}</figcaption>
         </figure>`).join('\n');
   const previous = projects[index - 1];
