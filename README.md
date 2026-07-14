@@ -4,12 +4,12 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 **Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
-La base actual es la referencia funcional y visual. La Fase 1 ya incorpora una
-fundacion paralela con Next.js App Router, TypeScript, validacion Zod, ESLint y
-Vitest. La migracion por fases, sus puertas de calidad y el modelo de
-consentimiento se detallan en [`ROADMAP.md`](ROADMAP.md). Hasta alcanzar paridad,
-el build estatico sigue siendo la salida principal y no se despliega la base
-Next.js.
+La base actual es la referencia funcional y visual. Las Fases 1 y 2 ya incorporan
+una portada paralela con Next.js App Router, Server Components, TypeScript,
+validacion Zod, ESLint y Vitest. La migracion por fases, sus puertas de calidad y
+el modelo de consentimiento se detallan en [`ROADMAP.md`](ROADMAP.md). Hasta que
+proyectos y legales alcancen paridad, el build estatico sigue siendo la salida
+principal y no se despliega la base Next.js.
 
 > **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
 > temporal heredada del nombre de la carpeta. No es la marca, no es una opción
@@ -28,11 +28,12 @@ Next.js.
 - `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`) y el
   comportamiento cliente aislado de la portada (`home-script`)
 - `scripts/build.mjs` — render estático (sin dependencias)
-- `src/app/` — fundacion App Router; por ahora solo expone una ruta interna de
-  control y conserva los tokens visuales existentes
+- `src/app/` — App Router, metadata, robots y portada migrada con paridad visual
+- `src/components/` — secciones servidoras de portada y una unica isla cliente
+  para menu movil y navegacion sticky
 - `src/lib/` — carga tipada de identidad, proyectos, ofertas y estado de
-  publicacion
-- `tests/` — reglas de datos, publicacion y rutas de la fundacion Next.js
+  publicacion, ademas del modelo de portada e imports responsive de imagen
+- `tests/` — reglas de datos, publicacion, portada y rutas Next.js
 - `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
 - `css/home.css` — estilos propios de la portada, separados de su estructura HTML
 - `css/projects.css` — estilos propios del hub técnico de proyectos
@@ -65,6 +66,12 @@ npm run check:all  # valida en conjunto la base estatica y la fundacion Next.js
 El entorno reproducible de la fundacion usa Node `24.x` (`.nvmrc`).
 `npm run dev:next` abre el App Router localmente y `npm run build:next` lo compila
 sin cambiar `vercel.json` ni sustituir la salida `dist/`.
+
+La portada Next replica las ocho secciones y seis casos de la referencia, usa 24
+imagenes reales y conserva `data/brand.json` como puerta de identidad y contacto.
+La CSP ya elimina `unsafe-inline` de estilos; `script-src` lo mantiene de forma
+temporal por el bootstrap estatico de App Router y se resolvera junto con la
+politica de hashes o nonces de la Fase 4.
 
 `<title>`, `meta`, Open Graph y JSON-LD se resuelven **en build**: el HTML servido
 es completamente estático (sin fetch ni inyección de marca en runtime).
