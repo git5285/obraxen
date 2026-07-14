@@ -79,7 +79,8 @@ Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
   de presupuesto cerrado.
 - **Materiales seleccionados según el sistema**; homologaciones concretas: `«FALTA»`.
 - **Primera respuesta en menos de 48 horas.**
-- **Control de polvo y residuos, señalización** durante la obra (Proceso).
+- Las medidas específicas de control de polvo, residuos o protección se mantienen
+  como `«FALTA»` hasta disponer de un protocolo verificable.
 - El plazo de reapertura depende del sistema y se concreta en la propuesta técnica.
 - **Método declarado:** «Diagnosticar · Reparar · Rendir», estructurado en 4
   fases (valoración → propuesta técnica → ejecución → entrega y seguimiento).
@@ -100,8 +101,8 @@ Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
 - **Auditoría de imágenes:** `PHOTO_AUDIT.md` registra la revisión de 640 fotos y
   un vídeo, las exclusiones de privacidad, la selección de 18 imágenes y la decisión
   de no alterar evidencia de obra mediante IA generativa.
-- **Testimonios:** la cita se atribuye provisionalmente al «Equipo fundador»;
-  nombre, cargo y cualquier testimonio de cliente: `«FALTA»`.
+- **Equipo:** el bloque queda preparado, pero no se genera mientras falten nombre
+  y cargo del fundador. Testimonios de cliente: `«FALTA»`.
 - **Recursos / contenido técnico:** `«FALTA»`; no se publican plantillas vacías.
 
 ## Tono de voz

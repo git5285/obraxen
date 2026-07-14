@@ -111,10 +111,10 @@ const absoluteMetaHtml = siteUrl ? `<link rel="canonical" href="${esc(siteUrl)}/
 <meta name="twitter:image" content="${esc(ogImage)}">` : '';
 
 const FAQ = [
-  ['¿Podéis darme una valoración sin venir a la instalación?', 'Sí. Con fotos o un vídeo de la zona afectada y las medidas aproximadas podemos darte una primera valoración orientativa. La visita técnica solo es necesaria para preparar una propuesta definitiva adaptada al caso.'],
+  ['¿Podéis darme una valoración sin venir a la instalación?', 'Sí. Las fotos o un vídeo de la zona afectada y unas medidas aproximadas permiten preparar una primera valoración orientativa. Si hace falta concretar el alcance, acordamos una inspección in situ antes de definir la propuesta.'],
   ['¿Puedo seguir operando durante la reparación?', 'Depende del daño, el sistema y la circulación de la instalación. Cuando el alcance lo permite, proponemos fases, zonas acotadas u horarios alternativos para reducir el impacto sobre la actividad.'],
   ['¿Cuánto tarda en poder pisarse una zona reparada?', 'Depende del sistema empleado. Existen morteros y resinas de curado rápido; el plazo concreto para tráfico peatonal o de carretillas queda definido en la propuesta técnica.'],
-  ['¿Por qué se rompen las juntas y las fisuras vuelven a aparecer?', 'Normalmente porque se repara el síntoma sin corregir la causa: juntas mal dimensionadas, soporte degradado o tráfico distinto al previsto en el diseño original. Nuestro diagnóstico empieza por ahí.'],
+  ['¿Por qué se rompen las juntas y las fisuras vuelven a aparecer?', 'Puede ocurrir cuando se trata el síntoma sin revisar la causa: juntas mal dimensionadas, soporte degradado o un tráfico distinto al previsto. Por eso la valoración empieza por el estado del pavimento y las condiciones de uso.'],
   ['¿Trabajáis fuera de España?', 'Sí. Trabajamos en toda la Unión Europea, principalmente en Alemania, Países Bajos, Bélgica, Francia, España, Portugal e Italia.'],
 ];
 const faqHtml = FAQ.map(([question, answer]) => `        <details data-stagger>
@@ -160,12 +160,14 @@ const phone = clean(brand.telefono);
 const whatsapp = clean(brand.whatsapp);
 const telHref = phone.replace(/[^+\d]/g, '');
 const whatsappHref = whatsapp.replace(/\D/g, '');
-const contactChannelsHtml = [
-  `También puedes escribirnos a <a href="mailto:${esc(email)}">${esc(email)}</a>`,
-  whatsapp ? ` por <a href="https://wa.me/${esc(whatsappHref)}" rel="noopener">WhatsApp</a>` : '',
-  phone ? ` o llamarnos al <a href="tel:${esc(telHref)}">${esc(phone)}</a>` : '',
-  '.',
-].join('');
+const hasContactChannel = Boolean(email || phone || whatsapp);
+const secondaryContactLinks = [
+  whatsapp ? `<a href="https://wa.me/${esc(whatsappHref)}" rel="noopener">WhatsApp</a>` : '',
+  phone ? `<a href="tel:${esc(telHref)}">${esc(phone)}</a>` : '',
+].filter(Boolean);
+const contactChannelsHtml = secondaryContactLinks.length
+  ? ` También puedes contactar por ${secondaryContactLinks.join(' o ')}.`
+  : '';
 const footerContactItemsHtml = [
   email ? `<li><a href="mailto:${esc(email)}">${esc(email)}</a></li>` : '',
   whatsapp ? `<li><a href="https://wa.me/${esc(whatsappHref)}" rel="noopener">WhatsApp</a></li>` : '',
@@ -180,14 +182,14 @@ const contactFormHtml = email ? `<form class="form" id="formContacto" action="ma
       <label for="f-msg">¿Qué le pasa a tu pavimento?</label>
       <textarea id="f-msg" name="mensaje" required></textarea>
       <button class="btn btn-acento" type="submit">Preparar solicitud por email</button>
-      <small id="contacto-ayuda">Al continuar se abrirá tu aplicación de correo. ${contactChannelsHtml}</small>
-    </form>` : `<div class="form form-pendiente" data-reveal>
-      <p class="form-estado">Web en preparación</p>
-      <h3>Canal de contacto pendiente</h3>
-      <p>El correo, el teléfono y WhatsApp se incorporarán cuando estén confirmados. Este bloque no admite solicitudes todavía.</p>
-    </div>`;
+      <small id="contacto-ayuda">Al continuar se abrirá tu aplicación de correo.${contactChannelsHtml}</small>
+    </form>` : hasContactChannel ? `<div class="form form-pendiente" data-reveal>
+      <p class="form-estado">Canales disponibles</p>
+      <h3>Cuéntanos qué ocurre en el pavimento</h3>
+      <p>${secondaryContactLinks.join('<br>')}</p>
+    </div>` : '';
 const footerContactColumnHtml = footerContactItemsHtml ? `<div>
-      <h3>Contacto</h3>
+      <h3>${hasContactChannel ? 'Contacto' : 'Horario'}</h3>
       <ul>
         ${footerContactItemsHtml}
       </ul>
@@ -204,9 +206,8 @@ const legalLinks = [
   clean(brand.privacidadUrl) ? `<a href="${esc(brand.privacidadUrl)}">Privacidad</a>` : '',
 ].filter(Boolean);
 const legalLinksHtml = legalLinks.join(' · ');
-const founderAttributionHtml = clean(brand.fundadorNombre)
-  ? `<b>${esc(brand.fundadorNombre)}</b>${esc(clean(brand.fundadorCargo) || 'Equipo fundador')}, ${esc(nombre)}`
-  : '<b>Equipo fundador</b>Proyecto empresarial en desarrollo';
+const founderName = clean(brand.fundadorNombre);
+const founderRole = clean(brand.fundadorCargo) || 'Equipo fundador';
 const years = Number(brand.experienciaAnios);
 const experienceStatHtml = Number.isFinite(years) && years > 0
   ? `<div class="stat" data-reveal><b>+<i data-counter="${years}">${years}</i></b><span>Años de experiencia acumulada del equipo</span></div>`
@@ -215,6 +216,17 @@ const responseHours = Number(brand.respuestaHoras);
 const responseStatHtml = Number.isFinite(responseHours) && responseHours > 0
   ? `<div class="stat" data-reveal><b>&lt;<i data-counter="${responseHours}">${responseHours}</i>h</b><span>Primera respuesta</span></div>`
   : '';
+const contactResponseText = Number.isFinite(responseHours) && responseHours > 0
+  ? `Recibirás una primera respuesta en menos de ${responseHours} horas con los próximos pasos para valorar el caso.`
+  : 'Revisaremos la información y te indicaremos los próximos pasos para valorar el caso.';
+const contactLeadHtml = hasContactChannel ? `<div class="cta-fila">
+    <div>
+      <p class="kicker" data-reveal>Contacto</p>
+      <h2 data-reveal>¿Tu pavimento está frenando tu operativa?</h2>
+      <p data-reveal>Cuéntanos qué ocurre. ${esc(contactResponseText)}</p>
+    </div>
+    ${contactFormHtml}
+  </div>` : '';
 const naturalList = (items) => items.length < 2
   ? (items[0] || '')
   : `${items.slice(0, -1).join(', ')} e ${items.at(-1)}`;
@@ -239,7 +251,15 @@ const whyKicker = nombre ? `Por qué ${nombre}` : 'Por qué este enfoque';
 const teamQuote = nombre
   ? `Hemos pasado más de diez años ejecutando pavimentos industriales. ${nombre} nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, reduciendo el impacto en la actividad.`
   : 'Hemos pasado más de diez años ejecutando pavimentos industriales. Este proyecto nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, reduciendo el impacto en la actividad.';
-const copyrightText = nombre ? `© 2026 ${nombre}. Todos los derechos reservados.` : 'Proyecto empresarial en desarrollo.';
+const teamSectionHtml = founderName ? `<section class="cita">
+    <div class="wrap">
+      <p class="kicker" data-reveal style="justify-content:center;display:flex">El equipo</p>
+      <h2 data-reveal>Quiénes estamos detrás</h2>
+      <blockquote data-reveal>«${esc(teamQuote)}»</blockquote>
+      <cite data-reveal><b>${esc(founderName)}</b>${esc(founderRole)}</cite>
+    </div>
+  </section>` : '';
+const copyrightText = nombre ? `© 2026 ${nombre}. Todos los derechos reservados.` : 'Reparación y tratamiento técnico de pavimentos industriales.';
 const legalOwner = clean(brand.nombreLegal) || 'Pendiente de confirmar';
 const legalTaxId = clean(brand.cif) || 'Pendiente de confirmar';
 const legalContactEmail = email || 'Pendiente de confirmar';
@@ -253,7 +273,7 @@ function renderProjects(items) {
       <div class="cab">
         <p class="kicker">Proyectos ejecutados</p>
         <h2>Alcance real y evidencia de obra</h2>
-        <p class="proy-intro">Las cantidades y la ejecución están confirmadas. Los resultados descritos se limitan a lo que documentan las fotografías aportadas; no publicamos plazos ni mejoras de rendimiento sin un dato verificable.</p>
+        <p class="proy-intro">Cada ficha recoge magnitudes confirmadas, fotografías de la obra y una lectura separada de la situación, la intervención ejecutada y el resultado que puede acreditarse.</p>
       </div>
       <div class="proy-grid">
 ${items.map((project, index) => {
@@ -309,7 +329,6 @@ ${magnitudeHtml}
   </section>`;
 }
 const projectsSection = renderProjects(projects);
-const hasContactChannel = Boolean(email || phone || whatsapp);
 const ctaHref = hasContactChannel ? '#contacto' : (projects.length ? '#proyectos' : '#servicios');
 const ctaText = hasContactChannel ? 'Pide una evaluación' : (projects.length ? 'Ver proyectos' : 'Ver servicios');
 const capaCtaText = hasContactChannel ? 'Pedir evaluación →' : (projects.length ? 'Ver proyectos →' : 'Ver servicios →');
@@ -344,13 +363,11 @@ const ctx = {
   robotsDirective,
   jsonld,
   faqHtml,
-  contactChannelsHtml,
-  contactFormHtml,
+  contactLeadHtml,
   footerContactItemsHtml,
   footerContactColumnHtml,
   legalDetailsHtml,
   legalLinksHtml,
-  founderAttributionHtml,
   experienceStatHtml,
   responseStatHtml,
   serviceAreaLabel,
@@ -358,7 +375,7 @@ const ctx = {
   ownTeamsAdvantageHtml,
   brandKicker,
   whyKicker,
-  teamQuote,
+  teamSectionHtml,
   copyrightText,
   legalOwner,
   legalTaxId,

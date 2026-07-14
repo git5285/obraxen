@@ -40,6 +40,12 @@ if (!ctaTargets.length || ctaTargets.some((href) => href !== expectedCtaHref)) {
 if (!hasContactChannel && /Pide una evaluación|Pedir evaluación/.test(html)) {
   errors.push('La preview no debe pedir una evaluación mientras no exista un canal de contacto');
 }
+if (!hasContactChannel && /<div class="cta-fila">|Canal de contacto pendiente|id="formContacto"/.test(html)) {
+  errors.push('La preview no debe mostrar un bloque de captación mientras no exista un canal de contacto');
+}
+if (!String(brand.fundadorNombre || '').trim() && html.includes('Quiénes estamos detrás')) {
+  errors.push('La preview no debe mostrar el bloque de equipo mientras falte el nombre del fundador');
+}
 const projectFiles = projects.map((project) => `proyectos/${project.slug}/index.html`);
 const requiredFiles = ['index.html', 'aviso-legal/index.html', 'privacidad/index.html', 'robots.txt', 'css/tokens.css', 'css/case.css', 'img/hero-nave.jpg', ...projectFiles];
 if (brand.dominio) requiredFiles.push('sitemap.xml');
@@ -117,7 +123,7 @@ const externalStyles = [...allGeneratedHtml.matchAll(/<link[^>]+href="https:[^"]
 if (externalScripts.length || externalStyles.length) {
   errors.push('La preview no debe depender de scripts ni estilos de terceros');
 }
-for (const claim of ['Tu planta no se detiene', 'Mínima parada de actividad', 'sin compromiso', 'empresa nueva']) {
+for (const claim of ['Tu planta no se detiene', 'Mínima parada de actividad', 'bien a la primera', 'control de polvo y residuos', 'sin compromiso', 'empresa nueva']) {
   if (allGeneratedHtml.toLocaleLowerCase('es').includes(claim.toLocaleLowerCase('es'))) {
     errors.push(`La salida contiene una afirmación no aprobada: ${claim}`);
   }
