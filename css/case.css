@@ -20,7 +20,7 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.03em;line-height:1.08}
 .back-link:hover span{transform:translateX(4px)}
 
 .case-hero{position:relative;overflow:hidden;padding:38px 0 84px;background:var(--brand-bg)}
-.reference-mark{position:absolute;right:-.03em;bottom:-.24em;color:rgb(from var(--brand-ink) r g b / .035);font-family:var(--font-display);font-size:clamp(8rem,24vw,22rem);font-weight:800;line-height:1;letter-spacing:-.08em;pointer-events:none;user-select:none}
+.reference-mark{position:absolute;right:-.03em;bottom:-.24em;color:transparent;-webkit-text-stroke:1px rgb(from var(--brand-ink) r g b / .09);font-family:var(--font-display);font-size:clamp(8rem,24vw,22rem);font-weight:800;line-height:1;letter-spacing:-.08em;pointer-events:none;user-select:none}
 .breadcrumbs ol{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 64px;padding:0;list-style:none;color:var(--brand-muted);font-size:.78rem;font-weight:700}
 .breadcrumbs li:not(:last-child)::after{content:"/";margin-left:8px;color:var(--brand-line-strong)}
 .breadcrumbs a{text-decoration:none}.breadcrumbs a:hover{color:var(--brand-ink)}
