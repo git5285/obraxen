@@ -1,102 +1,104 @@
-# Auditoría técnica integral
+# Auditoría técnica
 
-Fecha: 14 de julio de 2026. Entorno medido: build estático local servido por
-HTTP, Lighthouse 13.4.0 y Google Chrome headless. No se realizó ningún despliegue.
+Última verificación: 14 de julio de 2026. Entorno: build estático local,
+Lighthouse 13.4.0 y Chromium headless. Es una fotografía de la base previa a
+Next.js; no sustituye las pruebas que deberán repetirse durante la migración.
 
-## Resultado
+## Resumen
 
-| Página y perfil | Rendimiento | Accesibilidad | Buenas prácticas | SEO |
-|---|---:|---:|---:|---:|
-| Portada móvil | 99 | 100 | 100 | 66 |
-| Portada escritorio | 100 | 100 | 100 | 66 |
-| Caso móvil, antes | 85 | 96 | 100 | 66 |
-| Caso móvil, después | 100 | 100 | 100 | 66 |
-| Caso escritorio, después | 100 | 100 | 100 | 66 |
+- Problemas críticos pendientes: **0**.
+- Problemas de prioridad alta pendientes: **0**.
+- Preview deliberadamente cerrada: `noindex,nofollow`, sin dominio y sin
+  despliegues Git automáticos.
+- Sin dependencias cliente, recursos de terceros, secretos detectados ni errores
+  de consola en las rutas comprobadas.
 
-El 66 de SEO es deliberado: la preview permanece en `noindex,nofollow`,
-`robots.txt` bloquea rastreo y todavía no existe dominio para generar canonical o
-sitemap. No debe corregirse hasta completar la identidad, la revisión legal y la
-autorización expresa de publicación.
+| Página y perfil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Portada móvil | 99 | 100 | 100 | 66 | 1,8 s | 0 ms | 0 |
+| Portada escritorio | 100 | 100 | 100 | 66 | 0,5 s | 0 ms | 0 |
+| Hub móvil | 100 | 100 | 100 | 66 | 1,1 s | 0 ms | 0 |
+| Caso Blitz móvil | 100 | 100 | 100 | 66 | 1,0 s | 0 ms | 0 |
 
-## Problemas críticos
+El 66 de SEO es intencionado. No debe perseguirse una puntuación de publicación
+mientras falten identidad, dominio, revisión legal y autorización expresa.
 
-No se detectaron problemas críticos.
+## Correcciones incorporadas
 
-## Prioridad alta — corregida
+### Imágenes
 
-### Rendimiento: fotografía bajo el pliegue con prioridad alta
+- Las 18 evidencias se sirven como WebP, con un máximo de 1.400 px y calidad 82.
+- Peso conjunto: 1.702.898 bytes frente a 7.209.017 bytes de las copias previas,
+  una reducción del 76 %.
+- Se retiraron 18 JPEG redundantes y `img/valoracion.jpg`, que no tenía referencias.
+- `dist/img` pasó de 9.308.702 a 2.057.670 bytes, un 77,9 % menos.
+- Los originales maestros permanecen fuera del repositorio y se identifican en
+  [`PHOTO_AUDIT.md`](PHOTO_AUDIT.md).
 
-- **Impacto:** el primer caso precargaba una fotografía situada a 1.287 px del
-  inicio. En móvil competía con los estilos y retrasaba el H1, que era el LCP.
-- **Medición inicial:** LCP 4,4 s; rendimiento 85.
-- **Corrección:** retirada de `preload`, `loading="eager"` y
-  `fetchpriority="high"` en las fotografías de los casos. Todas cargan al
-  aproximarse al viewport.
-- **Resultado:** LCP 1,0 s; rendimiento 100; TBT 0 ms; CLS 0.
+### Rendimiento y estructura
 
-### Accesibilidad: contraste de los números 01–03
+- Las fotografías bajo el pliegue ya no usan carga prioritaria. El caso móvil
+  pasó de LCP 4,4 s y rendimiento 85 a LCP 1,0 s y rendimiento 100.
+- El CSS de portada se trasladó a `css/home.css` y el comportamiento cliente a
+  `src/partials/home-script.html`; `src/index.html` bajó de 870 a 312 líneas.
+- La separación mantuvo la portada en 99/100 de rendimiento móvil/escritorio y
+  mejoró su LCP móvil de 2,0 a 1,8 s.
 
-- **Impacto:** el naranja principal sobre blanco ofrecía 3,55:1 para texto de
-  16 px, por debajo de WCAG AA.
-- **Corrección:** uso de `--brand-primary-dark` en la numeración narrativa.
-- **Resultado:** accesibilidad Lighthouse de los casos 96 → 100.
+### Accesibilidad
 
-## Prioridad media — optimizada
+- La numeración 01–03 usa `--brand-primary-dark`; los casos pasaron de 96 a 100.
+- Los seis mosaicos y seis enlaces textuales del hub incluyen ahora su etiqueta
+  visible en el nombre accesible. Lighthouse devuelve 100 y
+  `label-content-name-mismatch` afecta a 0 elementos.
+- El menú móvil conserva foco inicial, trampa de foco, cierre con `Escape` y
+  restauración del foco.
 
-### Entrega de imágenes
+## Trabajo pendiente
 
-- Se generaron 18 derivados WebP con un máximo de 1.400 × 1.400 px y calidad 82.
-- Peso conjunto publicado: 7.209.017 → 1.702.898 bytes, reducción del 76 %.
-- Los JPEG originales se conservan intactos como fuente; el HTML sirve WebP.
-- El build comprueba que todos los casos publicados referencien WebP.
+| Deuda | Riesgo actual | Resolución prevista |
+|---|---|---|
+| Activos sin nombres versionados ni caché larga | Medio en visitas repetidas | Hashes del build de Next.js y cabeceras verificadas en Vercel |
+| Imágenes sin variantes responsive | Medio en transferencia | `next/image` con dimensiones y `sizes` por composición |
+| JavaScript de portada todavía inline | Medio para CSP | Isla cliente externa en la Fase 2; retirar `unsafe-inline` después |
+| Sin TypeScript, lint, tests ni CI | Medio para mantenimiento | Fases 1 y 4 del roadmap |
+| Minificación CSS pendiente | Bajo; ahorro estimado de 3–5 KiB por ruta | Resolver con el toolchain nuevo, sin añadir ahora una dependencia aislada |
+| Reflow de navegación de unos 34 ms | Bajo | Simplificar la isla cliente y volver a perfilar |
 
-## Prioridad media — pendiente de publicación
+La migración a Next.js se justifica por mantenibilidad, tipado, pruebas,
+versionado, imágenes, metadatos y consentimiento; no por un problema de velocidad
+de la base actual.
 
-- **Caché:** el servidor local no aplica una política de caché larga. Debe
-  definirse con versionado de activos para evitar servir archivos obsoletos.
-- **CSP:** la política ya bloquea objetos, iframes externos y orígenes no
-  autorizados, pero mantiene `'unsafe-inline'` porque portada, CSS crítico y
-  JavaScript siguen embebidos. Puede eliminarse al externalizar esos bloques.
-- **HTTPS/HSTS:** solo puede verificarse cuando exista dominio y despliegue
-  autorizado.
-- **CSS:** Lighthouse estima un ahorro de 3–5 KiB por minificación. No se introduce
-  una dependencia de build para un ahorro marginal mientras el sitio siga en preview.
-- **SEO público:** canonical, sitemap e indexación continúan bloqueados por diseño.
+## Verificación funcional
 
-## Accesibilidad y funcionamiento manual
+- Diez rutas generadas responden 200 y contienen un único `h1`.
+- Cero enlaces internos o imágenes rotas.
+- Cero overflow horizontal a 390 px y 1.440 px.
+- Cero errores de JavaScript, consola, red o recursos.
+- Hub y seis casos enlazados en ambas direcciones.
+- Las 18 fotografías cargan correctamente al hacer scroll.
+- Cabeceras CSP, `X-Content-Type-Options`, `X-Frame-Options`,
+  `Referrer-Policy` y `Permissions-Policy` están preparadas para el hosting.
 
-- Enlace «Saltar al contenido» operativo.
-- Menú móvil accesible por teclado, con foco inicial, trampa de foco, cierre con
-  `Escape` y restauración del foco al disparador.
-- El foco pasa a la sección elegida al cerrar el menú.
-- Jerarquía de encabezados y nombres accesibles de enlaces correctos.
-- Seis rutas de casos operativas; tres fotografías por caso.
-- Las 18 fotografías WebP cargan correctamente al hacer scroll.
-- Sin desbordamiento horizontal en 390 px ni 1.440 px.
-- Sin errores de consola, JavaScript, red ni recursos rotos.
+Comandos de cierre:
 
-## SEO y semántica
+```sh
+npm run check
+node --check scripts/build.mjs
+node --check scripts/check.mjs
+git diff --check
+```
 
-- Un único `h1` por página revisada.
-- Títulos únicos para portada, seis casos y dos borradores legales.
-- Descripciones y Open Graph presentes en portada y casos.
-- FAQ estructurada como `FAQPage`; `LocalBusiness` solo se generará cuando exista
-  un nombre definitivo.
-- Breadcrumbs preparados para JSON-LD cuando exista dominio.
-- Ningún caso queda huérfano: todos reciben enlace desde la portada.
+## Puerta de publicación
 
-## Seguridad y privacidad
+Antes de retirar `noindex` deben existir y validarse:
 
-- Sin librerías cliente ni recursos de terceros.
-- CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y
-  `Permissions-Policy` configurados para el futuro hosting.
-- Formulario y bloque de captación ausentes mientras no exista canal real.
-- Naming temporal, sociedad, dominio y contactos continúan fuera del HTML.
-- No se publican fichas, ensayos, garantías ni afirmaciones de fabricantes como
-  si pertenecieran a la futura empresa.
+1. nombre comercial, sociedad, CIF y dominio;
+2. email y/o teléfono o WhatsApp reales;
+3. textos legales revisados profesionalmente;
+4. consentimiento previo a GA4 y Clarity;
+5. canonical, sitemap, HTTPS, HSTS y cabeceras sobre el hosting real;
+6. auditoría final de rutas, formularios, accesibilidad, rendimiento y privacidad;
+7. autorización expresa de publicación.
 
-## Puerta de publicación pendiente
-
-Antes de quitar `noindex` deben existir y validarse: nombre comercial, sociedad,
-CIF, dominio, canales de contacto, revisión legal, canonical, sitemap, HTTPS,
-HSTS y una prueba final contra el hosting real.
+La ejecución por fases está en [`ROADMAP.md`](ROADMAP.md). Las reglas visuales
+viven en [`DESIGN.md`](DESIGN.md) y no se duplican en esta auditoría.

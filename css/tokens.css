@@ -24,7 +24,6 @@
   --brand-ink-deep:     oklch(17.28% 0.004 264.452);   /* #0F1012 */
   --brand-ink-panel:    oklch(24.794% 0.006 271.176);  /* #202124 */
   --brand-overlay-menu: oklch(18.02% 0.032 266.625);   /* #0B1120 velo menú móvil */
-  --brand-muted-2:      oklch(69.56% 0.006 264.522);   /* #9B9DA1 */
   --brand-line:         oklch(93.8% 0.01 252.813);     /* #E6EBF1 líneas/bordes */
   --brand-line-strong:  oklch(89.895% 0.015 260.729);  /* #D8DEE8 borde hover */
   --brand-input-border: oklch(86.898% 0.02 252.894);   /* #CBD5E1 borde inputs */
@@ -45,31 +44,6 @@
   --font-sans:    -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
   --font-display: 'Avenir Next', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
 
-  /* ---- Tipografía · escala modular (base 1rem · razón 1.25) ---- */
-  --fs-xs:   0.64rem;
-  --fs-sm:   0.8rem;
-  --fs-base: 1rem;
-  --fs-md:   1.25rem;
-  --fs-lg:   1.563rem;
-  --fs-xl:   1.953rem;
-  --fs-2xl:  2.441rem;
-  --fs-3xl:  3.052rem;
-  --fs-4xl:  3.815rem;
-  --lh-tight: 1.1;
-  --lh-base:  1.6;
-  --tracking-tight: -0.03em;
-
-  /* ---- Espaciado (base 4px) ---- */
-  --space-2xs: 4px;
-  --space-xs:  8px;
-  --space-sm:  12px;
-  --space-md:  16px;
-  --space-lg:  24px;
-  --space-xl:  32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
-  --space-4xl: 96px;
-
   /* ---- Radios ---- */
   --radius-sm:   12px;
   --radius-md:   18px;
@@ -78,18 +52,11 @@
 
   /* ---- Layout ---- */
   --maxw: 1180px;
-  --gutter: 24px;            /* canalón del contenedor .wrap */
-  --bp-mobile: 860px;        /* único breakpoint activo */
 
-  /* ---- z-index · escala semántica (prohibido cualquier valor literal) ---- */
-  --z-base:            0;
+  /* ---- z-index · capas utilizadas ---- */
   --z-content:         1;
-  --z-dropdown:     1000;
   --z-sticky:       1100;
-  --z-modal-backdrop:1200;
   --z-modal:        1300;
-  --z-toast:        1400;
-  --z-tooltip:      1500;
   --z-skip-link:    1600;    /* enlace "saltar al contenido": siempre por encima */
 
   /* ---- Motion ---- */

@@ -13,6 +13,10 @@
       "sector",
       "ubicacion",
       "superficieM2",
+      "superficieInstalacionM2",
+      "equipoOperarios",
+      "maquinaria",
+      "materiales",
       "magnitudes",
       "ejecucionConfirmada",
       "permisoPublicarCliente",
@@ -39,6 +43,23 @@
         "type": ["number", "null"],
         "exclusiveMinimum": 0,
         "description": "Superficie total solo cuando puede calcularse sin sumar dos tratamientos sobre la misma zona."
+      },
+      "superficieInstalacionM2": {
+        "type": ["integer", "null"],
+        "minimum": 1,
+        "description": "Superficie aproximada de la instalación, distinta de la superficie efectivamente intervenida."
+      },
+      "equipoOperarios": {
+        "type": ["integer", "null"],
+        "minimum": 1
+      },
+      "maquinaria": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "materiales": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 }
       },
       "magnitudes": {
         "type": "array",
@@ -72,7 +93,7 @@
           "fechaEjecucion": { "type": ["string", "null"] },
           "duracionReal": { "type": ["string", "null"] },
           "continuidadOperativa": {
-            "enum": [null, "total", "parcial", "detenida"]
+            "enum": [null, "total", "parcial", "detenida", "sin_actividad"]
           },
           "resultadoAdicional": { "type": ["string", "null"] }
         }
