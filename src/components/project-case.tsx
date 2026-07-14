@@ -98,7 +98,6 @@ export function ProjectCase({ project }: ProjectCaseProps) {
               <dl className="execution-facts">
                 <div><dt>Referencia</dt><dd>{project.referencia}</dd></div>
                 <div><dt>Estado</dt><dd>Obra ejecutada</dd></div>
-                <div><dt>Publicación</dt><dd>Cliente autorizado</dd></div>
                 <div><dt>Resultado</dt><dd>Documentado mediante fotografías</dd></div>
                 {executionFacts.map(([label, value]) => (
                   <div key={label}><dt>{label}</dt><dd>{value}</dd></div>

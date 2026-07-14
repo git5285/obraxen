@@ -34,7 +34,7 @@ export default function ProjectsPage() {
               </div>
               <div className="projects-hero-copy">
                 <p>Cada expediente separa la situación inicial, la intervención, las magnitudes confirmadas y el cierre documentado. Las fotografías muestran lo visible; los datos que aún no están acreditados permanecen fuera.</p>
-                <p className="archive-note"><strong>{projects.length} obras publicables</strong> · Todas con permiso para identificar al cliente.</p>
+                <p className="archive-note"><strong>{projects.length} obras documentadas</strong> · La publicación final permanece sujeta a la puerta de evidencia.</p>
               </div>
             </div>
           </div>

@@ -59,9 +59,9 @@ export function ProjectsSection() {
                   <a
                     className="proy-enlace"
                     href={`/proyectos/${project.slug}/`}
-                    aria-label={`Ver el caso completo de ${project.cliente}`}
+                    aria-label={`Ver el caso completo: ${project.cliente}`}
                   >
-                    Ver caso completo <span aria-hidden="true">→</span>
+                    Ver el caso completo <span aria-hidden="true">→</span>
                   </a>
                 </div>
               </article>
