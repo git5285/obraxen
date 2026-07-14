@@ -61,6 +61,8 @@ for (const project of Array.isArray(projects) ? projects : []) {
   if (!slugPattern.test(String(project?.slug || ''))) errors.push(`${label}: slug de proyecto inválido`);
   if (projectSlugs.has(project?.slug)) errors.push(`${label}: slug de proyecto duplicado`);
   projectSlugs.add(project?.slug);
+  if (project?.ejecucionConfirmada !== true) errors.push(`${label}: la colección pública exige ejecucionConfirmada true`);
+  if (project?.permisoPublicarCliente !== true) errors.push(`${label}: la colección pública exige permisoPublicarCliente true`);
   if (!own(project, 'plazoPrevisto') || !nullableText(project.plazoPrevisto)) {
     errors.push(`${label}: plazoPrevisto debe ser texto no vacío o null`);
   }
@@ -124,7 +126,7 @@ if (brand.publicar !== true && vercelConfig.git?.deploymentEnabled !== false) {
   errors.push('Los despliegues automáticos deben permanecer desactivados mientras brand.publicar no sea true');
 }
 const hasContactChannel = ['email', 'telefono', 'whatsapp'].some((key) => String(brand[key] || '').trim());
-const expectedCtaHref = hasContactChannel ? '#contacto' : (projects.length ? '#proyectos' : '#servicios');
+const expectedCtaHref = hasContactChannel ? '#contacto' : (projects.length ? '/proyectos/' : '#servicios');
 const ctaTargets = [...html.matchAll(/<a class="(?:btn btn-acento|capa-cta)" href="([^"]+)"/g)].map((match) => match[1]);
 if (!ctaTargets.length || ctaTargets.some((href) => href !== expectedCtaHref)) {
   errors.push(`Los CTA deben apuntar a ${expectedCtaHref} en el estado actual`);
@@ -139,13 +141,14 @@ if (!String(brand.fundadorNombre || '').trim() && html.includes('Quiénes estamo
   errors.push('La preview no debe mostrar el bloque de equipo mientras falte el nombre del fundador');
 }
 const projectFiles = projects.map((project) => `proyectos/${project.slug}/index.html`);
-const requiredFiles = ['index.html', 'aviso-legal/index.html', 'privacidad/index.html', 'robots.txt', 'css/tokens.css', 'css/case.css', 'img/hero-nave.jpg', ...projectFiles];
+const requiredFiles = ['index.html', 'proyectos/index.html', 'aviso-legal/index.html', 'privacidad/index.html', 'robots.txt', 'css/tokens.css', 'css/projects.css', 'css/case.css', 'img/hero-nave.jpg', ...projectFiles];
 if (brand.dominio) requiredFiles.push('sitemap.xml');
 for (const file of requiredFiles) {
   if (!fs.existsSync(path.join(ROOT, 'dist', file))) errors.push(`Falta dist/${file}`);
 }
 const generatedHtml = [
   ['inicio', html],
+  ['proyectos', fs.readFileSync(path.join(ROOT, 'dist', 'proyectos', 'index.html'), 'utf8')],
   ['aviso-legal', fs.readFileSync(path.join(ROOT, 'dist', 'aviso-legal', 'index.html'), 'utf8')],
   ['privacidad', fs.readFileSync(path.join(ROOT, 'dist', 'privacidad', 'index.html'), 'utf8')],
   ...projects.map((project) => [
@@ -153,6 +156,7 @@ const generatedHtml = [
     fs.readFileSync(path.join(ROOT, 'dist', 'proyectos', project.slug, 'index.html'), 'utf8'),
   ]),
 ];
+const projectsHtml = generatedHtml.find(([route]) => route === 'proyectos')?.[1] || '';
 if (temporaryName && generatedHtml.some(([, output]) => output.toLocaleLowerCase('es').includes(temporaryName.toLocaleLowerCase('es')))) {
   errors.push(`La salida pública contiene el nombre temporal no publicable: ${temporaryName}`);
 }
@@ -172,6 +176,7 @@ for (const project of projects) {
   const caseHtml = generatedHtml.find(([name]) => name === `proyectos/${project.slug}`)?.[1] || '';
   const nonWebpImages = project.imagenes.filter((image) => !String(image.src || '').endsWith('.webp'));
   if (!html.includes(`href="${route}"`)) errors.push(`La portada no enlaza el caso ${project.slug}`);
+  if (!projectsHtml.includes(`href="${route}"`)) errors.push(`El hub no enlaza el caso ${project.slug}`);
   if ((caseHtml.match(/<h1(?:\s|>)/g) || []).length !== 1) errors.push(`${project.slug}: debe existir un único h1`);
   if ((caseHtml.match(/<figure>/g) || []).length !== project.imagenes.length) errors.push(`${project.slug}: número de fotografías incorrecto`);
   if (nonWebpImages.length) errors.push(`${project.slug}: las fotografías publicadas deben usar derivados WebP`);
@@ -181,9 +186,34 @@ for (const project of projects) {
   for (const marker of ['class="breadcrumbs"', 'class="scope-rail"', 'class="case-narrative"']) {
     if (!caseHtml.includes(marker)) errors.push(`${project.slug}: falta ${marker}`);
   }
+  if (!caseHtml.includes('href="/proyectos/"')) errors.push(`${project.slug}: no enlaza de vuelta al hub`);
   if (brand.publicar !== true && !caseHtml.includes('name="robots" content="noindex,nofollow"')) {
     errors.push(`${project.slug}: debe permanecer noindex en preview`);
   }
+}
+
+if ((projectsHtml.match(/<h1(?:\s|>)/g) || []).length !== 1) {
+  errors.push('El hub de proyectos debe tener un único h1');
+}
+if ((projectsHtml.match(/class="project-dossier"/g) || []).length !== projects.length) {
+  errors.push('El hub debe renderizar un expediente por proyecto');
+}
+const publishedImageCount = projects.reduce((total, project) => total + project.imagenes.length, 0);
+if ((projectsHtml.match(/<figure>/g) || []).length !== publishedImageCount) {
+  errors.push('El hub no contiene todas las fotografías previstas');
+}
+if (projects.length && !projectsHtml.includes('class="contact-sheet"')) {
+  errors.push('El hub debe conservar la hoja de evidencias');
+}
+const positiveCloseCount = projects.filter((project) => (
+  project?.cierre?.entregaConforme === true
+  && project?.cierre?.correccionesPosteriores === false
+)).length;
+if ((projectsHtml.match(/class="dossier-close"/g) || []).length !== positiveCloseCount) {
+  errors.push('El hub debe mostrar el cierre positivo solo en los proyectos que lo acreditan');
+}
+if (brand.publicar !== true && !projectsHtml.includes('name="robots" content="noindex,nofollow"')) {
+  errors.push('El hub de proyectos debe permanecer noindex en preview');
 }
 
 const titles = generatedHtml.map(([route, output]) => [route, output.match(/<title>([^<]+)<\/title>/)?.[1]?.trim() || '']);
@@ -201,14 +231,31 @@ const missingAnchors = [...html.matchAll(/href="#([^"]+)"/g)]
   .filter((id) => !idSet.has(id));
 if (missingAnchors.length) errors.push(`Anclas inexistentes: ${[...new Set(missingAnchors)].join(', ')}`);
 
-const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
-for (const script of scripts) {
-  if (!script.trim()) continue;
-  try {
-    if (script.trim().startsWith('{')) JSON.parse(script);
-    else new Function(script);
-  } catch (error) {
-    errors.push(`Script inválido: ${error.message}`);
+for (const [route, output] of generatedHtml) {
+  const scripts = [...output.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
+  for (const script of scripts) {
+    if (!script.trim()) continue;
+    try {
+      if (script.trim().startsWith('{')) JSON.parse(script);
+      else new Function(script);
+    } catch (error) {
+      errors.push(`${route}: script inválido: ${error.message}`);
+    }
+  }
+}
+
+const knownRoutes = new Set([
+  '/',
+  '/proyectos/',
+  '/aviso-legal/',
+  '/privacidad/',
+  ...projects.map((project) => `/proyectos/${project.slug}/`),
+]);
+for (const [route, output] of generatedHtml) {
+  const localHrefs = [...output.matchAll(/<a\s[^>]*href="(\/[^"?]*)"/g)].map((match) => match[1]);
+  for (const href of localHrefs) {
+    const pathname = href.split('#')[0] || '/';
+    if (!knownRoutes.has(pathname)) errors.push(`${route}: enlace interno sin ruta generada (${href})`);
   }
 }
 
