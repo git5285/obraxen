@@ -1,3 +1,12 @@
 .DS_Store
 *.log
+
+# Dependencias y salidas generadas
+node_modules/
+.next/
 dist/
+coverage/
+
+# Configuración local de herramientas
+.claude/
+.vercel/

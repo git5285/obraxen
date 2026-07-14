@@ -5,3 +5,7 @@
 # scripts/, data/ y *.md quedan fuera de lo servido igualmente → 404.
 *.md
 .gitignore
+.claude/
+.coordination/
+research/
+data/proyectos.borrador.json
