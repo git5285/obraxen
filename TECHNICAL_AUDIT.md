@@ -1,7 +1,7 @@
 # Auditoría técnica
 
 Última verificación: 14 de julio de 2026. Entorno: build estático local,
-Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. Las Fases 2 y 3 ya
+Next.js 16.2.10, Lighthouse 13.4.0 y Chromium headless. Las Fases 2–4 ya
 demuestran paridad de portada, hub y casos; las rutas legales permanecen en la
 base estatica hasta su migracion.
 
@@ -24,6 +24,9 @@ base estatica hasta su migracion.
 | Caso Blitz móvil | 100 | 100 | 100 | 66 | 1,0 s | 0 ms | 0 |
 | Hub Next móvil | 99 | 100 | 100 | 66 | 2,21 s | 21 ms | 0 |
 | Caso Blitz Next móvil | 98 | 100 | 100 | 66 | 2,39 s | 3 ms | 0 |
+| Portada Next móvil, gate Fase 4 | 98 | 100 | 100 | 66 | 2,47 s | 4 ms | 0 |
+| Hub Next móvil, gate Fase 4 | 97 | 100 | 100 | 66 | 2,69 s | 3 ms | 0 |
+| Caso Blitz Next móvil, gate Fase 4 | 98 | 100 | 100 | 66 | 2,38 s | 2 ms | 0 |
 
 El 66 de SEO es intencionado. No debe perseguirse una puntuación de publicación
 mientras falten identidad, dominio, revisión legal y autorización expresa.
@@ -69,8 +72,8 @@ mientras falten identidad, dominio, revisión legal y autorización expresa.
 
 | Deuda | Riesgo actual | Resolución prevista |
 |---|---|---|
-| `script-src` conserva `unsafe-inline` en Next | Medio para CSP | Definir hashes de build o nonces en Fase 4; `style-src` ya no lo necesita |
-| Sin CI ni checks remotos obligatorios | Medio para mantenimiento | Fase 4 del roadmap; TypeScript, lint y tests locales ya completados |
+| `script-src` conserva `unsafe-inline` en Next | Medio para CSP | Decisión cerrada en ADR-006: conservar durante el prerender estático y reevaluar si cambia el modelo de renderizado |
+| Activación y protección de acceso de preview Vercel | Sin riesgo mientras el interruptor siga apagado | Exige autorización expresa, entorno protegido, secretos y verificación del control de acceso |
 | Minificación CSS pendiente | Bajo; ahorro estimado de 3–5 KiB por ruta | Resolver con el toolchain nuevo, sin añadir ahora una dependencia aislada |
 | Reflow de navegación de unos 34 ms | Bajo | Simplificar la isla cliente y volver a perfilar |
 
@@ -89,7 +92,8 @@ de la base actual.
 - Cabeceras CSP, `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy` y `Permissions-Policy` están preparadas para el hosting.
 - La base Next supera ESLint, TypeScript estricto, 31 tests, build de produccion
-  y smoke test Chromium en 390 y 1.440 px.
+  y 24 pruebas Playwright efectivas en 390 y 1.440 px (2 exclusivas de móvil se
+  omiten correctamente en escritorio).
 - `/`, `/robots.txt` y una ruta 404 de Next.js responden como se espera, sin
   errores de consola, overflow ni exposicion accidental a indexacion.
 - Next y la referencia miden exactamente 13.701 px de alto en movil y 8.117 px
@@ -106,6 +110,9 @@ Comandos de cierre:
 ```sh
 npm run check
 npm run check:next
+npm run test:e2e
+npm run lighthouse:ci
+npm run check:quality
 node --check scripts/build.mjs
 node --check scripts/check.mjs
 git diff --check
