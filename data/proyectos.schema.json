@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "proyectos.schema.json",
+  "title": "Proyectos del sitio",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "slug",
+      "referencia",
+      "cliente",
+      "sector",
+      "ubicacion",
+      "superficieM2",
+      "magnitudes",
+      "ejecucionConfirmada",
+      "permisoPublicarCliente",
+      "imagenes",
+      "traducciones"
+    ],
+    "properties": {
+      "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "referencia": { "type": "string", "pattern": "^E[0-9]{6}$" },
+      "cliente": { "type": "string", "minLength": 1 },
+      "sector": { "type": "string", "minLength": 1 },
+      "ubicacion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ciudad", "pais"],
+        "properties": {
+          "ciudad": { "type": "string", "minLength": 1 },
+          "pais": { "type": "string", "minLength": 1 }
+        }
+      },
+      "superficieM2": {
+        "type": ["number", "null"],
+        "exclusiveMinimum": 0,
+        "description": "Superficie total solo cuando puede calcularse sin sumar dos tratamientos sobre la misma zona."
+      },
+      "magnitudes": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "ejecucionConfirmada": { "const": true },
+      "permisoPublicarCliente": { "const": true },
+      "plazo": { "type": ["string", "null"] },
+      "imagenes": {
+        "type": "array",
+        "minItems": 3,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["src", "alt", "etapa"],
+          "properties": {
+            "src": { "type": "string", "pattern": "^img/" },
+            "alt": { "type": "string", "minLength": 1 },
+            "etapa": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "traducciones": {
+        "type": "object",
+        "required": ["es"],
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["titulo", "problema", "solucion", "resultado"],
+          "properties": {
+            "titulo": { "type": "string", "minLength": 1 },
+            "problema": { "type": "string", "minLength": 1 },
+            "solucion": { "type": "string", "minLength": 1 },
+            "resultado": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,10 +2,8 @@
 /**
  * build.mjs — render estático sin dependencias.
  *
- * Lee data/brand.json y src/index.html (+ src/partials/*.html) y escribe
- * index.html en la raíz, con <title>, meta, Open Graph y JSON-LD resueltos en
- * build. El HTML de salida es 100% estático: no hay fetch ni inyección de marca
- * en runtime.
+ * Lee los datos y plantillas del proyecto y escribe dist/ con HTML y activos
+ * completamente estáticos. No hay fetch ni inyección de marca en runtime.
  *
  * Sintaxis de plantilla:
  *   {{ ruta.punteada }}    → valor escapado para HTML/atributos
@@ -24,6 +22,7 @@ const OUT_DIR = path.join(ROOT, 'dist');   // directorio servido (outputDirector
 const ASSETS = ['css', 'img'];             // activos que se copian tal cual a dist/
 
 const brand = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'brand.json'), 'utf8'));
+const projects = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'proyectos.json'), 'utf8'));
 
 const esc = (s) => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -33,41 +32,289 @@ const esc = (s) => String(s)
 const nombre = brand.nombre || '';
 const claim = brand.claim || '';
 const noPend = (v) => v && String(v).indexOf('PENDIENTE') < 0;
+const clean = (v) => noPend(v) ? String(v).trim() : '';
 
-// Logotipo bicolor: las 2 últimas letras van en color de acento (constante de plantilla).
+function validateBrand() {
+  const errors = [];
+  for (const key of ['claim']) {
+    if (!clean(brand[key])) errors.push(`brand.${key} es obligatorio`);
+  }
+  if (clean(brand.email) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(brand.email)) {
+    errors.push('brand.email no es válido');
+  }
+  if (clean(brand.dominio) && !/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(brand.dominio)) {
+    errors.push('brand.dominio no es válido');
+  }
+  for (const key of ['telefono', 'whatsapp']) {
+    const value = clean(brand[key]);
+    if (value && value.replace(/\D/g, '').length < 9) errors.push(`brand.${key} no es válido`);
+  }
+  if (!Array.isArray(projects)) errors.push('data/proyectos.json debe contener un array');
+  if (!Array.isArray(brand.areasServicio) || !brand.areasServicio.length || brand.areasServicio.some((area) => !clean(area))) {
+    errors.push('brand.areasServicio debe contener al menos un mercado válido');
+  }
+  const temporaryName = clean(brand.nombreTemporalNoPublicable);
+  if (temporaryName && clean(brand.nombre).toLocaleLowerCase('es') === temporaryName.toLocaleLowerCase('es')) {
+    errors.push('brand.nombre no puede utilizar el nombre temporal no publicable');
+  }
+
+  if (brand.publicar) {
+    if (brand.empresaConstituida !== true) {
+      errors.push('la sociedad debe estar constituida antes de publicar');
+    }
+    for (const key of ['nombre', 'nombreLegal', 'cif', 'direccion', 'dominio', 'email']) {
+      if (!clean(brand[key])) errors.push(`brand.${key} es obligatorio para publicar`);
+    }
+    if (!clean(brand.telefono) && !clean(brand.whatsapp)) {
+      errors.push('hace falta teléfono o WhatsApp para publicar');
+    }
+    for (const key of ['legalUrl', 'privacidadUrl']) {
+      if (!clean(brand[key])) errors.push(`brand.${key} es obligatorio para publicar`);
+      else if (!/^(?:https:\/\/|\/(?!\/))/.test(brand[key])) errors.push(`brand.${key} debe ser una URL https o una ruta absoluta`);
+    }
+    if (brand.legalRevisionAprobada !== true) {
+      errors.push('brand.legalRevisionAprobada debe ser true para publicar');
+    }
+  }
+  if (errors.length) throw new Error('Datos inválidos:\n- ' + errors.join('\n- '));
+}
+validateBrand();
+
+// Sin nombre final mostramos un símbolo neutro, nunca una marca inventada.
 const TAIL = 2;
 const cut = Math.max(0, nombre.length - TAIL);
-const logoInner = esc(nombre.slice(0, cut)) + '<span>' + esc(nombre.slice(cut)) + '</span>';
+const logoInner = nombre
+  ? esc(nombre.slice(0, cut)) + '<span>' + esc(nombre.slice(cut)) + '</span>'
+  : '<svg class="logo-provisional" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="7"/><path d="M8 21l6-5 4 3 6-7"/></svg><span class="sr-only">Inicio</span>';
 
 const titleText = nombre ? `${nombre} — ${claim}` : claim;
-const descText = `${nombre} — reparación de pavimentos industriales: juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas con mínima parada de actividad.`;
+const descText = `Reparación de pavimentos industriales: juntas, fisuras, recrecidos y tratamientos superficiales. Intervenciones planificadas para reducir el impacto en la actividad.`;
+const domain = clean(brand.dominio);
+const email = clean(brand.email);
+const siteUrl = domain ? `https://${domain}` : '';
+const ogImage = siteUrl ? `${siteUrl}/img/hero-nave.jpg` : '';
+const robotsDirective = brand.publicar ? 'index,follow' : 'noindex,nofollow';
+const siteName = nombre || claim;
+const absoluteMetaHtml = siteUrl ? `<link rel="canonical" href="${esc(siteUrl)}/">
+<meta property="og:url" content="${esc(siteUrl)}/">
+<meta property="og:image" content="${esc(ogImage)}">
+<meta property="og:image:alt" content="Pavimento industrial en una nave logística">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta name="twitter:image" content="${esc(ogImage)}">` : '';
+
+const FAQ = [
+  ['¿Podéis darme una valoración sin venir a la instalación?', 'Sí. Con fotos o un vídeo de la zona afectada y las medidas aproximadas podemos darte una primera valoración orientativa. La visita técnica solo es necesaria para preparar una propuesta definitiva adaptada al caso.'],
+  ['¿Puedo seguir operando durante la reparación?', 'Depende del daño, el sistema y la circulación de la instalación. Cuando el alcance lo permite, proponemos fases, zonas acotadas u horarios alternativos para reducir el impacto sobre la actividad.'],
+  ['¿Cuánto tarda en poder pisarse una zona reparada?', 'Depende del sistema empleado. Existen morteros y resinas de curado rápido; el plazo concreto para tráfico peatonal o de carretillas queda definido en la propuesta técnica.'],
+  ['¿Por qué se rompen las juntas y las fisuras vuelven a aparecer?', 'Normalmente porque se repara el síntoma sin corregir la causa: juntas mal dimensionadas, soporte degradado o tráfico distinto al previsto en el diseño original. Nuestro diagnóstico empieza por ahí.'],
+  ['¿Trabajáis fuera de España?', 'Sí. Trabajamos en toda la Unión Europea, principalmente en Alemania, Países Bajos, Bélgica, Francia, España, Portugal e Italia.'],
+];
+const faqHtml = FAQ.map(([question, answer]) => `        <details data-stagger>
+          <summary>${esc(question)}</summary>
+          <p>${esc(answer)}</p>
+        </details>`).join('\n');
 
 // JSON-LD resuelto en build
+const graph = [];
+if (nombre) {
+  const businessLd = {
+    '@type': 'LocalBusiness',
+    name: nombre,
+    description: `${claim}: juntas, fisuras, recrecidos y tratamientos superficiales.`,
+    areaServed: brand.areasServicio,
+  };
+  if (siteUrl) {
+    businessLd['@id'] = `${siteUrl}/#empresa`;
+    businessLd.url = siteUrl;
+    businessLd.image = ogImage;
+  }
+  if (email) businessLd.email = email;
+  if (noPend(brand.telefono)) businessLd.telephone = brand.telefono;
+  if (noPend(brand.direccion)) businessLd.address = brand.direccion;
+  if (noPend(brand.horarioSchema)) businessLd.openingHours = brand.horarioSchema;
+  graph.push(businessLd);
+}
+graph.push({
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map(([name, text]) => ({
+    '@type': 'Question',
+    name,
+    acceptedAnswer: { '@type': 'Answer', text },
+  })),
+});
 const ld = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: nombre,
-  description: `${claim}: juntas, fisuras, recrecidos y tratamientos superficiales.`,
-  areaServed: ['España', 'Europa'],
-  openingHours: 'Mo-Fr 08:00-18:00',
+  '@graph': graph,
 };
-if (brand.email) ld.email = brand.email;
-if (brand.dominio) ld.url = 'https://' + brand.dominio;
-if (noPend(brand.telefono)) ld.telephone = brand.telefono;
-if (noPend(brand.direccion)) ld.address = brand.direccion;
-const jsonld = JSON.stringify(ld, null, 2);
+const jsonld = JSON.stringify(ld, null, 2).replace(/</g, '\\u003c');
+
+const phone = clean(brand.telefono);
+const whatsapp = clean(brand.whatsapp);
+const telHref = phone.replace(/[^+\d]/g, '');
+const whatsappHref = whatsapp.replace(/\D/g, '');
+const contactChannelsHtml = [
+  `También puedes escribirnos a <a href="mailto:${esc(email)}">${esc(email)}</a>`,
+  whatsapp ? ` por <a href="https://wa.me/${esc(whatsappHref)}" rel="noopener">WhatsApp</a>` : '',
+  phone ? ` o llamarnos al <a href="tel:${esc(telHref)}">${esc(phone)}</a>` : '',
+  '.',
+].join('');
+const footerContactItemsHtml = [
+  email ? `<li><a href="mailto:${esc(email)}">${esc(email)}</a></li>` : '',
+  whatsapp ? `<li><a href="https://wa.me/${esc(whatsappHref)}" rel="noopener">WhatsApp</a></li>` : '',
+  phone ? `<li><a href="tel:${esc(telHref)}">${esc(phone)}</a></li>` : '',
+  clean(brand.horarioTexto) ? `<li>${esc(brand.horarioTexto)}</li>` : '',
+].filter(Boolean).join('\n        ');
+const contactFormHtml = email ? `<form class="form" id="formContacto" action="mailto:${esc(email)}" method="post" enctype="text/plain" aria-describedby="contacto-ayuda" data-reveal>
+      <label for="f-nombre">Nombre</label>
+      <input id="f-nombre" name="nombre" type="text" autocomplete="name" required>
+      <label for="f-email">Correo electrónico</label>
+      <input id="f-email" name="email" type="email" autocomplete="email" required>
+      <label for="f-msg">¿Qué le pasa a tu pavimento?</label>
+      <textarea id="f-msg" name="mensaje" required></textarea>
+      <button class="btn btn-acento" type="submit">Preparar solicitud por email</button>
+      <small id="contacto-ayuda">Al continuar se abrirá tu aplicación de correo. ${contactChannelsHtml}</small>
+    </form>` : `<div class="form form-pendiente" data-reveal>
+      <p class="form-estado">Web en preparación</p>
+      <h3>Canal de contacto pendiente</h3>
+      <p>El correo, el teléfono y WhatsApp se incorporarán cuando estén confirmados. Este bloque no admite solicitudes todavía.</p>
+    </div>`;
+const footerContactColumnHtml = footerContactItemsHtml ? `<div>
+      <h3>Contacto</h3>
+      <ul>
+        ${footerContactItemsHtml}
+      </ul>
+    </div>` : '';
+const legalRows = [
+  clean(brand.nombreLegal) ? `<strong>Razón social:</strong> ${esc(brand.nombreLegal)}` : '',
+  clean(brand.cif) ? `<strong>CIF:</strong> ${esc(brand.cif)}` : '',
+  clean(brand.direccion) ? `<strong>Domicilio:</strong> ${esc(brand.direccion)}` : '',
+  '<strong>Actividad:</strong> Reparación y tratamiento técnico de pavimentos industriales de hormigón',
+].filter(Boolean);
+const legalDetailsHtml = legalRows.join('<br>\n        ');
+const legalLinks = [
+  clean(brand.legalUrl) ? `<a href="${esc(brand.legalUrl)}">Aviso legal</a>` : '',
+  clean(brand.privacidadUrl) ? `<a href="${esc(brand.privacidadUrl)}">Privacidad</a>` : '',
+].filter(Boolean);
+const legalLinksHtml = legalLinks.join(' · ');
+const founderAttributionHtml = clean(brand.fundadorNombre)
+  ? `<b>${esc(brand.fundadorNombre)}</b>${esc(clean(brand.fundadorCargo) || 'Equipo fundador')}, ${esc(nombre)}`
+  : '<b>Equipo fundador</b>Proyecto empresarial en desarrollo';
+const years = Number(brand.experienciaAnios);
+const experienceStatHtml = Number.isFinite(years) && years > 0
+  ? `<div class="stat" data-reveal><b>+<i data-counter="${years}">${years}</i></b><span>Años de experiencia acumulada del equipo</span></div>`
+  : '';
+const responseHours = Number(brand.respuestaHoras);
+const responseStatHtml = Number.isFinite(responseHours) && responseHours > 0
+  ? `<div class="stat" data-reveal><b>&lt;<i data-counter="${responseHours}">${responseHours}</i>h</b><span>Primera respuesta</span></div>`
+  : '';
+const naturalList = (items) => items.length < 2
+  ? (items[0] || '')
+  : `${items.slice(0, -1).join(', ')} e ${items.at(-1)}`;
+const serviceAreas = brand.areasServicio.map(clean).filter(Boolean);
+const serviceAreaLabel = serviceAreas.length === 1 && serviceAreas[0] === 'Unión Europea'
+  ? 'la Unión Europea'
+  : naturalList(serviceAreas);
+const priorityMarketsLabel = Array.isArray(brand.mercadosPrioritarios)
+  ? naturalList(brand.mercadosPrioritarios.map(clean).filter(Boolean))
+  : '';
+const ownTeamsAdvantageHtml = brand.equiposPropios ? `<div class="ventaja" data-stagger>
+            <div class="ico" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M4 18h16M6 18V9l6-4 6 4v9"/><path d="M9 18v-5h6v5"/></svg>
+            </div>
+            <div>
+              <h3>Equipos propios</h3>
+              <p>La ejecución se realiza con equipos propios, manteniendo el control directo sobre la planificación y el trabajo en obra.</p>
+            </div>
+          </div>` : '';
+const brandKicker = nombre || 'Experiencia técnica';
+const whyKicker = nombre ? `Por qué ${nombre}` : 'Por qué este enfoque';
+const teamQuote = nombre
+  ? `Hemos pasado más de diez años ejecutando pavimentos industriales. ${nombre} nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, reduciendo el impacto en la actividad.`
+  : 'Hemos pasado más de diez años ejecutando pavimentos industriales. Este proyecto nace para hacer lo que mejor sabemos: devolverles el rendimiento cuando fallan, reduciendo el impacto en la actividad.';
+const copyrightText = nombre ? `© 2026 ${nombre}. Todos los derechos reservados.` : 'Proyecto empresarial en desarrollo.';
+const legalOwner = clean(brand.nombreLegal) || 'Pendiente de confirmar';
+const legalTaxId = clean(brand.cif) || 'Pendiente de confirmar';
+const legalContactEmail = email || 'Pendiente de confirmar';
+const legalDomain = domain || 'Pendiente de confirmar';
+const legalUpdatedAt = '14 de julio de 2026';
+
+function renderProjects(items) {
+  if (!items.length) return '';
+  return `<section class="proyectos" id="proyectos">
+    <div class="wrap">
+      <div class="cab">
+        <p class="kicker">Proyectos ejecutados</p>
+        <h2>Alcance real y evidencia de obra</h2>
+        <p class="proy-intro">Las cantidades y la ejecución están confirmadas. Los resultados descritos se limitan a lo que documentan las fotografías aportadas; no publicamos plazos ni mejoras de rendimiento sin un dato verificable.</p>
+      </div>
+      <div class="proy-grid">
+${items.map((project, index) => {
+  const t = project.traducciones?.es;
+  const images = project.imagenes;
+  if (!project.slug || !project.referencia || !project.cliente || !project.sector || !project.ubicacion?.ciudad || !project.ubicacion?.pais || !Array.isArray(project.magnitudes) || !project.magnitudes.length || !Array.isArray(images) || images.length < 3 || !t?.titulo || !t?.problema || !t?.solucion || !t?.resultado) {
+    throw new Error(`Proyecto ${index + 1}: faltan campos obligatorios`);
+  }
+  if (project.ejecucionConfirmada !== true || project.permisoPublicarCliente !== true) {
+    throw new Error(`Proyecto ${project.slug}: falta confirmar ejecución o permiso de publicación`);
+  }
+  if (project.superficieM2 != null && (!Number.isFinite(project.superficieM2) || project.superficieM2 <= 0)) {
+    throw new Error(`Proyecto ${project.slug}: superficieM2 no es válida`);
+  }
+  const imageRoot = path.join(ROOT, 'img') + path.sep;
+  const galleryHtml = images.map((image, imageIndex) => {
+    if (!image?.src || !image?.alt || !image?.etapa) {
+      throw new Error(`Proyecto ${project.slug}: imagen ${imageIndex + 1} incompleta`);
+    }
+    const imagePath = path.resolve(ROOT, image.src);
+    if (!imagePath.startsWith(imageRoot)) throw new Error(`Proyecto ${project.slug}: la imagen debe vivir dentro de img/`);
+    if (!fs.existsSync(imagePath)) throw new Error(`Proyecto ${project.slug}: no existe ${image.src}`);
+    return `            <figure>
+              <img src="${esc(image.src)}" alt="${esc(image.alt)}" loading="lazy" decoding="async">
+              <figcaption>${esc(image.etapa)}</figcaption>
+            </figure>`;
+  }).join('\n');
+  const magnitudeHtml = project.magnitudes.map((magnitude) => `              <li>${esc(magnitude)}</li>`).join('\n');
+  return `        <article class="proy" data-stagger>
+          <div class="proy-media" aria-label="Reportaje fotográfico de ${esc(project.cliente)}">
+${galleryHtml}
+          </div>
+          <div class="cuerpo">
+            <div class="meta">
+              <span class="ref">${esc(project.referencia)}</span>
+              <span>${esc(project.sector)}</span>
+              <span>${esc(project.ubicacion.ciudad)}, ${esc(project.ubicacion.pais)}</span>
+            </div>
+            <h3>${esc(t.titulo)}</h3>
+            <ul class="proy-cifras" aria-label="Magnitudes confirmadas">
+${magnitudeHtml}
+            </ul>
+            <dl>
+              <dt>Problema</dt><dd>${esc(t.problema)}</dd>
+              <dt>Solución</dt><dd>${esc(t.solucion)}</dd>
+              <dt>Resultado documentado</dt><dd>${esc(t.resultado)}</dd>
+            </dl>
+          </div>
+        </article>`;
+}).join('\n')}
+      </div>
+    </div>
+  </section>`;
+}
+const projectsSection = renderProjects(projects);
 
 // Navegación: única fuente de los enlaces → se renderiza a 3 variantes.
 // Añadir aquí un item lo publica en las tres barras (móvil, sticky y hero).
 const NAV = [
   ['proceso', 'Proceso'],
   ['servicios', 'Servicios'],
+  ...(projects.length ? [['proyectos', 'Proyectos']] : []),
   ['empresa', 'Empresa'],
   ['faq', 'FAQ'],
 ];
 const navHeroLinks = NAV.map(([id, l]) => `<li><a href="#${id}">${l}</a></li>`).join('\n      ');
 const navStickyLinks = NAV.map(([id, l]) => `<li><a href="#${id}" data-sec="${id}">${l}</a></li>`).join('\n      ');
-const navMobileLinks = NAV.map(([id, l]) => `<a href="#${id}" onclick="menuMovil.classList.remove('abierto')">${l}</a>`).join('\n  ');
+const navMobileLinks = NAV.map(([id, l]) => `<a href="#${id}">${l}</a>`).join('\n  ');
 
 const ctx = {
   brand,
@@ -77,7 +324,35 @@ const ctx = {
   titleText,
   descText,
   ogTitle: titleText,
+  siteName,
+  siteUrl,
+  ogImage,
+  absoluteMetaHtml,
+  robotsDirective,
   jsonld,
+  faqHtml,
+  contactChannelsHtml,
+  contactFormHtml,
+  footerContactItemsHtml,
+  footerContactColumnHtml,
+  legalDetailsHtml,
+  legalLinksHtml,
+  founderAttributionHtml,
+  experienceStatHtml,
+  responseStatHtml,
+  serviceAreaLabel,
+  priorityMarketsLabel,
+  ownTeamsAdvantageHtml,
+  brandKicker,
+  whyKicker,
+  teamQuote,
+  copyrightText,
+  legalOwner,
+  legalTaxId,
+  legalContactEmail,
+  legalDomain,
+  legalUpdatedAt,
+  projectsSection,
   navHeroLinks,
   navStickyLinks,
   navMobileLinks,
@@ -101,17 +376,40 @@ function render(str) {
 }
 
 const out = render(fs.readFileSync(path.join(SRC, 'index.html'), 'utf8'));
+const legalPages = [
+  ['aviso-legal', 'aviso-legal.html'],
+  ['privacidad', 'privacidad.html'],
+];
+const renderedLegalPages = legalPages.map(([route, file]) => [
+  route,
+  render(fs.readFileSync(path.join(SRC, 'legal', file), 'utf8')),
+]);
 
 // Ninguna marca de plantilla debe quedar sin resolver.
 const leftover = out.match(/\{\{[^}]*\}\}/g);
 if (leftover) throw new Error('Placeholders sin resolver: ' + leftover.join(', '));
+if (/«PENDIENTE»|\[Nombre Apellido\]|\[B-00000000\]|\[Calle, nº, CP, Ciudad\]/.test(out)) {
+  throw new Error('La salida contiene datos ficticios visibles');
+}
 
 // dist/ contiene SOLO lo que se sirve (index.html + activos). Ni src/ ni
 // scripts/ ni data/ ni *.md llegan aquí → en producción devuelven 404.
 fs.rmSync(OUT_DIR, { recursive: true, force: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(path.join(OUT_DIR, 'index.html'), out);
+for (const [route, html] of renderedLegalPages) {
+  const dir = path.join(OUT_DIR, route);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), html);
+}
+const robots = brand.publicar && siteUrl
+  ? `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`
+  : 'User-agent: *\nDisallow: /\n';
+fs.writeFileSync(path.join(OUT_DIR, 'robots.txt'), robots);
+if (siteUrl) {
+  fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${siteUrl}/</loc></url>\n  <url><loc>${siteUrl}/aviso-legal/</loc></url>\n  <url><loc>${siteUrl}/privacidad/</loc></url>\n</urlset>\n`);
+}
 for (const dir of ASSETS) {
   fs.cpSync(path.join(ROOT, dir), path.join(OUT_DIR, dir), { recursive: true });
 }
-console.log('build OK → dist/  (index.html', `${out.length} bytes  +  ${ASSETS.join('/ + ')}/)`);
+console.log(`build OK → dist/ (${brand.publicar ? 'PUBLICACIÓN' : 'PREVIEW NOINDEX'}) · index.html ${out.length} bytes + ${ASSETS.join('/ + ')}/`);

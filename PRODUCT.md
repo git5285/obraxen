@@ -8,6 +8,11 @@
 > **Identidad (nombre, dominio, email, teléfono, razón social, dirección):**
 > centralizada en [`data/brand.json`](data/brand.json). No se duplica aquí para
 > mantener el punto único de verdad establecido previamente.
+>
+> **Nombre temporal:** “RemainOn” es solo el identificador interno heredado del
+> proyecto y no puede publicarse como marca. La empresa aún no está constituida;
+> únicamente está confirmada la intención de constituir una sociedad limitada.
+> El naming, la razón social y el CIF están aplazados por decisión de los socios.
 
 ## Qué es la empresa
 
@@ -23,16 +28,16 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
   retirada de anclajes/tornillos, bacheo y parcheo de hormigón, reparación de
   arañazos y desconchones, sellado de juntas de dilatación, pulido en grandes
   superficies.
-- **Ejecuta con equipos propios** (Proceso, fase 03).
-- **Posicionamiento declarado:** «Oficio de siempre, empresa nueva» — empresa de
-  nueva creación formada por personas con trayectoria en la *ejecución* de
-  pavimentos («Conocemos los suelos porque los hemos construido»; cita del socio
-  fundador). *Marca lo presenta así; es un mensaje de marketing, no un dato
-  verificable en el repo.*
-- **Horario:** L–V 8:00–18:00 (footer; JSON-LD `openingHours`).
-- Año de fundación, tamaño del equipo, facturación, forma jurídica concreta,
-  certificaciones: `«FALTA»` (razón social y datos legales son `«PENDIENTE»` en
-  `brand.json`).
+- **Modelo de ejecución:** equipos propios.
+- **Posicionamiento declarado:** «Oficio de siempre, empresa nueva» — proyecto de
+  nueva creación cuyo equipo declara **más de 10 años de experiencia acumulada**
+  en ejecución de pavimentos industriales.
+- **Horario de atención confirmado:** lunes a viernes, 9:00–18:00. El valor
+  `Mo-Fr 09:00-18:00` queda preparado en `brand.json` para incorporarse al
+  JSON-LD cuando se confirme el nombre comercial.
+- La forma jurídica prevista es una **sociedad limitada**, todavía no constituida.
+  Razón social, CIF, fecha de constitución, tamaño del equipo, facturación y
+  certificaciones: `«FALTA»` y no se publican hasta confirmarlos en `brand.json`.
 
 ## A quién vende (segmentos y decisores)
 
@@ -53,7 +58,7 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
   tu operativa?»): juntas dañadas por tráfico pesado, fisuras estructurales o
   superficiales, superficies degradadas, pérdida de planimetría.
 - **Coste de parar la producción** para reparar (hero y propuesta giran en torno
-  a «sin parar tu producción» / «mínima parada de actividad»).
+  a reducir el impacto y planificar la mínima parada posible).
 - **Reparaciones que no duran**: se repara el síntoma sin corregir la causa
   (juntas mal dimensionadas, soporte degradado, tráfico distinto al de diseño) —
   FAQ y Proceso lo plantean explícitamente.
@@ -64,34 +69,40 @@ hormigón** (footer «Actividad»; `<title>`; JSON-LD `LocalBusiness`).
 
 Fundamentado en copy de Hero, Proceso, Servicios, «Por qué», FAQ y Contacto:
 
-- **Intervención por fases sin parar la producción**, en horarios compatibles
-  (noches, fines de semana, zonas acotadas).
+- **Propuesta de intervención por fases para reducir el impacto**, cuando el daño,
+  el sistema y la circulación de la instalación lo permiten.
 - **Diagnóstico de causa raíz**, no solo del síntoma.
 - **Valoración inicial sin visita** (con fotos/vídeo) + inspección in situ para
   el presupuesto definitivo.
-- **Presupuesto cerrado, «sin sorpresas»**.
-- **Materiales homologados** y estándares pensados para operar en toda Europa.
-- **Garantía** según sistema y condiciones de uso (FAQ).
-- **Respuesta en < 48 h laborables** a cada solicitud (Contacto; métrica «48 h»).
+- **Propuesta adaptada a cada caso:** solución, alcance, materiales, plazos y
+  fases se concretan según el diagnóstico; no se promete un formato universal
+  de presupuesto cerrado.
+- **Materiales seleccionados según el sistema**; homologaciones concretas: `«FALTA»`.
+- **Primera respuesta en menos de 48 horas.**
 - **Control de polvo y residuos, señalización** durante la obra (Proceso).
-- **Curado rápido**: tráfico peatonal en horas, carretillas en 24–48 h (FAQ).
+- El plazo de reapertura depende del sistema y se concreta en la propuesta técnica.
 - **Método declarado:** «Diagnosticar · Reparar · Rendir», estructurado en 4
   fases (valoración → propuesta técnica → ejecución → entrega y seguimiento).
-- **Métricas mostradas:** «48 h» de respuesta y «100 % presupuestos cerrados».
-  La cifra de años de experiencia se muestra como marcador `+XX` → `«FALTA»`.
+- **Métricas publicadas:** más de 10 años de experiencia acumulada, primera
+  respuesta inferior a 48 horas y las cuatro fases del método. No se publican
+  porcentajes de continuidad operativa ni otras cifras sin evidencia.
 
 ## Competencia y referencias
 
 - **Competencia:** `«FALTA»` — el repo no menciona competidores ni
   posicionamiento comparativo.
-- **Referencias / casos de éxito:** `«FALTA»` — la sección *Proyectos* existe
-  pero está **oculta** (`hidden`) y solo contiene plantillas con marcadores
-  (`[Título del proyecto]`, `[0.000] m²`, `[Sector]`, `[Ciudad, País]`). No hay
-  proyectos, clientes ni cifras reales.
-- **Testimonios:** solo la cita del «Socio fundador», con el nombre en marcador
-  `[Nombre Apellido]` → `«FALTA»` la persona y cualquier testimonio de cliente.
-- **Recursos / contenido técnico:** sección *Recursos* también oculta y con
-  títulos entre corchetes (sin artículos reales).
+- **Proyectos ejecutados:** Delticom, TP-Link, dadada GmbH, L’Oréal, Blitz y
+  Hologram Bâtiment están publicados desde `data/proyectos.json`, con ejecución,
+  ubicación, unidades principales y permiso para identificar al cliente confirmados.
+  La redacción distingue alcance ejecutado de resultado documentado: solo describe
+  lo visible en las fotografías y no afirma plazos, continuidad ni rendimiento sin
+  una confirmación específica.
+- **Auditoría de imágenes:** `PHOTO_AUDIT.md` registra la revisión de 640 fotos y
+  un vídeo, las exclusiones de privacidad, la selección de 18 imágenes y la decisión
+  de no alterar evidencia de obra mediante IA generativa.
+- **Testimonios:** la cita se atribuye provisionalmente al «Equipo fundador»;
+  nombre, cargo y cualquier testimonio de cliente: `«FALTA»`.
+- **Recursos / contenido técnico:** `«FALTA»`; no se publican plantillas vacías.
 
 ## Tono de voz
 
@@ -104,8 +115,8 @@ el repo):
   («Diagnosticar. Reparar. Rendir.»).
 - **Técnico pero traducido a beneficio operativo** (habla de resinas y morteros,
   pero el foco es «no parar la producción»).
-- **Tranquilizador / reductor de riesgo**: «sin sorpresas», «sin compromiso»,
-  «mínima parada», «respondemos en menos de 48 h».
+- **Tranquilizador / reductor de riesgo**: valoración inicial, alcance definido y
+  planificación por fases sin convertir posibilidades técnicas en promesas absolutas.
 - **Autoridad por oficio**: «Oficio de siempre», «Conocemos los suelos porque
   los hemos construido».
 - Guía de estilo formal, do's & don'ts, léxico permitido/prohibido, tratamiento
@@ -122,11 +133,12 @@ el repo):
 
 ## Platform: web
 
-- **Sitio web estático** (HTML + CSS + GSAP), **una sola página** (`index.html`),
-  sin build ni dependencias (README).
+- **Sitio web estático** (HTML + CSS + GSAP), **una sola página**, con build y
+  validación en Node sin dependencias de terceros.
 - **Despliegue:** Vercel con auto-deploy en cada push a `main` (README).
-- **Estado actual:** `noindex` temporal; formulario de contacto **interino** por
-  `mailto:`; varias secciones ocultas y placeholders pendientes.
+- **Estado actual:** preview `noindex,nofollow`; sin nombre, dominio ni canales de
+  contacto inventados; datos desconocidos omitidos y publicación estricta
+  bloqueada hasta completarlos.
 - **Evolución prevista** (README, «Decisiones»): migración a generador estático
   (Astro) con i18n para Europa cuando se activen Proyectos/Recursos; hero de
   vídeo solo con metraje propio de obra.
@@ -135,11 +147,8 @@ el repo):
 
 ## Mercados objetivo
 
-- **España** — mercado principal (footer «en España y Europa»; FAQ «¿Trabajáis
-  fuera de España?»; JSON-LD `areaServed`).
-- **Resto de Europa** — declarado explícitamente: «Vocación europea», «operar en
-  toda Europa», FAQ «planteamos proyectos en el resto de Europa» (`areaServed:
-  ["España","Europa"]`).
-- Países, regiones o ciudades concretas, prioridad entre mercados, idiomas de
-  publicación: `«FALTA»` (el README solo menciona i18n para Europa como plan
-  futuro, no como mercados confirmados).
+- **Toda la Unión Europea** — cobertura operativa confirmada.
+- **Mercados principales:** Alemania, Países Bajos, Bélgica, Francia, España,
+  Portugal e Italia.
+- La prioridad comercial entre esos países y los idiomas de publicación siguen
+  pendientes de planificación.

@@ -1,0 +1,889 @@
+[
+  {
+    "slug": "delticom-hannover",
+    "referencia": "E240002",
+    "cliente": "Delticom",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Hannover",
+      "pais": "Alemania"
+    },
+    "superficieM2": 18084,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 5,
+    "maquinaria": [
+      "Máquinas de lijado",
+      "Máquinas de pulido"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Mortero cementoso",
+      "Masilla bicomponente"
+    ],
+    "magnitudes": [
+      "18.084 m² tratados",
+      "5.362 m² de revestimiento retirado"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E240002"
+        }
+      ]
+    },
+    "plazoPrevisto": "30 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": "Abril y mayo de 2025",
+      "duracionReal": "2 meses",
+      "continuidadOperativa": "detenida",
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "Delticom · floor refurbishment in Hanover",
+        "problema": "A large logistics floor retained coatings and markings, while a mezzanine required a different treatment approach.",
+        "solucion": "Removal of 5,362 m² of coating and treatment of 18,084 m² across the main floor and mezzanine using wet and dry systems.",
+        "resultado": "The supplied photographic record documents the removal of markings and a continuous, clean and polished surface. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Logistics",
+        "pais": "Germany",
+        "fechaEjecucion": "April and May 2025",
+        "duracionReal": "2 months",
+        "maquinaria": [
+          "Grinding machines",
+          "Polishing machines"
+        ],
+        "materiales": [
+          "Lithium densifier",
+          "Cementitious mortar",
+          "Two-component filler"
+        ],
+        "magnitudes": [
+          "18,084 m² treated",
+          "5,362 m² of coating removed"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "Delticom · Bodensanierung in Hannover",
+        "problema": "Eine große Logistikfläche wies noch Beschichtungen und Markierungen auf; eine Zwischenebene erforderte eine abweichende Behandlung.",
+        "solucion": "Entfernung von 5.362 m² Beschichtung und Behandlung von 18.084 m² auf Hauptfläche und Zwischenebene mit Nass- und Trockenverfahren.",
+        "resultado": "Die bereitgestellte Fotodokumentation zeigt die Entfernung der Markierungen sowie eine durchgängige, saubere und polierte Oberfläche. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Logistik",
+        "pais": "Deutschland",
+        "fechaEjecucion": "April und Mai 2025",
+        "duracionReal": "2 Monate",
+        "maquinaria": [
+          "Bodenschleifmaschinen",
+          "Poliermaschinen"
+        ],
+        "materiales": [
+          "Lithiumverdichter",
+          "Zementgebundener Mörtel",
+          "Zweikomponenten-Spachtelmasse"
+        ],
+        "magnitudes": [
+          "18.084 m² behandelt",
+          "5.362 m² Beschichtung entfernt"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "Delticom · renovación de pavimento en Hannover",
+        "problema": "Una superficie logística extensa conservaba revestimientos y señalización, con una entreplanta que requería un tratamiento diferenciado.",
+        "solucion": "Retirada de 5.362 m² de revestimiento y tratamiento de 18.084 m² entre la planta principal y la entreplanta mediante sistemas húmedo y seco.",
+        "resultado": "El reportaje aportado documenta la retirada de marcas y una superficie continua, limpia y pulida. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Logística",
+        "pais": "Alemania",
+        "fechaEjecucion": "Abril y mayo de 2025",
+        "duracionReal": "2 meses",
+        "maquinaria": [
+          "Máquinas de lijado",
+          "Máquinas de pulido"
+        ],
+        "materiales": [
+          "Densificador de litio",
+          "Mortero cementoso",
+          "Masilla bicomponente"
+        ],
+        "magnitudes": [
+          "18.084 m² tratados",
+          "5.362 m² de revestimiento retirado"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "Delticom · rénovation du sol à Hanovre",
+        "problema": "Une vaste surface logistique conservait des revêtements et des marquages, tandis qu'une mezzanine nécessitait un traitement différent.",
+        "solucion": "Dépose de 5 362 m² de revêtement et traitement de 18 084 m² entre le niveau principal et la mezzanine, par procédés humides et secs.",
+        "resultado": "Le reportage fourni documente la suppression des marquages et une surface continue, propre et polie. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Logistique",
+        "pais": "Allemagne",
+        "fechaEjecucion": "Avril et mai 2025",
+        "duracionReal": "2 mois",
+        "maquinaria": [
+          "Machines de ponçage",
+          "Machines de polissage"
+        ],
+        "materiales": [
+          "Densificateur au lithium",
+          "Mortier cimentaire",
+          "Mastic bicomposant"
+        ],
+        "magnitudes": [
+          "18 084 m² traités",
+          "5 362 m² de revêtement déposés"
+        ],
+        "imagenes": []
+      }
+    }
+  },
+  {
+    "slug": "tp-link-dusseldorf",
+    "referencia": "E250007",
+    "cliente": "TP-Link",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Düsseldorf",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "superficieInstalacionM2": 8000,
+    "equipoOperarios": 3,
+    "maquinaria": [
+      "Máquina de lijado",
+      "Equipo de aspiración"
+    ],
+    "materiales": [
+      "Masilla bicomponente"
+    ],
+    "magnitudes": [
+      "1.730 anclajes rebajados",
+      "Retirada localizada de señalización"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250007"
+        }
+      ]
+    },
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": "Julio de 2025",
+      "duracionReal": "3 semanas",
+      "continuidadOperativa": null,
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "TP-Link · anchor and marking removal in Düsseldorf",
+        "problema": "The facility required the removal of anchors, painted and adhesive markings, and several local paint patches.",
+        "solucion": "Grinding down 1,730 anchors, filling with two-component filler, and local removal of markings and paint patches.",
+        "resultado": "The supplied photographs show the treated areas and details of the ground-down points. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Logistics",
+        "pais": "Germany",
+        "fechaEjecucion": "July 2025",
+        "duracionReal": "3 weeks",
+        "maquinaria": [
+          "Grinding machine",
+          "Dust-extraction equipment"
+        ],
+        "materiales": [
+          "Two-component filler"
+        ],
+        "magnitudes": [
+          "1,730 anchors ground down",
+          "Local removal of floor markings"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "TP-Link · Entfernung von Ankern und Markierungen in Düsseldorf",
+        "problema": "In der Anlage mussten Anker sowie aufgebrachte und geklebte Markierungen und mehrere lokale Farbstellen entfernt werden.",
+        "solucion": "Abschleifen von 1.730 Ankern, Verfüllen mit Zweikomponenten-Spachtelmasse und lokale Entfernung von Markierungen und Farbstellen.",
+        "resultado": "Die bereitgestellten Fotos zeigen die bearbeiteten Bereiche und Details der abgeschliffenen Punkte. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Logistik",
+        "pais": "Deutschland",
+        "fechaEjecucion": "Juli 2025",
+        "duracionReal": "3 Wochen",
+        "maquinaria": [
+          "Bodenschleifmaschine",
+          "Absauganlage"
+        ],
+        "materiales": [
+          "Zweikomponenten-Spachtelmasse"
+        ],
+        "magnitudes": [
+          "1.730 Anker abgeschliffen",
+          "Bodenmarkierungen lokal entfernt"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "TP-Link · retirada de anclajes y señalización en Düsseldorf",
+        "problema": "La instalación requería retirar anclajes, señalización pintada y adhesiva, además de varios parches de pintura.",
+        "solucion": "Rebaje de 1.730 anclajes, relleno con masilla bicomponente y retirada localizada de señalización y parches de pintura.",
+        "resultado": "Las fotografías aportadas muestran las áreas intervenidas y el detalle de los puntos rebajados. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Logística",
+        "pais": "Alemania",
+        "fechaEjecucion": "Julio de 2025",
+        "duracionReal": "3 semanas",
+        "maquinaria": [
+          "Máquina de lijado",
+          "Equipo de aspiración"
+        ],
+        "materiales": [
+          "Masilla bicomponente"
+        ],
+        "magnitudes": [
+          "1.730 anclajes rebajados",
+          "Retirada localizada de señalización"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "TP-Link · dépose d'ancrages et de marquages à Düsseldorf",
+        "problema": "Le site nécessitait la dépose d'ancrages, de marquages peints et adhésifs ainsi que de plusieurs reprises de peinture localisées.",
+        "solucion": "Meulage de 1 730 ancrages, rebouchage avec un mastic bicomposant et suppression localisée des marquages et reprises de peinture.",
+        "resultado": "Les photographies fournies montrent les zones traitées et le détail des points arasés. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Logistique",
+        "pais": "Allemagne",
+        "fechaEjecucion": "Juillet 2025",
+        "duracionReal": "3 semaines",
+        "maquinaria": [
+          "Machine de ponçage",
+          "Équipement d'aspiration"
+        ],
+        "materiales": [
+          "Mastic bicomposant"
+        ],
+        "magnitudes": [
+          "1 730 ancrages arasés",
+          "Suppression localisée de marquages"
+        ],
+        "imagenes": []
+      }
+    }
+  },
+  {
+    "slug": "dadada-euskirchen",
+    "referencia": "E250006",
+    "cliente": "dadada GmbH",
+    "sector": "Industrial",
+    "ubicacion": {
+      "ciudad": "Euskirchen",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "superficieInstalacionM2": 10000,
+    "equipoOperarios": 2,
+    "maquinaria": [
+      "Herramientas de lijado"
+    ],
+    "materiales": [
+      "Masilla bicomponente"
+    ],
+    "magnitudes": [
+      "44 m lineales de juntas de construcción",
+      "20 huecos reparados"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250006"
+        }
+      ]
+    },
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": "3 días",
+      "continuidadOperativa": "total",
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "dadada GmbH · localised repair in Euskirchen",
+        "problema": "The floor showed movement at construction joints, voids and local unevenness that required a targeted technical intervention.",
+        "solucion": "Treatment of 44 linear metres of construction joints, filling of 20 voids and mechanical reinforcement of the documented areas.",
+        "resultado": "The technical photographic record documents the initial condition and the different preparation and mechanical reinforcement stages. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Industrial",
+        "pais": "Germany",
+        "fechaEjecucion": null,
+        "duracionReal": "3 days",
+        "maquinaria": [
+          "Grinding tools"
+        ],
+        "materiales": [
+          "Two-component filler"
+        ],
+        "magnitudes": [
+          "44 linear metres of construction joints",
+          "20 voids repaired"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "dadada GmbH · lokale Reparatur in Euskirchen",
+        "problema": "Der Boden zeigte Bewegungen an Arbeitsfugen, Hohlstellen und lokale Unebenheiten, die eine gezielte technische Maßnahme erforderten.",
+        "solucion": "Bearbeitung von 44 laufenden Metern Arbeitsfugen, Verfüllung von 20 Hohlstellen und mechanische Verstärkung der dokumentierten Bereiche.",
+        "resultado": "Die technische Fotodokumentation zeigt den Ausgangszustand sowie die einzelnen Schritte der Vorbereitung und mechanischen Verstärkung. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Industrie",
+        "pais": "Deutschland",
+        "fechaEjecucion": null,
+        "duracionReal": "3 Tage",
+        "maquinaria": [
+          "Schleifwerkzeuge"
+        ],
+        "materiales": [
+          "Zweikomponenten-Spachtelmasse"
+        ],
+        "magnitudes": [
+          "44 lfm Arbeitsfugen",
+          "20 Hohlstellen repariert"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "dadada GmbH · reparación localizada en Euskirchen",
+        "problema": "El pavimento presentaba dilatación en juntas de construcción, huecos y desniveles localizados que requerían una intervención técnica puntual.",
+        "solucion": "Tratamiento de 44 m lineales de juntas de construcción, relleno de 20 huecos y refuerzo mecánico de las zonas documentadas.",
+        "resultado": "El reportaje técnico documenta el estado inicial y las distintas fases de preparación y refuerzo mecánico. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Industrial",
+        "pais": "Alemania",
+        "fechaEjecucion": null,
+        "duracionReal": "3 días",
+        "maquinaria": [
+          "Herramientas de lijado"
+        ],
+        "materiales": [
+          "Masilla bicomponente"
+        ],
+        "magnitudes": [
+          "44 m lineales de juntas de construcción",
+          "20 huecos reparados"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "dadada GmbH · réparation localisée à Euskirchen",
+        "problema": "Le sol présentait des mouvements au droit des joints de construction, des cavités et des irrégularités localisées nécessitant une intervention technique ciblée.",
+        "solucion": "Traitement de 44 mètres linéaires de joints de construction, rebouchage de 20 cavités et renforcement mécanique des zones documentées.",
+        "resultado": "Le reportage technique documente l'état initial et les différentes étapes de préparation et de renforcement mécanique. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Industrie",
+        "pais": "Allemagne",
+        "fechaEjecucion": null,
+        "duracionReal": "3 jours",
+        "maquinaria": [
+          "Outils de ponçage"
+        ],
+        "materiales": [
+          "Mastic bicomposant"
+        ],
+        "magnitudes": [
+          "44 m linéaires de joints de construction",
+          "20 cavités réparées"
+        ],
+        "imagenes": []
+      }
+    }
+  },
+  {
+    "slug": "loreal-gauchy",
+    "referencia": "E250013",
+    "cliente": "L’Oréal",
+    "sector": "Industria",
+    "ubicacion": {
+      "ciudad": "Gauchy",
+      "pais": "Francia"
+    },
+    "superficieM2": 4200,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 4,
+    "maquinaria": [
+      "Fratasadora doble"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Sellador"
+    ],
+    "magnitudes": [
+      "4.200 m² tratados",
+      "Tratamiento superficial LitoBrillant"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250013"
+        }
+      ]
+    },
+    "plazoPrevisto": "6 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": "1 semana",
+      "continuidadOperativa": "total",
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "L’Oréal · surface treatment in Gauchy",
+        "problema": "The plant needed to renew a large concrete surface and restore a uniform finish across the working area.",
+        "solucion": "Application of the LitoBrillant surface treatment to 4,200 m² of industrial floor using a double power trowel, lithium densifier and sealer.",
+        "resultado": "The final photographic record shows a uniform, polished surface across the treated area. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Industry",
+        "pais": "France",
+        "fechaEjecucion": null,
+        "duracionReal": "1 week",
+        "maquinaria": [
+          "Double power trowel"
+        ],
+        "materiales": [
+          "Lithium densifier",
+          "Sealer"
+        ],
+        "magnitudes": [
+          "4,200 m² treated",
+          "LitoBrillant surface treatment"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "L’Oréal · Oberflächenbehandlung in Gauchy",
+        "problema": "Im Werk sollte eine große Betonfläche erneuert und ein gleichmäßiges Erscheinungsbild im Arbeitsbereich wiederhergestellt werden.",
+        "solucion": "Aufbringen der LitoBrillant-Oberflächenbehandlung auf 4.200 m² Industrieboden mit Doppelglätter, Lithiumverdichter und Versiegelung.",
+        "resultado": "Die abschließende Fotodokumentation zeigt eine gleichmäßige, polierte Oberfläche im behandelten Bereich. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Industrie",
+        "pais": "Frankreich",
+        "fechaEjecucion": null,
+        "duracionReal": "1 Woche",
+        "maquinaria": [
+          "Doppelglätter"
+        ],
+        "materiales": [
+          "Lithiumverdichter",
+          "Versiegelung"
+        ],
+        "magnitudes": [
+          "4.200 m² behandelt",
+          "LitoBrillant-Oberflächenbehandlung"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "L’Oréal · tratamiento superficial en Gauchy",
+        "problema": "La planta necesitaba renovar una gran superficie de hormigón y recuperar un acabado uniforme en el área de trabajo.",
+        "solucion": "Aplicación del tratamiento superficial LitoBrillant sobre 4.200 m² de pavimento industrial mediante fratasadora doble, densificador de litio y sellador.",
+        "resultado": "El reportaje final muestra una superficie homogénea y pulida en el área tratada. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Industria",
+        "pais": "Francia",
+        "fechaEjecucion": null,
+        "duracionReal": "1 semana",
+        "maquinaria": [
+          "Fratasadora doble"
+        ],
+        "materiales": [
+          "Densificador de litio",
+          "Sellador"
+        ],
+        "magnitudes": [
+          "4.200 m² tratados",
+          "Tratamiento superficial LitoBrillant"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "L’Oréal · traitement de surface à Gauchy",
+        "problema": "L'usine devait rénover une grande surface en béton et retrouver une finition uniforme dans la zone de travail.",
+        "solucion": "Application du traitement de surface LitoBrillant sur 4 200 m² de sol industriel à l'aide d'une talocheuse double, d'un densificateur au lithium et d'un bouche-pores.",
+        "resultado": "Le reportage final montre une surface homogène et polie dans la zone traitée. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Industrie",
+        "pais": "France",
+        "fechaEjecucion": null,
+        "duracionReal": "1 semaine",
+        "maquinaria": [
+          "Talocheuse double"
+        ],
+        "materiales": [
+          "Densificateur au lithium",
+          "Bouche-pores"
+        ],
+        "magnitudes": [
+          "4 200 m² traités",
+          "Traitement de surface LitoBrillant"
+        ],
+        "imagenes": []
+      }
+    }
+  },
+  {
+    "slug": "blitz-bremen",
+    "referencia": "E240001",
+    "cliente": "Blitz",
+    "sector": "Logística",
+    "ubicacion": {
+      "ciudad": "Bremen",
+      "pais": "Alemania"
+    },
+    "superficieM2": null,
+    "superficieInstalacionM2": 20000,
+    "equipoOperarios": 8,
+    "maquinaria": [
+      "Equipos de aserrado y aspiración",
+      "Herramientas de lijado"
+    ],
+    "materiales": [
+      "Masilla bicomponente",
+      "Mortero cementoso"
+    ],
+    "magnitudes": [
+      "1.121 m lineales de fisuras",
+      "5.000 anclajes retirados o rebajados",
+      "465 huecos reparados"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E240001"
+        }
+      ]
+    },
+    "plazoPrevisto": "35 días laborables",
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": "Marzo de 2025",
+      "duracionReal": "5 semanas",
+      "continuidadOperativa": "total",
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "Blitz · logistics floor restoration in Bremen",
+        "problema": "The facility had an extensive network of cracks, anchor points and voids, together with local repairs of varying sizes.",
+        "solucion": "Saw-cutting and extraction along 1,121 linear metres of cracks, filling with two-component filler, removal or grinding of 5,000 anchors, repair of 465 voids with cementitious mortar, and grinding to level loading-bay areas.",
+        "resultado": "The supplied sequence documents the initial damage, the local repair and the subsequent condition of one logistics aisle. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Logistics",
+        "pais": "Germany",
+        "fechaEjecucion": "March 2025",
+        "duracionReal": "5 weeks",
+        "maquinaria": [
+          "Sawing and dust-extraction equipment",
+          "Grinding tools"
+        ],
+        "materiales": [
+          "Two-component filler",
+          "Cementitious mortar"
+        ],
+        "magnitudes": [
+          "1,121 linear metres of cracks",
+          "5,000 anchors removed or ground down",
+          "465 voids repaired"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "Blitz · Sanierung eines Logistikbodens in Bremen",
+        "problema": "Das Zentrum wies ein weitläufiges Netz aus Rissen, Ankerpunkten und Hohlstellen sowie lokale Reparaturen unterschiedlicher Größe auf.",
+        "solucion": "Schneiden und Absaugen von 1.121 laufenden Metern Rissen, Verfüllung mit Zweikomponenten-Spachtelmasse, Entfernung oder Abschleifen von 5.000 Ankern, Reparatur von 465 Hohlstellen mit zementgebundenem Mörtel und Höhenausgleich durch Schleifen an den Laderampen.",
+        "resultado": "Die bereitgestellte Bildfolge dokumentiert den Ausgangsschaden, die lokale Reparatur und den anschließenden Zustand eines Logistikgangs. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Logistik",
+        "pais": "Deutschland",
+        "fechaEjecucion": "März 2025",
+        "duracionReal": "5 Wochen",
+        "maquinaria": [
+          "Säge- und Absauganlagen",
+          "Schleifwerkzeuge"
+        ],
+        "materiales": [
+          "Zweikomponenten-Spachtelmasse",
+          "Zementgebundener Mörtel"
+        ],
+        "magnitudes": [
+          "1.121 lfm Risse",
+          "5.000 Anker entfernt oder abgeschliffen",
+          "465 Hohlstellen repariert"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "Blitz · restauración de pavimento logístico en Bremen",
+        "problema": "El centro presentaba una red extensa de fisuras, puntos de anclaje y huecos, además de reparaciones localizadas de distinto tamaño.",
+        "solucion": "Aserrado y aspiración de 1.121 m lineales de fisuras, relleno con masilla bicomponente, retirada o rebaje de 5.000 anclajes, reparación de 465 huecos con mortero cementoso y nivelación mediante lijado en los muelles de carga.",
+        "resultado": "La secuencia aportada documenta el daño inicial, la reparación localizada y el estado posterior de uno de los pasillos logísticos. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Logística",
+        "pais": "Alemania",
+        "fechaEjecucion": "Marzo de 2025",
+        "duracionReal": "5 semanas",
+        "maquinaria": [
+          "Equipos de aserrado y aspiración",
+          "Herramientas de lijado"
+        ],
+        "materiales": [
+          "Masilla bicomponente",
+          "Mortero cementoso"
+        ],
+        "magnitudes": [
+          "1.121 m lineales de fisuras",
+          "5.000 anclajes retirados o rebajados",
+          "465 huecos reparados"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "Blitz · restauration d'un sol logistique à Brême",
+        "problema": "Le centre présentait un vaste réseau de fissures, de points d'ancrage et de cavités, ainsi que des réparations localisées de différentes dimensions.",
+        "solucion": "Sciage et aspiration de 1 121 mètres linéaires de fissures, remplissage avec un mastic bicomposant, dépose ou arasement de 5 000 ancrages, réparation de 465 cavités au mortier cimentaire et remise à niveau par ponçage au niveau des quais.",
+        "resultado": "La séquence fournie documente le désordre initial, la réparation localisée et l'état ultérieur de l'une des allées logistiques. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Logistique",
+        "pais": "Allemagne",
+        "fechaEjecucion": "Mars 2025",
+        "duracionReal": "5 semaines",
+        "maquinaria": [
+          "Équipements de sciage et d'aspiration",
+          "Outils de ponçage"
+        ],
+        "materiales": [
+          "Mastic bicomposant",
+          "Mortier cimentaire"
+        ],
+        "magnitudes": [
+          "1 121 m linéaires de fissures",
+          "5 000 ancrages déposés ou arasés",
+          "465 cavités réparées"
+        ],
+        "imagenes": []
+      }
+    }
+  },
+  {
+    "slug": "hologram-paris",
+    "referencia": "E250005",
+    "cliente": "Hologram Bâtiment",
+    "sector": "Edificación",
+    "ubicacion": {
+      "ciudad": "París",
+      "pais": "Francia"
+    },
+    "superficieM2": 2700,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 4,
+    "maquinaria": [
+      "Fratasadora doble"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Sellador",
+      "Masilla bicomponente",
+      "Mortero cementoso"
+    ],
+    "magnitudes": [
+      "2.700 m² tratados y lijados",
+      "201 m² de revestimiento retirado",
+      "829 m lineales de fisuras y juntas",
+      "1.943 anclajes y 357 huecos"
+    ],
+    "ejecucionConfirmada": true,
+    "autorizacionPublicacion": {
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": [
+            "nombre_cliente",
+            "fotografias_web"
+          ],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250005"
+        }
+      ]
+    },
+    "plazoPrevisto": null,
+    "cierre": {
+      "entregaConforme": true,
+      "correccionesPosteriores": false,
+      "fuente": "Confirmación del equipo responsable",
+      "confirmadoEl": "2026-07-14",
+      "fechaEjecucion": null,
+      "duracionReal": "1 mes",
+      "continuidadOperativa": "sin_actividad",
+      "resultadoAdicional": null
+    },
+    "imagenes": [],
+    "traducciones": {
+      "en": {
+        "titulo": "Hologram Bâtiment · comprehensive refurbishment in Paris",
+        "problema": "The floor combined existing coating, cracks, joints, anchors, voids and areas requiring local levelling.",
+        "solucion": "Treatment and grinding of 2,700 m², removal of 201 m² of coating, repair of 21 m of cracks and 808 m of joints, together with treatment of anchors and voids.",
+        "resultado": "The final photographic record documents a repaired, uniform and polished surface after the intervention. The team confirms that the work was handed over as agreed and required no subsequent corrective work.",
+        "sector": "Construction",
+        "pais": "France",
+        "fechaEjecucion": null,
+        "duracionReal": "1 month",
+        "maquinaria": [
+          "Double power trowel"
+        ],
+        "materiales": [
+          "Lithium densifier",
+          "Sealer",
+          "Two-component filler",
+          "Cementitious mortar"
+        ],
+        "magnitudes": [
+          "2,700 m² treated and ground",
+          "201 m² of coating removed",
+          "829 linear metres of cracks and joints",
+          "1,943 anchors and 357 voids"
+        ],
+        "imagenes": []
+      },
+      "de": {
+        "titulo": "Hologram Bâtiment · umfassende Bodensanierung in Paris",
+        "problema": "Die Fläche kombinierte vorhandene Beschichtung, Risse, Fugen, Anker, Hohlstellen und Bereiche mit lokalem Ausgleichsbedarf.",
+        "solucion": "Behandlung und Schleifen von 2.700 m², Entfernung von 201 m² Beschichtung, Reparatur von 21 m Rissen und 808 m Fugen sowie Sanierung von Ankern und Hohlstellen.",
+        "resultado": "Die abschließende Fotodokumentation zeigt nach der Maßnahme eine sanierte, gleichmäßige und polierte Oberfläche. Das Team bestätigt die vereinbarungsgemäße Übergabe ohne nachträgliche Korrekturarbeiten.",
+        "sector": "Bauwesen",
+        "pais": "Frankreich",
+        "fechaEjecucion": null,
+        "duracionReal": "1 Monat",
+        "maquinaria": [
+          "Doppelglätter"
+        ],
+        "materiales": [
+          "Lithiumverdichter",
+          "Versiegelung",
+          "Zweikomponenten-Spachtelmasse",
+          "Zementgebundener Mörtel"
+        ],
+        "magnitudes": [
+          "2.700 m² behandelt und geschliffen",
+          "201 m² Beschichtung entfernt",
+          "829 lfm Risse und Fugen",
+          "1.943 Anker und 357 Hohlstellen"
+        ],
+        "imagenes": []
+      },
+      "es": {
+        "titulo": "Hologram Bâtiment · rehabilitación integral en París",
+        "problema": "La superficie combinaba revestimiento existente, fisuras, juntas, anclajes, huecos y zonas que requerían nivelación.",
+        "solucion": "Tratamiento y lijado de 2.700 m², retirada de 201 m² de revestimiento, reparación de 21 m de fisuras y 808 m de juntas, además del saneado de anclajes y huecos.",
+        "resultado": "El reportaje final documenta una superficie saneada, homogénea y pulida tras la intervención. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores.",
+        "sector": "Edificación",
+        "pais": "Francia",
+        "fechaEjecucion": null,
+        "duracionReal": "1 mes",
+        "maquinaria": [
+          "Fratasadora doble"
+        ],
+        "materiales": [
+          "Densificador de litio",
+          "Sellador",
+          "Masilla bicomponente",
+          "Mortero cementoso"
+        ],
+        "magnitudes": [
+          "2.700 m² tratados y lijados",
+          "201 m² de revestimiento retirado",
+          "829 m lineales de fisuras y juntas",
+          "1.943 anclajes y 357 huecos"
+        ],
+        "imagenes": []
+      },
+      "fr": {
+        "titulo": "Hologram Bâtiment · réhabilitation complète à Paris",
+        "problema": "La surface associait un revêtement existant, des fissures, des joints, des ancrages, des cavités et des zones nécessitant une remise à niveau.",
+        "solucion": "Traitement et ponçage de 2 700 m², dépose de 201 m² de revêtement, réparation de 21 m de fissures et de 808 m de joints, ainsi que traitement des ancrages et cavités.",
+        "resultado": "Le reportage final documente une surface assainie, homogène et polie après l'intervention. L'équipe confirme que les travaux ont été réceptionnés sans correction ultérieure.",
+        "sector": "Bâtiment",
+        "pais": "France",
+        "fechaEjecucion": null,
+        "duracionReal": "1 mois",
+        "maquinaria": [
+          "Talocheuse double"
+        ],
+        "materiales": [
+          "Densificateur au lithium",
+          "Bouche-pores",
+          "Mastic bicomposant",
+          "Mortier cimentaire"
+        ],
+        "magnitudes": [
+          "2 700 m² traités et poncés",
+          "201 m² de revêtement déposés",
+          "829 m linéaires de fissures et joints",
+          "1 943 ancrages et 357 cavités"
+        ],
+        "imagenes": []
+      }
+    }
+  }
+]
