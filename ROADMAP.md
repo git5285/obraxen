@@ -146,7 +146,7 @@ La puntuacion usa `(impacto + riesgo) x (6 - esfuerzo)`, con valores de 1 a 5.
 | Corregir nombres accesibles del hub | 4 | 4 | 1 | 40 | Completado |
 | Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Fase 5, antes de scripts |
 | Retirar JPEG y asset huerfano | 4 | 3 | 1 | 35 | Completado |
-| Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada completada; rutas en Fase 3 |
+| Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada, hub y casos completados |
 | Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Portada completada; politica de scripts en Fase 4 |
 | Tipado, tests y CI | 5 | 4 | 5 | 9 | Fases 1 y 4 |
 
@@ -186,10 +186,11 @@ precipitada.
 
 ### Fase 3 — Evidencia y soluciones
 
-- Migrar `/proyectos/` y `/proyectos/[slug]` desde los JSON actuales.
-- Incorporar `/soluciones/` solo para ofertas que superen sus condiciones de
-  salida; no publicar borradores internos por el hecho de existir.
-- Añadir metadatos y Open Graph por ruta.
+- [x] Migrar `/proyectos/` y `/proyectos/[slug]` desde los JSON actuales.
+- [x] Incorporar la puerta de `/soluciones/` solo para ofertas que superen sus
+  condiciones de salida; no publicar borradores internos por el hecho de existir.
+- [x] Añadir metadatos y Open Graph por ruta; canonical, URL e imagen absoluta
+  permanecen condicionados al dominio real.
 
 ### Fase 4 — Calidad de entrega
 
@@ -229,11 +230,10 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Revisar e integrar la rama de **Fase 2 — Portada y sistema de componentes**.
-Despues, abrir una reserva nueva para **Fase 3 — Evidencia y soluciones** y
-migrar primero `/proyectos/` y `/proyectos/[slug]` desde los JSON actuales. La
-web estatica continua como salida principal hasta que proyectos y legales tengan
-paridad.
+Revisar e integrar la rama de **Fase 3 — Evidencia y soluciones**. Despues,
+abrir una reserva independiente para **Fase 4 — Calidad de entrega** y añadir CI,
+pruebas de navegador automatizadas y presupuestos. La web estatica continua como
+salida principal hasta que las rutas legales tengan paridad.
 
 ## Referencias oficiales de implementacion
 
