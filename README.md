@@ -1,7 +1,7 @@
 # Web corporativa — reparación de pavimentos industriales
 
 Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos industriales.
-**Build mínimo sin dependencias**: `src/index.html` + `data/brand.json` →
+**Build mínimo sin dependencias**: plantillas `src/` + datos `data/` →
 `dist/` (100% estático) mediante `scripts/build.mjs` (Node puro).
 
 > **Identidad pendiente:** “RemainOn” es únicamente una referencia interna
@@ -14,6 +14,7 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 
 - `src/index.html` — **plantilla** (maquetación y JS); usa placeholders
   `{{brand.*}}` y parciales `{{> …}}`. No contiene el nombre literal.
+- `src/project.html` — plantilla común de los seis casos individuales
 - `src/partials/` — bloques reutilizables (`logo`, `cta`, `capa-cta`)
 - `scripts/build.mjs` — render estático (sin dependencias)
 - `css/tokens.css` — **único punto de verdad del color y la tipografía** (OKLCH)
@@ -27,7 +28,8 @@ Web estática (HTML + CSS + JavaScript nativo) de reparación de pavimentos indu
 - `src/legal/` — borradores de aviso legal y privacidad; se generan como rutas
   estáticas y permanecen `noindex` mientras el sitio esté en preview
 - `img/` — fotografías optimizadas para web; los originales se mantienen fuera del repo
-- `dist/` — **salida generada** por el build (`index.html` + `css/` + `img/`).
+- `SITE_ARCHITECTURE.md` — jerarquía, rutas, navegación y enlaces internos
+- `dist/` — **salida generada** por el build (portada, seis casos, legales y activos).
   Es lo único que se sirve; está en `.gitignore` (lo regenera el build).
 
 ## Build
@@ -58,7 +60,8 @@ del paquete de subida (nunca `src/`/`scripts/`/`data/`: son entradas del build).
   activa la validación estricta y exige identidad legal, contacto, políticas y
   confirmación expresa de revisión legal (`legalRevisionAprobada`).
 - **Proyectos** → se publican automáticamente al añadir casos válidos a
-  `data/proyectos.json`; la navegación aparece solo cuando la colección tiene datos.
+  `data/proyectos.json`; cada registro genera su resumen en portada y su ruta
+  `/proyectos/{slug}/` con breadcrumbs y navegación entre casos.
 
 ### Retomar la identidad cuando esté decidida
 
