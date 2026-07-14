@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ofertas.schema.json",
+  "title": "Ofertas comerciales en preparación",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "slug",
+      "prioridad",
+      "estadoInterno",
+      "estadoPublicacion",
+      "compradores",
+      "problemas",
+      "alcance",
+      "limites",
+      "evidencia",
+      "condicionesSalida",
+      "traducciones"
+    ],
+    "properties": {
+      "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "prioridad": { "type": "integer", "minimum": 1 },
+      "estadoInterno": {
+        "enum": ["preparar_ahora", "oferta_central", "desarrollo_controlado"]
+      },
+      "estadoPublicacion": {
+        "enum": ["borrador_interno", "preparada_preview", "publicable"]
+      },
+      "compradores": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "problemas": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "alcance": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "limites": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "evidencia": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["proyecto", "acredita"],
+          "properties": {
+            "proyecto": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+            "acredita": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "condicionesSalida": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "traducciones": {
+        "type": "object",
+        "required": ["es"],
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["titulo", "entradilla", "propuesta", "cta"],
+          "properties": {
+            "titulo": { "type": "string", "minLength": 1 },
+            "entradilla": { "type": "string", "minLength": 1 },
+            "propuesta": { "type": "string", "minLength": 1 },
+            "cta": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

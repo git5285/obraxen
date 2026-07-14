@@ -1,9 +1,23 @@
 # Arquitectura del sitio
 
-Estado documentado: 14 de julio de 2026. La arquitectura funciona en preview
-`noindex,nofollow`; naming, sociedad, dominio y contacto quedan fuera de alcance.
+Estado documentado: 14 de julio de 2026. La web continúa en preview
+`noindex,nofollow`; naming, sociedad, dominio, contacto, interfaz nueva y
+publicación quedan fuera de este hito.
 
-## Jerarquía
+Este documento distingue la estructura que ya existe de la arquitectura futura.
+Una ruta planificada no se construye ni se publica hasta superar su puerta de
+contenido, evidencia y capacidad.
+
+## 1. Principio de navegación
+
+La web debe acompañar la decisión del comprador mediante este recorrido:
+
+> problema → riesgo operativo → inspección → intervención → control → evidencia
+
+La estructura será plana: las páginas principales estarán a un clic del inicio y
+los detalles a un segundo nivel. Las seis rutas de proyecto actuales se conservan.
+
+## 2. Estructura actual
 
 ```text
 Portada (/)
@@ -22,64 +36,203 @@ Portada (/)
 └── Privacidad (/privacidad/)
 ```
 
-## Mapa visual
+Los seis casos reciben enlace desde la portada y navegación anterior/siguiente;
+no existen páginas huérfanas.
+
+## 3. Arquitectura objetivo
+
+```text
+Inicio (/)
+├── Problemas (/problemas/)
+│   ├── Fisuras y grietas (/problemas/fisuras-y-grietas/)
+│   ├── Juntas dañadas (/problemas/juntas-danadas/)
+│   ├── Anclajes, huecos y parches (/problemas/anclajes-huecos-y-parches/)
+│   ├── Revestimientos y señalización (/problemas/revestimientos-y-senalizacion/)
+│   └── Desniveles y superficies degradadas (/problemas/desniveles-y-degradacion/)
+├── Soluciones (/soluciones/)
+│   ├── Inspección y plan de intervención (/soluciones/inspeccion-plan-intervencion/)
+│   ├── Reparaciones localizadas (/soluciones/reparaciones-por-zonas/)
+│   ├── Rehabilitación integral (/soluciones/rehabilitacion-integral-hormigon/)
+│   └── Recuperación por cambio de uso (/soluciones/recuperacion-cambio-inquilino/)
+├── Proyectos (/proyectos/)
+│   └── Seis rutas actuales, sin cambiar sus slugs
+├── Método (/metodo/)
+├── Empresa (/empresa/)
+├── Contacto (/contacto/) [bloqueada]
+├── Guías (/guias/) [futuro]
+├── Sectores (/sectores/) [futuro]
+│   ├── Logística (/sectores/logistica/)
+│   └── Industria y fabricación (/sectores/industria-fabricacion/) [por validar]
+├── Aviso legal (/aviso-legal/)
+└── Privacidad (/privacidad/)
+```
+
+Las páginas individuales de problema son candidatas, no compromisos de
+publicación. Se priorizarán por evidencia y utilidad comercial.
+
+## 4. Mapa visual
 
 ```mermaid
 graph TD
-    HOME["Portada /"] --> HUB["Proyectos /#proyectos"]
-    HOME --> PROCESS["Proceso /#proceso"]
-    HOME --> SERVICES["Servicios /#servicios"]
-    HOME --> COMPANY["Empresa /#empresa"]
-    HOME --> FAQ["FAQ /#faq"]
-    HUB --> P1["Delticom · Hannover"]
-    HUB --> P2["TP-Link · Düsseldorf"]
-    HUB --> P3["dadada · Euskirchen"]
-    HUB --> P4["L’Oréal · Gauchy"]
-    HUB --> P5["Blitz · Bremen"]
-    HUB --> P6["Hologram · París"]
-    P1 --> P2
-    P2 --> P3
-    P3 --> P4
-    P4 --> P5
-    P5 --> P6
-    HOME --> LEGAL["Legal y privacidad"]
+    HOME["Inicio"] --> PROBLEMS["Problemas"]
+    HOME --> SOLUTIONS["Soluciones"]
+    HOME --> PROJECTS["Proyectos"]
+    HOME --> METHOD["Método"]
+    HOME --> COMPANY["Empresa"]
+    HOME -. canal pendiente .-> CONTACT["Contacto"]
+
+    PROBLEMS --> P1["Fisuras y grietas"]
+    PROBLEMS --> P2["Juntas dañadas"]
+    PROBLEMS --> P3["Anclajes, huecos y parches"]
+    PROBLEMS --> P4["Revestimientos y señalización"]
+    PROBLEMS --> P5["Desniveles y degradación"]
+
+    SOLUTIONS --> S1["Inspección y plan"]
+    SOLUTIONS --> S2["Reparaciones por zonas"]
+    SOLUTIONS --> S3["Rehabilitación integral"]
+    SOLUTIONS --> S4["Cambio de uso"]
+
+    PROJECTS --> C1["Delticom"]
+    PROJECTS --> C2["TP-Link"]
+    PROJECTS --> C3["dadada"]
+    PROJECTS --> C4["L’Oréal"]
+    PROJECTS --> C5["Blitz"]
+    PROJECTS --> C6["Hologram"]
+
+    P1 --> S2
+    P2 --> S2
+    P3 --> S2
+    P4 --> S3
+    P5 --> S3
+    S2 --> PROJECTS
+    S3 --> PROJECTS
+    S4 --> PROJECTS
 ```
 
-## Mapa de URLs
+## 5. Mapa de URLs y fases
 
-| Página | URL | Padre | Acceso | Prioridad |
+| Página | URL | Acceso objetivo | Prioridad | Estado |
 |---|---|---|---|---|
-| Portada | `/` | — | Navegación principal | Alta |
-| Hub de proyectos | `/#proyectos` | Portada | Navegación y CTA provisional | Alta |
-| Caso de proyecto | `/proyectos/{slug}/` | Proyectos | Tarjeta, breadcrumbs y anterior/siguiente | Alta |
-| Aviso legal | `/aviso-legal/` | Portada | Pie | Bloqueada |
-| Privacidad | `/privacidad/` | Portada | Pie | Bloqueada |
+| Inicio | `/` | Cabecera | Alta | Existe |
+| Hub de proyectos | `/proyectos/` | Cabecera | Alta | Siguiente implementación |
+| Caso | `/proyectos/{slug}/` | Hub, contexto y anterior/siguiente | Alta | Seis rutas existentes |
+| Hub de soluciones | `/soluciones/` | Cabecera | Alta | Modelo preparado |
+| Solución | `/soluciones/{slug}/` | Hub y enlaces de problema | Alta | Borrador interno |
+| Hub de problemas | `/problemas/` | Cabecera | Alta | Planificada |
+| Problema | `/problemas/{slug}/` | Hub y enlaces contextuales | Media | Condicionada por evidencia |
+| Método | `/metodo/` | Cabecera | Media | Planificada |
+| Empresa | `/empresa/` | Cabecera y pie | Media | Planificada; sin fundador ni historia inventada |
+| Contacto | `/contacto/` | CTA principal | Alta | Bloqueada hasta tener canal real |
+| Logística | `/sectores/logistica/` | Contexto y pie | Media | Primera candidata; tres casos relacionados |
+| Industria y fabricación | `/sectores/industria-fabricacion/` | Contexto y pie | Media | Validar especificidad de dos casos |
+| Guías | `/guias/` | Contexto y pie | Baja | Fase posterior |
+| Aviso legal | `/aviso-legal/` | Pie | Obligatoria | Borrador, pendiente de revisión |
+| Privacidad | `/privacidad/` | Pie | Obligatoria | Borrador, pendiente de revisión |
 
-## Navegación
+No se introducirán prefijos de idioma hasta cerrar la versión española y decidir
+la estrategia internacional. En ese momento deberá documentarse si la versión
+base permanece sin prefijo o migra a `/es/` con redirecciones.
 
-- La portada conserva cinco entradas: Proceso, Servicios, Proyectos, Empresa y FAQ.
-- Sin canales de contacto, el CTA principal lleva a Proyectos. Cambia a Contacto
-  automáticamente cuando exista email, teléfono o WhatsApp.
-- Cada caso incluye breadcrumbs `Inicio > Proyectos > Cliente`.
-- Cada caso enlaza con el anterior y el siguiente; la secuencia termina sin crear
-  un bucle artificial.
-- El logotipo vuelve al inicio desde cualquier ruta.
+## 6. Navegación
 
-## Enlazado interno
+### Mientras no existan las nuevas rutas
 
-- Ningún caso queda huérfano: todos reciben un enlace desde la portada.
-- La portada funciona como hub y concentra la evidencia resumida.
-- Las páginas individuales contienen el alcance, la lectura técnica y las tres
-  fotografías sin duplicar el modelo de datos.
-- Cuando exista dominio, el sitemap XML incluirá automáticamente las seis rutas.
-- Futuras páginas de servicio deberán enlazar hacia los casos que acrediten esa
-  intervención; no se crearán hasta tener contenido técnico específico.
+- Se conservan Proceso, Servicios, Proyectos, Empresa y FAQ como anclas.
+- El CTA lleva a Proyectos porque no existe un canal real de contacto.
+- El logotipo vuelve al inicio.
 
-## Reglas de crecimiento
+### Navegación objetivo
 
-1. Añadir un proyecto válido a `data/proyectos.json` genera resumen y detalle.
-2. Los slugs deben ser únicos, minúsculos y separados con guiones.
-3. No se crearán páginas por país, sector o servicio sin contenido y evidencia
-   suficientes para que sean útiles por sí mismas.
-4. La estructura se mantendrá a dos niveles mientras los casos puedan alcanzarse
-   desde la portada en un clic.
+Orden de cabecera:
+
+1. Soluciones.
+2. Problemas.
+3. Proyectos.
+4. Método.
+5. Empresa.
+6. CTA «Pide una evaluación», solo cuando exista contacto.
+
+El pie agrupará Soluciones, Evidencia, Empresa y Legal. Sectores y Guías solo
+aparecerán cuando contengan páginas publicables. No se crearán menús vacíos.
+
+Cada detalle utilizará breadcrumbs alineados con su URL:
+
+- `Inicio > Proyectos > Delticom`.
+- `Inicio > Soluciones > Reparaciones localizadas`.
+- `Inicio > Problemas > Juntas dañadas`.
+
+## 7. Enlazado interno
+
+Cada página de problema enlazará a:
+
+1. la solución o soluciones que permiten evaluarlo;
+2. al menos un caso que demuestre un alcance relacionado;
+3. el método de inspección;
+4. contacto cuando el canal esté activo.
+
+Cada solución enlazará a sus límites, casos aplicables, problemas relacionados y
+siguiente paso. Cada caso enlazará a la solución que acredita, sin presentar el
+contexto del caso como prueba de prestaciones no medidas.
+
+### Matriz inicial
+
+| Problema | Solución principal | Casos relacionados |
+|---|---|---|
+| Fisuras y juntas | Reparaciones por zonas; rehabilitación integral | dadada, Blitz, Hologram |
+| Anclajes, huecos y parches | Reparaciones por zonas; cambio de uso | TP-Link, Blitz, Hologram |
+| Revestimientos y señalización | Rehabilitación integral; cambio de uso | Delticom, TP-Link, Hologram |
+| Desniveles y degradación | Reparaciones por zonas; rehabilitación integral | dadada, Hologram |
+| Superficie extensa y heterogénea | Rehabilitación integral | Delticom, L’Oréal, Hologram |
+
+El contexto de cambio de inquilino no se atribuye a esos casos mientras no esté
+confirmado; solo acreditan partidas compatibles con esa futura oferta.
+
+## 8. Puertas de publicación
+
+Una página de solución requiere:
+
+- capacidad propia o red de socios confirmada;
+- explicación técnica original;
+- criterios de selección y límites;
+- al menos un caso aplicable y autorizado;
+- siguiente paso útil.
+
+La inspección necesita además un protocolo e informe tipo. La recuperación por
+cambio de uso necesita validación comercial y un estándar de entrega.
+
+Una página de problema requiere:
+
+- síntomas y riesgos explicados sin diagnosticar a distancia;
+- alternativas y límites;
+- enlace a una solución y caso aplicables;
+- contenido suficiente para ser útil por sí misma.
+
+Una página sectorial requiere:
+
+- dos casos autorizados o evidencia equivalente;
+- lenguaje del decisor;
+- problemas, restricciones, normativa y mantenimiento propios del contexto.
+
+Contacto, indexación y publicación siguen sujetos a identidad, sociedad, canales,
+revisión legal y autorización expresa.
+
+## 9. Orden de implementación
+
+1. Consolidar el nuevo cierre de los seis casos.
+2. Construir `/proyectos/` como hub de evidencia.
+3. Preparar `/soluciones/` desde `data/ofertas.json`.
+4. Construir únicamente las soluciones que superen su condición de salida.
+5. Crear `/problemas/` y las primeras páginas respaldadas por casos.
+6. Separar Método y Empresa cuando sus contenidos estén cerrados.
+7. Añadir Logística como primer sector si supera la revisión específica.
+8. Activar Contacto, legal, SEO e indexación al completar la identidad.
+
+## 10. Reglas de crecimiento
+
+1. Los modelos viven en `data/*.json`; las páginas se generan desde plantillas.
+2. Los slugs son únicos, minúsculos y separados con guiones.
+3. Ninguna página queda huérfana ni aparece en navegación antes de existir.
+4. No se crean rutas geográficas por volumen aparente de búsqueda.
+5. Las rutas actuales se conservan; cualquier cambio futuro exige redirección.
+6. Tras cada integración se verifican enlaces, accesibilidad, rendimiento, SEO y
+   datos estructurados.
