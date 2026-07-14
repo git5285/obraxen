@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviso legal — {{titleText}}</title>
+<meta name="description" content="Información legal del titular de esta web.">
+<meta name="robots" content="{{robotsDirective}}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/legal.css">
+</head>
+<body>
+<nav class="legal-nav" aria-label="Navegación legal"><div><a href="/">{{brand.claim}}</a><a class="volver" href="/">Volver a la web</a></div></nav>
+<main>
+  <p class="estado">Borrador incompleto · no apto para publicación</p>
+  <h1>Aviso legal</h1>
+  <p class="intro">Este documento es un borrador de trabajo preparado para completar la información exigida al titular de una web empresarial establecida en España. Debe revisarse cuando exista la sociedad y antes de activar la publicación.</p>
+
+  <div class="ficha">
+    <dl>
+      <dt>Titular o razón social</dt><dd>{{legalOwner}}</dd>
+      <dt>NIF/CIF</dt><dd>{{legalTaxId}}</dd>
+      <dt>Domicilio</dt><dd>{{brand.direccion}}</dd>
+      <dt>Correo electrónico</dt><dd>{{legalContactEmail}}</dd>
+      <dt>Dominio</dt><dd>{{legalDomain}}</dd>
+      <dt>Registro Mercantil</dt><dd>Pendiente de confirmar, si resulta aplicable</dd>
+    </dl>
+  </div>
+
+  <div class="alerta"><strong>Información imprescindible pendiente</strong>Faltan la razón social, el CIF, el email, el dominio y, en su caso, los datos registrales. El artículo 10 de la LSSI exige que esta información sea accesible de forma permanente, fácil, directa y gratuita.</div>
+
+  <h2>1. Objeto</h2>
+  <p>Esta web tiene por objeto presentar servicios de reparación y tratamiento técnico de pavimentos industriales y facilitar el contacto para solicitar información o una propuesta adaptada a cada proyecto.</p>
+
+  <h2>2. Condiciones de uso</h2>
+  <p>El acceso a la web implica el uso diligente y lícito de sus contenidos. No está permitido utilizarla para dañar sistemas, introducir software malicioso, vulnerar derechos de terceros o realizar actividades contrarias a la ley.</p>
+
+  <h2>3. Información comercial</h2>
+  <p>Los contenidos tienen carácter informativo. El diagnóstico, el alcance, el precio, el plazo y las condiciones de ejecución se concretan para cada proyecto en su correspondiente propuesta y contrato.</p>
+
+  <h2>4. Propiedad intelectual e industrial</h2>
+  <p>Salvo indicación contraria, los textos, diseños, elementos gráficos y materiales propios de la web pertenecen al titular o se utilizan con autorización. No pueden reproducirse, distribuirse o transformarse con fines comerciales sin permiso o cobertura legal suficiente.</p>
+
+  <h2>5. Responsabilidad y enlaces externos</h2>
+  <p>Se procura mantener la información correcta y disponible, pero no se garantiza la ausencia absoluta de errores o interrupciones. Los enlaces a servicios de terceros se facilitan, en su caso, como referencia; cada tercero responde de sus contenidos, disponibilidad y condiciones.</p>
+
+  <h2>6. Legislación aplicable</h2>
+  <p>Este aviso se rige por la legislación española. Cualquier controversia se someterá a los juzgados y tribunales que resulten competentes conforme a las normas imperativas aplicables.</p>
+
+  <h2>7. Modificaciones</h2>
+  <p>El titular podrá actualizar este aviso para reflejar cambios legales, técnicos o empresariales. La versión aplicable será la publicada en la web en cada momento.</p>
+
+  <footer>Última revisión del borrador: {{legalUpdatedAt}} · <a href="/privacidad/">Política de privacidad</a></footer>
+</main>
+</body>
+</html>
