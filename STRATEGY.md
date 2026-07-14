@@ -20,12 +20,13 @@ pavimentos industriales en uso**.
 
 La propuesta no empieza por un producto. Empieza por el síntoma operativo,
 diagnostica la causa, compara intervenciones proporcionadas y coordina la
-ejecución por fases con criterios de entrega documentados.
+ejecución con criterios de entrega documentados. Las fases se adaptan a la
+operativa cuando el soporte, el sistema y la circulación lo permiten.
 
 Propuesta de valor de trabajo:
 
 > Diagnosticamos el pavimento, definimos la intervención proporcionada y la
-> ejecutamos por fases con control del resultado.
+> ejecutamos con control del resultado, planificando fases cuando son viables.
 
 La diferenciación debe residir en cinco capacidades:
 
@@ -90,7 +91,28 @@ empresa ni se presentarán como propios.
 | Interpretación estratégica | “Recuperación técnica de pavimentos industriales en uso” ocupa un territorio más defendible que “aplicador de pavimentos”. | Orientar empresa, mensajes, casos y arquitectura futura. |
 | Hipótesis comercial | Reparación rápida y rehabilitación diagnóstica serán las dos mejores ofertas de entrada. | Validar con presupuestos, pilotos y entrevistas. |
 | Hipótesis de capacidad | Planimetría y automatización pueden ser una segunda especialidad atractiva. | Empezar mediante medición competente y alianzas; no prometer capacidad completa todavía. |
-| Decisión pendiente | Nombre de empresa y nombres de sistemas. | No desarrollar ni publicar hasta que los socios reabran el naming. |
+| Decisión pendiente | Nombre de empresa y nombres de sistemas. | Investigar candidatos sin seleccionar, integrar ni publicar hasta una decisión expresa. |
+
+### Perfil operativo confirmado
+
+Estos hechos proceden de `data/brand.json` y de la evidencia aprobada; no deben
+duplicarse con valores alternativos en otros documentos:
+
+- actividad B2B centrada en reparación y recuperación técnica de pavimentos
+  industriales de hormigón en uso;
+- interlocutores iniciales: operaciones y mantenimiento; propiedad, facility
+  management e integradores son compradores o prescriptores por validar;
+- equipos propios y más de 10 años de experiencia acumulada;
+- cobertura declarada en la Unión Europea, con Alemania, Países Bajos, Bélgica,
+  Francia, España, Portugal e Italia como mercados prioritarios;
+- horario de atención de lunes a viernes, 9:00–18:00;
+- primera respuesta inferior a 48 horas cuando exista un canal de contacto real.
+
+El catálogo técnico observado incluye juntas, fisuras, parches, anclajes,
+nivelación, preparación mecánica, retirada de revestimientos, pulido,
+densificación, sellado y resinas. Esta enumeración describe experiencia y
+capacidad a validar; las ofertas vendibles y sus límites viven en
+`data/ofertas.json`.
 
 ## 4. Modelo operativo de intervención
 
@@ -230,9 +252,12 @@ antes de definir un ensayo, tolerancia o declaración comercial.
 La portada, el proceso, los servicios resumidos y los seis casos siguen siendo la
 arquitectura inmediata. Los seis casos ya cuentan con un indicador de cierre
 común —entrega conforme sin correcciones posteriores registradas por el equipo—,
-pero continúan pendientes la fecha de ejecución, duración real, continuidad
-operativa y resultados adicionales. Naming, sociedad, dominio, contacto y
-publicación permanecen aplazados. Esta estrategia no modifica esa decisión.
+y ahora registran duración, equipo y medios principales; cinco distinguen además
+su situación operativa durante la intervención. Continúan pendientes algunos años
+exactos, la continuidad de TP-Link, los tiempos de reapertura y los valores de las
+mediciones. La investigación de naming está abierta, pero selección, sociedad,
+dominio, contacto y publicación permanecen pendientes. Esta estrategia no
+modifica esa decisión.
 
 La web debe demostrar el recorrido:
 
@@ -317,7 +342,8 @@ precios, márgenes, contactos, bancos y acuerdos privados no se publicarán.
 - crear protocolo de inspección, fotografía, humedad, juntas, fricción y
   planimetría;
 - completar las fichas de evidencia de los seis casos; el cierre básico ya está
-  confirmado y faltan fecha, duración, continuidad y resultados adicionales;
+  confirmado y faltan los años incompletos, la continuidad de TP-Link, los tiempos
+  de reapertura y los valores concretos de los resultados medidos;
 - comparar al menos dos fabricantes por familia de sistema y tres familias de
   maquinaria;
 - preparar una matriz de PRL, sílice, polvo, residuos y zonas en uso;
@@ -376,8 +402,7 @@ Toda información nueva seguirá este recorrido:
 
 | Tema | Fuente de verdad |
 |---|---|
-| Dirección de empresa, oferta, mercado y prioridades | `STRATEGY.md` |
-| Producto y límites del servicio actual | `PRODUCT.md` |
+| Dirección de empresa, perfil operativo, oferta, mercado y prioridades | `STRATEGY.md` |
 | Copy permitido, bloqueado y evidencia pendiente | `CONTENT_AUDIT.md` |
 | Rutas y crecimiento de la web | `SITE_ARCHITECTURE.md` |
 | Decisiones técnicas del sitio | `DECISIONS.md` |

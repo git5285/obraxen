@@ -6,8 +6,8 @@ de trabajo y no sustituyen la revisión de un profesional.
 Situación societaria confirmada: la empresa **todavía no está constituida**. La
 forma jurídica prevista es una **sociedad limitada**. “RemainOn” es solo un nombre
 interno temporal y no puede utilizarse como nombre comercial ni razón social. El
-naming y la constitución están **aplazados por decisión de los socios**; no deben
-rellenarse con datos provisionales.
+análisis de nombres no autoriza todavía una selección ni integración; la
+constitución sigue pendiente y no deben rellenarse datos provisionales.
 
 ## Datos pendientes
 
@@ -29,6 +29,8 @@ rellenarse con datos provisionales.
 - Actualmente no hay analítica, publicidad ni cookies propias no esenciales. Si
   se añade alguna herramienta que las utilice, habrá que implementar información,
   rechazo y configuración antes de activarla.
+- GA4 y Microsoft Clarity permanecerán desactivados hasta implementar y probar
+  consentimiento. Search Console se configurará cuando exista dominio.
 
 ## Comprobación final
 
@@ -39,11 +41,10 @@ rellenarse con datos provisionales.
 
 ## Fuentes oficiales consultadas
 
-- Ley 34/2002, de servicios de la sociedad de la información, especialmente su
-  artículo 10: https://www.boe.es/buscar/act.php?id=BOE-A-2002-13758
-- Reglamento (UE) 2016/679, especialmente sus artículos 6 y 13:
-  https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa
-- Ley Orgánica 3/2018, de protección de datos personales:
-  https://www.boe.es/eli/es/lo/2018/12/05/3/con
-- Guías y preguntas frecuentes de la AEPD sobre deber de información y bases de
-  legitimación: https://www.aepd.es/
+Enlaces comprobados el 14 de julio de 2026:
+
+- [Ley 34/2002, especialmente el artículo 10](https://www.boe.es/buscar/act.php?id=BOE-A-2002-13758).
+- [Reglamento (UE) 2016/679, especialmente los artículos 6 y 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa).
+- [Ley Orgánica 3/2018](https://www.boe.es/eli/es/lo/2018/12/05/3/con).
+- [Agencia Española de Protección de Datos](https://www.aepd.es/), para deber de
+  información y bases de legitimación.
