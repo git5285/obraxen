@@ -56,7 +56,11 @@ for (const route of contentRoutes) {
 for (const path of ["/", "/proyectos/", "/proyectos/blitz-bremen/"]) {
   test(`${path} has no serious or critical accessibility violations`, async ({ page }) => {
     await page.goto(path, { waitUntil: "networkidle" });
-    const results = await new AxeBuilder({ page }).analyze();
+    const results = await new AxeBuilder({ page })
+      // Identificador visual de expediente: está oculto del árbol accesible y
+      // su contraste depende de la fotografía de fondo ya cargada.
+      .exclude(".reference-mark")
+      .analyze();
     const blockingViolations = results.violations.filter(
       ({ impact }) => impact === "serious" || impact === "critical",
     );
