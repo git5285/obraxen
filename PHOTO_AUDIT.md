@@ -25,7 +25,9 @@ La auditoría técnica no encontró archivos ilegibles ni coordenadas GPS. Detec
 - Se priorizan encuadres que acreditan el estado inicial, la intervención y el resultado cuando existe esa secuencia.
 - TP-Link solo dispone de documentación posterior; por eso sus imágenes se describen como vistas y detalles de la zona intervenida, sin presentar un falso “antes”.
 - No se aplicó IA generativa. Las fotos tienen resolución y nitidez suficientes, y alterar o reconstruir el pavimento reduciría su valor como evidencia de obra.
-- Las copias web solo se han orientado, reducido a un máximo de 1.800 px, comprimido y limpiado de metadatos EXIF. No se añadieron ni eliminaron elementos de la escena.
+- Las copias web solo se han orientado, reducido a un máximo de 1.400 px,
+  convertido a WebP con calidad 82 y limpiado de metadatos EXIF. No se añadieron
+  ni eliminaron elementos de la escena.
 
 ## Selección publicada
 
@@ -38,7 +40,9 @@ La auditoría técnica no encontró archivos ilegibles ni coordenadas GPS. Detec
 | Blitz | `20250410_080430.jpg`, `20250319_112448.jpg`, `20250410_075420.jpg` | `img/proyectos/blitz/` |
 | Hologram Bâtiment | `20250215_170707.jpg`, `20250219_100650.jpg`, `20250211_180246.jpg` | `img/proyectos/hologram/` |
 
-Las 18 copias web ocupan aproximadamente 6,9 MB y no contienen EXIF.
+Las 18 copias WebP ocupan 1.702.898 bytes en conjunto —aproximadamente 1,62 MiB—
+y no contienen EXIF. Las copias JPEG intermedias, que sumaban 7.209.017 bytes,
+se retiraron del repositorio después de comprobar que ninguna ruta las utilizaba.
 
 ## Exclusiones de privacidad relevantes
 

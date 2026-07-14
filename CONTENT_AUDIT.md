@@ -34,6 +34,13 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 - Ejecución, clientes, ubicaciones y magnitudes de los seis casos documentados.
 - Entrega conforme y ausencia de correcciones posteriores registradas por el
   equipo en los seis casos, confirmadas el 14 de julio de 2026.
+- Duración real y tamaño aproximado del equipo en los seis casos, confirmados por
+  el equipo responsable.
+- Superficie aproximada de las instalaciones de TP-Link, dadada GmbH y Blitz.
+- Continuidad operativa confirmada en Delticom, dadada GmbH, L’Oréal, Blitz y
+  Hologram Bâtiment, distinguiendo actividad paralela, detenida o inexistente.
+- Maquinaria y familias de materiales aportadas para cada intervención, sin
+  atribuir fabricante, formulación ni prestación no confirmados.
 - Valoración inicial a partir de fotografías o vídeo.
 
 ## Afirmaciones condicionadas
@@ -123,10 +130,29 @@ Alternativas reservadas para una futura prueba:
 2. «Diagnosticar el daño. Planificar la reparación. Recuperar el pavimento» — más
    metodológica, pero menos centrada en el impacto operativo.
 
+## Guía de voz
+
+- Profesional cercana en B2B, con tuteo en web y lenguaje más formal en textos
+  legales o contractuales.
+- Directa y concisa: verbo activo, frases cortas y términos técnicos explicados
+  por su efecto operativo.
+- Autoridad por oficio y evidencia, no por superlativos, miedo ni cifras
+  decorativas.
+- Expresar posibilidades como condicionadas: «cuando el soporte y la operativa
+  lo permiten», nunca como garantía universal.
+- CTA actual: «Ver proyectos». «Pide una evaluación» solo se activa cuando
+  exista al menos un canal real.
+- Evitar «sin paradas», «para siempre», «antideslizante», «garantizado» y
+  equivalentes sin método, alcance y evidencia específica.
+
+La voz de marca en otros idiomas se definirá al decidir mercados e idioma base;
+no se traducen literalmente giros comerciales antes de esa decisión.
+
 ## Pendientes de evidencia
 
-- Fecha de ejecución, duración real, cumplimiento de plazo, continuidad,
-  reapertura y resultados adicionales de cada proyecto.
+- Año exacto de ejecución de dadada GmbH, L’Oréal y Hologram Bâtiment; continuidad
+  de TP-Link; tiempos de reapertura, cumplimiento de plazo y valores concretos de
+  los resultados medidos de cada proyecto.
 - Protocolos de ejecución y control ambiental o de polvo.
 - Certificaciones y sistemas/materiales homologados.
 - Productos y sistemas exactos que aplicará la empresa, con fichas vigentes y
