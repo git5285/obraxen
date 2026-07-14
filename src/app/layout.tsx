@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { brand } from "@/lib/brand";
+import { projects } from "@/lib/projects";
 import { getPublicationState } from "@/lib/publication";
 import "./globals.css";
 
-const publication = getPublicationState(brand);
+const publication = getPublicationState(brand, projects);
 
 export const metadata: Metadata = {
   title: brand.nombre ? `${brand.nombre} — ${brand.claim}` : brand.claim,

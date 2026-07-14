@@ -5,6 +5,10 @@ Estado documentado: 14 de julio de 2026. La web continúa en preview
 sin integrar. La investigación de nombres no modifica rutas ni identidad hasta
 que exista una selección expresa.
 
+Next.js App Router es la única implementación desde la Fase 4.5. Todas las rutas
+actuales se prerenderizan; los borradores legales ya no dependen de plantillas
+legacy y el sitemap permanece vacío mientras la publicación esté bloqueada.
+
 Este documento distingue la estructura que ya existe de la arquitectura futura.
 Una ruta planificada no se construye ni se publica hasta superar su puerta de
 contenido, evidencia y capacidad.
@@ -127,8 +131,8 @@ graph TD
 | Logística | `/sectores/logistica/` | Contexto y pie | Media | Primera candidata; tres casos relacionados |
 | Industria y fabricación | `/sectores/industria-fabricacion/` | Contexto y pie | Media | Validar especificidad de dos casos |
 | Guías | `/guias/` | Contexto y pie | Baja | Fase posterior |
-| Aviso legal | `/aviso-legal/` | Pie | Obligatoria | Borrador, pendiente de revisión |
-| Privacidad | `/privacidad/` | Pie | Obligatoria | Borrador, pendiente de revisión |
+| Aviso legal | `/aviso-legal/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
+| Privacidad | `/privacidad/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
 
 No se introducirán prefijos de idioma hasta cerrar la versión española y decidir
 la estrategia internacional. En ese momento deberá documentarse si la versión
@@ -226,16 +230,19 @@ revisión legal y autorización expresa.
    Fases 1–3 de `ROADMAP.md`.~~ Completado.
 4. ~~Conectar `data/ofertas.json` a una puerta tipada `publicable`.~~ Completado;
    ninguna oferta la supera todavía.
-5. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
+5. ~~Completar legal, sitemap y cutover a Next como implementación única.~~
+   Completado en la Fase 4.5.
+6. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
    condición de salida.
-6. Crear `/problemas/` y las primeras páginas respaldadas por casos.
-7. Separar Método y Empresa cuando sus contenidos estén cerrados.
-8. Añadir Logística como primer sector si supera la revisión específica.
-9. Activar Contacto, legal, SEO e indexación al completar la identidad.
+7. Crear `/problemas/` y las primeras páginas respaldadas por casos.
+8. Separar Método y Empresa cuando sus contenidos estén cerrados.
+9. Añadir Logística como primer sector si supera la revisión específica.
+10. Activar Contacto, legal, SEO e indexación al completar la identidad.
 
 ## 10. Reglas de crecimiento
 
-1. Los modelos viven en `data/*.json`; las páginas se generan desde plantillas.
+1. Los modelos viven en `data/*.json`; las páginas se prerenderizan desde
+   componentes y rutas Next.js.
 2. Los slugs son únicos, minúsculos y separados con guiones.
 3. Ninguna página queda huérfana ni aparece en navegación antes de existir.
 4. No se crean rutas geográficas por volumen aparente de búsqueda.
