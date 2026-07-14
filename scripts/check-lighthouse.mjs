@@ -7,6 +7,7 @@ import { chromium } from "@playwright/test";
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const outputDirectory = path.join(root, ".lighthouseci");
+const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
 const baseUrl = "http://127.0.0.1:3000";
 const routes = [
   { name: "home", path: "/" },
@@ -134,10 +135,11 @@ await fs.rm(outputDirectory, { recursive: true, force: true });
 await fs.mkdir(outputDirectory, { recursive: true });
 
 const server = spawn(
-  process.platform === "win32" ? "npm.cmd" : "npm",
-  ["run", "start:next", "--", "--hostname", "127.0.0.1", "--port", "3000"],
+  process.execPath,
+  [nextCli, "start", "--hostname", "127.0.0.1", "--port", "3000"],
   { cwd: root, env: process.env, stdio: ["ignore", "pipe", "pipe"] },
 );
+const serverExit = new Promise((resolve) => server.once("exit", resolve));
 
 let serverOutput = "";
 server.stdout.on("data", (chunk) => { serverOutput += chunk; });
@@ -152,4 +154,8 @@ try {
   throw error;
 } finally {
   server.kill("SIGTERM");
+  await Promise.race([serverExit, wait(5_000)]);
+  if (server.exitCode === null && server.signalCode === null) server.kill("SIGKILL");
+  server.stdout.destroy();
+  server.stderr.destroy();
 }
