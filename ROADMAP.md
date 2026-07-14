@@ -146,8 +146,8 @@ La puntuacion usa `(impacto + riesgo) x (6 - esfuerzo)`, con valores de 1 a 5.
 | Corregir nombres accesibles del hub | 4 | 4 | 1 | 40 | Completado |
 | Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Fase 5, antes de scripts |
 | Retirar JPEG y asset huerfano | 4 | 3 | 1 | 35 | Completado |
-| Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Fases 1–3 |
-| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | CSS completado; JS en Fase 2 |
+| Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada completada; rutas en Fase 3 |
+| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Portada completada; politica de scripts en Fase 4 |
 | Tipado, tests y CI | 5 | 4 | 5 | 9 | Fases 1 y 4 |
 
 La puntuacion no convierte una migracion grande en urgente por si sola: el sitio
@@ -177,10 +177,12 @@ precipitada.
 
 ### Fase 2 — Portada y sistema de componentes
 
-- Dividir la portada monolitica en secciones servidoras.
-- Mantener el menu movil como una isla cliente pequena.
-- Sustituir CSS y JavaScript embebidos para poder retirar `unsafe-inline` de CSP.
-- Verificar equivalencia visual y rendimiento antes de retirar la plantilla vieja.
+- [x] Dividir la portada monolitica en secciones servidoras.
+- [x] Mantener el menu movil y la navegacion sticky como una unica isla cliente.
+- [x] Sustituir el JavaScript heredado y retirar `unsafe-inline` de `style-src`;
+  `script-src` conserva la excepcion temporal del bootstrap estatico de App Router.
+- [x] Verificar equivalencia visual, accesible y de rendimiento sin retirar la
+  plantilla vieja.
 
 ### Fase 3 — Evidencia y soluciones
 
@@ -227,10 +229,11 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Revisar e integrar la rama de **Fase 1 — Fundacion Next.js**. Despues, abrir una
-reserva nueva para **Fase 2 — Portada y sistema de componentes**, manteniendo la
-web estatica como salida principal hasta demostrar paridad funcional, visual y
-de rendimiento.
+Revisar e integrar la rama de **Fase 2 — Portada y sistema de componentes**.
+Despues, abrir una reserva nueva para **Fase 3 — Evidencia y soluciones** y
+migrar primero `/proyectos/` y `/proyectos/[slug]` desde los JSON actuales. La
+web estatica continua como salida principal hasta que proyectos y legales tengan
+paridad.
 
 ## Referencias oficiales de implementacion
 

@@ -1,39 +1,54 @@
-import { brand } from "@/lib/brand";
-import { offers } from "@/lib/offers";
-import { projects } from "@/lib/projects";
-import { getPublicationState } from "@/lib/publication";
+import { CompanySection } from "@/components/company-section";
+import { FaqSection } from "@/components/faq-section";
+import { HeroSection } from "@/components/hero-section";
+import { IntroSection } from "@/components/intro-section";
+import { ProcessSection } from "@/components/process-section";
+import { ProjectsSection } from "@/components/projects-section";
+import { ServicesSection } from "@/components/services-section";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteNavigation } from "@/components/site-navigation";
+import { homepage, homepageJsonLd, navigationItems } from "@/lib/homepage";
 
-export default function FoundationPage() {
-  const publication = getPublicationState(brand);
-  const publicableOffers = offers.filter(
-    (offer) => offer.estadoPublicacion === "publicable",
-  ).length;
-
+export default function HomePage() {
   return (
-    <main className="foundation-shell">
-      <section className="foundation-panel" aria-labelledby="foundation-title">
-        <p className="foundation-kicker">Fase 1 · Fundación Next.js</p>
-        <h1 id="foundation-title">{brand.claim}</h1>
-        <p className="foundation-summary">
-          Esta ruta verifica App Router, tipado y puertas de publicación. La web
-          estática continúa siendo la referencia hasta que la portada y las rutas
-          actuales alcancen paridad en las siguientes fases.
-        </p>
-        <dl className="foundation-status">
-          <div>
-            <dt>Entorno</dt>
-            <dd>{publication.mode === "preview" ? "Preview cerrada" : "Público"}</dd>
-          </div>
-          <div>
-            <dt>Casos validados</dt>
-            <dd>{projects.length}</dd>
-          </div>
-          <div>
-            <dt>Ofertas publicables</dt>
-            <dd>{publicableOffers}</dd>
-          </div>
-        </dl>
-      </section>
-    </main>
+    <SiteNavigation
+      brandName={homepage.brandName}
+      cta={homepage.cta}
+      items={navigationItems}
+    >
+      <a className="skip" href="#contenido">Saltar al contenido</a>
+      <HeroSection
+        brandName={homepage.brandName}
+        cta={homepage.cta}
+        image={homepage.heroImage}
+        navigation={navigationItems}
+      />
+      <main id="contenido">
+        <IntroSection kicker={homepage.brandKicker} stats={homepage.stats} />
+        <ProcessSection />
+        <ServicesSection cta={homepage.cta} />
+        <ProjectsSection />
+        <CompanySection
+          cta={homepage.cta}
+          image={homepage.diagnosticoImage}
+          kicker={homepage.whyKicker}
+          hasOwnTeams={homepage.hasOwnTeams}
+          priorityMarketsLabel={homepage.priorityMarketsLabel}
+        />
+        <FaqSection />
+      </main>
+      <SiteFooter
+        brandName={homepage.brandName}
+        serviceAreaLabel={homepage.serviceAreaLabel}
+        priorityMarketsLabel={homepage.priorityMarketsLabel}
+        hasContactChannel={homepage.hasContactChannel}
+        contact={homepage.contact}
+        legal={homepage.legal}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: homepageJsonLd }}
+      />
+    </SiteNavigation>
   );
 }

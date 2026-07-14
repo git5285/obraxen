@@ -185,3 +185,13 @@ visual, responsive y accesible. `data/brand.json`, `data/proyectos.json` y
 
 El orden, las puertas de calidad y la estrategia de publicación se mantienen en
 [`ROADMAP.md`](ROADMAP.md), evitando duplicarlos en este ADR.
+
+**Actualización tras Fases 1 y 2.** La portada App Router queda prerenderizada y
+dividida en secciones servidoras. Solo `src/components/site-navigation.tsx` usa
+`use client`; gestiona menu, foco y navegacion sticky. Durante la convivencia se
+importa `css/home.css` en el bundle Next para garantizar paridad sin duplicar el
+sistema visual. Las imagenes usan props responsive de Next sin atributos de
+estilo inline, lo que permite retirar `unsafe-inline` de `style-src`. La excepcion
+permanece temporalmente en `script-src` por los bloques de arranque RSC que genera
+el prerender de App Router; la Fase 4 decidira hashes de build o nonces sin romper
+el objetivo estatico.
