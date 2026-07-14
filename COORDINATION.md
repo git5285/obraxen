@@ -70,7 +70,8 @@ cambios staged sin propietario.
   rutas legales y sitemap migrados, y builder/HTML legacy retirados. Next.js es
   la única implementación; el preset remoto de Vercel también reconoce Next con
   salida autodetectada y `vercel build` pasa sin desplegar. La PR borrador `#6`
-  contiene la entrega completa y la claim `042123c8...` está liberada.
+  contiene la entrega completa, su `Quality gate` está verde y la claim
+  `042123c8...` está liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
