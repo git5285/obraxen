@@ -9,6 +9,17 @@
       "pais": "Alemania"
     },
     "superficieM2": 18084,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 5,
+    "maquinaria": [
+      "Máquinas de lijado",
+      "Máquinas de pulido"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Mortero cementoso",
+      "Masilla bicomponente"
+    ],
     "magnitudes": [
       "18.084 m² tratados",
       "5.362 m² de revestimiento retirado"
@@ -21,9 +32,9 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
-      "continuidadOperativa": null,
+      "fechaEjecucion": "Abril y mayo de 2025",
+      "duracionReal": "2 meses",
+      "continuidadOperativa": "detenida",
       "resultadoAdicional": null
     },
     "imagenes": [
@@ -62,6 +73,15 @@
       "pais": "Alemania"
     },
     "superficieM2": null,
+    "superficieInstalacionM2": 8000,
+    "equipoOperarios": 3,
+    "maquinaria": [
+      "Máquina de lijado",
+      "Equipo de aspiración"
+    ],
+    "materiales": [
+      "Masilla bicomponente"
+    ],
     "magnitudes": [
       "1.730 anclajes rebajados",
       "Retirada localizada de señalización"
@@ -74,8 +94,8 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
+      "fechaEjecucion": "Julio de 2025",
+      "duracionReal": "3 semanas",
       "continuidadOperativa": null,
       "resultadoAdicional": null
     },
@@ -100,7 +120,7 @@
       "es": {
         "titulo": "TP-Link · retirada de anclajes y señalización en Düsseldorf",
         "problema": "La instalación requería retirar anclajes, señalización pintada y adhesiva, además de varios parches de pintura.",
-        "solucion": "Rebaje de 1.730 anclajes y retirada localizada de señalización y parches de pintura en las zonas indicadas.",
+        "solucion": "Rebaje de 1.730 anclajes, relleno con masilla bicomponente y retirada localizada de señalización y parches de pintura.",
         "resultado": "Las fotografías aportadas muestran las áreas intervenidas y el detalle de los puntos rebajados. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
@@ -115,8 +135,16 @@
       "pais": "Alemania"
     },
     "superficieM2": null,
+    "superficieInstalacionM2": 10000,
+    "equipoOperarios": 2,
+    "maquinaria": [
+      "Herramientas de lijado"
+    ],
+    "materiales": [
+      "Masilla bicomponente"
+    ],
     "magnitudes": [
-      "44 m lineales de fisuras XL",
+      "44 m lineales de juntas de construcción",
       "20 huecos reparados"
     ],
     "ejecucionConfirmada": true,
@@ -127,9 +155,9 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
-      "continuidadOperativa": null,
+      "fechaEjecucion": "Junio (año pendiente de confirmar)",
+      "duracionReal": "3 días",
+      "continuidadOperativa": "total",
       "resultadoAdicional": null
     },
     "imagenes": [
@@ -152,9 +180,9 @@
     "traducciones": {
       "es": {
         "titulo": "dadada GmbH · reparación localizada en Euskirchen",
-        "problema": "El pavimento presentaba fisuras abiertas, huecos y desniveles localizados que requerían una intervención técnica puntual.",
-        "solucion": "Reparación de 44 m lineales de fisuras XL, relleno de 20 huecos y refuerzo mecánico de las zonas documentadas.",
-        "resultado": "El reportaje técnico documenta el estado inicial y las distintas fases de preparación, cosido y refuerzo mecánico. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
+        "problema": "El pavimento presentaba dilatación en juntas de construcción, huecos y desniveles localizados que requerían una intervención técnica puntual.",
+        "solucion": "Tratamiento de 44 m lineales de juntas de construcción, relleno de 20 huecos y refuerzo mecánico de las zonas documentadas.",
+        "resultado": "El reportaje técnico documenta el estado inicial y las distintas fases de preparación y refuerzo mecánico. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
   },
@@ -168,6 +196,15 @@
       "pais": "Francia"
     },
     "superficieM2": 4200,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 4,
+    "maquinaria": [
+      "Fratasadora doble"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Sellador"
+    ],
     "magnitudes": [
       "4.200 m² tratados",
       "Tratamiento superficial LitoBrillant"
@@ -180,9 +217,9 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
-      "continuidadOperativa": null,
+      "fechaEjecucion": "Mayo (año pendiente de confirmar)",
+      "duracionReal": "1 semana",
+      "continuidadOperativa": "total",
       "resultadoAdicional": null
     },
     "imagenes": [
@@ -206,7 +243,7 @@
       "es": {
         "titulo": "L’Oréal · tratamiento superficial en Gauchy",
         "problema": "La planta necesitaba renovar una gran superficie de hormigón y recuperar un acabado uniforme en el área de trabajo.",
-        "solucion": "Aplicación del tratamiento superficial LitoBrillant sobre 4.200 m² de pavimento industrial.",
+        "solucion": "Aplicación del tratamiento superficial LitoBrillant sobre 4.200 m² de pavimento industrial mediante fratasadora doble, densificador de litio y sellador.",
         "resultado": "El reportaje final muestra una superficie homogénea y pulida en el área tratada. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
@@ -221,6 +258,16 @@
       "pais": "Alemania"
     },
     "superficieM2": null,
+    "superficieInstalacionM2": 20000,
+    "equipoOperarios": 8,
+    "maquinaria": [
+      "Equipos de aserrado y aspiración",
+      "Herramientas de lijado"
+    ],
+    "materiales": [
+      "Masilla bicomponente",
+      "Mortero cementoso"
+    ],
     "magnitudes": [
       "1.121 m lineales de fisuras",
       "5.000 anclajes retirados o rebajados",
@@ -234,9 +281,9 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
-      "continuidadOperativa": null,
+      "fechaEjecucion": "Marzo de 2025",
+      "duracionReal": "5 semanas",
+      "continuidadOperativa": "total",
       "resultadoAdicional": null
     },
     "imagenes": [
@@ -260,7 +307,7 @@
       "es": {
         "titulo": "Blitz · restauración de pavimento logístico en Bremen",
         "problema": "El centro presentaba una red extensa de fisuras, puntos de anclaje y huecos, además de reparaciones localizadas de distinto tamaño.",
-        "solucion": "Tratamiento de 1.121 m lineales de fisuras, retirada o rebaje de 5.000 anclajes y reparación de 465 huecos.",
+        "solucion": "Aserrado y aspiración de 1.121 m lineales de fisuras, relleno con masilla bicomponente, retirada o rebaje de 5.000 anclajes, reparación de 465 huecos con mortero cementoso y nivelación mediante lijado en los muelles de carga.",
         "resultado": "La secuencia aportada documenta el daño inicial, la reparación localizada y el estado posterior de uno de los pasillos logísticos. El equipo confirma que la intervención se entregó conforme y no requirió correcciones posteriores."
       }
     }
@@ -275,6 +322,17 @@
       "pais": "Francia"
     },
     "superficieM2": 2700,
+    "superficieInstalacionM2": null,
+    "equipoOperarios": 4,
+    "maquinaria": [
+      "Fratasadora doble"
+    ],
+    "materiales": [
+      "Densificador de litio",
+      "Sellador",
+      "Masilla bicomponente",
+      "Mortero cementoso"
+    ],
     "magnitudes": [
       "2.700 m² tratados y lijados",
       "201 m² de revestimiento retirado",
@@ -289,9 +347,9 @@
       "correccionesPosteriores": false,
       "fuente": "Confirmación del equipo responsable",
       "confirmadoEl": "2026-07-14",
-      "fechaEjecucion": null,
-      "duracionReal": null,
-      "continuidadOperativa": null,
+      "fechaEjecucion": "Febrero (año pendiente de confirmar)",
+      "duracionReal": "1 mes",
+      "continuidadOperativa": "sin_actividad",
       "resultadoAdicional": null
     },
     "imagenes": [
