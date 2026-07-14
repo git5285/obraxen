@@ -39,6 +39,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Lighthouse budgets
+        timeout-minutes: 8
         run: npm run lighthouse:ci
 
       - name: Store quality reports
