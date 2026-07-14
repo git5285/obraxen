@@ -44,8 +44,14 @@ const validDate = (value) => {
   const date = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
 };
+const continuityLabels = {
+  total: 'La actividad continuó en paralelo',
+  parcial: 'La actividad continuó parcialmente',
+  detenida: 'La actividad no continuó durante la intervención',
+  sin_actividad: 'Instalación sin actividad concurrente',
+};
 const projectRequired = new Set(projectSchema?.items?.required || []);
-for (const field of ['plazoPrevisto', 'cierre']) {
+for (const field of ['superficieInstalacionM2', 'equipoOperarios', 'maquinaria', 'materiales', 'plazoPrevisto', 'cierre']) {
   if (!projectRequired.has(field)) errors.push(`data/proyectos.schema.json debe exigir ${field}`);
 }
 const offerRequired = new Set(offerSchema?.items?.required || []);
@@ -63,6 +69,16 @@ for (const project of Array.isArray(projects) ? projects : []) {
   projectSlugs.add(project?.slug);
   if (project?.ejecucionConfirmada !== true) errors.push(`${label}: la colección pública exige ejecucionConfirmada true`);
   if (project?.permisoPublicarCliente !== true) errors.push(`${label}: la colección pública exige permisoPublicarCliente true`);
+  for (const field of ['superficieInstalacionM2', 'equipoOperarios']) {
+    if (!own(project, field) || (project[field] !== null && (!Number.isInteger(project[field]) || project[field] < 1))) {
+      errors.push(`${label}: ${field} debe ser un entero positivo o null`);
+    }
+  }
+  for (const field of ['maquinaria', 'materiales']) {
+    if (!Array.isArray(project[field]) || project[field].some((item) => !nonEmptyText(item))) {
+      errors.push(`${label}: ${field} debe ser un array de textos no vacíos`);
+    }
+  }
   if (!own(project, 'plazoPrevisto') || !nullableText(project.plazoPrevisto)) {
     errors.push(`${label}: plazoPrevisto debe ser texto no vacío o null`);
   }
@@ -81,8 +97,8 @@ for (const project of Array.isArray(projects) ? projects : []) {
       errors.push(`${label}: cierre.${field} debe ser texto no vacío o null`);
     }
   }
-  if (!own(closure, 'continuidadOperativa') || ![null, 'total', 'parcial', 'detenida'].includes(closure.continuidadOperativa)) {
-    errors.push(`${label}: cierre.continuidadOperativa debe ser total, parcial, detenida o null`);
+  if (!own(closure, 'continuidadOperativa') || ![null, 'total', 'parcial', 'detenida', 'sin_actividad'].includes(closure.continuidadOperativa)) {
+    errors.push(`${label}: cierre.continuidadOperativa debe ser total, parcial, detenida, sin_actividad o null`);
   }
 }
 
@@ -190,6 +206,32 @@ for (const project of projects) {
   if (brand.publicar !== true && !caseHtml.includes('name="robots" content="noindex,nofollow"')) {
     errors.push(`${project.slug}: debe permanecer noindex en preview`);
   }
+  const executionFacts = [
+    project.cierre?.fechaEjecucion && !/pendiente de confirmar/i.test(project.cierre.fechaEjecucion)
+      ? ['Ejecución', project.cierre.fechaEjecucion]
+      : null,
+    project.cierre?.duracionReal ? ['Duración real', project.cierre.duracionReal] : null,
+    project.superficieInstalacionM2
+      ? ['Instalación aprox.', `${project.superficieInstalacionM2.toLocaleString('es-ES')} m²`]
+      : null,
+    project.equipoOperarios ? ['Equipo', `${project.equipoOperarios} operarios`] : null,
+    project.cierre?.continuidadOperativa
+      ? ['Operativa', continuityLabels[project.cierre.continuidadOperativa]]
+      : null,
+  ].filter(Boolean);
+  for (const [factLabel, factValue] of executionFacts) {
+    const expectedFact = `<dt>${factLabel}</dt><dd>${factValue}</dd>`;
+    if (!caseHtml.includes(expectedFact)) {
+      errors.push(`${project.slug}: falta el dato de ejecución ${factLabel} (${factValue})`);
+    }
+  }
+  if (/pendiente de confirmar/i.test(project.cierre?.fechaEjecucion || '')
+    && caseHtml.includes(project.cierre.fechaEjecucion)) {
+    errors.push(`${project.slug}: la ficha publica una fecha de ejecución pendiente`);
+  }
+  if (((project.maquinaria?.length || 0) || (project.materiales?.length || 0)) && !caseHtml.includes('class="case-resources"')) {
+    errors.push(`${project.slug}: faltan los medios confirmados en la ficha pública`);
+  }
 }
 
 if ((projectsHtml.match(/<h1(?:\s|>)/g) || []).length !== 1) {
@@ -265,6 +307,9 @@ for (const marker of seoMarkers) {
   if (!html.includes(marker)) errors.push(`Falta ${marker}`);
 }
 const allGeneratedHtml = generatedHtml.map(([, output]) => output).join('\n');
+if (/\se\s+(?:Equipo|Herramientas|Máquinas|Mortero|Masilla|Sellador)\b/.test(allGeneratedHtml)) {
+  errors.push('Las listas generadas contienen la conjunción «e» ante una palabra sin sonido /i/');
+}
 const externalScripts = [...allGeneratedHtml.matchAll(/<script[^>]+src="https:[^"]+"[^>]*>/g)].map((match) => match[0]);
 if (externalScripts.some((tag) => !tag.includes('integrity=') || !tag.includes('crossorigin='))) {
   errors.push('Hay scripts externos sin SRI/crossorigin');
