@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "mode": "shadow",
+  "project": "remainon",
+  "limits": {
+    "maxConcurrentWriters": 1,
+    "maxActiveSystemPullRequests": 1,
+    "maxFindingsPerRun": 3,
+    "maxChangedFiles": 8,
+    "maxDiffLines": 400,
+    "maxCorrectionIterations": 1,
+    "maxRunSeconds": 1800,
+    "leaseTtlSeconds": 2100
+  },
+  "authority": {
+    "allowScout": true,
+    "allowLocalDiff": false,
+    "allowCommit": false,
+    "allowPush": false,
+    "allowDraftPullRequest": false,
+    "allowMerge": false,
+    "allowDeploy": false,
+    "allowPublish": false,
+    "allowNetwork": false,
+    "allowDependencyChanges": false
+  },
+  "protectedPaths": [
+    ".codex/**",
+    ".agents/**",
+    "automation/agents/**",
+    "AGENTS.md",
+    ".githooks/**",
+    ".github/**",
+    "vercel.json",
+    ".env*",
+    "ACTIVATION_GATE.md",
+    "data/brand.json",
+    "data/proyectos.json",
+    "data/proyectos.borrador.json",
+    "src/lib/publication.ts",
+    "src/lib/schemas.ts",
+    "src/components/legal-page.tsx"
+  ],
+  "activationInvariant": {
+    "schemaVersion": 1,
+    "candidateAuditRequired": true,
+    "publicationAuthorized": false,
+    "publishSwitch": false,
+    "requireExactBeforeAfterMatch": true
+  },
+  "requiredChecks": [
+    "git diff --check",
+    "npm run check",
+    "npm run check:quality",
+    "npm run check:activation -- --json",
+    "remote Quality gate for the exact reviewed SHA"
+  ]
+}

@@ -1,6 +1,13 @@
 import { defineConfig } from "@playwright/test";
 
 const isCi = Boolean(process.env.CI);
+const requestedPort = Number(process.env.QA_PORT ?? "3000");
+
+if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65_535) {
+  throw new Error("QA_PORT must be an integer between 1 and 65535");
+}
+
+const baseUrl = `http://127.0.0.1:${requestedPort}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -14,7 +21,7 @@ export default defineConfig({
     ? [["github"], ["html", { open: "never" }]]
     : [["list"]],
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: baseUrl,
     colorScheme: "light",
     contextOptions: { reducedMotion: "reduce" },
     screenshot: "only-on-failure",
@@ -39,13 +46,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run build && npm run start -- --hostname 127.0.0.1 --port 3000",
+    command: `npm run build && npm run start -- --hostname 127.0.0.1 --port ${requestedPort}`,
     env: {
       GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID ?? "G-TEST123456",
       CLARITY_PROJECT_ID: process.env.CLARITY_PROJECT_ID ?? "testclarity1",
     },
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: !isCi,
+    url: baseUrl,
+    reuseExistingServer: !isCi && process.env.QA_PORT === undefined,
     timeout: 120_000,
   },
 });
