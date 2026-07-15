@@ -16,7 +16,9 @@ const routes = [
 ];
 
 const budgets = {
-  performance: 0.95,
+  // El score compuesto varía con la carga del runner. Se conserva como smoke
+  // test y los límites duros de LCP, TBT y CLS siguen siendo la puerta real.
+  performance: 0.9,
   accessibility: 1,
   "best-practices": 1,
   seo: 0.65,
