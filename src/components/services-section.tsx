@@ -1,19 +1,31 @@
-import { getImageDimensions, otherWorks, services } from "@/lib/homepage";
+import { getImageDimensions } from "@/lib/homepage";
+import type { Dictionary } from "@/lib/dictionaries/types";
+import type { StaticImageData } from "next/image";
+import type { ServiceIcon as ServiceIconName } from "@/lib/homepage";
 import { ResponsiveImage } from "./responsive-image";
 import { ServiceIcon } from "./service-icon";
 
-export function ServicesSection({ cta }: { cta: { href: string; text: string } }) {
+export function ServicesSection({
+  cta,
+  copy,
+  services,
+}: {
+  cta: { href: string; text: string };
+  copy: Dictionary["services"];
+  services: readonly {
+    title: string;
+    description: string;
+    image: StaticImageData;
+    icon: ServiceIconName;
+  }[];
+}) {
   return (
-    <section className="servicios" id="servicios">
+    <section className="servicios" id="services">
       <div className="wrap">
         <div className="cab">
-          <p className="kicker kicker-center">Qué hacemos</p>
-          <h2>Soluciones definidas según el daño y la operativa</h2>
-          <p>
-            Una intervención puede combinar preparación, reparaciones localizadas,
-            nivelación y tratamiento superficial. El diagnóstico determina qué partidas
-            hacen falta.
-          </p>
+          <p className="kicker kicker-center">{copy.kicker}</p>
+          <h2>{copy.title}</h2>
+          <p>{copy.intro}</p>
         </div>
         <div className="serv-grid">
           {services.map((service) => (
@@ -29,7 +41,13 @@ export function ServicesSection({ cta }: { cta: { href: string; text: string } }
                 <ServiceIcon name={service.icon} />
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
-                <a className="capa-cta" href={cta.href}>
+                <a
+                  className="capa-cta"
+                  href={cta.href}
+                  data-analytics-event="cta_select"
+                  data-analytics-location="service-card"
+                  data-analytics-destination={cta.href}
+                >
                   {cta.text} →
                 </a>
               </div>
@@ -37,9 +55,9 @@ export function ServicesSection({ cta }: { cta: { href: string; text: string } }
           ))}
         </div>
         <div className="catalogo">
-          <h3>Otros trabajos que podemos abordar:</h3>
+          <h3>{copy.otherTitle}</h3>
           <ul>
-            {otherWorks.map((work) => (
+            {copy.otherWorks.map((work) => (
               <li key={work}>{work}</li>
             ))}
           </ul>

@@ -2,7 +2,7 @@
 
 Estado: documento interno de trabajo
 
-Actualizado: 14 de julio de 2026
+Actualizado: 15 de julio de 2026
 
 Ámbito: empresa, oferta, evidencia, ventas, alianzas y evolución de la web
 
@@ -168,6 +168,19 @@ pueden requerir barreras o sistemas diferentes.
 
 ## 6. Mercado y prioridades comerciales
 
+### Idiomas y entrada internacional
+
+La Unión Europea es el mercado principal. Inglés funciona como entrada común y
+alemán, español y francés cubren los mercados y casos inmediatos con URLs propias.
+Los cuatro idiomas tienen el mismo alcance funcional; no se publica una variante
+parcial ni se fuerza redirección por navegador. La ruta raíz dirige a inglés y el
+usuario conserva control mediante un selector de equivalentes.
+
+La presencia técnica completa no equivale a validación comercial o jurídica:
+cada idioma requiere revisión profesional antes de abrir indexación. Nuevos
+idiomas solo se incorporan cuando exista capacidad de atender consultas y
+mantener contenido, legal y evidencia con la misma calidad.
+
 El mapa sectorial contiene **108 organizaciones**: 40 contratistas o ingenierías,
 16 fabricantes, 13 propietarios/desarrolladores, 13 actores de automatización,
 8 facility managers, 8 proveedores de maquinaria, 5 asociaciones y 5 compañías
@@ -256,8 +269,11 @@ y ahora registran duración, equipo y medios principales; cinco distinguen adem�
 su situación operativa durante la intervención. Continúan pendientes algunos años
 exactos, la continuidad de TP-Link, los tiempos de reapertura y los valores de las
 mediciones. La investigación de naming está abierta, pero selección, sociedad,
-dominio, contacto y publicación permanecen pendientes. Esta estrategia no
-modifica esa decisión.
+dominio, contacto y publicación permanecen pendientes. La web ya dispone de
+estructura completa en/de/es/fr y captación fail-closed, pero las traducciones
+requieren revisión profesional y el proveedor requiere aprobación documental.
+Esta preparación técnica no modifica la decisión de mantener la publicación
+cerrada.
 
 La web debe demostrar el recorrido:
 

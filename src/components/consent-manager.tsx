@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { parseAnalyticsConfig } from "@/lib/analytics-config";
+import type { Dictionary } from "@/lib/dictionaries/types";
 import {
   CONSENT_STORAGE_KEY,
   createConsentRecord,
@@ -127,7 +128,19 @@ function storeConsent(record: ConsentRecord) {
   }
 }
 
-export function ConsentManager() {
+type ConsentManagerProps = {
+  analyticsAvailable: boolean;
+  copy: Dictionary["consent"];
+  cookieUrl: string;
+  privacyUrl: string;
+};
+
+export function ConsentManager(props: ConsentManagerProps) {
+  if (!props.analyticsAvailable) return null;
+  return <ActiveConsentManager {...props} />;
+}
+
+function ActiveConsentManager({ copy, cookieUrl, privacyUrl }: ConsentManagerProps) {
   const pathname = usePathname();
   const headingId = useId();
   const descriptionId = useId();
@@ -213,6 +226,45 @@ export function ConsentManager() {
   }, [gaReady, pathname]);
 
   useEffect(() => {
+    if (!record?.analytics) return;
+
+    function emit(name: string, parameters: Record<string, string> = {}) {
+      window.gtag?.("event", name, parameters);
+      window.clarity?.("event", name);
+    }
+
+    function handleClick(event: MouseEvent) {
+      if (!(event.target instanceof Element)) return;
+      const target = event.target.closest<HTMLElement>("[data-analytics-event]");
+      const name = target?.dataset.analyticsEvent;
+      if (!target || !name) return;
+      emit(name, {
+        ...(target.dataset.analyticsLocation ? { location: target.dataset.analyticsLocation } : {}),
+        ...(target.dataset.analyticsDestination ? { destination: target.dataset.analyticsDestination } : {}),
+        ...(target.dataset.analyticsProject ? { project_slug: target.dataset.analyticsProject } : {}),
+        ...(target.dataset.analyticsChannel ? { channel: target.dataset.analyticsChannel } : {}),
+      });
+    }
+
+    function handleCustom(event: Event) {
+      if (!(event instanceof CustomEvent) || !event.detail || typeof event.detail !== "object") return;
+      const detail = event.detail as { name?: unknown; parameters?: unknown };
+      if (typeof detail.name !== "string") return;
+      const parameters = detail.parameters && typeof detail.parameters === "object"
+        ? detail.parameters as Record<string, string>
+        : {};
+      emit(detail.name, parameters);
+    }
+
+    document.addEventListener("click", handleClick);
+    window.addEventListener("site:analytics", handleCustom);
+    return () => {
+      document.removeEventListener("click", handleClick);
+      window.removeEventListener("site:analytics", handleCustom);
+    };
+  }, [record]);
+
+  useEffect(() => {
     if (settingsOpen) closeButtonRef.current?.focus({ preventScroll: true });
   }, [settingsOpen]);
 
@@ -291,17 +343,14 @@ export function ConsentManager() {
           data-consent-banner
         >
           <div className="consent-copy">
-            <p className="consent-kicker">Privacidad</p>
-            <h2 id={headingId}>Tú decides si activamos la medición.</h2>
-            <p id={descriptionId}>
-              GA4 y Microsoft Clarity permanecerán bloqueados salvo que aceptes analítica.
-              La publicidad sigue desactivada. Puedes cambiar tu elección en cualquier momento.
-            </p>
-            <a href="/cookies/">Información sobre cookies y almacenamiento</a>
+            <p className="consent-kicker">{copy.privacy}</p>
+            <h2 id={headingId}>{copy.bannerTitle}</h2>
+            <p id={descriptionId}>{copy.bannerBody}</p>
+            <a href={cookieUrl}>{copy.cookieInfo}</a>
           </div>
           <div className="consent-actions">
             <button type="button" className="consent-button consent-choice" onClick={() => saveChoice(false)}>
-              Rechazar analítica
+              {copy.reject}
             </button>
             <button
               ref={bannerConfigButtonRef}
@@ -309,10 +358,10 @@ export function ConsentManager() {
               className="consent-button consent-secondary"
               onClick={openSettings}
             >
-              Configurar
+              {copy.configure}
             </button>
             <button type="button" className="consent-button consent-choice" onClick={() => saveChoice(true)}>
-              Aceptar analítica
+              {copy.accept}
             </button>
           </div>
         </section>
@@ -326,7 +375,7 @@ export function ConsentManager() {
           aria-haspopup="dialog"
           onClick={openSettings}
         >
-          Preferencias de privacidad
+          {copy.reopen}
         </button>
       ) : null}
 
@@ -345,30 +394,27 @@ export function ConsentManager() {
               ref={closeButtonRef}
               type="button"
               className="consent-close"
-              aria-label="Cerrar preferencias de privacidad"
+              aria-label={copy.closeAria}
               onClick={closeSettings}
             >
               ×
             </button>
-            <p className="consent-kicker">Preferencias de privacidad</p>
-            <h2 id={headingId}>Configura la medición</h2>
-            <p id={descriptionId}>
-              Las funciones esenciales no envían información a proveedores de analítica.
-              La categoría opcional permanece apagada hasta que la marques y guardes.
-            </p>
+            <p className="consent-kicker">{copy.settingsKicker}</p>
+            <h2 id={headingId}>{copy.settingsTitle}</h2>
+            <p id={descriptionId}>{copy.settingsBody}</p>
 
             <div className="consent-category">
               <div>
-                <strong>Preferencia esencial</strong>
-                <p>Guarda esta elección durante 180 días en el almacenamiento local del navegador.</p>
+                <strong>{copy.essentialTitle}</strong>
+                <p>{copy.essentialBody}</p>
               </div>
-              <span>Siempre activa</span>
+              <span>{copy.alwaysActive}</span>
             </div>
 
             <label className="consent-category consent-toggle">
               <span>
-                <strong>Analítica opcional</strong>
-                <small>Permitiría cargar GA4 y Clarity si el entorno dispone de IDs válidos.</small>
+                <strong>{copy.analyticsTitle}</strong>
+                <small>{copy.analyticsBody}</small>
               </span>
               <input
                 type="checkbox"
@@ -378,16 +424,16 @@ export function ConsentManager() {
             </label>
 
             <p className="consent-links">
-              <a href="/cookies/">Cookies y almacenamiento</a>
+              <a href={cookieUrl}>{copy.cookieInfo}</a>
               <span aria-hidden="true">·</span>
-              <a href="/privacidad/">Privacidad</a>
+              <a href={privacyUrl}>{copy.privacy}</a>
             </p>
             <div className="consent-settings-actions">
               <button type="button" className="consent-button consent-choice" onClick={() => saveChoice(draftAnalytics)}>
-                Guardar preferencias
+                {copy.save}
               </button>
               <button type="button" className="consent-button consent-choice" onClick={() => saveChoice(false)}>
-                Rechazar analítica
+                {copy.reject}
               </button>
             </div>
           </section>

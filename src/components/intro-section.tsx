@@ -1,16 +1,17 @@
 type IntroSectionProps = {
   kicker: string;
   stats: readonly { value: string; label: string }[];
+  copy: import("@/lib/dictionaries/types").Dictionary["intro"];
 };
 
-export function IntroSection({ kicker, stats }: IntroSectionProps) {
+export function IntroSection({ kicker, stats, copy }: IntroSectionProps) {
   return (
     <>
       <section className="intro">
         <div className="wrap fila">
           <div>
             <p className="kicker">{kicker}</p>
-            <h2>Soluciones para suelos que no pueden permitirse parar</h2>
+            <h2>{copy.title}</h2>
           </div>
           <div className="stats">
             {stats.map(({ value, label }) => {
@@ -29,15 +30,12 @@ export function IntroSection({ kicker, stats }: IntroSectionProps) {
         </div>
       </section>
 
-      <section className="relato" aria-label="Nuestro método en tres palabras">
+      <section className="relato" aria-label={copy.methodAria}>
         <div className="wrap">
-          <p className="linea">Diagnosticar.</p>
-          <p className="linea">Reparar.</p>
-          <p className="linea acento">Rendir.</p>
-          <p className="pie">
-            Tres palabras, un método: identificar la causa, definir la intervención y
-            devolver el pavimento al trabajo.
-          </p>
+          <p className="linea">{copy.methodWords[0]}</p>
+          <p className="linea">{copy.methodWords[1]}</p>
+          <p className="linea acento">{copy.methodWords[2]}</p>
+          <p className="pie">{copy.methodBody}</p>
         </div>
       </section>
     </>

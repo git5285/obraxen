@@ -1,0 +1,66 @@
+import { describe, expect, it } from "vitest";
+import { brand } from "@/lib/brand";
+import {
+  buildContactEmail,
+  contactSubmissionSchema,
+  resolveContactConfig,
+} from "@/lib/contact";
+import type { Brand } from "@/lib/schemas";
+
+const publicIdentity: Brand = {
+  ...brand,
+  nombre: "Validated brand",
+  nombreLegal: "Validated company, S.L.",
+  cif: "B00000000",
+  empresaConstituida: true,
+  dominio: "example.com",
+  direccion: "Validated address",
+  email: "contact@example.com",
+  telefono: "+34 900 000 000",
+  legalRevisionAprobada: true,
+  formularioRevisionAprobada: true,
+};
+
+const environment = {
+  CONTACT_FORM_ENABLED: "true",
+  RESEND_API_KEY: `re_${"1".repeat(30)}`,
+  CONTACT_TO_EMAIL: "contact@example.com",
+  CONTACT_FROM_EMAIL: "web@example.com",
+};
+
+describe("contact capture gate", () => {
+  it("stays closed for the current incomplete identity", () => {
+    expect(resolveContactConfig(environment).enabled).toBe(false);
+  });
+
+  it("accepts a coherent free-provider configuration only after legal readiness", () => {
+    expect(resolveContactConfig(environment, publicIdentity)).toEqual({
+      enabled: true,
+      apiKey: environment.RESEND_API_KEY,
+      toEmail: environment.CONTACT_TO_EMAIL,
+      fromEmail: environment.CONTACT_FROM_EMAIL,
+      issues: [],
+    });
+  });
+
+  it("validates bounded lead data and omits field content from attribution", () => {
+    const submission = contactSubmissionSchema.parse({
+      locale: "de",
+      name: "Erika Muster",
+      email: "erika@example.org",
+      company: "Muster GmbH",
+      country: "Deutschland",
+      phone: "",
+      message: "Beschädigte Fugen in einer betriebenen Logistikhalle.",
+      consent: true,
+      website: "",
+      startedAt: Date.now() - 5_000,
+      source: "/de/kontakt/",
+      utm: { source: "industry-newsletter" },
+    });
+    const email = buildContactEmail(submission);
+    expect(email).toContain("Muster GmbH");
+    expect(email).toContain("industry-newsletter");
+    expect(contactSubmissionSchema.safeParse({ ...submission, website: "spam" }).success).toBe(false);
+  });
+});

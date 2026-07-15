@@ -1,24 +1,22 @@
 import { brand } from "@/lib/brand";
+import { getDictionary, getPath, type Locale } from "@/lib/i18n";
 
-type ProjectFooterProps = {
+export function ProjectFooter({
+  variant,
+  locale,
+}: {
   variant: "projects" | "case";
-};
-
-export function ProjectFooter({ variant }: ProjectFooterProps) {
+  locale: Locale;
+}) {
+  const copy = getDictionary(locale).footer;
   return (
     <footer className={`${variant}-footer`}>
       <div className={`${variant}-wrap`}>
+        <p>{brand.nombre ? `© 2026 ${brand.nombre}. ${copy.rights}` : copy.fallbackCopyright}</p>
         <p>
-          {brand.nombre
-            ? `© 2026 ${brand.nombre}. Todos los derechos reservados.`
-            : "Reparación y tratamiento técnico de pavimentos industriales."}
-        </p>
-        <p>
-          {brand.legalUrl ? <a href={brand.legalUrl}>Aviso legal</a> : null}
-          {brand.legalUrl && brand.privacidadUrl ? " · " : null}
-          {brand.privacidadUrl ? <a href={brand.privacidadUrl}>Privacidad</a> : null}
-          {brand.legalUrl || brand.privacidadUrl ? " · " : null}
-          <a href="/cookies/">Cookies</a>
+          <a href={getPath(locale, "legalNotice")}>{copy.legalNotice}</a> ·{" "}
+          <a href={getPath(locale, "privacy")}>{copy.privacy}</a> ·{" "}
+          <a href={getPath(locale, "cookies")}>{copy.cookies}</a>
         </p>
       </div>
     </footer>
