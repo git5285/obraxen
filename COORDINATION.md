@@ -1,13 +1,15 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 00:14 Europe/Madrid.
+Actualizado: 2026-07-16 00:43 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No hay tareas editoras activas. Las claims versionadas están liberadas.
+| Tarea | Alcance exclusivo | Estado |
+|---|---|---|
+| Dominio y correo Obraxen (`4b65f9d3...`) | DNS/correo y reconciliación del gate 6.7.2 | Infraestructura verificada; integración en validación |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -137,19 +139,20 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - ADR-010 fija inglés como entrada y prefijos `/en/`, `/de/`, `/es/`, `/fr/`,
   con segmentos localizados y revisión profesional obligatoria por idioma.
 - ADR-011 fija Resend como adaptador técnico sin base propia; formulario y API
-  permanecen fail-closed hasta aprobación documental, identidad, dominio y buzón.
+  permanecen fail-closed hasta aprobación documental, identidad legal y entorno.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
 - `Obraxen` está seleccionado e integrado como nombre comercial por instrucción
-  expresa del usuario. Esto no acredita disponibilidad registral o marcaria; la
-  sociedad, el dominio operativo y los contactos siguen pendientes.
+  expresa del usuario. `obraxen.com`, `info@obraxen.com` y el alias de privacidad
+  están verificados; esto no acredita disponibilidad registral o marcaria y la
+  sociedad, el teléfono y la identidad legal siguen pendientes.
 
 ## Orden siguiente
 
-1. Resolver las 37 incidencias de la puerta 6.7 con revisión profesional de
-   en/de/es/fr, identidad, sociedad, permisos, legal, DPA/proveedor, dominio y
-   buzones reales según `ACTIVATION_GATE.md`.
+1. Resolver las 35 incidencias de la puerta 6.7 con revisión profesional de
+   en/de/es/fr, identidad, sociedad, teléfono, permisos, legal y DPA/proveedor
+   según `ACTIVATION_GATE.md`.
 2. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
 3. Mantener previews, indexación, formulario, analítica real y publicación

@@ -49,13 +49,16 @@ describe("localized project routes", () => {
     }
   });
 
-  it.each(locales)("provides unique %s metadata without inventing a domain", async (locale) => {
+  it.each(locales)("provides unique %s metadata for the verified domain", async (locale) => {
     const hubMetadata = await generateSectionMetadata({ params: Promise.resolve({
       lang: locale,
       section: routeSegments[locale].projects,
     }) });
     expect(hubMetadata.openGraph).toMatchObject({ type: "website" });
-    expect(hubMetadata.alternates).toBeUndefined();
+    expect(hubMetadata.alternates).toMatchObject({
+      canonical: `https://obraxen.com/${locale}/${routeSegments[locale].projects}/`,
+      languages: { "x-default": "https://obraxen.com/en/projects/" },
+    });
 
     const titles = await Promise.all(projects.map(async ({ slug }) => {
       const metadata = await generateProjectMetadata({ params: Promise.resolve({
@@ -64,7 +67,10 @@ describe("localized project routes", () => {
         slug,
       }) });
       expect(metadata.openGraph).toMatchObject({ type: "article" });
-      expect(metadata.alternates).toBeUndefined();
+      expect(metadata.alternates).toMatchObject({
+        canonical: `https://obraxen.com/${locale}/${routeSegments[locale].projects}/${slug}/`,
+        languages: { "x-default": `https://obraxen.com/en/projects/${slug}/` },
+      });
       return metadata.title;
     }));
     expect(new Set(titles).size).toBe(projects.length);
