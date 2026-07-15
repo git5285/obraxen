@@ -6,6 +6,7 @@
     "node": "24.x"
   },
   "scripts": {
+    "check:activation": "node --experimental-strip-types scripts/check-activation.mjs",
     "build": "next build",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "check:quality": "npm run check && npm run test:e2e && npm run lighthouse:ci",
