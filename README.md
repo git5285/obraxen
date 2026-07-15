@@ -9,10 +9,11 @@ La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
 con los despliegues Git de Vercel desactivados. El repositorio es privado y esa
 privacidad tampoco autoriza publicar o desplegar el sitio.
 
-> **Identidad pendiente:** “RemainOn” es solo una referencia interna heredada de
-> la carpeta. No es una marca seleccionada. La empresa todavía no está
-> constituida y nombre, razón social, CIF, dominio, domicilio y canales de
-> contacto permanecen en `null` hasta disponer de datos reales.
+> **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
+> `data/brand.json`. “RemainOn” queda solo como referencia interna heredada de la
+> carpeta. La empresa todavía no está constituida; razón social, CIF, dominio,
+> domicilio y canales de contacto permanecen en `null` hasta existir y poderse
+> verificar. La selección no sustituye comprobaciones registrales o marcarias.
 
 ## Arquitectura
 

@@ -64,11 +64,12 @@ grabación propia (ver guía de grabación).
 
 **Estado:** Aceptada · **consecuencia negativa (SEO) resuelta 2026-07-14**
 
-**Contexto.** El **nombre comercial está pendiente de decisión**. “RemainOn” es
-exclusivamente un identificador interno temporal, no es una marca candidata ni
-puede publicarse. `data/brand.json` mantiene `nombre: null` y registra este límite
-en `nombreTemporalNoPublicable`. La empresa tampoco está constituida todavía; la
-forma jurídica prevista es una sociedad limitada.
+**Contexto.** `Obraxen` fue seleccionado expresamente como nombre comercial el
+15 de julio de 2026. “RemainOn” es exclusivamente un identificador interno
+temporal y no puede publicarse. `data/brand.json` mantiene ese límite en
+`nombreTemporalNoPublicable`. La empresa todavía no está constituida y la
+selección no acredita disponibilidad registral o marcaria; la forma jurídica
+prevista es una sociedad limitada.
 Antes, el nombre, el dominio y los contactos estaban hardcodeados en ~18 puntos
 del HTML (título, meta, JSON-LD, logo, footer, formulario…). Renombrar habría
 sido una edición dispersa y propensa a error.
@@ -76,6 +77,13 @@ sido una edición dispersa y propensa a error.
 > **Actualización 2026-07-14:** la investigación de nombres se ha reabierto, pero
 > no existe una selección. Ningún candidato se integra y no se simulan datos
 > societarios mientras la decisión y la constitución sigan pendientes.
+
+> **Actualización 2026-07-15:** el usuario selecciona `Obraxen` y autoriza su
+> integración como nombre comercial. Razón social, CIF y domicilio siguen `null`
+> hasta la constitución. El RDAP no devolvió un objeto para el dominio propuesto
+> y no existían DNS/MX, pero una comprobación comercial separada lo marcó como no
+> disponible. Sin titularidad ni disponibilidad acreditadas, dominio y correo no
+> se integran todavía.
 
 **Decisión.** Aislar toda la identidad en un único punto de verdad,
 `data/brand.json` (`nombre`, `nombreLegal`, `claim`, `dominio`, `email`,
@@ -89,9 +97,10 @@ a build y ahora se realiza en los Server Components y metadatos de Next.js.
   de prueba propagó título, logo, contactos y JSON-LD a la vez).
 - (+) Los datos aún no decididos usan `null` y no se renderizan; el modo
   `publicar: true` exige identidad legal, contacto y URLs legales.
-- (+) Mientras el nombre no exista, el logotipo se reduce a un símbolo neutral;
-  sin dominio no se generan canonical, Open Graph absoluto ni sitemap, y sin
-  email no se muestra un formulario que no pueda enviarse.
+- (+) El nombre seleccionado se resuelve en logotipo, títulos y metadata sin
+  duplicarlo fuera de la fuente estructurada; sin dominio no se generan
+  canonical, Open Graph absoluto ni sitemap, y sin email operativo no se muestra
+  un formulario que no pueda enviarse.
 - (✓ **resuelto 2026-07-14**) ~~Inyección por JS ⇒ crawlers/scrapers sin JS no ven
   el nombre en cabecera~~ → el nombre, `<title>`, `meta`, `og` y JSON-LD se
   resuelven **en build** y viven en el HTML estático servido. Ejecutado el
