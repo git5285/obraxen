@@ -234,6 +234,7 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   display:grid;grid-template-columns:1fr 1fr;gap:40px;
   padding:56px;
 }
+.porque .panel > .col-izq,.porque .panel > .ventajas,.ventaja > div{min-width:0}
 .porque .panel::before{
   content:"";position:absolute;inset:0;z-index:var(--z-content);
   background:linear-gradient(120deg,rgb(from var(--brand-ink) r g b / .95) 0%,rgb(from var(--brand-ink-deep) r g b / .88) 100%);
@@ -241,7 +242,7 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
 }
 .porque .panel-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .porque .panel > :not(.panel-bg){position:relative;z-index:calc(var(--z-content) + 1)}
-.porque h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:16px}
+.porque h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:16px;overflow-wrap:anywhere;hyphens:auto}
 .porque .kicker{color:var(--brand-primary-light)}
 .porque .col-izq > p{color:rgb(from var(--brand-on-dark) r g b / .72);max-width:40ch;margin-bottom:34px}
 .ventajas{display:flex;flex-direction:column;gap:14px}
@@ -255,8 +256,8 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   background:var(--brand-primary-tint);color:var(--brand-primary);border:1px solid var(--brand-primary-tint-border);
   display:grid;place-items:center;
 }
-.ventaja h3{font-size:1rem;margin-bottom:4px}
-.ventaja p{font-size:.87rem;color:var(--brand-muted)}
+.ventaja h3{font-size:1rem;margin-bottom:4px;overflow-wrap:anywhere;hyphens:auto}
+.ventaja p{font-size:.87rem;color:var(--brand-muted);overflow-wrap:anywhere;hyphens:auto}
 
 .cita{padding:110px 0;text-align:center}
 .cita h2{font-size:clamp(1.8rem,3.4vw,2.4rem);margin-bottom:40px}
@@ -359,10 +360,15 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   .fisura-wrap{padding:0 28px 28px}
   .relato .linea{font-size:clamp(2.6rem,13vw,4rem)}
   section.intro .fila,.porque .panel,.faq .fila,.cierre .cta-fila{grid-template-columns:1fr}
+  .porque .panel{gap:28px;padding:36px 28px}
   .serv-grid{grid-template-columns:1fr}
   .proy-grid{grid-template-columns:1fr}
   .cierre{padding:44px 28px 28px}
   .foot{grid-template-columns:1fr 1fr}
+}
+@media (max-width:360px){
+  .sticky-nav .inner{gap:8px;padding-right:12px;padding-left:12px}
+  .sticky-nav .logo{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
