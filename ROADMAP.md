@@ -11,9 +11,9 @@ implementación.
 
 - **Web:** Next.js con App Router, TypeScript y React Server Components por
   defecto.
-- **Repositorio:** GitHub público por decisión expresa, ramas de trabajo y pull
-  requests con checks obligatorios antes de integrar en `main`; la exposición se
-  controla en `REPOSITORY_EXPOSURE.md`.
+- **Repositorio:** GitHub privado en el plan gratuito, ramas de trabajo y pull
+  requests con CI verde antes de integrar en `main`; el hook versionado bloquea
+  pushes directos y `REPOSITORY_EXPOSURE.md` controla la exposición.
 - **Hosting:** Vercel, previews protegidas por pull request y produccion cerrada
   hasta superar la puerta de publicacion.
 - **Analitica:** Google Analytics 4 y Microsoft Clarity solo tras consentimiento
@@ -88,12 +88,14 @@ tests/
 ## Flujo GitHub y Vercel
 
 1. Crear una rama por hito y abrir pull request.
-2. Ejecutar en GitHub Actions: instalacion reproducible, lint, TypeScript,
-   validacion de datos, tests, build y smoke test de rutas.
+2. El hook local ejecuta `npm run check:quality` antes del push; GitHub Actions
+   repite instalación reproducible, lint, TypeScript, validación de datos, tests,
+   build y comprobaciones de navegador en cada pull request.
 3. Vercel solo crea una preview si el entorno protegido, los secretos y
    `ENABLE_VERCEL_PREVIEWS=true` están configurados expresamente.
 4. Revisar visualmente escritorio y movil, teclado, consola y red.
-5. Integrar en `main` solo con checks verdes.
+5. Integrar en `main` solo con el `Quality gate` del SHA actual verde. GitHub Free
+   no lo impone en privado, por lo que `AGENTS.md` convierte la regla en obligatoria.
 6. Mantener produccion desactivada o protegida hasta que naming, dominio,
    contacto, legal y consentimiento esten aprobados.
 
@@ -200,9 +202,10 @@ precipitada.
 
 ### Fase 4 — Calidad de entrega
 
-- [x] Añadir GitHub Actions como check obligatorio y estricto de `main`, y dejar la preview de
-  Vercel preparada tras un entorno protegido, secretos y un interruptor apagado
-  por defecto; no se ha desplegado ni autorizado producción.
+- [x] Añadir GitHub Actions como check obligatorio y estricto de `main` mientras
+  el repositorio fue público, y dejar la preview de Vercel preparada tras un
+  entorno protegido, secretos y un interruptor apagado por defecto; ADR-009
+  conserva el gate en privado mediante CI, hook local y gobernanza.
 - [x] Añadir tests unitarios de reglas de publicacion y tests de navegador de rutas,
   navegacion, foco, responsive y errores de consola.
 - [x] Automatizar presupuestos Lighthouse móviles para portada, hub y un caso:
@@ -238,10 +241,17 @@ precipitada.
 
 ### Fase 6 — Publicacion controlada
 
-- Completar identidad, sociedad, contacto y textos legales.
-- Revision profesional de privacidad y cookies.
-- Auditoria final sobre la URL de produccion, aprobacion explicita y activacion
-  manual de despliegue.
+- [x] Retirar los siete deployments legacy de Vercel y comprobar que proyecto,
+  alias y dominios quedan sin una web accesible.
+- [x] Cambiar el repositorio a privado en GitHub Free y sustituir el enforcement
+  remoto de pago por CI en PR, bloqueo local de `main` y ADR-009.
+- [ ] Decidir estrategia de idiomas/URLs y sistema completo de captación mediante
+  ADRs separadas.
+- [ ] Completar identidad, sociedad, contacto y textos legales.
+- [ ] Documentar o anonimizar los seis casos y revisar profesionalmente privacidad
+  y cookies.
+- [ ] Auditar la URL candidata, aprobar expresamente y activar manualmente el
+  despliegue con rollback documentado.
 
 ## Puerta de calidad
 
@@ -255,7 +265,8 @@ precipitada.
   viewport no descarga imagenes ajenas a su contenido.
 - Rechazar analitica impide cargar GA4 y Clarity; cambiar preferencias aplica el
   nuevo estado sin recargar datos personales.
-- `main` solo integra cambios con build, tests y validacion de datos correctos.
+- `main` solo integra cambios mediante PR con el `Quality gate` remoto del SHA
+  actual verde; el hook local bloquea el push directo.
 
 ## Siguiente hito recomendado
 
