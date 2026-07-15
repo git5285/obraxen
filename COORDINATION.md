@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 20:47 Europe/Madrid.
+Actualizado: 2026-07-15 23:48 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -9,7 +9,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
-| Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
+| Identidad Obraxen (`c484b245...`) | Nombre comercial y reconciliación del gate 6.7 | En curso; sin publicación |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -135,12 +135,13 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
-- Naming está abierto solo como investigación. Selección, sociedad, dominio y
-  contacto siguen pendientes.
+- `Obraxen` está seleccionado e integrado como nombre comercial por instrucción
+  expresa del usuario. Esto no acredita disponibilidad registral o marcaria; la
+  sociedad, el dominio operativo y los contactos siguen pendientes.
 
 ## Orden siguiente
 
-1. Resolver las 38 incidencias de la puerta 6.7 con revisión profesional de
+1. Resolver las 37 incidencias de la puerta 6.7 con revisión profesional de
    en/de/es/fr, identidad, sociedad, permisos, legal, DPA/proveedor, dominio y
    buzones reales según `ACTIVATION_GATE.md`.
 2. Solo después y con autorización expresa, crear una preview protegida, auditar
