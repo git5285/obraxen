@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 15:57 Europe/Madrid.
+Actualizado: 2026-07-15 16:08 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,7 +10,6 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
-| Preparación Fase 6 (`5fd4304a...`) | Vercel legacy, privacidad Git y controles de lanzamiento | En curso; GitHub privado verificado y gate de cierre pendiente |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -80,6 +79,12 @@ cambios staged sin propietario.
   aceptación. El gate local completo pasa con 50 unitarias, 46 ejecuciones
   Playwright y Lighthouse 97/97/98; no hay IDs reales, despliegue ni indexación.
   La claim `19c89a6e...` está liberada.
+- Preparación de Fase 6 integrada mediante la PR `#10`; `main` queda en el merge
+  `4fb3a18`. Los siete deployments legacy de Vercel se retiraron, GitHub es
+  privado en el plan gratuito y ADR-009 sustituye la protección remota de pago
+  por CI en PR, hook local y gobernanza obligatoria. El run posterior de `main`
+  `29421963694` está verde, la preview fue omitida y la claim `5fd4304a...` queda
+  liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
