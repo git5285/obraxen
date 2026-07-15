@@ -209,7 +209,7 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
 .proy-media figure{position:relative;overflow:hidden;background:var(--brand-bg)}
 .proy-media figure:first-child{grid-row:1 / span 2}
 .proy-media img{display:block;width:100%;height:100%;object-fit:cover}
-.proy-media figcaption{position:absolute;left:8px;bottom:8px;padding:4px 8px;border-radius:var(--radius-pill);background:rgb(from var(--brand-ink-deep) r g b / .82);color:var(--brand-on-dark);font-size:.66rem;font-weight:700;letter-spacing:.04em}
+.proy-media figcaption{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);padding:4px 8px;border-radius:var(--radius-pill);background:rgb(from var(--brand-ink-deep) r g b / .82);color:var(--brand-on-dark);font-size:.66rem;font-weight:700;line-height:1.2;letter-spacing:.04em;overflow-wrap:anywhere;hyphens:auto}
 .proy .cuerpo{padding:22px 24px}
 .proy .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .proy .meta span{
