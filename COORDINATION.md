@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 19:34 Europe/Madrid.
+Actualizado: 2026-07-15 20:36 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,6 +10,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
+| Fase 6.7 (`f3ad2075...`) | Puerta ejecutable, expediente de activación y NO-GO verificable | En curso; sin publicación |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -99,6 +100,11 @@ cambios staged sin propietario.
   El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
   intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
   liberada sin despliegue. El run Linux de la PR `29439664817` está verde.
+- Fase 6.7 inicia con una puerta reproducible: `npm run check:activation` deriva
+  38 incidencias reales de identidad/contacto (8), legal/proveedor (2), revisión
+  lingüística (4) y permisos de seis casos (24). `ACTIVATION_GATE.md` define el
+  expediente exacto, la diligencia pública de Resend y el rollback; el resultado
+  permanece `NO-GO` y no autoriza candidata, contrato ni publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -131,8 +137,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Cerrar Fase 6.7 con revisión profesional de en/de/es/fr, identidad, sociedad,
-   permisos, legal, DPA/proveedor, dominio y buzones reales.
+1. Resolver las 38 incidencias de la puerta 6.7 con revisión profesional de
+   en/de/es/fr, identidad, sociedad, permisos, legal, DPA/proveedor, dominio y
+   buzones reales según `ACTIVATION_GATE.md`.
 2. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
 3. Mantener previews, indexación, formulario, analítica real y publicación

@@ -26,9 +26,12 @@ export type PublicationState =
     };
 
 export class PublicationConfigurationError extends Error {
-  constructor(readonly issues: readonly string[]) {
+  readonly issues: readonly string[];
+
+  constructor(issues: readonly string[]) {
     super(`La publicación está incompleta:\n- ${issues.join("\n- ")}`);
     this.name = "PublicationConfigurationError";
+    this.issues = issues;
   }
 }
 
