@@ -26,6 +26,16 @@ Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
 - Marca la claim `liberado` cuando no quede trabajo bajo su alcance.
 - Ninguna tarea despliega o publica sin autorización expresa.
 
+## Flujo Git obligatorio
+
+- Configura los hooks versionados con `git config core.hooksPath .githooks` antes
+  del primer push desde cada clon.
+- Nunca hagas push directo a `main` ni omitas el hook con `--no-verify`.
+- Toda rama ejecuta `npm run check:quality` antes de subir y abre una pull request.
+- Solo se fusiona el SHA revisado cuando su ejecución remota `Quality gate` está
+  verde. GitHub Free no impone este check en repositorios privados: esta regla y
+  el hook local son obligatorios para todas las tareas.
+
 ## Límites permanentes
 
 - La evidencia real prevalece sobre cualquier afirmación comercial.

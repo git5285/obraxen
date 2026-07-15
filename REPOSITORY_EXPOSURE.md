@@ -1,7 +1,8 @@
 # Revisión de exposición del repositorio
 
-Fecha: 14 de julio de 2026. Estado: repositorio público por instrucción expresa
-del usuario; la web continúa sin autorización de despliegue o publicación.
+Fecha: 15 de julio de 2026. Estado: repositorio privado en GitHub Free por
+decisión expresa del usuario; la web continúa sin autorización de despliegue o
+publicación.
 
 ## Resultado
 
@@ -18,8 +19,12 @@ del usuario; la web continúa sin autorización de despliegue o publicación.
   fotografías. La confirmación interna para identificar al cliente no equivale a
   soporte documental para publicar nombre y fotografías.
 - `STRATEGY.md`, `research/sector-map.csv`, los borradores de datos y el historial
-  de `.coordination/` son información operativa visible en GitHub. No contienen
-  credenciales, pero sí contexto estratégico y de ejecución.
+  de `.coordination/` estuvieron visibles mientras el repositorio fue público.
+  No contienen credenciales, pero sí contexto estratégico y de ejecución.
+- Los siete deployments Vercel legacy que conservaban la web estática provisional
+  se eliminaron por ID el 15 de julio de 2026. El proyecto `remainon-web` permanece
+  preparado, pero sin deployments, dominios ni alias accesibles; todas las URLs
+  históricas comprobadas responden 404.
 
 ## Controles adoptados
 
@@ -36,25 +41,36 @@ del usuario; la web continúa sin autorización de despliegue o publicación.
    pero se configuran por entorno y el navegador solo los solicita tras aceptar.
    Cualquier secreto administrativo de Google, Microsoft o Vercel queda fuera del
    repositorio y nunca debe exponerse desde `/api/analytics-config/`.
+6. El repositorio es privado. GitHub Actions mantiene `Quality gate` para cada PR,
+   y `.githooks/pre-push` bloquea pushes directos a `main` y ejecuta el gate local
+   antes de subir ramas.
+7. `AGENTS.md` prohíbe omitir el hook o fusionar un SHA cuyo check remoto no esté
+   verde. La protección se reevalúa si aumenta el número de colaboradores.
 
 ## Decisión de visibilidad
 
-Se conserva la visibilidad pública porque es el estado expresamente solicitado y
-permite aplicar el check obligatorio disponible en la configuración actual. Esta
-decisión acepta provisionalmente que el contenido versionado es consultable; no
-convierte los casos en material autorizado para una campaña o web pública.
+Se elige privacidad inmediata sin coste recurrente. GitHub Free no impone ramas
+protegidas ni checks obligatorios en repositorios privados, por lo que la barrera
+se compone de CI en cada PR, hook local versionado y protocolo obligatorio. Es una
+decisión proporcionada mientras `git5285` sea el único colaborador con acceso.
 
-Eliminar archivos en un commit nuevo no los elimina del historial. Si la
-estrategia, los casos o la dirección histórica no deben seguir accesibles, la
-solución requiere una autorización separada para una de estas operaciones:
+Cambiar la visibilidad impide nuevas consultas no autorizadas, pero no elimina el
+periodo de exposición previo ni revoca clones existentes. Tampoco elimina datos
+del historial. Una reescritura solo se considerará si aparece un dato que exija
+retirada o rotación; no se ha detectado esa condición en la revisión actual.
 
-- cambiar el repositorio a privado y conservar la protección mediante un plan que
-  la admita;
-- separar los datos y documentos internos en un repositorio privado;
-- reescribir el historial y rotar cualquier dato que se considere comprometido.
+GitHub Pro y GitLab Free quedan como alternativas si se necesita enforcement
+remoto para más colaboradores. La decisión completa se registra en ADR-009.
 
-No se ejecuta ninguna de esas operaciones destructivas o de visibilidad como
-efecto lateral de esta revisión.
+## Evidencia del cambio
+
+- La API de GitHub devuelve `visibility: PRIVATE` e `isPrivate: true`.
+- Una solicitud web sin autenticar a la URL del repositorio devuelve HTTP 404.
+- GitHub Actions permanece habilitado y la PR de cambio completó `Quality gate`
+  correctamente; el job de preview Vercel quedó omitido.
+- La lista de colaboradores contiene únicamente a `git5285` con rol administrador.
+- La consulta de branch protection devuelve HTTP 403 con la indicación de pasar
+  a GitHub Pro o volver a público, que confirma el límite aceptado por ADR-009.
 
 ## Comprobación repetible
 
