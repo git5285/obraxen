@@ -160,6 +160,23 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
       const state = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
+        rectOverflows: [...document.querySelectorAll<HTMLElement>("body *")]
+          .filter((element) => {
+            if (element.closest("[inert], .sectores .cinta") || element.matches(".skip:not(:focus)")) {
+              return false;
+            }
+            const style = getComputedStyle(element);
+            if (style.display === "none" || style.visibility === "hidden") return false;
+            const rect = element.getBoundingClientRect();
+            return rect.width > 0 && (
+              rect.right > document.documentElement.clientWidth + 1 || rect.left < -1
+            );
+          })
+          .map((element) => ({
+            selector: `${element.tagName.toLowerCase()}${element.className ? `.${String(element.className).trim().replaceAll(" ", ".")}` : ""}`,
+            rect: element.getBoundingClientRect().toJSON(),
+            text: element.textContent?.trim().slice(0, 80),
+          })),
         textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .relato .linea")]
           .filter((element) => element.scrollWidth > element.clientWidth + 1)
           .map((element) => ({
@@ -168,7 +185,9 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
             scrollWidth: element.scrollWidth,
           })),
       }));
-      expect(state.scrollWidth, `${entry.locale} at ${width}px`).toBeLessThanOrEqual(state.clientWidth);
+      expect(state.scrollWidth, `${entry.locale} at ${width}px: ${JSON.stringify(state.rectOverflows)}`)
+        .toBeLessThanOrEqual(state.clientWidth);
+      expect(state.rectOverflows, `${entry.locale} at ${width}px`).toEqual([]);
       expect(state.textOverflows, `${entry.locale} at ${width}px`).toEqual([]);
     }
   }
