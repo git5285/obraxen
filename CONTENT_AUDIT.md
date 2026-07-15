@@ -1,7 +1,8 @@
 # Auditoría de contenidos
 
 Estado: 15 de julio de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
-Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
+`Obraxen` se integra como nombre comercial seleccionado; constitución, dominio y
+canales de contacto quedan expresamente fuera hasta poder verificarlos.
 
 ## Objetivo de la página
 

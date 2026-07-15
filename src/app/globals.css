@@ -46,6 +46,10 @@
   color: var(--brand-ink);
 }
 
+.foot .logo-footer span {
+  color: var(--brand-primary-dark);
+}
+
 .legal-details {
   margin-top: 14px !important;
   font-size: 0.75rem !important;
