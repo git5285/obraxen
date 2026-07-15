@@ -1,7 +1,7 @@
 # Decisiones de arquitectura (ADR)
 
 > Registro corto de decisiones: **contexto / decisión / consecuencias**.
-> Formato ligero. Fecha de referencia: 2026-07-14.
+> Formato ligero. Fecha de referencia: 2026-07-15.
 > Estados: `Aceptada` · `Abierta` (aún sin decidir) · `Sustituida`.
 
 ---
@@ -225,8 +225,9 @@ sin scripts de terceros. `style-src` continúa cerrado.
 **Consecuencias.**
 
 - (+) El mismo comando reproduce localmente el check remoto.
-- (+) `main` exige `Quality gate` actualizado y bloquea fuerza y borrado,
-  también para administradores.
+- (✓ histórico hasta 2026-07-15) `main` exigió `Quality gate` actualizado y
+  bloqueó fuerza y borrado también para administradores mientras el repositorio
+  fue público.
 - (+) Rutas, responsive, accesibilidad, foco, consola, red y presupuestos quedan
   cubiertos antes de integrar.
 - (+) Ningún pull request despliega mientras el interruptor permanezca apagado.
@@ -234,9 +235,9 @@ sin scripts de terceros. `style-src` continúa cerrado.
   campo continúa siendo LCP < 2,5 s.
 - (−) Una preview solo puede considerarse protegida tras verificar también el
   control de acceso en Vercel; preparar el job no equivale a publicarla.
-- (±) El repositorio pasó a público por orden expresa del usuario para habilitar
-  la protección disponible en el plan actual; la visibilidad del código no
-  autoriza publicar la web.
+- (±) El repositorio pasó temporalmente a público para habilitar la protección
+  disponible en el plan gratuito. ADR-009 sustituye esa exposición por un flujo
+  privado con CI visible, hook local y gobernanza obligatoria.
 
 ---
 
@@ -342,3 +343,49 @@ y recarga únicamente si un proveedor ya se estaba ejecutando.
 **Pendiente externo.** No se configuran IDs reales ni Search Console hasta que
 existan revisión legal, entornos aprobados y dominio definitivo. Esta ADR no
 autoriza preview, producción, indexación o publicación.
+
+---
+
+## ADR-009 — Repositorio privado con guardas gratuitas
+
+**Estado:** Aceptada · **fecha 2026-07-15**
+
+**Contexto.** El repositorio público permitía exigir `Quality gate` en `main` con
+GitHub Free, pero también exponía estrategia, coordinación y datos de casos que
+no son contenido publicable. En el plan gratuito, GitHub no ofrece ramas
+protegidas ni rulesets para repositorios privados. El repositorio tiene un único
+colaborador y la web continúa sin deployments, dominios, analítica real o
+autorización de publicación.
+
+**Decisión.** Mantener GitHub Free y cambiar `git5285/remainon-web` a privado.
+GitHub Actions conserva `Quality gate` en cada pull request, pero su aprobación se
+impone mediante el protocolo del proyecto en lugar de una regla remota de pago.
+
+Cada clon activa `.githooks/pre-push` mediante
+`git config core.hooksPath .githooks`. El hook bloquea todo push directo a `main`
+y ejecuta `npm run check:quality` antes de subir una rama. Las tareas solo pueden
+fusionar una PR cuando el check remoto del SHA actual esté verde y no pueden usar
+`--no-verify` para eludir el control.
+
+### Opciones consideradas
+
+| Opción | Evaluación |
+|---|---|
+| GitHub privado + guardas locales | Aceptada: coste cero, continuidad y riesgo proporcionado a un único colaborador |
+| GitHub Pro | Aplazada: recupera enforcement remoto sin migración, pero añade coste recurrente |
+| GitLab Free privado | Aplazada: permite enforcement remoto gratis, pero obliga a migrar CI, PRs y automatización |
+| Mantener GitHub público | Rechazada: prolonga exposición estratégica sin aportar valor de publicación |
+
+**Consecuencias.**
+
+- (+) Nuevas consultas del código y los documentos requieren autorización.
+- (+) Se conservan el historial, las PRs, GitHub Actions y la integración actual.
+- (+) El gate local reduce consumo remoto y evita subir ramas no verificadas.
+- (−) El propietario todavía puede desactivar el hook o fusionar una PR fallida;
+  el protocolo es una barrera operativa, no enforcement del servidor.
+- (−) Hacer privado el repositorio no revoca clones o copias obtenidos mientras
+  fue público.
+- (→) Al incorporar otro colaborador con permisos de escritura se reabre esta ADR
+  para adoptar GitHub Pro o migrar a un forge con protección privada gratuita.
+
+Esta decisión no habilita Vercel, previews, producción, indexación ni analítica.
