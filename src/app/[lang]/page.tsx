@@ -13,21 +13,20 @@ import { brand, getBrandTranslation } from "@/lib/brand";
 import { getHomepage, getHomepageJsonLd } from "@/lib/homepage";
 import {
   getLanguageLinks,
-  getLocalizedPaths,
   getPath,
   isLocale,
   openGraphLocales,
+  type Locale,
 } from "@/lib/i18n";
+import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
 
 type HomePageProps = { params: Promise<{ lang: string }> };
 
-export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLocale(lang)) return {};
+export function getHomeMetadata(lang: Locale, domain = brand.dominio): Metadata {
   const homepage = getHomepage(lang);
   const title = brand.nombre ? `${brand.nombre} — ${homepage.claim}` : homepage.claim;
-  const images = brand.dominio ? [{
-    url: homepage.heroImage.src,
+  const images = domain ? [{
+    url: absoluteSiteUrl(domain, homepage.heroImage.src),
     width: homepage.heroImage.width,
     height: homepage.heroImage.height,
     alt: homepage.dictionary.meta.heroImageAlt,
@@ -35,17 +34,14 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
   return {
     title,
     description: homepage.dictionary.meta.homeDescription,
-    alternates: brand.dominio ? {
-      canonical: getPath(lang, "home"),
-      languages: getLocalizedPaths("home"),
-    } : undefined,
+    alternates: getLocalizedAlternates(domain, lang, "home"),
     openGraph: {
       title,
       description: homepage.dictionary.meta.homeDescription,
       type: "website",
       locale: openGraphLocales[lang],
       siteName: brand.nombre ?? getBrandTranslation(lang).claim,
-      url: brand.dominio ? getPath(lang, "home") : undefined,
+      url: domain ? absoluteSiteUrl(domain, getPath(lang, "home")) : undefined,
       images,
     },
     twitter: {
@@ -55,6 +51,11 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
       images: images.map(({ url }) => url),
     },
   };
+}
+
+export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
+  const { lang } = await params;
+  return isLocale(lang) ? getHomeMetadata(lang) : {};
 }
 
 export default async function HomePage({ params }: HomePageProps) {
