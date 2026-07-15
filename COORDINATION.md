@@ -1,15 +1,14 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 00:43 Europe/Madrid.
+Actualizado: 2026-07-16 01:09 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-| Tarea | Alcance exclusivo | Estado |
-|---|---|---|
-| Dominio y correo Obraxen (`4b65f9d3...`) | DNS/correo y reconciliación del gate 6.7.2 | Infraestructura verificada; integración en validación |
+No hay tareas editoras activas. La claim `4b65f9d3...` queda liberada tras la
+entrega de la Fase 6.7.2 en la PR `#16`.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -116,6 +115,12 @@ cambios staged sin propietario.
   incidencias y permanece `NO-GO`. El SHA `322e1fe` corrige además contraste del
   logo de pie y reflow Linux a 320 px; el run `29454371281` está verde y la claim
   `c484b245...` queda liberada sin despliegue.
+- Dominio y correo 6.7.2 entregados mediante la PR `#16`, con implementación en
+  `db77afa` y corrección de reflow Linux en `103266c`: `obraxen.com`,
+  `info@obraxen.com` y `privacy@obraxen.com` quedan acreditados; MX, SPF, DKIM
+  y DMARC están operativos. El gate baja de 37 a 35 incidencias y permanece
+  `NO-GO`. El run `29457427094` está verde, la preview fue omitida y la claim
+  `4b65f9d3...` queda liberada sin despliegue.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
