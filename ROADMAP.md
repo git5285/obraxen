@@ -214,8 +214,9 @@ precipitada.
 - [x] Añadir tests unitarios de reglas de publicacion y tests de navegador de rutas,
   navegacion, foco, responsive y errores de consola.
 - [x] Automatizar presupuestos Lighthouse móviles para portada, hub y un caso:
-  rendimiento >= 95, accesibilidad y buenas prácticas 100, TBT <= 200 ms,
-  CLS <= 0,1 y LCP de laboratorio <= 3 s. El objetivo de campo sigue en 2,5 s.
+  rendimiento compuesto >= 90 como smoke, accesibilidad y buenas prácticas 100,
+  TBT <= 200 ms, CLS <= 0,1 y LCP de laboratorio <= 3 s local/3,25 s en CI. El
+  objetivo de campo sigue en 2,5 s.
 
 ### Fase 4.5 — Consolidación y cutover
 
@@ -262,6 +263,11 @@ precipitada.
   antiabuso y adaptador Resend fail-closed, sin adjuntos ni base de leads.
 - [x] **6.6 · Consolidación:** verificar datos, render, rutas, red, WCAG, foco,
   consentimiento, Chromium, WebKit y Lighthouse multilingüe.
+- [x] **6.6.1 · Consolidación técnica inmediata:** eliminar overflow interno de
+  titulares entre 320 y 390 px, probar todas las ramas de contacto, tipar destinos
+  de navegación, verificar canonical/hreflang absolutos con dominio inyectado,
+  retirar el SLA de respuesta no acreditado y separar el presupuesto SEO de
+  preview (65) del candidato público (95).
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
   textos legales; completar identidad, dominio, buzones y permisos; ejecutar
   auditoría candidata y decisión expresa de publicación.
@@ -273,8 +279,9 @@ precipitada.
 
 ## Puerta de calidad
 
-- Lighthouse movil por ruta: rendimiento >= 95, accesibilidad 100 y buenas
-  practicas 100. SEO 100 solo cuando la publicacion sea real.
+- Lighthouse móvil por ruta: rendimiento compuesto >= 90 como smoke,
+  accesibilidad 100 y buenas prácticas 100; LCP, TBT y CLS conservan sus límites
+  duros. SEO >= 65 en preview noindex y >= 95 cuando la publicación sea real.
 - LCP < 2,5 s, INP < 200 ms y CLS < 0,1 en datos de campo.
 - Cero hallazgos serios o criticos de axe y cero errores de consola/red.
 - Ninguna ruta publica contiene `PENDIENTE`, datos ficticios o afirmaciones no

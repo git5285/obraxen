@@ -10,6 +10,7 @@ import {
   localizePath,
   routeSegments,
 } from "@/lib/i18n";
+import { getLocalizedAlternates } from "@/lib/metadata";
 
 const requiredRouteFiles = [
   "src/app/[lang]/layout.tsx",
@@ -49,6 +50,20 @@ describe("localized foundation routes", () => {
     });
     expect(localizePath("/de/projekte/blitz-bremen/", "fr"))
       .toBe("/fr/projets/blitz-bremen/");
+  });
+
+  it("builds absolute canonical and hreflang URLs when a candidate domain exists", () => {
+    expect(getLocalizedAlternates("example.com", "de", "projects", "blitz-bremen"))
+      .toEqual({
+        canonical: "https://example.com/de/projekte/blitz-bremen/",
+        languages: {
+          en: "https://example.com/en/projects/blitz-bremen/",
+          de: "https://example.com/de/projekte/blitz-bremen/",
+          es: "https://example.com/es/proyectos/blitz-bremen/",
+          fr: "https://example.com/fr/projets/blitz-bremen/",
+          "x-default": "https://example.com/en/projects/blitz-bremen/",
+        },
+      });
   });
 
   it("serves a closed robots and sitemap policy before publication", () => {

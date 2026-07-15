@@ -30,13 +30,19 @@ salida.
 2. Configurar el entorno Vercel `preview` con autenticación comprobada.
 3. Incorporar secretos solo en Vercel/GitHub: IDs de proyecto, token, dominio de
    envío, `RESEND_API_KEY`, buzones y, si se aprueban, IDs analíticos.
-4. Mantener producción y dominios desconectados.
-5. Activar temporalmente `ENABLE_VERCEL_PREVIEWS=true` solo con autorización.
-6. Dejar que el job `Gated Vercel preview` construya el SHA exacto tras el gate.
-7. Registrar URL, SHA, expiración/acceso y responsable en el handoff.
+4. Generar un build nuevo después de fijar esas variables. Las páginas se
+   prerenderizan: cambiar una variable en Vercel no modifica un artefacto ya
+   construido ni una URL candidata existente.
+5. Mantener producción y dominios desconectados.
+6. Activar temporalmente `ENABLE_VERCEL_PREVIEWS=true` solo con autorización.
+7. Dejar que el job `Gated Vercel preview` construya el SHA exacto tras el gate.
+8. Registrar URL, SHA, conjunto/versionado de variables, expiración/acceso y
+   responsable en el handoff.
 
 No se comparte una URL hasta verificar que exige autenticación. `noindex` no se
-considera un control de acceso.
+considera un control de acceso. Cualquier cambio posterior de variable que afecte
+identidad, dominio, metadata, formulario, consentimiento o analítica invalida la
+auditoría candidata: exige rebuild/redeploy del mismo SHA y repetir el apartado 3.
 
 ## 3. Auditoría candidata
 

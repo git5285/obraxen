@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import HomePage, { generateMetadata } from "@/app/[lang]/page";
+import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
 import { projects } from "@/lib/projects";
@@ -47,5 +47,14 @@ describe("localized Next.js homepage", () => {
     expect(metadata.openGraph && "images" in metadata.openGraph
       ? metadata.openGraph.images
       : undefined).toEqual([]);
+  });
+
+  it.each(locales)("provides absolute %s candidate metadata with an injected domain", (locale) => {
+    const metadata = getHomeMetadata(locale, "example.com");
+    expect(metadata.alternates).toMatchObject({
+      canonical: `https://example.com/${locale}/`,
+      languages: { "x-default": "https://example.com/en/" },
+    });
+    expect(metadata.openGraph).toMatchObject({ url: `https://example.com/${locale}/` });
   });
 });
