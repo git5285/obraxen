@@ -49,6 +49,7 @@ export const brandSchema = z.object({
     "El dominio no es válido",
   ),
   email: z.union([z.email(), z.null()]),
+  emailPrivacidad: z.union([z.email(), z.null()]),
   telefono: contactNumber,
   whatsapp: contactNumber,
   direccion: nullableText,

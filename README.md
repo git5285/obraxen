@@ -5,15 +5,17 @@ Components. El build genera 52 páginas en inglés, alemán, español y francés
 cuatro portadas, hubs, 24 fichas de proyecto, rutas legales y contacto. Navegación,
 consentimiento y formulario son las únicas interacciones cliente propias.
 
-La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
-con los despliegues Git de Vercel desactivados. El repositorio es privado y esa
-privacidad tampoco autoriza publicar o desplegar el sitio.
+La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` y el correo
+configurados pero sin DNS web, formulario ni despliegues Git de Vercel. El
+repositorio es privado y esa privacidad tampoco autoriza publicar o desplegar el
+sitio.
 
 > **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
 > `data/brand.json`. “RemainOn” queda solo como referencia interna heredada de la
-> carpeta. La empresa todavía no está constituida; razón social, CIF, dominio,
-> domicilio y canales de contacto permanecen en `null` hasta existir y poderse
-> verificar. La selección no sustituye comprobaciones registrales o marcarias.
+> carpeta. `obraxen.com`, `info@obraxen.com` y `privacy@obraxen.com` están
+> verificados e integrados. La empresa todavía no está constituida; razón social,
+> CIF, domicilio y teléfono permanecen en `null`. La selección no sustituye
+> comprobaciones registrales o marcarias.
 
 ## Arquitectura
 
@@ -135,13 +137,14 @@ las etiquetas ya estaban ejecutándose.
 ADR-010 fija inglés como entrada y prefijo para todos los idiomas. Los segmentos
 de proyectos, legal y contacto se localizan; los slugs de casos permanecen
 estables. El selector conserva la página equivalente. Canonical, `hreflang`,
-`x-default` y sitemap público esperan al dominio y a la apertura formal.
+`x-default` ya se resuelven contra `obraxen.com`; el sitemap público espera a la
+apertura formal.
 
 ADR-011 selecciona Resend como adaptador inicial sin base de leads ni adjuntos.
 El endpoint valida origen, tamaño, campos, honeypot, tiempo y rate limit efímero;
-no registra contenido personal. La UI queda desactivada hasta reunir identidad,
-dominio, buzón coincidente, textos legales, DPA/proveedor aprobado y variables
-reales. Las traducciones actuales también requieren revisor profesional y fecha
+no registra contenido personal. La UI queda desactivada hasta reunir identidad
+legal, textos legales, DPA/proveedor aprobado y variables reales; dominio y buzón
+coincidente ya están preparados. Las traducciones actuales también requieren revisor profesional y fecha
 por cada idioma antes de publicar.
 
 ## Datos y puerta de publicación
@@ -151,7 +154,7 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 
 - nombre comercial distinto del identificador temporal;
 - sociedad constituida, razón social, CIF y domicilio validado;
-- dominio, email y teléfono o WhatsApp reales;
+- dominio, email público, email de privacidad y teléfono o WhatsApp reales;
 - aviso legal, privacidad y cookies revisados profesionalmente;
 - traducciones en/de/es/fr con revisor y fecha de aprobación;
 - proveedor de captación, DPA y tratamiento aprobados;
@@ -162,9 +165,9 @@ La situación actual de los seis casos es `confirmada_internamente`: existe una
 declaración del equipo para identificar al cliente, pero falta soporte documental,
 alcance para fotografías y revisión legal. Esto mantiene la publicación cerrada.
 
-Canonical, URLs e imágenes sociales absolutas solo aparecen cuando existe un
-dominio real. El sitemap permanece vacío hasta que toda la puerta pública se
-complete.
+Canonical, URLs e imágenes sociales absolutas ya se generan contra el dominio
+real en los artefactos locales. El sitemap permanece vacío hasta que toda la
+puerta pública se complete.
 
 ## Repositorio privado
 
@@ -195,6 +198,6 @@ tareas; no son contenido público del sitio.
 ## Próximo hito
 
 Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: revisión profesional
-de en/de/es/fr, identidad y sociedad, permisos, legal, DPA/proveedor, dominio y
-buzones; después se audita una URL candidata y se decide expresamente si publicar.
+de en/de/es/fr, identidad y sociedad, teléfono, permisos, legal y DPA/proveedor;
+después se audita una URL candidata y se decide expresamente si publicar.
 Indexación, analítica real, formulario y despliegue continúan bloqueados.

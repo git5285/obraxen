@@ -249,7 +249,7 @@ export const en: Dictionary = {
       description: "Legal information about the operator of this website.",
       intro: "This working draft has been prepared to complete the information required from the operator of a business website established in Spain. It must be reviewed once the company exists and before publication is enabled.",
       alertTitle: "Essential information still required",
-      alertText: "The company identity, validated address, tax number, email address, domain and, where applicable, registration details are missing. This draft does not authorise publication.",
+      alertText: "The company's legal identity, validated address, tax number and, where applicable, registration details are missing. This draft does not authorise publication.",
       relatedRoute: "privacy",
       relatedLabel: "Privacy policy",
       sections: [
