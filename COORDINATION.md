@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 20:36 Europe/Madrid.
+Actualizado: 2026-07-15 20:47 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,7 +10,6 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
-| Fase 6.7 (`f3ad2075...`) | Puerta ejecutable, expediente de activación y NO-GO verificable | En curso; sin publicación |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -100,11 +99,15 @@ cambios staged sin propietario.
   El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
   intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
   liberada sin despliegue. El run Linux de la PR `29439664817` está verde.
-- Fase 6.7 inicia con una puerta reproducible: `npm run check:activation` deriva
+- Preparación técnica 6.7.0 entregada mediante la PR `#14`, commit de
+  implementación `09b6ab2`: `npm run check:activation` deriva
   38 incidencias reales de identidad/contacto (8), legal/proveedor (2), revisión
   lingüística (4) y permisos de seis casos (24). `ACTIVATION_GATE.md` define el
   expediente exacto, la diligencia pública de Resend y el rollback; el resultado
-  permanece `NO-GO` y no autoriza candidata, contrato ni publicación.
+  permanece `NO-GO` y no autoriza candidata, contrato ni publicación. El gate
+  local completo y el run Linux de PR `29441551157` están verdes, incluido
+  WebKit y Lighthouse; la preview fue omitida y la claim `f3ad2075...` queda
+  liberada.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
