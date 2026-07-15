@@ -1,0 +1,18 @@
+{
+  "description": "Deterministic least-authority guardrail for RemainOn custom agents.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .codex/hooks/pre-tool-policy.mjs",
+            "timeout": 5,
+            "statusMessage": "Comprobando la política de autonomía"
+          }
+        ]
+      }
+    ]
+  }
+}

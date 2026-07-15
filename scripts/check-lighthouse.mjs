@@ -9,7 +9,11 @@ const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const outputDirectory = path.join(root, ".lighthouseci");
 const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
-const baseUrl = "http://127.0.0.1:3000";
+const requestedPort = Number(process.env.QA_PORT ?? "3000");
+if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65_535) {
+  throw new Error("QA_PORT must be an integer between 1 and 65535");
+}
+const baseUrl = `http://127.0.0.1:${requestedPort}`;
 const routes = [
   { name: "home-en", path: "/en/" },
   { name: "projects-de", path: "/de/projekte/" },
@@ -189,7 +193,7 @@ await fs.mkdir(outputDirectory, { recursive: true });
 
 const server = spawn(
   process.execPath,
-  [nextCli, "start", "--hostname", "127.0.0.1", "--port", "3000"],
+  [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(requestedPort)],
   { cwd: root, env: process.env, stdio: ["ignore", "pipe", "pipe"] },
 );
 const serverExit = new Promise((resolve) => server.once("exit", resolve));
