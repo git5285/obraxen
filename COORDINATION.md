@@ -85,12 +85,13 @@ cambios staged sin propietario.
   por CI en PR, hook local y gobernanza obligatoria. El run posterior de `main`
   `29421963694` está verde, la preview fue omitida y la claim `5fd4304a...` queda
   liberada.
-- Fases 6.1–6.6 completadas en `codex/phase-6-eu-i18n`, commit `21f525f`:
+- Fases 6.1–6.6 integradas mediante la PR `#12`; `main` queda en el merge
+  `b79c695`. La implementación nació en `codex/phase-6-eu-i18n`, commit `21f525f`:
   52 páginas en/de/es/fr, rutas equivalentes, datos localizados, contacto Resend
   fail-closed, revisión profesional como gate, ADR-010/011 y runbook NO-GO. El
   gate local pasa con 75 unitarias, 87 Playwright correctas, 6 omisiones
   intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
-  liberada sin despliegue.
+  liberada sin despliegue. El run posterior de `main` `29431531128` está verde.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 

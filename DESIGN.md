@@ -1,6 +1,6 @@
 # Sistema de diseño
 
-Estado verificado: 14 de julio de 2026. Este documento describe el sistema que
+Estado verificado: 15 de julio de 2026. Este documento describe el sistema que
 existe hoy; no convierte aspiraciones antiguas en reglas. Los valores canónicos
 viven en [`css/tokens.css`](css/tokens.css) y los estilos se separan por ruta.
 
@@ -63,7 +63,8 @@ referencias de intención, no requisitos de parecido.
 - Los casos cambian en 760 px y los legales en 620 px.
 - Un breakpoint nuevo necesita una necesidad de composición verificable; no se
   añade para corregir un único texto o dispositivo.
-- No se admite overflow horizontal en 390 px ni en escritorio.
+- No se admite overflow horizontal desde 320 px ni en escritorio. Los titulares
+  multilingües usan reflow seguro y se prueban a 320, 360, 375 y 390 px.
 
 ### Motion
 
@@ -105,20 +106,19 @@ rg -n 'prefers-reduced-motion' css src
 npm run check
 ```
 
-La comprobación visual se realiza como mínimo a 390 px y 1.440 px, con teclado,
-consola y red abiertas. Los objetivos medidos y el historial de rendimiento
-viven en [`TECHNICAL_AUDIT.md`](TECHNICAL_AUDIT.md), no se duplican aquí.
+La comprobación visual se realiza como mínimo a 320, 360, 375, 390 y 1.440 px,
+con teclado, consola y red abiertas. Los objetivos medidos y el historial de
+rendimiento viven en [`TECHNICAL_AUDIT.md`](TECHNICAL_AUDIT.md), no se duplican
+aquí.
 
-## Migración a Next.js
+## Implementación Next.js
 
-Las Fases 1 y 2 trasladaron tokens, portada e imagenes a Next.js sin rediseñar la
-web. Para evitar deriva durante la convivencia, `src/app/globals.css` importa el
-`css/home.css` canonico y solo añade adaptadores sin estilos inline. La portada se
-divide en Server Components y la navegacion es la unica isla cliente.
+Next.js es la única implementación. `src/app/globals.css` importa las hojas
+canónicas de `css/`, la portada se divide en Server Components y la navegación es
+su única isla cliente. No existe una plantilla estática ni un generador heredado
+con el que mantener paridad.
 
-La comparacion Chromium confirma exactamente 13.701 px de alto a 390x844 y 8.117
-px a 1440x1000 tanto en la referencia como en Next, sin overflow. La base estatica
-seguira siendo la salida principal hasta que las rutas restantes alcancen paridad.
-Los CSS Modules se introduciran por composicion cuando una ruta deje de necesitar
-compartir su hoja con el generador heredado; no se duplican ahora 371 lineas para
+Playwright verifica el reflow de titulares multilingües a 320, 360, 375 y 390 px,
+además de la matriz de rutas a 390 y 1.440 px. Los CSS Modules solo se introducirán
+cuando aporten aislamiento real a una composición; no se duplican estilos para
 cumplir una preferencia de estructura.

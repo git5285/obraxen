@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import SectionPage, {
   generateMetadata as generateSectionMetadata,
   generateStaticParams as generateSectionParams,
+  getSectionMetadata,
 } from "@/app/[lang]/[section]/page";
 import ProjectPage, {
   generateMetadata as generateProjectMetadata,
@@ -13,6 +14,7 @@ import ProjectPage, {
 import { brand } from "@/lib/brand";
 import { getDictionary, locales, routeSegments } from "@/lib/i18n";
 import { projects } from "@/lib/projects";
+import { getProjectMetadata, getProjectsMetadata } from "@/lib/project-pages";
 import { publicableOffers } from "@/lib/solutions";
 
 describe("localized project routes", () => {
@@ -66,6 +68,34 @@ describe("localized project routes", () => {
       return metadata.title;
     }));
     expect(new Set(titles).size).toBe(projects.length);
+  });
+
+  it.each(locales)("provides absolute %s project metadata for a candidate domain", (locale) => {
+    const hubMetadata = getProjectsMetadata(locale, "example.com");
+    expect(hubMetadata.alternates).toMatchObject({
+      canonical: `https://example.com/${locale}/${routeSegments[locale].projects}/`,
+      languages: { "x-default": "https://example.com/en/projects/" },
+    });
+
+    const projectMetadata = getProjectMetadata(projects[0], locale, "example.com");
+    expect(projectMetadata.alternates).toMatchObject({
+      canonical: `https://example.com/${locale}/${routeSegments[locale].projects}/${projects[0].slug}/`,
+      languages: {
+        "x-default": `https://example.com/en/projects/${projects[0].slug}/`,
+      },
+    });
+  });
+
+  it.each(locales)("provides absolute %s legal and contact metadata for a candidate domain", (locale) => {
+    for (const route of ["legalNotice", "privacy", "cookies", "contact"] as const) {
+      const metadata = getSectionMetadata(locale, route, "example.com");
+      expect(metadata.alternates).toMatchObject({
+        canonical: `https://example.com/${locale}/${routeSegments[locale][route]}/`,
+        languages: {
+          "x-default": `https://example.com/en/${routeSegments.en[route]}/`,
+        },
+      });
+    }
   });
 });
 

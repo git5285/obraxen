@@ -25,7 +25,7 @@ export const de: Dictionary = {
     items: [
       { label: "Ablauf", section: "process" },
       { label: "Leistungen", section: "services" },
-      { label: "Projekte" },
+      { label: "Projekte", route: "projects" },
       { label: "Unternehmen", section: "company" },
       { label: "FAQ", section: "faq" },
     ],
@@ -182,7 +182,7 @@ export const de: Dictionary = {
     fallbackCopyright: "Reparatur und technische Behandlung von Industrieböden.",
     rights: "Alle Rechte vorbehalten.",
     industrialRepair: "Reparatur von Industrieböden in {area}.",
-    primaryMarkets: "Hauptmärkte: {markets}.",
+    primaryMarkets: "Schwerpunkte liegen in {markets}.",
     legalName: "Firmierung:",
     taxId: "Steuernummer:",
     address: "Anschrift:",
