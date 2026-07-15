@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { brand } from "@/lib/brand";
 import { offers } from "@/lib/offers";
 import { projects, projectsBySlug } from "@/lib/projects";
 import { locales } from "@/lib/i18n";
@@ -57,5 +58,9 @@ describe("structured data", () => {
 
     expect(unknownDates).toEqual([null, null, null]);
     expect(JSON.stringify(projects)).not.toContain("pendiente de confirmar");
+  });
+
+  it("does not publish an unverified initial-response SLA", () => {
+    expect(brand.respuestaHoras).toBeNull();
   });
 });

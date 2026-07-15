@@ -3,11 +3,11 @@ import { brand, getBrandTranslation } from "./brand";
 import { getProjectImage, naturalList } from "./homepage";
 import {
   getDictionary,
-  getLocalizedPaths,
   getPath,
   openGraphLocales,
   type Locale,
 } from "./i18n";
+import { absoluteSiteUrl, getLocalizedAlternates } from "./metadata";
 import { projects } from "./projects";
 import type { Project } from "./schemas";
 
@@ -26,44 +26,35 @@ function shorten(value: string, max = 158): string {
   return `${text.slice(0, max - 1).replace(/\s+\S*$/, "")}…`;
 }
 
-function metadataImage(project: Project, locale: Locale) {
-  const origin = siteOrigin();
-  if (!origin) return [];
+function metadataImage(project: Project, locale: Locale, domain: string | null) {
+  if (!domain) return [];
   const image = getProjectImage(project.imagenes[0].src);
   return [{
-    url: new URL(image.src, origin).toString(),
+    url: absoluteSiteUrl(domain, image.src),
     width: image.width,
     height: image.height,
     alt: project.traducciones[locale].imagenes[0]?.alt ?? project.cliente,
   }];
 }
 
-function alternates(route: "projects", locale: Locale, slug?: string) {
-  if (!brand.dominio) return undefined;
-  return {
-    canonical: getPath(locale, route, slug),
-    languages: getLocalizedPaths(route, slug),
-  };
-}
-
-export function getProjectsMetadata(locale: Locale): Metadata {
+export function getProjectsMetadata(locale: Locale, domain = brand.dominio): Metadata {
   const dictionary = getDictionary(locale);
   const claim = getBrandTranslation(locale).claim;
   const title = `${dictionary.meta.projectsTitle} — ${claim}`;
   const description = dictionary.meta.projectsDescription;
-  const images = projects.length ? metadataImage(projects[0], locale) : [];
+  const images = projects.length ? metadataImage(projects[0], locale, domain) : [];
 
   return {
     title,
     description,
-    alternates: alternates("projects", locale),
+    alternates: getLocalizedAlternates(domain, locale, "projects"),
     openGraph: {
       title,
       description,
       type: "website",
       locale: openGraphLocales[locale],
       siteName: brand.nombre ?? claim,
-      url: brand.dominio ? getPath(locale, "projects") : undefined,
+      url: domain ? absoluteSiteUrl(domain, getPath(locale, "projects")) : undefined,
       images,
     },
     twitter: {
@@ -75,25 +66,29 @@ export function getProjectsMetadata(locale: Locale): Metadata {
   };
 }
 
-export function getProjectMetadata(project: Project, locale: Locale): Metadata {
+export function getProjectMetadata(
+  project: Project,
+  locale: Locale,
+  domain = brand.dominio,
+): Metadata {
   const dictionary = getDictionary(locale);
   const translation = project.traducciones[locale];
   const title = `${translation.titulo} — ${dictionary.meta.projectTitleSuffix}`;
   const description = shorten(`${translation.problema} ${translation.solucion}`);
   const path = getPath(locale, "projects", project.slug);
-  const images = metadataImage(project, locale);
+  const images = metadataImage(project, locale, domain);
 
   return {
     title,
     description,
-    alternates: alternates("projects", locale, project.slug),
+    alternates: getLocalizedAlternates(domain, locale, "projects", project.slug),
     openGraph: {
       title,
       description,
       type: "article",
       locale: openGraphLocales[locale],
       siteName: brand.nombre ?? getBrandTranslation(locale).claim,
-      url: brand.dominio ? path : undefined,
+      url: domain ? absoluteSiteUrl(domain, path) : undefined,
       images,
     },
     twitter: {

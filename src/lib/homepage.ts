@@ -82,12 +82,10 @@ export function getHomepage(locale: Locale) {
   const dictionary = getDictionary(locale);
   const brandCopy = getBrandTranslation(locale);
   const hasContactChannel = Boolean(brand.email || brand.telefono || brand.whatsapp);
-  const navigationItems: readonly NavigationItem[] = dictionary.navigation.items.map(
-    (item, index) => ({
-      label: item.label,
-      ...(item.section ? { href: `#${item.section}`, section: item.section } : {}),
-      ...(!item.section && index === 2 ? { href: getPath(locale, "projects") } : {}),
-    } as NavigationItem),
+  const navigationItems: readonly NavigationItem[] = dictionary.navigation.items.map((item) =>
+    item.section
+      ? { label: item.label, href: `#${item.section}`, section: item.section }
+      : { label: item.label, href: getPath(locale, item.route) },
   );
   const cta = {
     href: hasContactChannel

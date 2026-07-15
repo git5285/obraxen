@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { chromium } from "@playwright/test";
+import { getLighthouseBudgets } from "./lighthouse-budgets.ts";
 
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
@@ -15,19 +16,13 @@ const routes = [
   { name: "case-blitz-fr", path: "/fr/projets/blitz-bremen/" },
 ];
 
-const budgets = {
-  // El score compuesto varía con la carga del runner. Se conserva como smoke
-  // test y los límites duros de LCP, TBT y CLS siguen siendo la puerta real.
-  performance: 0.9,
-  accessibility: 1,
-  "best-practices": 1,
-  seo: 0.65,
-  // El objetivo de campo sigue siendo 2,5 s. Local conserva 3 s; el runner CI
-  // admite 250 ms más porque su mediana incluye variación de infraestructura.
-  lcp: process.env.CI === "true" ? 3_250 : 3_000,
-  tbt: 200,
-  cls: 0.1,
-};
+const brandSource = JSON.parse(
+  await fs.readFile(path.join(root, "data", "brand.json"), "utf8"),
+);
+const budgets = getLighthouseBudgets({
+  isPublic: brandSource.publicar === true,
+  isCi: process.env.CI === "true",
+});
 
 async function resolveChromePath() {
   const candidates = [
