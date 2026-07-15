@@ -1,13 +1,14 @@
 # Arquitectura del sitio
 
-Estado documentado: 14 de julio de 2026. La web continúa en preview
+Estado documentado: 15 de julio de 2026. La web continúa en preview
 `noindex,nofollow`; naming, sociedad, dominio, contacto y publicación continúan
 sin integrar. La investigación de nombres no modifica rutas ni identidad hasta
 que exista una selección expresa.
 
 Next.js App Router es la única implementación desde la Fase 4.5. Todas las rutas
-actuales se prerenderizan; los borradores legales ya no dependen de plantillas
-legacy y el sitemap permanece vacío mientras la publicación esté bloqueada.
+actuales se prerenderizan en inglés, alemán, español y francés; los borradores
+legales ya no dependen de plantillas legacy y el sitemap permanece vacío mientras
+la publicación esté bloqueada.
 
 Este documento distingue la estructura que ya existe de la arquitectura futura.
 Una ruta planificada no se construye ni se publica hasta superar su puerta de
@@ -22,30 +23,45 @@ La web debe acompañar la decisión del comprador mediante este recorrido:
 La estructura será plana: las páginas principales estarán a un clic del inicio y
 los detalles a un segundo nivel. Las seis rutas de proyecto actuales se conservan.
 
-## 2. Estructura actual
+## 2. Estructura actual multilingüe
 
 ```text
-Portada (/)
-├── Proceso (/#proceso)
-├── Servicios (/#servicios)
-├── Proyectos (/proyectos/)
-│   ├── Delticom Hannover (/proyectos/delticom-hannover/)
-│   ├── TP-Link Düsseldorf (/proyectos/tp-link-dusseldorf/)
-│   ├── dadada Euskirchen (/proyectos/dadada-euskirchen/)
-│   ├── L’Oréal Gauchy (/proyectos/loreal-gauchy/)
-│   ├── Blitz Bremen (/proyectos/blitz-bremen/)
-│   └── Hologram París (/proyectos/hologram-paris/)
-├── Empresa (/#empresa)
-├── FAQ (/#faq)
-├── Aviso legal (/aviso-legal/)
-├── Privacidad (/privacidad/)
-└── Cookies y almacenamiento (/cookies/)
+Raíz (/) → 308 /en/
+├── English (/en/)
+│   ├── Projects (/en/projects/) → 6 casos
+│   ├── Legal notice (/en/legal-notice/)
+│   ├── Privacy (/en/privacy/)
+│   ├── Cookies (/en/cookies/)
+│   └── Contact (/en/contact/) [cerrado]
+├── Deutsch (/de/)
+│   ├── Projekte (/de/projekte/) → 6 casos
+│   ├── Impressum (/de/impressum/)
+│   ├── Datenschutz (/de/datenschutz/)
+│   ├── Cookies (/de/cookies/)
+│   └── Kontakt (/de/kontakt/) [cerrado]
+├── Español (/es/)
+│   ├── Proyectos (/es/proyectos/) → 6 casos
+│   ├── Aviso legal (/es/aviso-legal/)
+│   ├── Privacidad (/es/privacidad/)
+│   ├── Cookies (/es/cookies/)
+│   └── Contacto (/es/contacto/) [cerrado]
+└── Français (/fr/)
+    ├── Projets (/fr/projets/) → 6 casos
+    ├── Mentions légales (/fr/mentions-legales/)
+    ├── Confidentialité (/fr/confidentialite/)
+    ├── Cookies (/fr/cookies/)
+    └── Contact (/fr/contact/) [cerrado]
 ```
 
-Los seis casos reciben enlace desde la portada y el hub. Cada ficha vuelve al
-archivo y mantiene navegación anterior/siguiente; no existen páginas huérfanas.
+Los seis casos reciben enlace desde cada portada y hub con el mismo slug estable.
+Cada ficha vuelve al archivo, mantiene navegación anterior/siguiente y ofrece el
+equivalente exacto en los otros tres idiomas; no existen páginas huérfanas.
 
 ## 3. Arquitectura objetivo
+
+El árbol siguiente expresa nombres españoles para describir la taxonomía. Cada
+ruta que llegue a publicarse deberá vivir bajo su prefijo y tener equivalente
+editorial completo en los otros tres idiomas; no se abrirán subárboles parciales.
 
 ```text
 Inicio (/)
@@ -120,34 +136,35 @@ graph TD
 
 | Página | URL | Acceso objetivo | Prioridad | Estado |
 |---|---|---|---|---|
-| Inicio | `/` | Cabecera | Alta | Existe |
-| Hub de proyectos | `/proyectos/` | Cabecera y CTA de preview | Alta | Migrado a Next con paridad; seis expedientes |
-| Caso | `/proyectos/{slug}/` | Portada, hub y anterior/siguiente | Alta | Seis rutas Next prerenderizadas |
+| Inicio | `/{lang}/` | Cabecera | Alta | Cuatro rutas; `/` redirige a `/en/` |
+| Hub de proyectos | `/{lang}/{projects}/` | Cabecera y CTA de preview | Alta | Cuatro hubs; seis expedientes cada uno |
+| Caso | `/{lang}/{projects}/{slug}/` | Portada, hub y anterior/siguiente | Alta | 24 rutas SSG con slug estable |
 | Hub de soluciones | `/soluciones/` | Cabecera | Alta | Puerta preparada; ruta cerrada sin ofertas publicables |
 | Solución | `/soluciones/{slug}/` | Hub y enlaces de problema | Alta | Borrador interno |
 | Hub de problemas | `/problemas/` | Cabecera | Alta | Planificada |
 | Problema | `/problemas/{slug}/` | Hub y enlaces contextuales | Media | Condicionada por evidencia |
 | Método | `/metodo/` | Cabecera | Media | Planificada |
 | Empresa | `/empresa/` | Cabecera y pie | Media | Planificada; sin fundador ni historia inventada |
-| Contacto | `/contacto/` | CTA principal | Alta | Bloqueada hasta tener canal real |
+| Contacto | `/en/contact/`, `/de/kontakt/`, `/es/contacto/`, `/fr/contact/` | CTA principal | Alta | Ruta preparada; formulario fail-closed |
 | Logística | `/sectores/logistica/` | Contexto y pie | Media | Primera candidata; tres casos relacionados |
 | Industria y fabricación | `/sectores/industria-fabricacion/` | Contexto y pie | Media | Validar especificidad de dos casos |
 | Guías | `/guias/` | Contexto y pie | Baja | Fase posterior |
-| Aviso legal | `/aviso-legal/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
-| Privacidad | `/privacidad/` | Pie | Obligatoria | Ruta Next; borrador pendiente de revisión |
-| Cookies y almacenamiento | `/cookies/` | Pie y panel de privacidad | Obligatoria si se activa medición | Ruta Next; borrador técnico pendiente de revisión |
+| Aviso legal | Segmento localizado bajo `/{lang}/` | Pie | Obligatoria | Cuatro borradores pendientes de revisión profesional |
+| Privacidad | Segmento localizado bajo `/{lang}/` | Pie | Obligatoria | Cuatro borradores pendientes de revisión profesional |
+| Cookies y almacenamiento | `/{lang}/cookies/` | Pie y panel de privacidad | Obligatoria si se activa medición | Cuatro borradores técnicos pendientes de revisión |
 
-No se introducirán prefijos de idioma hasta cerrar la versión española y decidir
-la estrategia internacional. En ese momento deberá documentarse si la versión
-base permanece sin prefijo o migra a `/es/` con redirecciones.
+La estrategia internacional queda cerrada en ADR-010: los cuatro idiomas llevan
+prefijo y el inglés es la entrada inicial. Las rutas españolas legacy redirigen
+permanentemente a `/es/`; no se detecta idioma de forma obligatoria por navegador.
 
 ## 6. Navegación
 
 ### Navegación actual
 
-- Se conservan Proceso, Servicios, Empresa y FAQ como anclas de portada.
-- Proyectos y los CTA de preview llevan al hub `/proyectos/` porque no existe
-  un canal real de contacto.
+- Se conservan Proceso, Servicios, Empresa y FAQ como anclas internas estables.
+- Proyectos y los CTA de preview llevan al hub localizado porque no existe un
+  canal real de contacto.
+- El selector de idioma conserva inicio, hub, caso, legal o contacto equivalente.
 - El logotipo vuelve al inicio.
 
 ### Navegación objetivo
@@ -238,12 +255,17 @@ revisión legal y autorización expresa.
 6. ~~Implementar consentimiento básico, información de cookies y pruebas de red
    antes de cargar GA4 o Clarity.~~ Completado técnicamente en Fase 5; IDs reales,
    dominio y activación permanecen bloqueados.
-7. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
+7. ~~Definir inglés como entrada, prefijos en/de/es/fr, segmentos localizados,
+   selector equivalente y redirecciones legacy.~~ Completado en ADR-010.
+8. ~~Preparar contacto localizado y API fail-closed sin almacenamiento propio.~~
+   Completado técnicamente en ADR-011; activación externa bloqueada.
+9. Construir `/soluciones/` únicamente cuando existan ofertas que superen su
    condición de salida.
-8. Crear `/problemas/` y las primeras páginas respaldadas por casos.
-9. Separar Método y Empresa cuando sus contenidos estén cerrados.
-10. Añadir Logística como primer sector si supera la revisión específica.
-11. Activar Contacto, legal, SEO e indexación al completar la identidad.
+10. Crear `/problemas/` y las primeras páginas respaldadas por casos.
+11. Separar Método y Empresa cuando sus contenidos estén cerrados.
+12. Añadir Logística como primer sector si supera la revisión específica.
+13. Activar Contacto, legal, SEO e indexación al completar identidad, revisión
+   profesional de los cuatro idiomas, proveedor y permisos.
 
 ## 10. Reglas de crecimiento
 

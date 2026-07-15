@@ -1,6 +1,6 @@
 # Auditoría de contenidos
 
-Estado: 14 de julio de 2026. Alcance: portada, casos y reglas de publicación.
+Estado: 15 de julio de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
 Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 
 ## Objetivo de la página
@@ -24,6 +24,8 @@ Naming, constitución, dominio y canales de contacto quedan expresamente fuera.
 | Los resultados repetían «la obra fue ejecutada» | Redundancia | La ejecución queda en la ficha; el resultado combina la evidencia fotográfica con el cierre ahora confirmado por el equipo |
 | La oferta podía interpretarse como cuatro técnicas aisladas | No explica el valor de una rehabilitación completa | La página aclara que una intervención puede combinar preparación, reparación, nivelación y tratamiento según el diagnóstico |
 | Las técnicas no formaban ofertas comprensibles para el comprador | Dificulta saber qué se contrata y para qué | Se preparan cuatro ofertas internas con comprador, problema, alcance, límites, evidencia y condiciones de salida |
+| La internacionalización podía dejar interfaz o datos parcialmente traducidos | Mezcla idiomas y debilita confianza técnica | Diccionarios y esquemas exigen en/de/es/fr completos; la revisión profesional sigue bloqueando publicación |
+| Un formulario anticipado implicaba tratamiento sin responsable completo | Riesgo legal y pérdida de consultas | Contacto y API quedan preparados, pero cerrados hasta identidad, proveedor, buzón y legal aprobados |
 
 ## Afirmaciones publicables
 
@@ -150,8 +152,11 @@ Alternativas reservadas para una futura prueba:
 - Evitar «sin paradas», «para siempre», «antideslizante», «garantizado» y
   equivalentes sin método, alcance y evidencia específica.
 
-La voz de marca en otros idiomas se definirá al decidir mercados e idioma base;
-no se traducen literalmente giros comerciales antes de esa decisión.
+La voz se ha adaptado a inglés, alemán, español y francés con términos técnicos y
+CTA propios de cada idioma; no se reutiliza interfaz española por defecto. Estas
+versiones son borradores editoriales completos y deben pasar revisión profesional
+nativa o equivalente. `revisionTraducciones` conserva estado, revisor y fecha y
+la puerta pública exige las cuatro aprobaciones.
 
 ## Pendientes de evidencia
 
@@ -168,3 +173,5 @@ no se traducen literalmente giros comerciales antes de esa decisión.
 - Garantía propia, con duración, mantenimiento, exclusiones y soporte admisible.
 - Testimonios o citas autorizadas de clientes.
 - Identidad y datos del equipo fundador.
+- Revisión lingüística profesional completa de en/de/es/fr, incluida terminología
+  técnica, copy legal, alt text, magnitudes y coherencia de mercados.

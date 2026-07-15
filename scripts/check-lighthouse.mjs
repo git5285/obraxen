@@ -10,9 +10,9 @@ const outputDirectory = path.join(root, ".lighthouseci");
 const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
 const baseUrl = "http://127.0.0.1:3000";
 const routes = [
-  { name: "home", path: "/" },
-  { name: "projects", path: "/proyectos/" },
-  { name: "case-blitz", path: "/proyectos/blitz-bremen/" },
+  { name: "home-en", path: "/en/" },
+  { name: "projects-de", path: "/de/projekte/" },
+  { name: "case-blitz-fr", path: "/fr/projets/blitz-bremen/" },
 ];
 
 const budgets = {
@@ -26,6 +26,26 @@ const budgets = {
   tbt: 200,
   cls: 0.1,
 };
+
+async function resolveChromePath() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/usr/bin/google-chrome",
+    "/usr/bin/google-chrome-stable",
+    "/usr/bin/chromium",
+    chromium.executablePath(),
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    try {
+      await fs.access(candidate);
+      return candidate;
+    } catch {
+      // Prueba el siguiente Chrome disponible.
+    }
+  }
+  throw new Error("No se encontró un ejecutable de Chrome para Lighthouse");
+}
 
 function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -79,23 +99,31 @@ async function auditRoute(route) {
     commandArguments = ["--yes", "lighthouse@13.4.0", `${baseUrl}${route.path}`];
   }
 
-  await execFileAsync(
-    command,
-    [
-      ...commandArguments,
-      "--quiet",
-      "--chrome-flags=--headless --no-sandbox",
-      "--only-categories=performance,accessibility,best-practices,seo",
-      "--output=json",
-      `--output-path=${reportPath}`,
-    ],
-    {
-      cwd: root,
-      env: { ...process.env, CHROME_PATH: chromium.executablePath() },
-      maxBuffer: 20 * 1024 * 1024,
-      timeout: 120_000,
-    },
-  );
+  const lighthouseArguments = [
+    ...commandArguments,
+    "--quiet",
+    "--chrome-flags=--headless=new --no-sandbox --disable-gpu --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows",
+    "--only-categories=performance,accessibility,best-practices,seo",
+    "--output=json",
+    `--output-path=${reportPath}`,
+  ];
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await execFileAsync(command, lighthouseArguments, {
+        cwd: root,
+        env: { ...process.env, CHROME_PATH: await resolveChromePath() },
+        maxBuffer: 20 * 1024 * 1024,
+        timeout: 120_000,
+      });
+      break;
+    } catch (error) {
+      const diagnostic = `${error?.message ?? ""}\n${error?.stderr ?? ""}`;
+      const transient = /NO_FCP|PROTOCOL_TIMEOUT|Target closed|timed out/i.test(diagnostic);
+      if (!transient || attempt === 3) throw error;
+      console.warn(`${route.path} → Lighthouse no pintó en el intento ${attempt}; reintento controlado`);
+      await wait(1_000 * attempt);
+    }
+  }
 
   const report = JSON.parse(await fs.readFile(reportPath, "utf8"));
   const result = {
@@ -148,7 +176,7 @@ server.stderr.on("data", (chunk) => { serverOutput += chunk; });
 try {
   await waitForServer();
   for (const route of routes) await auditRoute(route);
-  console.log("Lighthouse OK → 3 rutas dentro de presupuesto");
+  console.log("Lighthouse OK → 3 rutas localizadas dentro de presupuesto");
 } catch (error) {
   if (serverOutput) console.error(serverOutput.trim());
   throw error;

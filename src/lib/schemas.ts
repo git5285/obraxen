@@ -8,10 +8,34 @@ const uniqueTextList = z.array(text).min(1).refine(
   "La lista no puede contener duplicados",
 );
 
+const siteLocales = ["en", "de", "es", "fr"] as const;
+
+function localized<T extends z.ZodType>(schema: T) {
+  return z.object({
+    en: schema,
+    de: schema,
+    es: schema,
+    fr: schema,
+  }).strict();
+}
+
 const contactNumber = nullableText.refine(
   (value) => value === null || value.replace(/\D/g, "").length >= 9,
   "El teléfono debe contener al menos nueve dígitos",
 );
+
+const editorialReview = z.object({
+  estado: z.enum(["pendiente", "aprobada"]),
+  revisor: nullableText,
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+}).strict().superRefine((review, context) => {
+  if (review.estado === "aprobada" && (!review.revisor || !review.fecha)) {
+    context.addIssue({
+      code: "custom",
+      message: "Una traducción aprobada necesita revisor y fecha",
+    });
+  }
+});
 
 export const brandSchema = z.object({
   nombreTemporalNoPublicable: nullableText,
@@ -20,7 +44,6 @@ export const brandSchema = z.object({
   cif: nullableText,
   empresaConstituida: z.boolean(),
   formaJuridicaPrevista: nullableText,
-  claim: text,
   dominio: nullableText.refine(
     (value) => value === null || /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(value),
     "El dominio no es válido",
@@ -34,14 +57,17 @@ export const brandSchema = z.object({
   experienciaAnios: z.number().int().positive().nullable(),
   respuestaHoras: z.number().int().positive().nullable(),
   equiposPropios: z.boolean(),
-  areasServicio: uniqueTextList,
-  mercadosPrioritarios: uniqueTextList,
-  horarioTexto: nullableText,
   horarioSchema: nullableText,
-  legalUrl: nullableText,
-  privacidadUrl: nullableText,
   legalRevisionAprobada: z.boolean(),
   formularioProveedor: nullableText,
+  formularioRevisionAprobada: z.boolean(),
+  revisionTraducciones: localized(editorialReview),
+  traducciones: localized(z.object({
+    claim: text,
+    areasServicio: uniqueTextList,
+    mercadosPrioritarios: uniqueTextList,
+    horarioTexto: nullableText,
+  }).strict()),
   publicar: z.boolean(),
 }).superRefine((brand, context) => {
   if (
@@ -58,11 +84,21 @@ export const brandSchema = z.object({
   }
 });
 
+const localizedImage = z.object({ alt: text, etapa: text }).strict();
+
 const projectTranslation = z.object({
   titulo: text,
   problema: text,
   solucion: text,
   resultado: text,
+  sector: text,
+  pais: text,
+  fechaEjecucion: nullableText,
+  duracionReal: nullableText,
+  maquinaria: z.array(text),
+  materiales: z.array(text),
+  magnitudes: z.array(text).min(1),
+  imagenes: z.array(localizedImage).min(3),
 }).strict();
 
 const projectPublicationAuthorizationSchema = z.object({
@@ -141,8 +177,18 @@ export const projectSchema = z.object({
     alt: text,
     etapa: text,
   }).strict()).min(3),
-  traducciones: z.object({ es: projectTranslation }).catchall(projectTranslation),
-}).strict();
+  traducciones: localized(projectTranslation),
+}).strict().superRefine((project, context) => {
+  for (const language of siteLocales) {
+    if (project.traducciones[language].imagenes.length !== project.imagenes.length) {
+      context.addIssue({
+        code: "custom",
+        path: ["traducciones", language, "imagenes"],
+        message: "Cada imagen necesita alt y etapa en todos los idiomas",
+      });
+    }
+  }
+});
 
 export const projectsSchema = z.array(projectSchema);
 
@@ -172,7 +218,7 @@ export const offerSchema = z.object({
   limites: uniqueTextList,
   evidencia: z.array(z.object({ proyecto: slug, acredita: text }).strict()),
   condicionesSalida: uniqueTextList,
-  traducciones: z.object({ es: offerTranslation }).catchall(offerTranslation),
+  traducciones: localized(offerTranslation),
 }).strict();
 
 export const offersSchema = z.array(offerSchema).min(1);

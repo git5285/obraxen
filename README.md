@@ -1,9 +1,9 @@
 # Web corporativa — reparación de pavimentos industriales
 
 Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. La portada, el hub, seis fichas de proyecto y los tres borradores
-legales se prerenderizan en build; navegación y consentimiento son las dos islas
-cliente propias.
+Components. El build genera 52 páginas en inglés, alemán, español y francés:
+cuatro portadas, hubs, 24 fichas de proyecto, rutas legales y contacto. Navegación,
+consentimiento y formulario son las únicas interacciones cliente propias.
 
 La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
 con los despliegues Git de Vercel desactivados. El repositorio es privado y esa
@@ -19,8 +19,8 @@ privacidad tampoco autoriza publicar o desplegar el sitio.
 - `src/app/` — rutas App Router, metadata, robots y sitemap.
 - `src/components/` — secciones de portada, proyectos, navegación, consentimiento
   y páginas legales.
-- `src/lib/` — carga tipada de identidad, proyectos y ofertas, imports de
-  imágenes y puertas de publicación.
+- `src/lib/` — carga tipada de identidad, proyectos y ofertas, diccionarios
+  en/de/es/fr, rutas localizadas, imports de imágenes y puertas de publicación.
 - `data/brand.json` — única fuente de identidad y estado de publicación.
 - `data/proyectos.json` — casos ejecutados, evidencia, datos confirmados y
   trazabilidad de autorización.
@@ -41,13 +41,14 @@ Next.js.
 
 | Ruta | Estado |
 |---|---|
-| `/` | Portada prerenderizada |
-| `/proyectos/` | Hub de seis expedientes |
-| `/proyectos/{slug}/` | Seis fichas SSG mediante `generateStaticParams` |
-| `/aviso-legal/` | Borrador incompleto, no apto para publicación |
-| `/privacidad/` | Borrador incompleto, no apto para publicación |
-| `/cookies/` | Borrador técnico de cookies y almacenamiento |
+| `/` | Redirección permanente a `/en/` |
+| `/en/`, `/de/`, `/es/`, `/fr/` | Cuatro portadas prerenderizadas |
+| `/{lang}/{projects}/` | Cuatro hubs de seis expedientes |
+| `/{lang}/{projects}/{slug}/` | 24 fichas SSG mediante `generateStaticParams` |
+| Rutas legales localizadas | 12 borradores incompletos, no aptos para publicación |
+| Rutas de contacto localizadas | UI preparada; formulario cerrado hasta aprobación |
 | `/api/analytics-config/` | Configuración del entorno, consultada solo tras aceptar |
+| `/api/contact/` | Entrega Resend fail-closed; 503 mientras falten condiciones |
 | `/robots.txt` | Bloquea rastreo mientras la preview esté cerrada |
 | `/sitemap.xml` | Vacío en preview; se completa solo al superar la puerta pública |
 | `/soluciones/` | 404 mientras no existan ofertas publicables |
@@ -68,8 +69,9 @@ npm run check        # lint + tipos + unitarias + build
 npm run check:quality # gate completo local
 ```
 
-El gate remoto ejecuta el mismo `npm run check`, 46 pruebas Playwright y
-presupuestos Lighthouse móviles en portada, hub y un caso. Los informes se
+El gate ejecuta 75 pruebas Vitest, una matriz Playwright en Chromium móvil y
+escritorio más smoke WebKit, y presupuestos Lighthouse en portada, hub y caso
+localizados. Los informes se
 conservan como artefactos durante 14 días.
 
 ## Gobernanza Git gratuita
@@ -126,6 +128,20 @@ personalizados y los formularios quedan enmascarados. Al retirar una aceptación
 se deniega el estado, se limpian cookies detectables y se reinicia la página si
 las etiquetas ya estaban ejecutándose.
 
+## Idiomas y captación
+
+ADR-010 fija inglés como entrada y prefijo para todos los idiomas. Los segmentos
+de proyectos, legal y contacto se localizan; los slugs de casos permanecen
+estables. El selector conserva la página equivalente. Canonical, `hreflang`,
+`x-default` y sitemap público esperan al dominio y a la apertura formal.
+
+ADR-011 selecciona Resend como adaptador inicial sin base de leads ni adjuntos.
+El endpoint valida origen, tamaño, campos, honeypot, tiempo y rate limit efímero;
+no registra contenido personal. La UI queda desactivada hasta reunir identidad,
+dominio, buzón coincidente, textos legales, DPA/proveedor aprobado y variables
+reales. Las traducciones actuales también requieren revisor profesional y fecha
+por cada idioma antes de publicar.
+
 ## Datos y puerta de publicación
 
 Los valores desconocidos se representan como `null` y no se completan con
@@ -135,6 +151,8 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 - sociedad constituida, razón social, CIF y domicilio validado;
 - dominio, email y teléfono o WhatsApp reales;
 - aviso legal, privacidad y cookies revisados profesionalmente;
+- traducciones en/de/es/fr con revisor y fecha de aprobación;
+- proveedor de captación, DPA y tratamiento aprobados;
 - autorización documentada de cada caso para nombre y fotografías;
 - referencia verificable y revisión legal aprobada por caso.
 
@@ -174,8 +192,7 @@ tareas; no son contenido público del sitio.
 
 ## Próximo hito
 
-La base técnica de Fase 5 está terminada. Configurar IDs reales requiere aprobar
-proveedores, textos y entornos; canonical, sitemap público, Search Console y datos
-estructurados finales requieren el dominio definitivo. Naming, sociedad,
-contacto, permisos, revisión legal, indexación y despliegue continúan bloqueados
-por decisiones y evidencia reales.
+Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: revisión profesional
+de en/de/es/fr, identidad y sociedad, permisos, legal, DPA/proveedor, dominio y
+buzones; después se audita una URL candidata y se decide expresamente si publicar.
+Indexación, analítica real, formulario y despliegue continúan bloqueados.

@@ -1,39 +1,39 @@
-import { getImageDimensions, getProjectImage, homepage } from "@/lib/homepage";
+import { getImageDimensions, getProjectImage } from "@/lib/homepage";
+import { getDictionary, getPath, type Locale } from "@/lib/i18n";
+import { projects } from "@/lib/projects";
 import { ResponsiveImage } from "./responsive-image";
 
-export function ProjectsSection() {
+export function ProjectsSection({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).projectsSection;
   return (
     <section className="proyectos" id="proyectos">
       <div className="wrap">
         <div className="cab">
-          <p className="kicker">Proyectos ejecutados</p>
-          <h2>Alcance real y evidencia de obra</h2>
-          <p className="proy-intro">
-            Cada ficha recoge magnitudes confirmadas, fotografías de la obra y una lectura
-            separada de la situación, la intervención ejecutada y el resultado que puede
-            acreditarse.
-          </p>
+          <p className="kicker">{copy.kicker}</p>
+          <h2>{copy.title}</h2>
+          <p className="proy-intro">{copy.intro}</p>
         </div>
         <div className="proy-grid">
-          {homepage.projects.map((project) => {
-            const translation = project.traducciones.es;
+          {projects.map((project) => {
+            const translation = project.traducciones[locale];
             return (
               <article className="proy" key={project.slug}>
                 <div
                   className="proy-media"
-                  aria-label={`Reportaje fotográfico de ${project.cliente}`}
+                  aria-label={`${copy.galleryAria} ${project.cliente}`}
                 >
-                  {project.imagenes.map((image) => {
+                  {project.imagenes.map((image, index) => {
                     const source = getProjectImage(image.src);
+                    const localizedImage = translation.imagenes[index];
                     return (
                       <figure key={image.src}>
                         <ResponsiveImage
                           src={source}
-                          alt={image.alt}
+                          alt={localizedImage?.alt ?? ""}
                           {...getImageDimensions(source, { width: 1400, height: 900 })}
                           sizes="(max-width: 860px) 62vw, 31vw"
                         />
-                        <figcaption>{image.etapa}</figcaption>
+                        <figcaption>{localizedImage?.etapa}</figcaption>
                       </figure>
                     );
                   })}
@@ -41,27 +41,30 @@ export function ProjectsSection() {
                 <div className="cuerpo">
                   <div className="meta">
                     <span className="ref">{project.referencia}</span>
-                    <span>{project.sector}</span>
+                    <span>{translation.sector}</span>
                     <span>
-                      {project.ubicacion.ciudad}, {project.ubicacion.pais}
+                      {project.ubicacion.ciudad}, {translation.pais}
                     </span>
                   </div>
                   <h3>{translation.titulo}</h3>
-                  <ul className="proy-cifras" aria-label="Magnitudes confirmadas">
-                    {project.magnitudes.map((magnitude) => (
+                  <ul className="proy-cifras" aria-label={copy.magnitudesAria}>
+                    {translation.magnitudes.map((magnitude) => (
                       <li key={magnitude}>{magnitude}</li>
                     ))}
                   </ul>
                   <div className="proy-resumen">
-                    <strong>Situación</strong>
+                    <strong>{copy.situation}</strong>
                     <p>{translation.problema}</p>
                   </div>
                   <a
                     className="proy-enlace"
-                    href={`/proyectos/${project.slug}/`}
-                    aria-label={`Ver el caso completo: ${project.cliente}`}
+                    href={getPath(locale, "projects", project.slug)}
+                    aria-label={`${copy.openCaseAria} ${project.cliente}`}
+                    data-analytics-event="project_open"
+                    data-analytics-project={project.slug}
+                    data-analytics-location="homepage"
                   >
-                    Ver el caso completo <span aria-hidden="true">→</span>
+                    {copy.openCase} <span aria-hidden="true">→</span>
                   </a>
                 </div>
               </article>

@@ -1,63 +1,64 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 import type { Project } from "@/lib/schemas";
 import { getImageDimensions, getProjectImage } from "@/lib/homepage";
 import {
   getExecutionFacts,
   getProjectLocation,
   getProjectNeighbors,
-  naturalList,
+  projectResources,
 } from "@/lib/project-pages";
+import { getDictionary, getPath, type Locale } from "@/lib/i18n";
 import { ProjectFooter } from "./project-footer";
 import { ProjectHeader } from "./project-header";
 import { ResponsiveImage } from "./responsive-image";
 
 type ProjectCaseProps = {
   project: Project;
+  locale: Locale;
 };
 
-export function ProjectCase({ project }: ProjectCaseProps) {
-  const translation = project.traducciones.es;
-  const executionFacts = getExecutionFacts(project);
+export function ProjectCase({ project, locale }: ProjectCaseProps) {
+  const dictionary = getDictionary(locale);
+  const copy = dictionary.projectCase;
+  const hubCopy = dictionary.projectHub;
+  const translation = project.traducciones[locale];
+  const executionFacts = getExecutionFacts(project, locale);
   const { previous, next } = getProjectNeighbors(project);
-  const resources = [
-    project.maquinaria.length ? `Maquinaria: ${naturalList(project.maquinaria)}.` : null,
-    project.materiales.length ? `Materiales: ${naturalList(project.materiales)}.` : null,
-  ].filter((resource): resource is string => resource !== null);
+  const resources = projectResources(project, locale);
 
   return (
     <>
-      <a className="skip" href="#case-content">Saltar al contenido</a>
-      <ProjectHeader variant="case" />
+      <a className="skip" href="#case-content">{dictionary.common.skipToContent}</a>
+      <ProjectHeader variant="case" locale={locale} slug={project.slug} />
 
       <main id="case-content">
         <section className="case-hero">
           <span className="reference-mark" aria-hidden="true">{project.referencia}</span>
           <div className="case-wrap">
-            <nav className="breadcrumbs" aria-label="Migas de pan">
+            <nav className="breadcrumbs" aria-label={dictionary.common.breadcrumbs}>
               <ol>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/proyectos/">Proyectos</a></li>
+                <li><a href={getPath(locale, "home")}>{dictionary.common.home}</a></li>
+                <li><a href={getPath(locale, "projects")}>{dictionary.common.projects}</a></li>
                 <li aria-current="page">{project.cliente}</li>
               </ol>
             </nav>
 
             <div className="case-heading">
               <div>
-                <p className="case-kicker">Caso ejecutado · {project.referencia}</p>
+                <p className="case-kicker">{copy.kicker} · {project.referencia}</p>
                 <h1>{translation.titulo}</h1>
                 <p className="case-lede">{translation.problema}</p>
               </div>
               <dl className="case-facts">
-                <div><dt>Cliente</dt><dd>{project.cliente}</dd></div>
-                <div><dt>Sector</dt><dd>{project.sector}</dd></div>
-                <div><dt>Ubicación</dt><dd>{getProjectLocation(project)}</dd></div>
+                <div><dt>{hubCopy.client}</dt><dd>{project.cliente}</dd></div>
+                <div><dt>{hubCopy.sector}</dt><dd>{translation.sector}</dd></div>
+                <div><dt>{hubCopy.location}</dt><dd>{getProjectLocation(project, locale)}</dd></div>
               </dl>
             </div>
 
             <div className="scope-rail">
-              <p>Alcance confirmado</p>
+              <p>{copy.confirmedScope}</p>
               <ul>
-                {project.magnitudes.map((magnitude) => <li key={magnitude}>{magnitude}</li>)}
+                {translation.magnitudes.map((magnitude) => <li key={magnitude}>{magnitude}</li>)}
               </ul>
             </div>
           </div>
@@ -67,23 +68,24 @@ export function ProjectCase({ project }: ProjectCaseProps) {
           <div className="case-wrap">
             <div className="section-heading">
               <div>
-                <p className="case-kicker">Evidencia fotográfica</p>
-                <h2 id="evidence-title">Estado documentado de la intervención</h2>
+                <p className="case-kicker">{copy.photoKicker}</p>
+                <h2 id="evidence-title">{copy.photoTitle}</h2>
               </div>
-              <p>Las fotografías acreditan el estado visible y la ejecución mostrada. No se atribuyen plazos, continuidad operativa ni mejoras cuantificadas sin documentación adicional.</p>
+              <p>{copy.photoBody}</p>
             </div>
             <div className="evidence-grid">
-              {project.imagenes.map((image) => {
+              {project.imagenes.map((image, index) => {
                 const source = getProjectImage(image.src);
+                const localizedImage = translation.imagenes[index];
                 return (
                   <figure key={image.src}>
                     <ResponsiveImage
                       src={source}
-                      alt={image.alt}
+                      alt={localizedImage?.alt ?? ""}
                       sizes="(max-width: 760px) 100vw, 55vw"
                       {...getImageDimensions(source, { width: 1400, height: 900 })}
                     />
-                    <figcaption>{image.etapa}</figcaption>
+                    <figcaption>{localizedImage?.etapa}</figcaption>
                   </figure>
                 );
               })}
@@ -93,12 +95,12 @@ export function ProjectCase({ project }: ProjectCaseProps) {
 
         <section className="case-story" aria-labelledby="story-title">
           <div className="case-wrap story-layout">
-            <aside className="case-dossier" aria-label="Ficha del proyecto">
-              <p>Ficha de obra</p>
+            <aside className="case-dossier" aria-label={copy.dossier}>
+              <p>{copy.dossier}</p>
               <dl className="execution-facts">
-                <div><dt>Referencia</dt><dd>{project.referencia}</dd></div>
-                <div><dt>Estado</dt><dd>Obra ejecutada</dd></div>
-                <div><dt>Resultado</dt><dd>Documentado mediante fotografías</dd></div>
+                <div><dt>{copy.reference}</dt><dd>{project.referencia}</dd></div>
+                <div><dt>{copy.status}</dt><dd>{copy.executedStatus}</dd></div>
+                <div><dt>{copy.result}</dt><dd>{copy.photoDocumented}</dd></div>
                 {executionFacts.map(([label, value]) => (
                   <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
                 ))}
@@ -106,25 +108,25 @@ export function ProjectCase({ project }: ProjectCaseProps) {
             </aside>
 
             <div className="case-narrative">
-              <p className="case-kicker">Lectura técnica</p>
-              <h2 id="story-title">Problema, intervención y resultado</h2>
+              <p className="case-kicker">{copy.technicalReading}</p>
+              <h2 id="story-title">{copy.storyTitle}</h2>
               <article>
                 <span>01</span>
-                <div><h3>Situación inicial</h3><p>{translation.problema}</p></div>
+                <div><h3>{copy.initialSituation}</h3><p>{translation.problema}</p></div>
               </article>
               <article>
                 <span>02</span>
-                <div><h3>Intervención ejecutada</h3><p>{translation.solucion}</p></div>
+                <div><h3>{copy.executedIntervention}</h3><p>{translation.solucion}</p></div>
               </article>
               <article>
                 <span>03</span>
-                <div><h3>Resultado documentado</h3><p>{translation.resultado}</p></div>
+                <div><h3>{copy.documentedResult}</h3><p>{translation.resultado}</p></div>
               </article>
               {resources.length ? (
                 <article className="case-resources">
                   <span>04</span>
                   <div>
-                    <h3>Medios confirmados</h3>
+                    <h3>{copy.confirmedResources}</h3>
                     <p>
                       {resources.map((resource, index) => (
                         <span key={resource}>
@@ -141,23 +143,23 @@ export function ProjectCase({ project }: ProjectCaseProps) {
           </div>
         </section>
 
-        <nav className="case-pagination case-wrap" aria-label="Otros casos">
+        <nav className="case-pagination case-wrap" aria-label={copy.otherCases}>
           {previous ? (
-            <a className="previous" href={`/proyectos/${previous.slug}/`}>
-              <span>← Caso anterior</span>
+            <a className="previous" href={getPath(locale, "projects", previous.slug)} data-analytics-event="project_open" data-analytics-project={previous.slug} data-analytics-location="case-pagination">
+              <span>{copy.previousCase}</span>
               <strong>{previous.cliente} · {previous.ubicacion.ciudad}</strong>
             </a>
           ) : null}
           {next ? (
-            <a className="next" href={`/proyectos/${next.slug}/`}>
-              <span>Siguiente caso →</span>
+            <a className="next" href={getPath(locale, "projects", next.slug)} data-analytics-event="project_open" data-analytics-project={next.slug} data-analytics-location="case-pagination">
+              <span>{copy.nextCase}</span>
               <strong>{next.cliente} · {next.ubicacion.ciudad}</strong>
             </a>
           ) : null}
         </nav>
       </main>
 
-      <ProjectFooter variant="case" />
+      <ProjectFooter variant="case" locale={locale} />
     </>
   );
 }

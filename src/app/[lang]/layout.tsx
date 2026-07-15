@@ -1,0 +1,72 @@
+import type { Metadata, Viewport } from "next";
+import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
+import { ConsentManager } from "@/components/consent-manager";
+import { resolveAnalyticsConfig } from "@/lib/analytics-config";
+import { brand } from "@/lib/brand";
+import { getDictionary, getPath, isLocale, locales } from "@/lib/i18n";
+import { projects } from "@/lib/projects";
+import { getPublicationState } from "@/lib/publication";
+import "../globals.css";
+import "../../../css/consent.css";
+import "../../../css/projects.css";
+import "../../../css/case.css";
+import "../../../css/legal.css";
+
+const publication = getPublicationState(brand, projects);
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  return {
+    robots: publication.isPublic
+      ? { index: true, follow: true }
+      : { index: false, follow: false, nocache: true },
+    ...(brand.dominio ? { metadataBase: new URL(`https://${brand.dominio}`) } : {}),
+    icons: {
+      icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+    },
+  };
+}
+
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: Readonly<{ children: ReactNode; params: Promise<{ lang: string }> }>) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dictionary = getDictionary(lang);
+  const analytics = resolveAnalyticsConfig(process.env);
+  const analyticsAvailable = Boolean(analytics.gaMeasurementId || analytics.clarityProjectId);
+
+  return (
+    <html lang={lang}>
+      <body>
+        {children}
+        <ConsentManager
+          analyticsAvailable={analyticsAvailable}
+          copy={dictionary.consent}
+          cookieUrl={getPath(lang, "cookies")}
+          privacyUrl={getPath(lang, "privacy")}
+        />
+      </body>
+    </html>
+  );
+}
