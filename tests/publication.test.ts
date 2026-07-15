@@ -19,6 +19,13 @@ const publicBrand: Brand = {
   email: "contacto@example.com",
   telefono: "+34 900 000 000",
   legalRevisionAprobada: true,
+  formularioRevisionAprobada: true,
+  revisionTraducciones: {
+    en: { estado: "aprobada", revisor: "EN reviewer", fecha: "2026-07-15" },
+    de: { estado: "aprobada", revisor: "DE reviewer", fecha: "2026-07-15" },
+    es: { estado: "aprobada", revisor: "ES reviewer", fecha: "2026-07-15" },
+    fr: { estado: "aprobada", revisor: "FR reviewer", fecha: "2026-07-15" },
+  },
   publicar: true,
 };
 
@@ -62,5 +69,16 @@ describe("publication gate", () => {
     expect(() => getPublicationState(publicBrand, projects)).toThrow(
       PublicationConfigurationError,
     );
+  });
+
+  it("blocks publication until every locale and the capture provider are approved", () => {
+    expect(() => getPublicationState({
+      ...publicBrand,
+      revisionTraducciones: brand.revisionTraducciones,
+    }, documentedProjects)).toThrow(PublicationConfigurationError);
+    expect(() => getPublicationState({
+      ...publicBrand,
+      formularioRevisionAprobada: false,
+    }, documentedProjects)).toThrow(PublicationConfigurationError);
   });
 });
