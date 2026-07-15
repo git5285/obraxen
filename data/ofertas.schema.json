@@ -2,6 +2,19 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ofertas.schema.json",
   "title": "Ofertas comerciales en preparación",
+  "$defs": {
+    "offerTranslation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["titulo", "entradilla", "propuesta", "cta"],
+      "properties": {
+        "titulo": { "type": "string", "minLength": 1 },
+        "entradilla": { "type": "string", "minLength": 1 },
+        "propuesta": { "type": "string", "minLength": 1 },
+        "cta": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
   "type": "array",
   "minItems": 1,
   "items": {
@@ -74,17 +87,13 @@
       },
       "traducciones": {
         "type": "object",
-        "required": ["es"],
-        "additionalProperties": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["titulo", "entradilla", "propuesta", "cta"],
-          "properties": {
-            "titulo": { "type": "string", "minLength": 1 },
-            "entradilla": { "type": "string", "minLength": 1 },
-            "propuesta": { "type": "string", "minLength": 1 },
-            "cta": { "type": "string", "minLength": 1 }
-          }
+        "required": ["en", "de", "es", "fr"],
+        "additionalProperties": false,
+        "properties": {
+          "en": { "$ref": "#/$defs/offerTranslation" },
+          "de": { "$ref": "#/$defs/offerTranslation" },
+          "es": { "$ref": "#/$defs/offerTranslation" },
+          "fr": { "$ref": "#/$defs/offerTranslation" }
         }
       }
     }

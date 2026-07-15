@@ -1,5 +1,6 @@
 import type { StaticImageData } from "next/image";
 import { getImageDimensions } from "@/lib/homepage";
+import type { Dictionary } from "@/lib/dictionaries/types";
 import { CtaLink } from "./cta-link";
 import { ResponsiveImage } from "./responsive-image";
 
@@ -9,6 +10,7 @@ type CompanySectionProps = {
   kicker: string;
   hasOwnTeams: boolean;
   priorityMarketsLabel: string;
+  copy: Dictionary["company"];
 };
 
 function AdvantageIcon({ name }: { name: "diagnosis" | "team" | "time" | "europe" }) {
@@ -53,9 +55,10 @@ export function CompanySection({
   kicker,
   hasOwnTeams,
   priorityMarketsLabel,
+  copy,
 }: CompanySectionProps) {
   return (
-    <section className="porque" id="empresa">
+    <section className="porque" id="company">
       <div className="wrap">
         <div className="panel">
           <ResponsiveImage
@@ -67,57 +70,41 @@ export function CompanySection({
           />
           <div className="col-izq">
             <p className="kicker">{kicker}</p>
-            <h2>Criterio de obra aplicado a cada reparación</h2>
-            <p>
-              Más de diez años de experiencia acumulada en ejecución y reparación sirven
-              para plantear cada intervención según el soporte, el daño y la actividad de
-              la instalación.
-            </p>
+            <h2>{copy.title}</h2>
+            <p>{copy.intro}</p>
             <span className="inline-block">
-              <CtaLink href={cta.href}>{cta.text}</CtaLink>
+              <CtaLink href={cta.href} eventLocation="company">{cta.text}</CtaLink>
             </span>
           </div>
           <div className="ventajas">
             <article className="ventaja">
               <AdvantageIcon name="diagnosis" />
               <div>
-                <h3>Diagnóstico basado en ejecución</h3>
-                <p>
-                  El estado del soporte, el tipo de daño y las exigencias de tráfico
-                  orientan la reparación propuesta.
-                </p>
+                <h3>{copy.diagnosisTitle}</h3>
+                <p>{copy.diagnosisBody}</p>
               </div>
             </article>
             {hasOwnTeams ? (
               <article className="ventaja">
                 <AdvantageIcon name="team" />
                 <div>
-                  <h3>Equipos propios</h3>
-                  <p>
-                    La ejecución se realiza con equipos propios, manteniendo el control
-                    directo sobre la planificación y el trabajo en obra.
-                  </p>
+                  <h3>{copy.teamsTitle}</h3>
+                  <p>{copy.teamsBody}</p>
                 </div>
               </article>
             ) : null}
             <article className="ventaja">
               <AdvantageIcon name="time" />
               <div>
-                <h3>Intervención adaptada a la actividad</h3>
-                <p>
-                  Cuando el alcance lo permite, proponemos fases, zonas acotadas u horarios
-                  alternativos para reducir el impacto en tu operativa.
-                </p>
+                <h3>{copy.operationsTitle}</h3>
+                <p>{copy.operationsBody}</p>
               </div>
             </article>
             <article className="ventaja">
               <AdvantageIcon name="europe" />
               <div>
-                <h3>Cobertura europea</h3>
-                <p>
-                  Trabajamos en toda la Unión Europea, con actividad principal en{" "}
-                  {priorityMarketsLabel}.
-                </p>
+                <h3>{copy.europeTitle}</h3>
+                <p>{copy.europeBody.replace("{markets}", priorityMarketsLabel)}</p>
               </div>
             </article>
           </div>

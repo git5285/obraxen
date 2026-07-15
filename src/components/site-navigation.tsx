@@ -10,7 +10,9 @@ import {
   type ReactNode,
 } from "react";
 import type { NavigationItem } from "@/lib/homepage";
+import type { Dictionary } from "@/lib/dictionaries/types";
 import { CtaLink } from "./cta-link";
+import { LanguageSwitcher, type LanguageLink } from "./language-switcher";
 import { LogoMark } from "./logo-mark";
 
 type NavigationContextValue = {
@@ -24,10 +26,23 @@ type SiteNavigationProps = {
   brandName: string | null;
   cta: { href: string; text: string };
   items: readonly NavigationItem[];
+  labels: Pick<Dictionary["common"], "mobileMenu" | "menuClose" | "menuOpen" | "mainNavigation" | "home">;
+  languageLabel: string;
+  languageLinks: readonly LanguageLink[];
+  homeHref: string;
   children: ReactNode;
 };
 
-export function SiteNavigation({ brandName, cta, items, children }: SiteNavigationProps) {
+export function SiteNavigation({
+  brandName,
+  cta,
+  items,
+  labels,
+  languageLabel,
+  languageLinks,
+  homeHref,
+  children,
+}: SiteNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [stickyVisible, setStickyVisible] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -125,7 +140,7 @@ export function SiteNavigation({ brandName, cta, items, children }: SiteNavigati
       <nav
         className={`movil-menu${isOpen ? " abierto" : ""}`}
         id="menuMovil"
-        aria-label="Menú móvil"
+        aria-label={labels.mobileMenu}
         aria-hidden={!isOpen}
         inert={!isOpen}
         ref={menuRef}
@@ -134,7 +149,7 @@ export function SiteNavigation({ brandName, cta, items, children }: SiteNavigati
         <button
           className="cerrar"
           type="button"
-          aria-label="Cerrar menú"
+          aria-label={labels.menuClose}
           ref={closeButtonRef}
           onClick={() => closeMenu()}
         >
@@ -145,19 +160,27 @@ export function SiteNavigation({ brandName, cta, items, children }: SiteNavigati
             {item.label}
           </a>
         ))}
-        <a className="btn btn-acento" href={cta.href} onClick={() => handleMenuLink(cta.href)}>
+        <LanguageSwitcher label={languageLabel} links={languageLinks} />
+        <a
+          className="btn btn-acento"
+          href={cta.href}
+          onClick={() => handleMenuLink(cta.href)}
+          data-analytics-event="cta_select"
+          data-analytics-location="mobile-menu"
+          data-analytics-destination={cta.href}
+        >
           {cta.text}
         </a>
       </nav>
 
       <nav
         className={`sticky-nav${stickyVisible ? " visible" : ""}`}
-        aria-label="Navegación principal"
+        aria-label={labels.mainNavigation}
         aria-hidden={!stickyVisible}
         inert={!stickyVisible}
       >
         <div className="inner">
-          <LogoMark brandName={brandName} />
+          <LogoMark brandName={brandName} href={homeHref} homeLabel={labels.home} />
           <ul>
             {items.map((item) => (
               <li key={item.href}>
@@ -171,8 +194,9 @@ export function SiteNavigation({ brandName, cta, items, children }: SiteNavigati
               </li>
             ))}
           </ul>
-          <MenuButton />
-          <CtaLink href={cta.href}>{cta.text}</CtaLink>
+          <LanguageSwitcher label={languageLabel} links={languageLinks} />
+          <MenuButton label={labels.menuOpen} />
+          <CtaLink href={cta.href} eventLocation="sticky-navigation">{cta.text}</CtaLink>
         </div>
       </nav>
 
@@ -181,7 +205,7 @@ export function SiteNavigation({ brandName, cta, items, children }: SiteNavigati
   );
 }
 
-export function MenuButton() {
+export function MenuButton({ label = "Open menu" }: { label?: string }) {
   const context = useContext(NavigationContext);
   if (!context) throw new Error("MenuButton debe estar dentro de SiteNavigation");
 
@@ -189,7 +213,7 @@ export function MenuButton() {
     <button
       className="menu-btn"
       type="button"
-      aria-label="Abrir menú"
+      aria-label={label}
       aria-controls="menuMovil"
       aria-expanded={context.isOpen}
       onClick={(event) => context.openMenu(event.currentTarget)}

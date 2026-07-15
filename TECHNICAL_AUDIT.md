@@ -1,19 +1,20 @@
 # Auditoría técnica
 
-Última verificación: 14 de julio de 2026. Stack: Next.js 16.2.10, React 19,
+Última verificación: 15 de julio de 2026. Stack: Next.js 16.2.10, React 19,
 TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 ## Estado
 
 - Implementación única: Next.js App Router.
-- Portada, hub, seis casos, aviso legal, privacidad, cookies, robots y sitemap
-  prerenderizados; no queda builder o plantilla HTML legacy.
+- 52 páginas en/de/es/fr prerenderizadas: portadas, cuatro hubs, 24 casos,
+  legales y contacto; no queda builder o plantilla HTML legacy.
 - Preview cerrada: `noindex,nofollow`, sitemap vacío, sin dominio y sin
   despliegues Git automáticos.
 - Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
   hook versionado bloquea pushes directos a `main`. No se detectan secretos o
   credenciales en los archivos versionados.
-- La puerta pública falla por identidad, sociedad, contacto, revisión legal y
+- La puerta pública falla por identidad, sociedad, contacto, revisión legal,
+  revisión profesional de los cuatro idiomas, proveedor de captación y
   autorizaciones documentales de los casos, como está previsto.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
   permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
@@ -22,9 +23,9 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/` | 97 | 100 | 100 | 66 | 2.553 ms | 10 ms | 0 |
-| `/proyectos/` | 97 | 100 | 100 | 66 | 2.687 ms | 3 ms | 0 |
-| `/proyectos/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.459 ms | 2 ms | 0 |
+| `/en/` | 98 | 100 | 100 | 66 | 2.462 ms | 2 ms | 0 |
+| `/de/projekte/` | 99 | 100 | 100 | 66 | 1.955 ms | 2 ms | 0 |
+| `/fr/projets/blitz-bremen/` | 100 | 100 | 100 | 66 | 1.804 ms | 2 ms | 0 |
 
 El SEO 66 es deliberado mientras la preview siga noindex. Los tres perfiles
 superan el presupuesto de rendimiento 95, accesibilidad y buenas prácticas 100,
@@ -33,15 +34,16 @@ siendo inferior a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 50 pruebas Vitest y build de producción.
-- Build: 15 páginas generadas; todas las rutas de contenido son estáticas o SSG.
-  Solo `/api/analytics-config/` es dinámico y no se consulta antes de aceptar.
-- Playwright: 46 ejecuciones, 42 correctas y 4 omisiones intencionales de pruebas
-  exclusivas de móvil en el proyecto de escritorio.
-- Once rutas de contenido verificadas a 390 × 844 y 1.440 × 1.000.
+- `npm run check`: ESLint, TypeScript, 75 pruebas Vitest y build de producción.
+- Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
+  `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
+- Playwright: 93 ejecuciones configuradas en Chromium móvil/escritorio y smoke
+  WebKit; 6 omisiones intencionales por cobertura exclusiva de navegador/viewport.
+- 28 rutas de contenido representativas verificadas a 390 × 844 y 1.440 × 1.000,
+  más equivalencia de rutas en los cuatro idiomas.
 - Cero errores de consola o red, imágenes rotas u overflow horizontal.
-- Axe sin hallazgos serios o críticos en portada, hub, un caso y las tres rutas
-  legales.
+- Axe sin hallazgos serios o críticos en las cuatro portadas y los cuatro hubs;
+  contraste del selector de idioma corregido a nivel AA.
 - WCAG 2.5.3 comprobado expresamente con `label-content-name-mismatch`: cero
   violaciones en los seis enlaces de casos de la portada.
 - Menú móvil con foco inicial, trampa de foco, cierre con `Escape`, restauración
@@ -54,6 +56,9 @@ siendo inferior a 2,5 s.
   denegación, elimina etiquetas y deja la visita siguiente sin requests externos.
 - `/soluciones/` y slugs desconocidos responden 404.
 - `robots.txt` bloquea rastreo y `sitemap.xml` no contiene URLs en preview.
+- `/` y las rutas españolas legacy redirigen a sus destinos canónicos localizados.
+- El formulario no se renderiza activo y `/api/contact/` responde 503 sin la
+  identidad, aprobación y configuración reales.
 
 ## Seguridad y privacidad
 
@@ -71,6 +76,10 @@ siendo inferior a 2,5 s.
 - La dirección provisional se retiró de `brand.json` y permanece `null` hasta
   disponer de un domicilio empresarial validado.
 - Los informes locales y auditorías externas están ignorados.
+- La API de contacto limita JSON a 15 KB, valida mismo origen, honeypot y tiempo,
+  aplica rate limit efímero sobre IP hasheada, no admite adjuntos y no registra PII.
+- `npm audit --omit=dev --audit-level=moderate` devuelve 0 vulnerabilidades de
+  producción.
 
 Los nonces no se adoptan: Next exige render dinámico por petición, desactiva la
 optimización estática y aumenta coste y latencia. La alternativa SRI continúa
@@ -97,6 +106,8 @@ los casos.
 
 Las fechas de ejecución cuyo año no estaba confirmado se almacenan como `null`;
 ya no hay textos del tipo “año pendiente de confirmar” en los datos públicos.
+Los campos públicos, alt text y magnitudes tienen estructura completa en/de/es/fr,
+pero las cuatro revisiones editoriales siguen `pendiente` y bloquean publicación.
 
 ## Decisión de despliegue
 
@@ -136,6 +147,8 @@ debe revisarse antes de conceder nuevos permisos de escritura.
 | Permisos de clientes y fotografías | Bloqueo público | Documento, alcance y revisión por caso |
 | Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
+| Traducciones en/de/es/fr | Borradores completos | Revisor profesional y fecha por idioma |
+| Captación Resend | Implementada y cerrada | DPA/subencargados, legal, dominio, buzones y aprobación explícita |
 | Dominio, canonical y Search Console | Sin dato | Dominio definitivo |
 | Producción | Sin deployments ni dominios | Auditoría final y autorización expresa |
 

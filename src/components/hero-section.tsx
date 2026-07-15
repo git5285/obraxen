@@ -1,7 +1,9 @@
 import type { StaticImageData } from "next/image";
 import type { NavigationItem } from "@/lib/homepage";
 import { getImageDimensions } from "@/lib/homepage";
+import type { Dictionary } from "@/lib/dictionaries/types";
 import { CtaLink } from "./cta-link";
+import { LanguageSwitcher, type LanguageLink } from "./language-switcher";
 import { LogoMark } from "./logo-mark";
 import { ResponsiveImage } from "./responsive-image";
 import { MenuButton } from "./site-navigation";
@@ -11,9 +13,24 @@ type HeroSectionProps = {
   cta: { href: string; text: string };
   image: StaticImageData;
   navigation: readonly NavigationItem[];
+  copy: Dictionary["hero"];
+  labels: Dictionary["common"];
+  languageLabel: string;
+  languageLinks: readonly LanguageLink[];
+  homeHref: string;
 };
 
-export function HeroSection({ brandName, cta, image, navigation }: HeroSectionProps) {
+export function HeroSection({
+  brandName,
+  cta,
+  image,
+  navigation,
+  copy,
+  labels,
+  languageLabel,
+  languageLinks,
+  homeHref,
+}: HeroSectionProps) {
   const dimensions = getImageDimensions(image, { width: 1280, height: 720 });
   return (
     <section className="hero" id="inicio">
@@ -27,8 +44,8 @@ export function HeroSection({ brandName, cta, image, navigation }: HeroSectionPr
         unoptimized
         sizes="100vw"
       />
-      <nav className="hero-nav" aria-label="Navegación principal">
-        <LogoMark brandName={brandName} />
+      <nav className="hero-nav" aria-label={labels.mainNavigation}>
+        <LogoMark brandName={brandName} href={homeHref} homeLabel={labels.home} />
         <ul>
           {navigation.map((item) => (
             <li key={item.href}>
@@ -36,19 +53,17 @@ export function HeroSection({ brandName, cta, image, navigation }: HeroSectionPr
             </li>
           ))}
         </ul>
-        <MenuButton />
-        <CtaLink href={cta.href}>{cta.text}</CtaLink>
+        <LanguageSwitcher label={languageLabel} links={languageLinks} />
+        <MenuButton label={labels.menuOpen} />
+        <CtaLink href={cta.href} eventLocation="hero-navigation">{cta.text}</CtaLink>
       </nav>
       <div className="hero-body">
         <div>
-          <p className="kicker kicker-hero">Reparación de pavimentos industriales</p>
-          <h1>Reparaciones planificadas para reducir el impacto operativo.</h1>
-          <p className="hero-sub">
-            Evaluamos el soporte, el daño y las exigencias de tráfico para definir una
-            reparación adaptada al pavimento y a la operativa de la instalación.
-          </p>
+          <p className="kicker kicker-hero">{copy.kicker}</p>
+          <h1>{copy.title}</h1>
+          <p className="hero-sub">{copy.body}</p>
           <span className="inline-block">
-            <CtaLink href={cta.href}>{cta.text}</CtaLink>
+            <CtaLink href={cta.href} eventLocation="hero">{cta.text}</CtaLink>
           </span>
         </div>
       </div>
@@ -61,8 +76,8 @@ export function HeroSection({ brandName, cta, image, navigation }: HeroSectionPr
           <path className="f-fija" d="M0,28 L1200,28" />
         </svg>
         <div className="fisura-label">
-          <span>Fisura</span>
-          <span>Reparada</span>
+          <span>{copy.crackBefore}</span>
+          <span>{copy.crackAfter}</span>
         </div>
       </div>
     </section>
