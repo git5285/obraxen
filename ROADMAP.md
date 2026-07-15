@@ -274,8 +274,11 @@ precipitada.
 - [x] **6.7.1 · Nombre comercial:** integrar `Obraxen` desde `data/brand.json`
   por selección expresa del usuario, sin atribuir existencia a la sociedad,
   dominio, buzón o permisos documentales aún pendientes.
+- [x] **6.7.2 · Dominio y correo:** verificar `obraxen.com`, Google Workspace,
+  MX/SPF/DKIM/DMARC y los alias de privacidad/informes; integrarlos en
+  `data/brand.json` sin conectar DNS web, Vercel ni publicación.
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
-  textos legales; completar identidad, dominio, buzones y permisos; ejecutar
+  textos legales; completar identidad, teléfono y permisos; ejecutar
   auditoría candidata y decisión expresa de publicación.
 - [ ] Completar identidad, sociedad, contacto y textos legales.
 - [ ] Documentar o anonimizar los seis casos y revisar profesionalmente privacidad
@@ -301,10 +304,10 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Resolver las 37 incidencias que informa `npm run check:activation` mediante el
+Resolver las 35 incidencias que informa `npm run check:activation` mediante el
 expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
 en/de/es/fr, identidad y sociedad, permisos de casos/fotografías, revisión legal,
-aceptación documentada del proveedor, dominio y buzones. Con cero bloqueos y
+aceptación documentada del proveedor y teléfono o WhatsApp. Con cero bloqueos y
 autorización expresa se construirá una URL candidata protegida, se auditará y se
 pedirá la decisión de publicación. Hasta entonces, formulario, despliegues,
 indexación y analítica real permanecen apagados.

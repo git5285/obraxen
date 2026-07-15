@@ -249,7 +249,7 @@ export const de: Dictionary = {
       description: "Rechtliche Informationen zum Betreiber dieser Website.",
       intro: "Dieser Arbeitsentwurf dient der Vorbereitung der Angaben für eine in Spanien ansässige geschäftliche Website. Er muss nach Gründung der Gesellschaft und vor der Veröffentlichung rechtlich geprüft und an die tatsächlich anwendbaren Anforderungen angepasst werden.",
       alertTitle: "Erforderliche Angaben fehlen",
-      alertText: "Unternehmensidentität, bestätigte Anschrift, Steuernummer, E-Mail-Adresse, Domain und gegebenenfalls Registerangaben fehlen. Dieser Entwurf erlaubt keine Veröffentlichung.",
+      alertText: "Rechtliche Unternehmensidentität, bestätigte Anschrift, Steuernummer und gegebenenfalls Registerangaben fehlen. Dieser Entwurf erlaubt keine Veröffentlichung.",
       relatedRoute: "privacy",
       relatedLabel: "Datenschutzerklärung",
       sections: [

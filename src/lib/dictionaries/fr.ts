@@ -249,7 +249,7 @@ export const fr: Dictionary = {
       description: "Informations juridiques sur l'éditeur de ce site.",
       intro: "Ce brouillon de travail prépare les informations requises pour le site professionnel d'une entreprise établie en Espagne. Il devra être revu après la constitution de la société et avant toute publication.",
       alertTitle: "Informations indispensables manquantes",
-      alertText: "L'identité de la société, l'adresse validée, l'identifiant fiscal, l'e-mail, le domaine et, le cas échéant, les données d'immatriculation sont manquants. Ce brouillon n'autorise pas la publication.",
+      alertText: "L'identité juridique de la société, l'adresse validée, l'identifiant fiscal et, le cas échéant, les données d'immatriculation sont manquants. Ce brouillon n'autorise pas la publication.",
       relatedRoute: "privacy",
       relatedLabel: "Politique de confidentialité",
       sections: [
