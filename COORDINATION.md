@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 17:39 Europe/Madrid.
+Actualizado: 2026-07-15 19:34 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -92,6 +92,13 @@ cambios staged sin propietario.
   gate local pasa con 75 unitarias, 87 Playwright correctas, 6 omisiones
   intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
   liberada sin despliegue. El run posterior de `main` `29431531128` está verde.
+- Consolidación técnica inmediata entregada mediante la PR `#13`, commit
+  `a635299`: reflow en/de/es/fr probado desde 320 px, contacto y legales sin
+  colisión CSS, navegación tipada, metadata absoluta verificable, SLA no
+  acreditado retirado y presupuestos SEO diferenciados entre preview y público.
+  El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
+  intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
+  liberada sin despliegue.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
