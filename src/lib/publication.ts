@@ -8,6 +8,7 @@ const requiredPublicTextFields = [
   "direccion",
   "dominio",
   "email",
+  "emailPrivacidad",
   "formularioProveedor",
 ] as const;
 

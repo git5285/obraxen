@@ -16,6 +16,7 @@ const publicIdentity: Brand = {
   dominio: "example.com",
   direccion: "Validated address",
   email: "contact@example.com",
+  emailPrivacidad: "privacy@example.com",
   telefono: "+34 900 000 000",
   legalRevisionAprobada: true,
   formularioRevisionAprobada: true,

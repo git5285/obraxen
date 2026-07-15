@@ -22,11 +22,12 @@ describe("localized Next.js homepage", () => {
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
 
-  it.each(locales)("keeps unavailable contact flows out of the %s homepage", async (locale) => {
+  it.each(locales)("exposes the verified email contact flow on the %s homepage", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
-    expect(html).not.toContain(dictionary.cta.assessment);
-    expect(html).toContain(dictionary.cta.projects);
+    expect(html).toContain(dictionary.cta.assessment);
+    expect(html).toContain(`href="${getPath(locale, "contact")}"`);
+    expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
   it.each(locales)("keeps visible project text inside accessible names in %s", async (locale) => {
@@ -39,14 +40,18 @@ describe("localized Next.js homepage", () => {
     }
   });
 
-  it.each(locales)("provides %s social metadata without inventing a domain", async (locale) => {
+  it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {
     const metadata = await generateMetadata({ params: Promise.resolve({ lang: locale }) });
     expect(metadata.openGraph).toMatchObject({ type: "website" });
     expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
-    expect(metadata.alternates).toBeUndefined();
+    expect(metadata.alternates).toMatchObject({
+      canonical: `https://obraxen.com/${locale}/`,
+      languages: { "x-default": "https://obraxen.com/en/" },
+    });
+    expect(metadata.openGraph).toMatchObject({ url: `https://obraxen.com/${locale}/` });
     expect(metadata.openGraph && "images" in metadata.openGraph
       ? metadata.openGraph.images
-      : undefined).toEqual([]);
+      : undefined).toHaveLength(1);
   });
 
   it.each(locales)("provides absolute %s candidate metadata with an injected domain", (locale) => {

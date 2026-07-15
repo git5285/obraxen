@@ -1,6 +1,6 @@
 # Runbook de cutover y publicación
 
-Estado: **bloqueado** · actualizado: 15 de julio de 2026.
+Estado: **bloqueado** · actualizado: 16 de julio de 2026.
 
 Este documento prepara una activación futura; no autoriza preview, despliegue,
 dominio, indexación, analítica ni formulario. Next.js ya es la única
@@ -10,7 +10,8 @@ implementación y no existe un segundo cutover técnico pendiente.
 
 No se crea una URL candidata hasta que una PR demuestre simultáneamente:
 
-- identidad comercial y sociedad constituidas, dominio y buzones reales;
+- identidad comercial y sociedad constituidas; dominio y buzones reales ya
+  acreditados en la fase 6.7.2;
 - textos legales revisados y `legalRevisionAprobada: true`;
 - en/de/es/fr con estado `aprobada`, revisor y fecha;
 - Resend aprobado documentalmente, DPA archivado, subencargados, transferencias,
@@ -27,7 +28,7 @@ npm run check:activation
 ```
 
 Debe devolver `READY_FOR_PROTECTED_CANDIDATE`. El estado actual devuelve
-`NO-GO` con 37 incidencias verificables; el detalle y el contrato de entrada
+`NO-GO` con 35 incidencias verificables; el detalle y el contrato de entrada
 están en `ACTIVATION_GATE.md`. Ese comando no sustituye la auditoría de la URL ni
 la decisión humana de publicación.
 
@@ -104,6 +105,6 @@ regresión grave de seguridad/accesibilidad.
 ## 6. Estado actual
 
 **NO-GO.** Fases técnicas 6.1–6.6 y puerta ejecutable 6.7.0 completas. Fase 6.7
-registra 37 incidencias externas de identidad, sociedad, dominio, buzones,
-permisos, revisión legal/lingüística y aceptación del proveedor. Vercel permanece
+registra 35 incidencias externas de identidad y sociedad, teléfono, permisos,
+revisión legal/lingüística y aceptación del proveedor. Vercel permanece
 sin deployments ni dominios y `git.deploymentEnabled` continúa desactivado.
