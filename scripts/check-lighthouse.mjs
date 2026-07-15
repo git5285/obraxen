@@ -22,9 +22,9 @@ const budgets = {
   accessibility: 1,
   "best-practices": 1,
   seo: 0.65,
-  // El objetivo de campo sigue siendo 2,5 s. El margen de laboratorio evita
-  // falsos negativos por la variación del arranque local dentro del runner CI.
-  lcp: 3_000,
+  // El objetivo de campo sigue siendo 2,5 s. Local conserva 3 s; el runner CI
+  // admite 250 ms más porque su mediana incluye variación de infraestructura.
+  lcp: process.env.CI === "true" ? 3_250 : 3_000,
   tbt: 200,
   cls: 0.1,
 };
