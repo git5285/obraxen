@@ -35,11 +35,29 @@
       "Documentar una inspección completa como caso propio"
     ],
     "traducciones": {
+      "en": {
+        "titulo": "Inspection and intervention plan",
+        "entradilla": "Structure the problem before choosing the repair.",
+        "propuesta": "We assess the visible condition, use and facility constraints to define alternatives, scope and controls before execution.",
+        "cta": "See how we plan an intervention"
+      },
+      "de": {
+        "titulo": "Inspektion und Maßnahmenplan",
+        "entradilla": "Das Problem ordnen, bevor die Reparatur festgelegt wird.",
+        "propuesta": "Wir bewerten sichtbaren Zustand, Nutzung und Anlagenrestriktionen, um vor der Ausführung Alternativen, Umfang und Kontrollen festzulegen.",
+        "cta": "Unseren Ansatz für Maßnahmen ansehen"
+      },
       "es": {
         "titulo": "Inspección y plan de intervención",
         "entradilla": "Ordenar el problema antes de decidir la reparación.",
         "propuesta": "Analizamos el estado visible, el uso y las restricciones de la instalación para definir alternativas, alcance y controles antes de ejecutar.",
         "cta": "Ver cómo planteamos una intervención"
+      },
+      "fr": {
+        "titulo": "Inspection et plan d'intervention",
+        "entradilla": "Structurer le problème avant de choisir la réparation.",
+        "propuesta": "Nous analysons l'état visible, l'usage et les contraintes du site afin de définir les options, le périmètre et les contrôles avant exécution.",
+        "cta": "Voir comment nous préparons une intervention"
       }
     }
   },
@@ -91,11 +109,29 @@
       "Preparar criterios de aceptación y mantenimiento"
     ],
     "traducciones": {
+      "en": {
+        "titulo": "Local repairs by area",
+        "entradilla": "Treat the damaged area without losing sight of the cause.",
+        "propuesta": "We define cracks, joints, voids, anchors and uneven areas to combine the preparation and repair required in each zone.",
+        "cta": "View completed repairs"
+      },
+      "de": {
+        "titulo": "Lokale Reparaturen nach Bereichen",
+        "entradilla": "Den Schaden gezielt behandeln, ohne die Ursache aus dem Blick zu verlieren.",
+        "propuesta": "Wir grenzen Risse, Fugen, Hohlstellen, Anker und Unebenheiten ab und kombinieren die für jeden Bereich erforderliche Vorbereitung und Reparatur.",
+        "cta": "Ausgeführte Reparaturen ansehen"
+      },
       "es": {
         "titulo": "Reparaciones localizadas por zonas",
         "entradilla": "Intervenir donde está el daño sin perder de vista su causa.",
         "propuesta": "Delimitamos fisuras, juntas, huecos, anclajes y desniveles para combinar la preparación y la reparación que requiera cada zona.",
         "cta": "Ver reparaciones ejecutadas"
+      },
+      "fr": {
+        "titulo": "Réparations localisées par zones",
+        "entradilla": "Intervenir sur le désordre sans perdre de vue sa cause.",
+        "propuesta": "Nous délimitons fissures, joints, cavités, ancrages et irrégularités afin de combiner la préparation et la réparation nécessaires dans chaque zone.",
+        "cta": "Voir les réparations réalisées"
       }
     }
   },
@@ -149,11 +185,29 @@
       "Preparar controles finales y recomendaciones de mantenimiento"
     ],
     "traducciones": {
+      "en": {
+        "titulo": "Comprehensive concrete floor refurbishment",
+        "entradilla": "Coordinate every layer of the intervention as one scope.",
+        "propuesta": "We integrate removal, preparation, repairs, corrections and finishes according to the substrate condition and intended use.",
+        "cta": "View documented refurbishments"
+      },
+      "de": {
+        "titulo": "Umfassende Sanierung von Betonböden",
+        "entradilla": "Alle Ebenen der Maßnahme als einen Leistungsumfang koordinieren.",
+        "propuesta": "Wir verbinden Rückbau, Vorbereitung, Reparaturen, Korrekturen und Oberflächen entsprechend Untergrundzustand und vorgesehener Nutzung.",
+        "cta": "Dokumentierte Sanierungen ansehen"
+      },
       "es": {
         "titulo": "Rehabilitación integral de pavimentos de hormigón",
         "entradilla": "Coordinar todas las capas de la intervención como un único alcance.",
         "propuesta": "Integramos retirada, preparación, reparaciones, correcciones y acabado según el estado del soporte y el uso previsto.",
         "cta": "Ver rehabilitaciones documentadas"
+      },
+      "fr": {
+        "titulo": "Réhabilitation complète des sols en béton",
+        "entradilla": "Coordonner toutes les composantes de l'intervention dans un même périmètre.",
+        "propuesta": "Nous intégrons dépose, préparation, réparations, corrections et finition selon l'état du support et l'usage prévu.",
+        "cta": "Voir les réhabilitations documentées"
       }
     }
   },
@@ -204,11 +258,29 @@
       "Documentar un proyecto cuyo contexto de cambio de uso pueda publicarse"
     ],
     "traducciones": {
+      "en": {
+        "titulo": "Floor recovery for a change of tenant or use",
+        "entradilla": "Prepare the floor for the asset's next stage.",
+        "propuesta": "We inspect and coordinate the removals and repairs needed to agree a handover condition compatible with the new use.",
+        "cta": "View related scopes"
+      },
+      "de": {
+        "titulo": "Bodenaufbereitung bei Mieter- oder Nutzungswechsel",
+        "entradilla": "Den Boden für die nächste Nutzungsphase vorbereiten.",
+        "propuesta": "Wir prüfen und koordinieren die erforderlichen Rückbau- und Reparaturarbeiten, um einen mit der neuen Nutzung vereinbaren Übergabezustand festzulegen.",
+        "cta": "Verwandte Leistungsumfänge ansehen"
+      },
       "es": {
         "titulo": "Recuperación por cambio de inquilino o uso",
         "entradilla": "Preparar el pavimento para la siguiente etapa del activo.",
         "propuesta": "Inspeccionamos y coordinamos las retiradas y reparaciones necesarias para acordar una condición de entrega compatible con el nuevo uso.",
         "cta": "Ver alcances relacionados"
+      },
+      "fr": {
+        "titulo": "Remise en état lors d'un changement de locataire ou d'usage",
+        "entradilla": "Préparer le sol pour la prochaine étape de l'actif.",
+        "propuesta": "Nous inspectons et coordonnons les déposes et réparations nécessaires afin de convenir d'un état de livraison compatible avec le nouvel usage.",
+        "cta": "Voir les périmètres associés"
       }
     }
   }

@@ -21,6 +21,8 @@ constitución sigue pendiente y no deben rellenarse datos provisionales.
 - Proveedores definitivos de alojamiento, correo y recursos técnicos.
 - IDs y propiedades definitivas de GA4 y Microsoft Clarity por entorno.
 - Revisión de conservación, transferencias y configuración de ambos proveedores.
+- Revisión profesional y aprobación registrada de las versiones en inglés,
+  alemán, español y francés, incluidos textos legales y consentimiento.
 
 ## Autorizaciones de casos y fotografías
 
@@ -44,8 +46,12 @@ automáticamente en autorización comercial.
 
 ## Decisiones técnicas pendientes
 
-- Formspree no debe activarse hasta disponer de cuenta, endpoint, email y revisión
-  de su ubicación, conservación, contrato y transferencias internacionales.
+- Resend es el adaptador técnico seleccionado, pero no debe activarse hasta
+  aceptar y archivar el DPA, revisar subencargados, ubicación, conservación y
+  transferencias, y registrar `formularioRevisionAprobada: true`.
+- El formulario no almacena leads en una base propia ni admite adjuntos. El buzón
+  receptor será el sistema de conservación y necesita plazos, accesos, borrado y
+  medidas de seguridad definidos.
 - La preview no solicita fuentes ni scripts a terceros: utiliza tipografías del
   sistema y animación CSS/JavaScript nativo.
 - El panel, la ruta `/cookies/` y las pruebas de consentimiento están
@@ -68,14 +74,18 @@ automáticamente en autorización comercial.
 2. Revisar aviso legal, privacidad y cookies con asesoría legal.
 3. Documentar o anonimizar cada caso y sus fotografías.
 4. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
-5. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
+5. Registrar revisor y fecha para en/de/es/fr solo después de revisión profesional.
+6. Aprobar el proveedor de captación y verificar dominio, buzones y DPA.
+7. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
 
 ## Fuentes oficiales consultadas
 
-Enlaces comprobados el 14 de julio de 2026:
+Enlaces comprobados el 15 de julio de 2026:
 
 - [Ley 34/2002, especialmente el artículo 10](https://www.boe.es/buscar/act.php?id=BOE-A-2002-13758).
 - [Reglamento (UE) 2016/679, especialmente los artículos 6 y 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa).
 - [Ley Orgánica 3/2018](https://www.boe.es/eli/es/lo/2018/12/05/3/con).
 - [Agencia Española de Protección de Datos](https://www.aepd.es/), para deber de
   información y bases de legitimación.
+- [DPA de Resend](https://resend.com/legal/dpa), sujeto a revisión profesional y
+  archivo de la versión aceptada antes de activar.

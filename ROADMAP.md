@@ -1,6 +1,6 @@
 # Roadmap para una web ejemplar
 
-Fecha de referencia: 14 de julio de 2026.
+Fecha de referencia: 15 de julio de 2026.
 
 Este plan parte de la evidencia real y del cutover ya completado a Next.js. Los
 siguientes hitos deben conservar contenido, datos, rutas, dirección industrial,
@@ -40,14 +40,12 @@ implementación.
 ```text
 src/
   app/
-    layout.tsx
-    page.tsx
-    proyectos/page.tsx
-    proyectos/[slug]/page.tsx
-    (legal)/aviso-legal/page.tsx
-    (legal)/cookies/page.tsx
-    (legal)/privacidad/page.tsx
+    [lang]/layout.tsx
+    [lang]/page.tsx
+    [lang]/[section]/page.tsx
+    [lang]/[section]/[slug]/page.tsx
     api/analytics-config/route.ts
+    api/contact/route.ts
     robots.ts
     sitemap.ts
   components/
@@ -55,6 +53,8 @@ src/
     projects-section.tsx
     project-case.tsx
     legal-page.tsx
+    contact-form.tsx
+    language-switcher.tsx
     consent-manager.tsx
   lib/
     brand.ts
@@ -63,6 +63,9 @@ src/
     publication.ts
     analytics-config.ts
     consent.ts
+    contact.ts
+    i18n.ts
+    dictionaries/{en,de,es,fr}.ts
 data/
   brand.json
   proyectos.json
@@ -74,6 +77,8 @@ tests/
 
 - Las paginas se prerenderizan en build. No se necesita SSR para contenido que
   cambia mediante commits.
+- Las 52 páginas se generan bajo `/en/`, `/de/`, `/es/` y `/fr/`; todos los
+  idiomas llevan prefijo y `/` redirige a inglés.
 - `data/brand.json` sigue siendo la puerta de identidad y publicacion.
 - Los proyectos conservan una unica fuente de datos y generan tanto el hub como
   las rutas dinamicas mediante `generateStaticParams`.
@@ -245,8 +250,21 @@ precipitada.
   alias y dominios quedan sin una web accesible.
 - [x] Cambiar el repositorio a privado en GitHub Free y sustituir el enforcement
   remoto de pago por CI en PR, bloqueo local de `main` y ADR-009.
-- [ ] Decidir estrategia de idiomas/URLs y sistema completo de captación mediante
-  ADRs separadas.
+- [x] **6.1 · Decisión:** aprobar ADR-010 para idiomas/URLs y ADR-011 para
+  captación minimizada con Resend, sin activar tratamiento.
+- [x] **6.2 · Datos:** exigir en/de/es/fr en marca, ofertas, proyectos, imágenes y
+  datos desconocidos; registrar revisión profesional por idioma como pendiente.
+- [x] **6.3 · Aplicación:** generar 52 páginas localizadas, selector equivalente,
+  `<html lang>` exacto y redirecciones de las rutas españolas legacy.
+- [x] **6.4 · SEO técnico:** preparar metadata, Open Graph, canonical, `hreflang`,
+  `x-default` y sitemap derivados; mantenerlos cerrados hasta dominio/publicación.
+- [x] **6.5 · Captación:** implementar contacto localizado, validación, límites,
+  antiabuso y adaptador Resend fail-closed, sin adjuntos ni base de leads.
+- [x] **6.6 · Consolidación:** verificar datos, render, rutas, red, WCAG, foco,
+  consentimiento, Chromium, WebKit y Lighthouse multilingüe.
+- [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
+  textos legales; completar identidad, dominio, buzones y permisos; ejecutar
+  auditoría candidata y decisión expresa de publicación.
 - [ ] Completar identidad, sociedad, contacto y textos legales.
 - [ ] Documentar o anonimizar los seis casos y revisar profesionalmente privacidad
   y cookies.
@@ -270,12 +288,12 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Cerrar las condiciones externas pendientes antes de la **Fase 6 — Publicación
-controlada**: aprobar identidad y textos legales; decidir proveedores y configurar
-sus IDs por entorno; y disponer del dominio definitivo para canonical, sitemap,
-Search Console y datos estructurados finales. Hasta entonces, despliegues,
-indexación y analítica real permanecen apagados. Next.js sigue siendo la única
-salida y no se reabre la base legacy.
+Ejecutar exclusivamente la **Fase 6.7 — activación externa**: revisión lingüística
+profesional en/de/es/fr, identidad y sociedad, permisos de casos/fotografías,
+revisión legal, aceptación documentada del proveedor, dominio y buzones. Después
+se construirá una URL candidata protegida, se auditará y se pedirá una decisión
+expresa de publicación. Hasta entonces, formulario, despliegues, indexación y
+analítica real permanecen apagados.
 
 ## Referencias oficiales de implementacion
 
