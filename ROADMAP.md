@@ -268,6 +268,9 @@ precipitada.
   de navegación, verificar canonical/hreflang absolutos con dominio inyectado,
   retirar el SLA de respuesta no acreditado y separar el presupuesto SEO de
   preview (65) del candidato público (95).
+- [x] **6.7.0 · Puerta ejecutable:** derivar un `NO-GO` reproducible de identidad,
+  revisión, proveedor y permisos mediante `npm run check:activation`; documentar
+  el expediente exacto de entrada y el rollback sin activar superficies públicas.
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
   textos legales; completar identidad, dominio, buzones y permisos; ejecutar
   auditoría candidata y decisión expresa de publicación.
@@ -295,12 +298,13 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Ejecutar exclusivamente la **Fase 6.7 — activación externa**: revisión lingüística
-profesional en/de/es/fr, identidad y sociedad, permisos de casos/fotografías,
-revisión legal, aceptación documentada del proveedor, dominio y buzones. Después
-se construirá una URL candidata protegida, se auditará y se pedirá una decisión
-expresa de publicación. Hasta entonces, formulario, despliegues, indexación y
-analítica real permanecen apagados.
+Resolver las 38 incidencias que informa `npm run check:activation` mediante el
+expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
+en/de/es/fr, identidad y sociedad, permisos de casos/fotografías, revisión legal,
+aceptación documentada del proveedor, dominio y buzones. Con cero bloqueos y
+autorización expresa se construirá una URL candidata protegida, se auditará y se
+pedirá la decisión de publicación. Hasta entonces, formulario, despliegues,
+indexación y analítica real permanecen apagados.
 
 ## Referencias oficiales de implementacion
 
