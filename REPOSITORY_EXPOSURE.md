@@ -62,6 +62,16 @@ retirada o rotación; no se ha detectado esa condición en la revisión actual.
 GitHub Pro y GitLab Free quedan como alternativas si se necesita enforcement
 remoto para más colaboradores. La decisión completa se registra en ADR-009.
 
+## Evidencia del cambio
+
+- La API de GitHub devuelve `visibility: PRIVATE` e `isPrivate: true`.
+- Una solicitud web sin autenticar a la URL del repositorio devuelve HTTP 404.
+- GitHub Actions permanece habilitado y la PR de cambio completó `Quality gate`
+  correctamente; el job de preview Vercel quedó omitido.
+- La lista de colaboradores contiene únicamente a `git5285` con rol administrador.
+- La consulta de branch protection devuelve HTTP 403 con la indicación de pasar
+  a GitHub Pro o volver a público, que confirma el límite aceptado por ADR-009.
+
 ## Comprobación repetible
 
 La revisión cubre archivos versionados y patrones de claves API, secretos,
