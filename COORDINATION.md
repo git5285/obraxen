@@ -1,15 +1,13 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 23:48 Europe/Madrid.
+Actualizado: 2026-07-16 00:14 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-| Tarea | Alcance exclusivo | Estado |
-|---|---|---|
-| Identidad Obraxen (`c484b245...`) | Nombre comercial y reconciliación del gate 6.7 | En curso; sin publicación |
+No hay tareas editoras activas. Las claims versionadas están liberadas.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -108,6 +106,14 @@ cambios staged sin propietario.
   local completo y el run Linux de PR `29441551157` están verdes, incluido
   WebKit y Lighthouse; la preview fue omitida y la claim `f3ad2075...` queda
   liberada.
+- Ingesta controlada de identidad 6.7.1 preparada en la PR `#15`: `Obraxen`
+  queda integrado únicamente como nombre comercial. Sociedad, CIF, domicilio
+  publicable, dominio operativo, buzones y teléfono siguen sin acreditarse; la
+  declaración general sobre los seis casos se conserva como confirmación interna
+  y no sustituye permisos documentales de terceros. El gate baja de 38 a 37
+  incidencias y permanece `NO-GO`. El SHA `322e1fe` corrige además contraste del
+  logo de pie y reflow Linux a 320 px; el run `29454371281` está verde y la claim
+  `c484b245...` queda liberada sin despliegue.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
