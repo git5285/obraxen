@@ -23,9 +23,9 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/en/` | 98 | 100 | 100 | 66 | 2.464 ms | 3 ms | 0 |
-| `/de/projekte/` | 96 | 100 | 100 | 66 | 2.835 ms | 3 ms | 0 |
-| `/fr/projets/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.383 ms | 2 ms | 0 |
+| `/en/` | 98 | 100 | 100 | 66 | 2.463 ms | 3 ms | 0 |
+| `/de/projekte/` | 100 | 100 | 100 | 66 | 1.805 ms | 2 ms | 0 |
+| `/fr/projets/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.382 ms | 2 ms | 0 |
 
 El SEO 66 es deliberado mientras la preview siga noindex. Los tres perfiles
 superan el presupuesto de rendimiento compuesto 90, accesibilidad y buenas
