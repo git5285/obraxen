@@ -14,7 +14,6 @@ import { resolveContactConfig } from "@/lib/contact";
 import {
   getDictionary,
   getLanguageLinks,
-  getLocalizedPaths,
   getPath,
   getRouteForSection,
   getSectionParams,
@@ -23,6 +22,7 @@ import {
   type Locale,
   type RouteKey,
 } from "@/lib/i18n";
+import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
 import { getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
 import { projects } from "@/lib/projects";
 import { CONSENT_MAX_AGE_MS, CONSENT_STORAGE_KEY } from "@/lib/consent";
@@ -35,7 +35,11 @@ export function generateStaticParams() {
   return getSectionParams();
 }
 
-function pageMetadata(locale: Locale, route: RouteKey): Metadata {
+export function getSectionMetadata(
+  locale: Locale,
+  route: RouteKey,
+  domain = brand.dominio,
+): Metadata {
   const dictionary = getDictionary(locale);
   const claim = getBrandTranslation(locale).claim;
   const document = route === "legalNotice"
@@ -50,17 +54,14 @@ function pageMetadata(locale: Locale, route: RouteKey): Metadata {
   return {
     title: `${title} — ${claim}`,
     description,
-    alternates: brand.dominio ? {
-      canonical: getPath(locale, route),
-      languages: getLocalizedPaths(route),
-    } : undefined,
+    alternates: getLocalizedAlternates(domain, locale, route),
     openGraph: {
       title: `${title} — ${claim}`,
       description,
       type: "website",
       locale: openGraphLocales[locale],
       siteName: brand.nombre ?? claim,
-      url: brand.dominio ? getPath(locale, route) : undefined,
+      url: domain ? absoluteSiteUrl(domain, getPath(locale, route)) : undefined,
     },
   };
 }
@@ -70,7 +71,7 @@ export async function generateMetadata({ params }: SectionPageProps): Promise<Me
   if (!isLocale(lang)) return {};
   const route = getRouteForSection(lang, section);
   if (!route) return {};
-  return route === "projects" ? getProjectsMetadata(lang) : pageMetadata(lang, route);
+  return route === "projects" ? getProjectsMetadata(lang) : getSectionMetadata(lang, route);
 }
 
 export default async function SectionPage({ params }: SectionPageProps) {
@@ -151,7 +152,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
         <main className="contact-page" id="contact-content">
           <p className="kicker">{dictionary.contact.kicker}</p>
           <h1>{dictionary.contact.title}</h1>
-          <p className="intro">{dictionary.contact.intro}</p>
+          <p className="contact-intro">{dictionary.contact.intro}</p>
           {enabled ? (
             <ContactForm
               locale={lang}

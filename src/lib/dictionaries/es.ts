@@ -25,7 +25,7 @@ export const es: Dictionary = {
     items: [
       { label: "Proceso", section: "process" },
       { label: "Servicios", section: "services" },
-      { label: "Proyectos" },
+      { label: "Proyectos", route: "projects" },
       { label: "Empresa", section: "company" },
       { label: "FAQ", section: "faq" },
     ],

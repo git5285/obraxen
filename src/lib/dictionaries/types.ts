@@ -1,7 +1,14 @@
-export type NavigationItemCopy = {
-  label: string;
-  section?: "process" | "services" | "company" | "faq";
-};
+export type NavigationItemCopy =
+  | {
+      label: string;
+      section: "process" | "services" | "company" | "faq";
+      route?: never;
+    }
+  | {
+      label: string;
+      route: "projects";
+      section?: never;
+    };
 
 export type LegalSectionCopy = {
   title: string;
