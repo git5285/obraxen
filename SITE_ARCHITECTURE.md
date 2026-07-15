@@ -1,9 +1,9 @@
 # Arquitectura del sitio
 
 Estado documentado: 15 de julio de 2026. La web continúa en preview
-`noindex,nofollow`; naming, sociedad, dominio, contacto y publicación continúan
-sin integrar. La investigación de nombres no modifica rutas ni identidad hasta
-que exista una selección expresa.
+`noindex,nofollow`; `Obraxen` está integrado como nombre comercial, mientras
+sociedad, dominio, contacto y publicación continúan sin integrar. La selección
+no modifica rutas ni autoriza una salida pública.
 
 Next.js App Router es la única implementación desde la Fase 4.5. Todas las rutas
 actuales se prerenderizan en inglés, alemán, español y francés; los borradores

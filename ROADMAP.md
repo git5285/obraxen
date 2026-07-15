@@ -271,6 +271,9 @@ precipitada.
 - [x] **6.7.0 · Puerta ejecutable:** derivar un `NO-GO` reproducible de identidad,
   revisión, proveedor y permisos mediante `npm run check:activation`; documentar
   el expediente exacto de entrada y el rollback sin activar superficies públicas.
+- [x] **6.7.1 · Nombre comercial:** integrar `Obraxen` desde `data/brand.json`
+  por selección expresa del usuario, sin atribuir existencia a la sociedad,
+  dominio, buzón o permisos documentales aún pendientes.
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
   textos legales; completar identidad, dominio, buzones y permisos; ejecutar
   auditoría candidata y decisión expresa de publicación.
@@ -298,7 +301,7 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Resolver las 38 incidencias que informa `npm run check:activation` mediante el
+Resolver las 37 incidencias que informa `npm run check:activation` mediante el
 expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
 en/de/es/fr, identidad y sociedad, permisos de casos/fotografías, revisión legal,
 aceptación documentada del proveedor, dominio y buzones. Con cero bloqueos y

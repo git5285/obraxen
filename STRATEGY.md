@@ -6,7 +6,9 @@ Actualizado: 15 de julio de 2026
 
 Ámbito: empresa, oferta, evidencia, ventas, alianzas y evolución de la web
 
-Nombre comercial: pendiente; `RemainOn` sigue siendo solo un identificador interno
+Nombre comercial: `Obraxen`, seleccionado por el usuario el 15 de julio de 2026;
+la selección no sustituye comprobaciones registrales o marcarias. `RemainOn`
+sigue siendo solo un identificador interno heredado.
 
 Este documento centraliza la investigación sectorial y el aprendizaje utilizable
 del corpus BECOSAN/deepEX. No convierte material de terceros en experiencia propia,
@@ -268,8 +270,8 @@ común —entrega conforme sin correcciones posteriores registradas por el equip
 y ahora registran duración, equipo y medios principales; cinco distinguen además
 su situación operativa durante la intervención. Continúan pendientes algunos años
 exactos, la continuidad de TP-Link, los tiempos de reapertura y los valores de las
-mediciones. La investigación de naming está abierta, pero selección, sociedad,
-dominio, contacto y publicación permanecen pendientes. La web ya dispone de
+mediciones. `Obraxen` está seleccionado e integrado como nombre comercial, pero
+sociedad, dominio operativo, contacto y publicación permanecen pendientes. La web ya dispone de
 estructura completa en/de/es/fr y captación fail-closed, pero las traducciones
 requieren revisión profesional y el proveedor requiere aprobación documental.
 Esta preparación técnica no modifica la decisión de mantener la publicación

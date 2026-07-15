@@ -63,4 +63,19 @@ describe("structured data", () => {
   it("does not publish an unverified initial-response SLA", () => {
     expect(brand.respuestaHoras).toBeNull();
   });
+
+  it("integrates only the selected commercial name from the current identity intake", () => {
+    expect(brand).toMatchObject({
+      nombre: "Obraxen",
+      nombreLegal: null,
+      cif: null,
+      empresaConstituida: false,
+      dominio: null,
+      email: null,
+      telefono: null,
+      whatsapp: null,
+      direccion: null,
+      publicar: false,
+    });
+  });
 });
