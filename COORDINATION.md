@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 15:48 Europe/Madrid.
+Actualizado: 2026-07-15 15:57 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,7 +10,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
-| Preparación Fase 6 (`5fd4304a...`) | Vercel legacy, privacidad Git y controles de lanzamiento | En curso; retirada Vercel cerrada y guardas Git preparadas |
+| Preparación Fase 6 (`5fd4304a...`) | Vercel legacy, privacidad Git y controles de lanzamiento | En curso; GitHub privado verificado y gate de cierre pendiente |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
