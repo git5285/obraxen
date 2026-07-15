@@ -1,10 +1,10 @@
 # Expediente de activación · Fase 6.7
 
-Estado: **NO-GO verificable** · actualizado: 15 de julio de 2026.
+Estado: **NO-GO verificable** · actualizado: 16 de julio de 2026.
 
 Este expediente convierte la activación externa en una puerta reproducible. No
 es asesoramiento jurídico, no sustituye revisiones profesionales y no autoriza
-preview, despliegue, dominio, indexación, formulario ni analítica.
+preview, despliegue, conexión web del dominio, indexación, formulario ni analítica.
 
 ## Puerta ejecutable
 
@@ -21,23 +21,24 @@ Resultado actual:
 
 | Bloque | Incidencias | Estado |
 |---|---:|---|
-| Identidad, sociedad y contacto | 7 | Pendiente |
+| Identidad, sociedad y contacto | 5 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
 | Permisos de seis casos y fotografías | 24 | Pendiente |
-| **Total** | **37** | **NO-GO** |
+| **Total** | **35** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
 
-Entrada incorporada el 15 de julio de 2026: `Obraxen` queda seleccionado por el
-usuario e integrado como nombre comercial. La selección no equivale a
-certificación registral o marcaria. La sociedad comunicada como prevista aún no
-está constituida; razón social, CIF y domicilio continúan `null`. Para el dominio
-comunicado, el RDAP de `.com` no devolvió un objeto y no existían DNS ni MX,
-mientras una comprobación comercial separada lo marcó como no disponible. No se
-acredita por tanto registro, disponibilidad ni control; dominio y buzón
-permanecen `null` hasta verificar titularidad y entrega.
+Entrada incorporada el 16 de julio de 2026: `obraxen.com` consta registrado desde
+el 15 de julio de 2026 y bajo control operativo en Cloudflare. El DNS autoritativo
+publica los MX y SPF de Google Workspace, una clave DKIM de 2048 bits y DMARC en
+modo de observación (`p=none`) con informes a `dmarc@obraxen.com`. Google Workspace
+confirma DKIM activo para `obraxen.com`; `info@obraxen.com` existe como cuenta y
+`privacy@obraxen.com` y `dmarc@obraxen.com` como alias sin licencia adicional.
+No se ha conectado ningún registro A, AAAA o CNAME a la web, ni se ha probado en
+esta fase una entrega externa de extremo a extremo. La sociedad aún no está
+constituida; razón social, CIF y domicilio continúan `null`.
 
 ## Expediente mínimo que debe recibirse
 
@@ -45,8 +46,9 @@ permanecen `null` hasta verificar titularidad y entrega.
 
 - nombre comercial definitivo: **resuelto con `Obraxen`**;
 - sociedad constituida, razón social, CIF/NIF y domicilio validado;
-- dominio definitivo;
-- email público y buzón separado para derechos de privacidad;
+- dominio definitivo: **resuelto con `obraxen.com`**;
+- email público y buzón separado para derechos de privacidad: **resueltos con
+  `info@obraxen.com` y `privacy@obraxen.com`**;
 - teléfono o WhatsApp publicable;
 - persona con capacidad para aprobar proveedores y publicación.
 
@@ -115,7 +117,7 @@ de tracking, conservación y procedimiento de baja/borrado. Hasta entonces,
 2. Actualizar datos y textos mediante PR; ejecutar `npm run check:quality` y
    `npm run check:activation`.
 3. Con cero bloqueos y autorización expresa, crear una preview protegida del SHA
-   exacto, sin dominio ni producción conectados.
+   exacto, sin dominio web ni producción conectados.
 4. Auditar idiomas, permisos, formulario real, consentimiento, metadata, CSP,
    navegadores, móvil, accesibilidad, Lighthouse y exposición histórica.
 5. Registrar responsable, URL, SHA, variables, rollback y decisión `GO`,

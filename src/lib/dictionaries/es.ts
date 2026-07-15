@@ -256,7 +256,7 @@ export const es: Dictionary = {
       description: "Información legal del titular de esta web.",
       intro: "Este documento es un borrador de trabajo preparado para completar la información exigida al titular de una web empresarial establecida en España. Debe revisarse cuando exista la sociedad y antes de activar la publicación.",
       alertTitle: "Información imprescindible pendiente",
-      alertText: "Faltan la identidad societaria, el domicilio validado, el CIF, el email, el dominio y, en su caso, los datos registrales. Este borrador no autoriza la publicación.",
+      alertText: "Faltan la identidad societaria, el domicilio validado, el CIF y, en su caso, los datos registrales. Este borrador no autoriza la publicación.",
       relatedRoute: "privacy",
       relatedLabel: "Política de privacidad",
       sections: [

@@ -101,7 +101,7 @@ export function legalFacts(
       { label: labels.controller, value: brand.nombreLegal },
       { label: labels.taxId, value: brand.cif },
       { label: labels.address, value: brand.direccion },
-      { label: labels.privacyContact, value: brand.email },
+      { label: labels.privacyContact, value: brand.emailPrivacidad },
     ];
   }
   return [
