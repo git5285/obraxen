@@ -372,6 +372,9 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   .sticky-nav .inner{gap:8px;padding-right:12px;padding-left:12px}
   .sticky-nav .logo{display:none}
 }
+@media (max-width:480px){
+  .foot{grid-template-columns:minmax(0,1fr)}
+}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .btn,.tarjeta,.foto > .tex,.sticky-nav{transition:none}
