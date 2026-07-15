@@ -23,6 +23,7 @@
 .legal-shell ul{padding-left:22px}
 .legal-shell main>footer{border-top:1px solid var(--brand-line);margin-top:56px;padding-top:24px;color:var(--brand-muted);font-size:.86rem}
 .legal-shell .contact-page{max-width:760px}
+.legal-shell .contact-intro{max-width:68ch;font-size:1.08rem}
 .legal-shell .contact-form{margin-top:34px;border:1px solid var(--brand-line)}
 .legal-shell .contact-unavailable{margin-top:34px;border:1px solid var(--brand-line)}
 .contact-consent{display:grid!important;grid-template-columns:22px 1fr;gap:10px;align-items:start}

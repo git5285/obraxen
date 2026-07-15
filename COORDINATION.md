@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 17:39 Europe/Madrid.
+Actualizado: 2026-07-15 19:34 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -85,12 +85,20 @@ cambios staged sin propietario.
   por CI en PR, hook local y gobernanza obligatoria. El run posterior de `main`
   `29421963694` está verde, la preview fue omitida y la claim `5fd4304a...` queda
   liberada.
-- Fases 6.1–6.6 completadas en `codex/phase-6-eu-i18n`, commit `21f525f`:
+- Fases 6.1–6.6 integradas mediante la PR `#12`; `main` queda en el merge
+  `b79c695`. La implementación nació en `codex/phase-6-eu-i18n`, commit `21f525f`:
   52 páginas en/de/es/fr, rutas equivalentes, datos localizados, contacto Resend
   fail-closed, revisión profesional como gate, ADR-010/011 y runbook NO-GO. El
   gate local pasa con 75 unitarias, 87 Playwright correctas, 6 omisiones
   intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
-  liberada sin despliegue.
+  liberada sin despliegue. El run posterior de `main` `29431531128` está verde.
+- Consolidación técnica inmediata entregada mediante la PR `#13`, commit
+  inicial `a635299` y cabeza validada `1317129`: reflow en/de/es/fr probado desde 320 px, contacto y legales sin
+  colisión CSS, navegación tipada, metadata absoluta verificable, SLA no
+  acreditado retirado y presupuestos SEO diferenciados entre preview y público.
+  El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
+  intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
+  liberada sin despliegue. El run Linux de la PR `29439664817` está verde.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 

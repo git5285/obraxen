@@ -104,6 +104,16 @@ for (const route of contentRoutes) {
           clientWidth: element.clientWidth,
           scrollWidth: element.scrollWidth,
         })),
+      unexpectedTextOverflows: [...document.querySelectorAll<HTMLElement>(
+        ".hero h1, .relato .linea, main h1, main h2, .legal-shell .intro, .contact-intro",
+      )]
+        .filter((element) => element.clientWidth > 0 && element.scrollWidth > element.clientWidth + 1)
+        .map((element) => ({
+          selector: `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ""}${element.className ? `.${String(element.className).trim().replaceAll(" ", ".")}` : ""}`,
+          clientWidth: element.clientWidth,
+          scrollWidth: element.scrollWidth,
+          text: element.textContent?.trim().slice(0, 80),
+        })),
       overflowingElements: [...document.querySelectorAll<HTMLElement>("body *")]
         .filter((element) => {
           if (element.closest("[inert]") || element.matches(".skip:not(:focus)")) return false;
@@ -132,12 +142,61 @@ for (const route of contentRoutes) {
       }),
     ).toBeLessThanOrEqual(pageState.clientWidth);
     expect(pageState.brokenImages).toEqual([]);
+    expect(pageState.unexpectedTextOverflows).toEqual([]);
     expect(pageState.temporaryNamePresent).toBe(false);
     expect(consoleErrors).toEqual([]);
     expect(failedRequests).toEqual([]);
     expect(thirdPartyRequests).toEqual([]);
   });
 }
+
+test("localized display headings reflow from 320 to 390 CSS pixels", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile reflow matrix");
+
+  for (const width of [320, 360, 375, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const entry of locales) {
+      await page.goto(entry.home, { waitUntil: "networkidle" });
+      const state = await page.evaluate(() => ({
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        rectOverflows: [...document.querySelectorAll<HTMLElement>("body *")]
+          .filter((element) => {
+            if (element.closest("[inert], .sectores .cinta") || element.matches(".skip:not(:focus)")) {
+              return false;
+            }
+            const style = getComputedStyle(element);
+            if (style.display === "none" || style.visibility === "hidden") return false;
+            const rect = element.getBoundingClientRect();
+            const visibleInternalOverflow = style.overflowX === "visible"
+              && element.scrollWidth > element.clientWidth + 1
+              && rect.left + element.scrollWidth > document.documentElement.clientWidth + 1;
+            return rect.width > 0 && (rect.right > document.documentElement.clientWidth + 1
+              || rect.left < -1
+              || visibleInternalOverflow);
+          })
+          .map((element) => ({
+            selector: `${element.tagName.toLowerCase()}${element.className ? `.${String(element.className).trim().replaceAll(" ", ".")}` : ""}`,
+            rect: element.getBoundingClientRect().toJSON(),
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+            text: element.textContent?.trim().slice(0, 80),
+          })),
+        textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .relato .linea, .catalogo li")]
+          .filter((element) => element.scrollWidth > element.clientWidth + 1)
+          .map((element) => ({
+            text: element.textContent?.trim(),
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+          })),
+      }));
+      expect(state.scrollWidth, `${entry.locale} at ${width}px: ${JSON.stringify(state.rectOverflows)}`)
+        .toBeLessThanOrEqual(state.clientWidth);
+      expect(state.rectOverflows, `${entry.locale} at ${width}px`).toEqual([]);
+      expect(state.textOverflows, `${entry.locale} at ${width}px`).toEqual([]);
+    }
+  }
+});
 
 for (const entry of locales) {
   test(`${entry.locale} locale has coherent routes and language counterparts`, async ({ page }) => {

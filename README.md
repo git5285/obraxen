@@ -69,10 +69,11 @@ npm run check        # lint + tipos + unitarias + build
 npm run check:quality # gate completo local
 ```
 
-El gate ejecuta 75 pruebas Vitest, una matriz Playwright en Chromium móvil y
-escritorio más smoke WebKit, y presupuestos Lighthouse en portada, hub y caso
-localizados. Los informes se
-conservan como artefactos durante 14 días.
+El gate ejecuta 100 pruebas Vitest y 95 ejecuciones Playwright configuradas en
+Chromium móvil/escritorio y smoke WebKit. Incluye reflow multilingüe entre 320 y
+390 px, ramas de seguridad de la API de contacto y metadata con dominio inyectado,
+además de presupuestos Lighthouse en portada, hub y caso localizados. Los informes
+se conservan como artefactos durante 14 días.
 
 ## Gobernanza Git gratuita
 

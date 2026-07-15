@@ -23,24 +23,27 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/en/` | 98 | 100 | 100 | 66 | 2.462 ms | 2 ms | 0 |
-| `/de/projekte/` | 99 | 100 | 100 | 66 | 1.955 ms | 2 ms | 0 |
-| `/fr/projets/blitz-bremen/` | 100 | 100 | 100 | 66 | 1.804 ms | 2 ms | 0 |
+| `/en/` | 98 | 100 | 100 | 66 | 2.463 ms | 3 ms | 0 |
+| `/de/projekte/` | 100 | 100 | 100 | 66 | 1.805 ms | 2 ms | 0 |
+| `/fr/projets/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.382 ms | 2 ms | 0 |
 
 El SEO 66 es deliberado mientras la preview siga noindex. Los tres perfiles
-superan el presupuesto de rendimiento 95, accesibilidad y buenas prácticas 100,
-LCP de laboratorio 3 s, TBT 200 ms y CLS 0,1. El objetivo de campo de LCP sigue
-siendo inferior a 2,5 s.
+superan el presupuesto de rendimiento compuesto 90, accesibilidad y buenas
+prácticas 100, LCP de laboratorio 3 s local/3,25 s en CI, TBT 200 ms y CLS 0,1.
+El SEO exige 65 mientras el sitio permanezca en preview noindex y sube a 95 en
+cuanto `publicar` sea verdadero. El objetivo de campo de LCP sigue siendo inferior
+a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 75 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 100 pruebas Vitest y build de producción.
 - Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
-- Playwright: 93 ejecuciones configuradas en Chromium móvil/escritorio y smoke
-  WebKit; 6 omisiones intencionales por cobertura exclusiva de navegador/viewport.
+- Playwright: 95 ejecuciones configuradas en Chromium móvil/escritorio y smoke
+  WebKit; 7 omisiones intencionales por cobertura exclusiva de navegador/viewport.
 - 28 rutas de contenido representativas verificadas a 390 × 844 y 1.440 × 1.000,
-  más equivalencia de rutas en los cuatro idiomas.
+  más equivalencia de rutas en los cuatro idiomas y reflow de titulares en/de/es/fr
+  a 320, 360, 375 y 390 px.
 - Cero errores de consola o red, imágenes rotas u overflow horizontal.
 - Axe sin hallazgos serios o críticos en las cuatro portadas y los cuatro hubs;
   contraste del selector de idioma corregido a nivel AA.
@@ -59,6 +62,10 @@ siendo inferior a 2,5 s.
 - `/` y las rutas españolas legacy redirigen a sus destinos canónicos localizados.
 - El formulario no se renderiza activo y `/api/contact/` responde 503 sin la
   identidad, aprobación y configuración reales.
+- La ruta de contacto prueba 415, 403, 413, las tres causas de 400, 429, 502 y
+  202, incluida la forma acotada del envío a Resend y las cabeceras no-cache.
+- Canonical y `hreflang` permanecen ausentes sin dominio; pruebas con un dominio
+  inyectado exigen URLs absolutas y `x-default` para portada, hub y casos.
 
 ## Seguridad y privacidad
 
@@ -75,6 +82,8 @@ siendo inferior a 2,5 s.
   publicidad; Clarity usa ConsentV2 y el formulario queda enmascarado.
 - La dirección provisional se retiró de `brand.json` y permanece `null` hasta
   disponer de un domicilio empresarial validado.
+- El plazo de respuesta inicial permanece `null`; no se muestra un SLA hasta que
+  exista responsable, buzón y compromiso operativo verificable.
 - Los informes locales y auditorías externas están ignorados.
 - La API de contacto limita JSON a 15 KB, valida mismo origen, honeypot y tiempo,
   aplica rate limit efímero sobre IP hasheada, no admite adjuntos y no registra PII.
