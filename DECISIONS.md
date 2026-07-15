@@ -1,7 +1,7 @@
 # Decisiones de arquitectura (ADR)
 
 > Registro corto de decisiones: **contexto / decisión / consecuencias**.
-> Formato ligero. Fecha de referencia: 2026-07-15.
+> Formato ligero. Fecha de referencia: 2026-07-16.
 > Estados: `Aceptada` · `Abierta` (aún sin decidir) · `Sustituida`.
 
 ---
@@ -85,9 +85,16 @@ sido una edición dispersa y propensa a error.
 > disponible. Sin titularidad ni disponibilidad acreditadas, dominio y correo no
 > se integran todavía.
 
+> **Actualización 2026-07-16:** el registro y control de `obraxen.com` quedan
+> verificados mediante RDAP, sesión administrativa de Cloudflare y respuesta de
+> los DNS autoritativos. Google Workspace publica MX/SPF, autentica el envío con
+> DKIM y dispone de `info@obraxen.com`, `privacy@obraxen.com` y
+> `dmarc@obraxen.com`; DMARC queda inicialmente en observación. Dominio y correos
+> se integran en `brand.json`, sin conectar la web ni autorizar publicación.
+
 **Decisión.** Aislar toda la identidad en un único punto de verdad,
 `data/brand.json` (`nombre`, `nombreLegal`, `claim`, `dominio`, `email`,
-`telefono`, `direccion`). El nombre no aparece **literalmente en ningún otro
+`emailPrivacidad`, `telefono`, `direccion`). El nombre no aparece **literalmente en ningún otro
 fichero fuente** (`src/` + `data/` → solo `brand.json`). Recolorear = editar solo
 `tokens.css`; renombrar = editar solo `brand.json`. La resolución pasó de runtime
 a build y ahora se realiza en los Server Components y metadatos de Next.js.
@@ -97,10 +104,10 @@ a build y ahora se realiza en los Server Components y metadatos de Next.js.
   de prueba propagó título, logo, contactos y JSON-LD a la vez).
 - (+) Los datos aún no decididos usan `null` y no se renderizan; el modo
   `publicar: true` exige identidad legal, contacto y URLs legales.
-- (+) El nombre seleccionado se resuelve en logotipo, títulos y metadata sin
-  duplicarlo fuera de la fuente estructurada; sin dominio no se generan
-  canonical, Open Graph absoluto ni sitemap, y sin email operativo no se muestra
-  un formulario que no pueda enviarse.
+- (+) El nombre, dominio y correos verificados se resuelven desde la fuente
+  estructurada. Canonical y Open Graph absolutos ya pueden construirse, pero el
+  sitemap sigue vacío, `publicar` continúa en `false` y el formulario no se
+  habilita hasta completar identidad, legal y proveedor.
 - (✓ **resuelto 2026-07-14**) ~~Inyección por JS ⇒ crawlers/scrapers sin JS no ven
   el nombre en cabecera~~ → el nombre, `<title>`, `meta`, `og` y JSON-LD se
   resuelven **en build** y viven en el HTML estático servido. Ejecutado el
@@ -458,9 +465,13 @@ publicación falla cerrada mientras cualquier revisión siga pendiente.
 **Estado:** Aceptada técnicamente · **activación bloqueada** · **fecha 2026-07-15**
 
 **Contexto.** El sitio necesita una solicitud de evaluación en cuatro idiomas,
-pero todavía no existen sociedad, dominio, buzón responsable ni textos legales
-aprobados. Un `mailto:` no confirma entrega ni permite una experiencia coherente;
-una base de datos propia añade retención y superficie de seguridad innecesarias.
+pero todavía no existen sociedad ni textos legales aprobados. Un `mailto:` no
+confirma entrega ni permite una experiencia coherente; una base de datos propia
+añade retención y superficie de seguridad innecesarias.
+
+> **Actualización 2026-07-16:** el dominio, el buzón responsable y el alias de
+> privacidad ya existen. El formulario sigue bloqueado por identidad societaria,
+> revisión legal, aceptación del proveedor y configuración de entorno.
 
 **Decisión.** Usar Resend como adaptador de envío inicial y no persistir leads en
 una base de datos de la aplicación. `/api/contact/` acepta solo JSON limitado,

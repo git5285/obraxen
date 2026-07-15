@@ -1,14 +1,16 @@
 # Auditoría de contenidos
 
-Estado: 15 de julio de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
-`Obraxen` se integra como nombre comercial seleccionado; constitución, dominio y
-canales de contacto quedan expresamente fuera hasta poder verificarlos.
+Estado: 16 de julio de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
+`Obraxen`, `obraxen.com`, el correo público y el alias de privacidad se integran
+tras verificación; constitución, identidad legal, teléfono y publicación siguen
+fuera hasta poder acreditarlos.
 
 ## Objetivo de la página
 
 - **Ahora:** demostrar capacidad técnica mediante servicios, método y casos ejecutados.
-- **Acción principal actual:** consultar los proyectos.
-- **Cuando exista contacto:** solicitar una primera valoración.
+- **Acción principal actual:** consultar los proyectos; el correo público queda
+  disponible como canal secundario.
+- **Cuando se apruebe el formulario:** solicitar una primera valoración desde la web.
 - **Audiencia:** responsables de mantenimiento y operaciones de instalaciones con
   pavimento industrial de hormigón en uso.
 
@@ -21,18 +23,17 @@ canales de contacto quedan expresamente fuera hasta poder verificarlos.
 | El proceso incluía medidas de polvo y residuos no confirmadas | Detalle operativo sin fuente | Eliminado hasta contar con un protocolo verificable |
 | Servicios descritos como una lista de técnicas | Bajo valor para el decisor | Cada servicio conecta el daño con el criterio de intervención |
 | La sección de proyectos sonaba defensiva | Restaba fuerza a la evidencia | Se presenta qué acredita cada ficha sin añadir resultados no medidos |
-| Equipo y contacto mostraban datos pendientes | Expone una web incompleta | Los bloques permanecen preparados, pero no se generan hasta disponer de datos |
+| Equipo y contacto mostraban datos pendientes | Expone una web incompleta | El correo verificado ya puede mostrarse; el formulario permanece cerrado y los demás datos se omiten hasta acreditarlos |
 | Los resultados repetían «la obra fue ejecutada» | Redundancia | La ejecución queda en la ficha; el resultado combina la evidencia fotográfica con el cierre ahora confirmado por el equipo |
 | La oferta podía interpretarse como cuatro técnicas aisladas | No explica el valor de una rehabilitación completa | La página aclara que una intervención puede combinar preparación, reparación, nivelación y tratamiento según el diagnóstico |
 | Las técnicas no formaban ofertas comprensibles para el comprador | Dificulta saber qué se contrata y para qué | Se preparan cuatro ofertas internas con comprador, problema, alcance, límites, evidencia y condiciones de salida |
 | La internacionalización podía dejar interfaz o datos parcialmente traducidos | Mezcla idiomas y debilita confianza técnica | Diccionarios y esquemas exigen en/de/es/fr completos; la revisión profesional sigue bloqueando publicación |
-| Un formulario anticipado implicaba tratamiento sin responsable completo | Riesgo legal y pérdida de consultas | Contacto y API quedan preparados, pero cerrados hasta identidad, proveedor, buzón y legal aprobados |
+| Un formulario anticipado implicaba tratamiento sin responsable completo | Riesgo legal y pérdida de consultas | Contacto y API quedan preparados, pero cerrados hasta identidad, proveedor y legal aprobados |
 
 ## Afirmaciones publicables
 
 - Más de 10 años de experiencia acumulada.
 - Equipos propios.
-- Primera respuesta en menos de 48 horas, cuando haya un canal activo.
 - Trabajo en la Unión Europea y mercados principales confirmados.
 - Ejecución, ubicaciones y magnitudes de los seis casos documentados. La
   identificación de clientes y las fotografías quedan condicionadas a soporte
@@ -78,7 +79,7 @@ canales de contacto quedan expresamente fuera hasta poder verificarlos.
   futuros sistemas propios.
 - Fabricación química propia, formulaciones propias o titularidad sobre productos
   fabricados por terceros.
-- Nombre, razón social, CIF, dominio o contacto provisionales.
+- Razón social, CIF, domicilio o teléfono provisionales.
 
 ## Regla de evidencia técnica
 

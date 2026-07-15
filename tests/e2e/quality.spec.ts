@@ -340,7 +340,7 @@ test("mobile menu traps and restores focus", async ({ page }, testInfo) => {
   const trigger = page.locator(".hero .menu-btn");
   const menu = page.locator("#menuMovil");
   const close = menu.getByRole("button", { name: "Close menu" });
-  const lastLink = menu.getByRole("link", { name: /View projects/ }).last();
+  const lastLink = menu.locator("a").last();
 
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -395,7 +395,10 @@ test("redirects, closed routes, contact API and security policy fail closed", as
   expect(headers["permissions-policy"]).toContain("browsing-topics=()");
   expect(headers["content-security-policy"]).not.toContain("style-src 'self' 'unsafe-inline'");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://obraxen.com/en/",
+  );
 });
 
 test("WebKit smoke: localized home, project and contact load", async ({ page }, testInfo) => {

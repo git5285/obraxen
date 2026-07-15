@@ -108,7 +108,6 @@ duplicarse con valores alternativos en otros documentos:
 - cobertura declarada en la Unión Europea, con Alemania, Países Bajos, Bélgica,
   Francia, España, Portugal e Italia como mercados prioritarios;
 - horario de atención de lunes a viernes, 9:00–18:00;
-- primera respuesta inferior a 48 horas cuando exista un canal de contacto real.
 
 El catálogo técnico observado incluye juntas, fisuras, parches, anclajes,
 nivelación, preparación mecánica, retirada de revestimientos, pulido,
@@ -270,8 +269,9 @@ común —entrega conforme sin correcciones posteriores registradas por el equip
 y ahora registran duración, equipo y medios principales; cinco distinguen además
 su situación operativa durante la intervención. Continúan pendientes algunos años
 exactos, la continuidad de TP-Link, los tiempos de reapertura y los valores de las
-mediciones. `Obraxen` está seleccionado e integrado como nombre comercial, pero
-sociedad, dominio operativo, contacto y publicación permanecen pendientes. La web ya dispone de
+mediciones. `Obraxen`, `obraxen.com` y los correos público/privacidad están
+integrados, pero sociedad, teléfono, formulario y publicación permanecen
+pendientes. La web ya dispone de
 estructura completa en/de/es/fr y captación fail-closed, pero las traducciones
 requieren revisión profesional y el proveedor requiere aprobación documental.
 Esta preparación técnica no modifica la decisión de mantener la publicación

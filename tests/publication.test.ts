@@ -17,6 +17,7 @@ const publicBrand: Brand = {
   dominio: "example.com",
   direccion: "Domicilio validado",
   email: "contacto@example.com",
+  emailPrivacidad: "privacidad@example.com",
   telefono: "+34 900 000 000",
   legalRevisionAprobada: true,
   formularioRevisionAprobada: true,
@@ -79,6 +80,13 @@ describe("publication gate", () => {
     expect(() => getPublicationState({
       ...publicBrand,
       formularioRevisionAprobada: false,
+    }, documentedProjects)).toThrow(PublicationConfigurationError);
+  });
+
+  it("requires a dedicated privacy address before publication", () => {
+    expect(() => getPublicationState({
+      ...publicBrand,
+      emailPrivacidad: null,
     }, documentedProjects)).toThrow(PublicationConfigurationError);
   });
 });
