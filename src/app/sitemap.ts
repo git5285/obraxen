@@ -2,21 +2,31 @@ import type { MetadataRoute } from "next";
 import { brand } from "@/lib/brand";
 import { projects } from "@/lib/projects";
 import { getPublicationState } from "@/lib/publication";
+import { getLocalizedPaths, getPath, locales, type RouteKey } from "@/lib/i18n";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const publication = getPublicationState(brand, projects);
   if (!publication.isPublic || !brand.dominio) return [];
 
   const origin = `https://${brand.dominio}`;
-  return [
-    { url: `${origin}/`, priority: 1 },
-    { url: `${origin}/proyectos/`, priority: 0.9 },
-    ...projects.map(({ slug }) => ({
-      url: `${origin}/proyectos/${slug}/`,
-      priority: 0.8,
-    })),
-    { url: `${origin}/aviso-legal/`, priority: 0.2 },
-    { url: `${origin}/privacidad/`, priority: 0.2 },
-    { url: `${origin}/cookies/`, priority: 0.2 },
-  ];
+  const absolute = (path: string) => new URL(path, origin).toString();
+  const entry = (locale: (typeof locales)[number], route: RouteKey, priority: number, slug?: string) => ({
+    url: absolute(getPath(locale, route, slug)),
+    priority,
+    alternates: {
+      languages: Object.fromEntries(
+        Object.entries(getLocalizedPaths(route, slug)).map(([language, path]) => [language, absolute(path)]),
+      ),
+    },
+  });
+
+  return locales.flatMap((locale) => [
+    entry(locale, "home", 1),
+    entry(locale, "projects", 0.9),
+    ...projects.map(({ slug }) => entry(locale, "projects", 0.8, slug)),
+    entry(locale, "contact", 0.8),
+    entry(locale, "legalNotice", 0.2),
+    entry(locale, "privacy", 0.2),
+    entry(locale, "cookies", 0.2),
+  ]);
 }

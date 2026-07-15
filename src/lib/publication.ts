@@ -8,8 +8,7 @@ const requiredPublicTextFields = [
   "direccion",
   "dominio",
   "email",
-  "legalUrl",
-  "privacidadUrl",
+  "formularioProveedor",
 ] as const;
 
 export type PublicationState =
@@ -34,6 +33,7 @@ export class PublicationConfigurationError extends Error {
 }
 
 const requiredProjectScopes = ["nombre_cliente", "fotografias_web"] as const;
+const publicationLocales = ["en", "de", "es", "fr"] as const;
 
 export function getProjectPublicationIssues(projects: readonly Project[]): string[] {
   return projects.flatMap((project) => {
@@ -76,11 +76,12 @@ export function getPublicationIssues(
   if (!brand.legalRevisionAprobada) {
     issues.push("la revisión legal debe estar aprobada antes de publicar");
   }
-
-  for (const field of ["legalUrl", "privacidadUrl"] as const) {
-    const value = brand[field];
-    if (value && !/^(?:https:\/\/|\/(?!\/))/.test(value)) {
-      issues.push(`brand.${field} debe ser una URL https o una ruta absoluta`);
+  if (!brand.formularioRevisionAprobada) {
+    issues.push("el proveedor de captación y su tratamiento deben estar aprobados antes de publicar");
+  }
+  for (const locale of publicationLocales) {
+    if (brand.revisionTraducciones[locale].estado !== "aprobada") {
+      issues.push(`la traducción ${locale} necesita revisión profesional aprobada`);
     }
   }
 

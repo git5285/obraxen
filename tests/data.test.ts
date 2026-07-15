@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { offers } from "@/lib/offers";
 import { projects, projectsBySlug } from "@/lib/projects";
+import { locales } from "@/lib/i18n";
 
 describe("structured data", () => {
   it("keeps project and offer slugs unique", () => {
@@ -19,6 +20,19 @@ describe("structured data", () => {
   it("does not publish internal offer drafts", () => {
     expect(offers.every(({ estadoPublicacion }) => estadoPublicacion !== "publicable"))
       .toBe(true);
+  });
+
+  it("requires all four locale variants for public project and offer copy", () => {
+    for (const project of projects) {
+      expect(Object.keys(project.traducciones).sort()).toEqual([...locales].sort());
+      for (const locale of locales) {
+        expect(project.traducciones[locale].imagenes).toHaveLength(project.imagenes.length);
+        expect(project.traducciones[locale].magnitudes.length).toBeGreaterThan(0);
+      }
+    }
+    for (const offer of offers) {
+      expect(Object.keys(offer.traducciones).sort()).toEqual([...locales].sort());
+    }
   });
 
   it("keeps client publication evidence explicit and fail-closed", () => {

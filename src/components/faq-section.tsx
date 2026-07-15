@@ -1,19 +1,16 @@
-import { frequentlyAskedQuestions } from "@/lib/homepage";
+import type { Dictionary } from "@/lib/dictionaries/types";
 
-export function FaqSection() {
+export function FaqSection({ copy }: { copy: Dictionary["faq"] }) {
   return (
     <section className="faq" id="faq">
       <div className="wrap fila">
         <div className="col-izq">
-          <p className="kicker">Resolvemos dudas</p>
-          <h2>Preguntas frecuentes sobre reparación de pavimentos</h2>
-          <p>
-            Las dudas que más nos plantean responsables de mantenimiento y operaciones
-            antes de una intervención.
-          </p>
+          <p className="kicker">{copy.kicker}</p>
+          <h2>{copy.title}</h2>
+          <p>{copy.intro}</p>
         </div>
         <div>
-          {frequentlyAskedQuestions.map(({ question, answer }) => (
+          {copy.items.map(({ question, answer }) => (
             <details key={question}>
               <summary>{question}</summary>
               <p>{answer}</p>

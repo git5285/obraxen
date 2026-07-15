@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 16:08 Europe/Madrid.
+Actualizado: 2026-07-15 17:32 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,6 +10,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
+| Fase 6 UE (`3531129d...`) | i18n en/de/es/fr, captación cerrada, QA y documentación | En curso; implementación y gates técnicos completados, cierre documental en revisión |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -105,6 +106,10 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - ADR-009 fija GitHub privado en el plan gratuito: cada rama pasa el gate local,
   los pushes directos a `main` están bloqueados y solo se fusiona una PR con el
   `Quality gate` remoto del SHA actual verde.
+- ADR-010 fija inglés como entrada y prefijos `/en/`, `/de/`, `/es/`, `/fr/`,
+  con segmentos localizados y revisión profesional obligatoria por idioma.
+- ADR-011 fija Resend como adaptador técnico sin base propia; formulario y API
+  permanecen fail-closed hasta aprobación documental, identidad, dominio y buzón.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
@@ -113,10 +118,12 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Decidir mercado/idiomas y sistema completo de captación antes de implementar
-   URLs internacionales o contacto.
-2. Mantener previews, indexación, analítica real y publicación apagadas hasta
-   completar identidad, permisos, legal, dominio y autorización expresa.
+1. Cerrar Fase 6.7 con revisión profesional de en/de/es/fr, identidad, sociedad,
+   permisos, legal, DPA/proveedor, dominio y buzones reales.
+2. Solo después y con autorización expresa, crear una preview protegida, auditar
+   el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
+3. Mantener previews, indexación, formulario, analítica real y publicación
+   apagados hasta completar esas condiciones.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
 efecto lateral de esta coordinación.

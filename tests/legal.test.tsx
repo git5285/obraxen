@@ -1,20 +1,28 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import LegalNoticePage from "@/app/(legal)/aviso-legal/page";
-import CookiesPage from "@/app/(legal)/cookies/page";
-import PrivacyPage from "@/app/(legal)/privacidad/page";
+import SectionPage from "@/app/[lang]/[section]/page";
+import { getDictionary, locales, routeSegments } from "@/lib/i18n";
 
-describe("legal draft routes", () => {
-  it.each([
-    ["Aviso legal", <LegalNoticePage key="legal" />],
-    ["Cookies y almacenamiento", <CookiesPage key="cookies" />],
-    ["Política de privacidad", <PrivacyPage key="privacy" />],
-  ])("renders %s as an explicit non-public draft", (title, page) => {
-    const html = renderToStaticMarkup(page);
-    expect(html).toContain(`<h1>${title}</h1>`);
-    expect(html).toContain("Borrador incompleto · no apto para publicación");
-    expect(html).toContain("Sin dato");
-    expect(html).not.toContain(">null<");
-    expect(html).not.toContain("RemainOn");
-  });
+describe("localized legal draft routes", () => {
+  for (const locale of locales) {
+    const dictionary = getDictionary(locale);
+    const routes = [
+      ["legalNotice", dictionary.legal.notice.title],
+      ["privacy", dictionary.legal.privacy.title],
+      ["cookies", dictionary.legal.cookies.title],
+    ] as const;
+
+    it.each(routes)(`renders ${locale}/%s as an explicit non-public draft`, async (route, title) => {
+      const page = await SectionPage({ params: Promise.resolve({
+        lang: locale,
+        section: routeSegments[locale][route],
+      }) });
+      const html = renderToStaticMarkup(page);
+      expect(html).toContain(`<h1>${title}</h1>`);
+      expect(html).toContain(dictionary.legal.draftStatus);
+      expect(html).toContain(dictionary.common.noData);
+      expect(html).not.toContain(">null<");
+      expect(html).not.toContain("RemainOn");
+    });
+  }
 });

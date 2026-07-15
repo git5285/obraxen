@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import { brand } from "./brand";
-import { getProjectImage } from "./homepage";
+import { brand, getBrandTranslation } from "./brand";
+import { getProjectImage, naturalList } from "./homepage";
+import {
+  getDictionary,
+  getLocalizedPaths,
+  getPath,
+  openGraphLocales,
+  type Locale,
+} from "./i18n";
 import { projects } from "./projects";
 import type { Project } from "./schemas";
-
-export const projectsTitle = `Proyectos ejecutados — ${brand.claim}`;
-export const projectsDescription =
-  "Archivo de obras ejecutadas con fotografías, alcance, magnitudes confirmadas y cierre documentado de cada intervención.";
-
-const continuityLabels: Record<
-  NonNullable<Project["cierre"]["continuidadOperativa"]>,
-  string
-> = {
-  total: "La actividad continuó en paralelo",
-  parcial: "La actividad continuó parcialmente",
-  detenida: "La actividad no continuó durante la intervención",
-  sin_actividad: "Instalación sin actividad concurrente",
-};
 
 function siteOrigin(): string | null {
   return brand.dominio ? `https://${brand.dominio}` : null;
@@ -33,58 +26,73 @@ function shorten(value: string, max = 158): string {
   return `${text.slice(0, max - 1).replace(/\s+\S*$/, "")}…`;
 }
 
-function metadataImage(project: Project) {
+function metadataImage(project: Project, locale: Locale) {
   const origin = siteOrigin();
   if (!origin) return [];
   const image = getProjectImage(project.imagenes[0].src);
-  return [
-    {
-      url: new URL(image.src, origin).toString(),
-      width: image.width,
-      height: image.height,
-      alt: project.imagenes[0].alt,
-    },
-  ];
+  return [{
+    url: new URL(image.src, origin).toString(),
+    width: image.width,
+    height: image.height,
+    alt: project.traducciones[locale].imagenes[0]?.alt ?? project.cliente,
+  }];
 }
 
-export const projectsMetadata: Metadata = {
-  title: projectsTitle,
-  description: projectsDescription,
-  alternates: brand.dominio ? { canonical: "/proyectos/" } : undefined,
-  openGraph: {
-    title: projectsTitle,
-    description: projectsDescription,
-    type: "website",
-    locale: "es_ES",
-    siteName: brand.nombre ?? brand.claim,
-    url: brand.dominio ? "/proyectos/" : undefined,
-    images: projects.length ? metadataImage(projects[0]) : [],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: projectsTitle,
-    description: projectsDescription,
-    images: projects.length ? metadataImage(projects[0]).map(({ url }) => url) : [],
-  },
-};
+function alternates(route: "projects", locale: Locale, slug?: string) {
+  if (!brand.dominio) return undefined;
+  return {
+    canonical: getPath(locale, route, slug),
+    languages: getLocalizedPaths(route, slug),
+  };
+}
 
-export function getProjectMetadata(project: Project): Metadata {
-  const translation = project.traducciones.es;
-  const title = `${translation.titulo} — Caso ejecutado`;
-  const description = shorten(`${translation.problema} ${translation.solucion}`);
-  const path = `/proyectos/${project.slug}/`;
-  const images = metadataImage(project);
+export function getProjectsMetadata(locale: Locale): Metadata {
+  const dictionary = getDictionary(locale);
+  const claim = getBrandTranslation(locale).claim;
+  const title = `${dictionary.meta.projectsTitle} — ${claim}`;
+  const description = dictionary.meta.projectsDescription;
+  const images = projects.length ? metadataImage(projects[0], locale) : [];
 
   return {
     title,
     description,
-    alternates: brand.dominio ? { canonical: path } : undefined,
+    alternates: alternates("projects", locale),
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: openGraphLocales[locale],
+      siteName: brand.nombre ?? claim,
+      url: brand.dominio ? getPath(locale, "projects") : undefined,
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: images.map(({ url }) => url),
+    },
+  };
+}
+
+export function getProjectMetadata(project: Project, locale: Locale): Metadata {
+  const dictionary = getDictionary(locale);
+  const translation = project.traducciones[locale];
+  const title = `${translation.titulo} — ${dictionary.meta.projectTitleSuffix}`;
+  const description = shorten(`${translation.problema} ${translation.solucion}`);
+  const path = getPath(locale, "projects", project.slug);
+  const images = metadataImage(project, locale);
+
+  return {
+    title,
+    description,
+    alternates: alternates("projects", locale, project.slug),
     openGraph: {
       title,
       description,
       type: "article",
-      locale: "es_ES",
-      siteName: brand.nombre ?? brand.claim,
+      locale: openGraphLocales[locale],
+      siteName: brand.nombre ?? getBrandTranslation(locale).claim,
       url: brand.dominio ? path : undefined,
       images,
     },
@@ -97,8 +105,8 @@ export function getProjectMetadata(project: Project): Metadata {
   };
 }
 
-export function getProjectLocation(project: Project): string {
-  return `${project.ubicacion.ciudad}, ${project.ubicacion.pais}`;
+export function getProjectLocation(project: Project, locale: Locale): string {
+  return `${project.ubicacion.ciudad}, ${project.traducciones[locale].pais}`;
 }
 
 export function getProjectNeighbors(project: Project) {
@@ -109,93 +117,82 @@ export function getProjectNeighbors(project: Project) {
   };
 }
 
-export function getExecutionFacts(project: Project) {
-  const publicExecutionDate = project.cierre.fechaEjecucion;
+export function getExecutionFacts(project: Project, locale: Locale) {
+  const dictionary = getDictionary(locale).projectCase;
+  const translation = project.traducciones[locale];
 
   return [
-    publicExecutionDate ? ["Ejecución", publicExecutionDate] : null,
-    project.cierre.duracionReal
-      ? ["Duración real", project.cierre.duracionReal]
-      : null,
+    translation.fechaEjecucion ? [dictionary.execution, translation.fechaEjecucion] : null,
+    translation.duracionReal ? [dictionary.duration, translation.duracionReal] : null,
     project.superficieInstalacionM2
-      ? [
-          "Instalación aprox.",
-          `${project.superficieInstalacionM2.toLocaleString("es-ES")} m²`,
-        ]
+      ? [dictionary.facilityArea, `${project.superficieInstalacionM2.toLocaleString(locale)} m²`]
       : null,
     project.equipoOperarios
-      ? ["Equipo", `${project.equipoOperarios} operarios`]
+      ? [dictionary.team, `${project.equipoOperarios} ${dictionary.workers}`]
       : null,
     project.cierre.continuidadOperativa
-      ? [
-          "Operativa",
-          continuityLabels[project.cierre.continuidadOperativa],
-        ]
+      ? [dictionary.operation, dictionary.continuity[project.cierre.continuidadOperativa]]
       : null,
   ].filter((fact): fact is [string, string] => fact !== null);
 }
 
-export function naturalList(items: readonly string[]): string {
-  if (items.length < 2) return items[0] ?? "";
-  const last = items.at(-1) ?? "";
-  const conjunction = /^(?:i|hi(?!e))/i.test(last) ? "e" : "y";
-  return `${items.slice(0, -1).join(", ")} ${conjunction} ${last}`;
+export function getProjectsJsonLd(locale: Locale): string {
+  const dictionary = getDictionary(locale);
+  const projectsPath = getPath(locale, "projects");
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: dictionary.meta.projectsTitle,
+        description: dictionary.meta.projectsDescription,
+        inLanguage: locale,
+        ...(brand.dominio ? { url: absolutePath(projectsPath) } : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: dictionary.common.home, item: absolutePath(getPath(locale, "home")) },
+          { "@type": "ListItem", position: 2, name: dictionary.common.projects, item: absolutePath(projectsPath) },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        numberOfItems: projects.length,
+        itemListElement: projects.map((project, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: project.traducciones[locale].titulo,
+          url: absolutePath(getPath(locale, "projects", project.slug)),
+        })),
+      },
+    ],
+  }).replace(/</g, "\\u003c");
 }
 
-export const projectsJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      name: "Proyectos ejecutados",
-      description: projectsDescription,
-      ...(brand.dominio ? { url: absolutePath("/proyectos/") } : {}),
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Inicio", item: absolutePath("/") },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Proyectos",
-          item: absolutePath("/proyectos/"),
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      numberOfItems: projects.length,
-      itemListElement: projects.map((project, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: project.traducciones.es.titulo,
-        url: absolutePath(`/proyectos/${project.slug}/`),
-      })),
-    },
-  ],
-}).replace(/</g, "\\u003c");
-
-export function getProjectJsonLd(project: Project): string | null {
+export function getProjectJsonLd(project: Project, locale: Locale): string | null {
   if (!brand.dominio) return null;
-  const path = `/proyectos/${project.slug}/`;
+  const dictionary = getDictionary(locale);
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: absolutePath("/") },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Proyectos",
-        item: absolutePath("/proyectos/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: project.cliente,
-        item: absolutePath(path),
-      },
+      { "@type": "ListItem", position: 1, name: dictionary.common.home, item: absolutePath(getPath(locale, "home")) },
+      { "@type": "ListItem", position: 2, name: dictionary.common.projects, item: absolutePath(getPath(locale, "projects")) },
+      { "@type": "ListItem", position: 3, name: project.cliente, item: absolutePath(getPath(locale, "projects", project.slug)) },
     ],
   }).replace(/</g, "\\u003c");
+}
+
+export function projectResources(project: Project, locale: Locale): string[] {
+  const copy = getDictionary(locale).projectCase;
+  const translation = project.traducciones[locale];
+  return [
+    translation.maquinaria.length
+      ? `${copy.machinery}: ${naturalList(translation.maquinaria, locale)}.`
+      : null,
+    translation.materiales.length
+      ? `${copy.materials}: ${naturalList(translation.materiales, locale)}.`
+      : null,
+  ].filter((value): value is string => value !== null);
 }

@@ -389,3 +389,103 @@ fusionar una PR cuando el check remoto del SHA actual esté verde y no pueden us
   para adoptar GitHub Pro o migrar a un forge con protección privada gratuita.
 
 Esta decisión no habilita Vercel, previews, producción, indexación ni analítica.
+
+---
+
+## ADR-010 — Arquitectura internacional con prefijo para todos los idiomas
+
+**Estado:** Aceptada · **fecha 2026-07-15**
+
+**Contexto.** El mercado principal es la Unión Europea y la web debe operar en
+inglés, alemán, español y francés. Mantener español sin prefijo y añadir los
+demás idiomas produciría dos reglas de URL, haría más frágiles los enlaces
+equivalentes y complicaría un futuro cambio de mercado principal.
+
+**Decisión.** Inglés es el idioma inicial y los cuatro idiomas usan siempre
+prefijo: `/en/`, `/de/`, `/es/` y `/fr/`. `/` redirige permanentemente a `/en/`.
+Los segmentos se localizan (`projects/projekte/proyectos/projets`, las rutas
+legales y contacto), mientras los slugs estables de los seis proyectos se
+conservan en todos los idiomas. Las antiguas rutas españolas redirigen a `/es/`.
+
+Los diccionarios de interfaz son tipados y completos. Marca, ofertas, proyectos,
+alt text y datos de cada caso requieren las cuatro variantes en sus esquemas.
+Los equivalentes de idioma se calculan por identidad de ruta, no sustituyendo
+texto dentro de la URL. Canonical, `hreflang` —incluido `x-default`—, sitemap y
+Open Graph absolutos solo se emiten cuando exista un dominio definitivo y la
+puerta pública esté abierta.
+
+Las traducciones actuales son borradores editoriales completos, no aprobación
+lingüística. `data/brand.json` registra estado, revisor y fecha por idioma; la
+publicación falla cerrada mientras cualquier revisión siga pendiente.
+
+### Opciones consideradas
+
+| Opción | Evaluación |
+|---|---|
+| Prefijo en los cuatro idiomas e inglés inicial | Aceptada: regla uniforme, enlaces equivalentes deterministas y cambio futuro controlado |
+| Español sin prefijo | Rechazada: crea una excepción permanente y contradice el mercado internacional acordado |
+| Detección automática obligatoria por navegador | Rechazada: las URLs deben ser estables, compartibles y elegibles por el usuario |
+| Traducir también los slugs de casos | Aplazada: añade redirecciones y riesgo sin mejorar la evidencia del proyecto |
+
+**Consecuencias.**
+
+- (+) 52 páginas se generan en build con `<html lang>` exacto y selector que
+  conserva la página equivalente.
+- (+) Los datos desconocidos continúan como `null` u omitidos en cada idioma.
+- (+) Se conservan redirecciones permanentes para enlaces históricos españoles.
+- (−) Cada cambio público exige actualizar y revisar las cuatro versiones.
+- (−) El contenido no debe publicarse como traducción profesional hasta registrar
+  revisor y fecha en cada idioma.
+
+**Referencias.**
+
+- [Internationalization en Next.js](https://nextjs.org/docs/app/guides/internationalization)
+- [Versiones localizadas para Google](https://developers.google.com/search/docs/specialty/international/localized-versions)
+
+---
+
+## ADR-011 — Captación por Resend, sin almacenamiento propio y activación cerrada
+
+**Estado:** Aceptada técnicamente · **activación bloqueada** · **fecha 2026-07-15**
+
+**Contexto.** El sitio necesita una solicitud de evaluación en cuatro idiomas,
+pero todavía no existen sociedad, dominio, buzón responsable ni textos legales
+aprobados. Un `mailto:` no confirma entrega ni permite una experiencia coherente;
+una base de datos propia añade retención y superficie de seguridad innecesarias.
+
+**Decisión.** Usar Resend como adaptador de envío inicial y no persistir leads en
+una base de datos de la aplicación. `/api/contact/` acepta solo JSON limitado,
+valida origen, tamaño, tiempos, honeypot y campos, aplica rate limit efímero por IP
+hasheada y envía al buzón responsable sin registrar PII. No se admiten adjuntos.
+
+El formulario queda fail-closed y ni siquiera se renderiza como activo hasta que
+coincidan simultáneamente: `CONTACT_FORM_ENABLED=true`, API key válida, buzones
+del dominio definitivo, identidad societaria, correo público, revisión legal,
+proveedor `Resend` y `formularioRevisionAprobada=true`. La aprobación debe incluir
+DPA, subencargados, transferencias, ubicación y retención; seleccionar el
+adaptador no equivale a aceptar esas condiciones.
+
+### Opciones consideradas
+
+| Opción | Evaluación |
+|---|---|
+| Resend a buzón responsable, sin base propia | Aceptada técnicamente: coste inicial cero, API directa y minimización de almacenamiento |
+| `mailto:` | Rechazada: experiencia desigual, exposición del canal y entrega no verificable |
+| Base de datos/CRM desde el inicio | Rechazada ahora: retención y complejidad desproporcionadas |
+| Formulario activo antes de identidad/legal | Rechazada: tratamiento sin responsable ni información completos |
+
+**Consecuencias.**
+
+- (+) La ruta y la UI quedan listas sin aceptar datos prematuramente.
+- (+) El plan gratuito declarado por el proveedor cubre la etapa inicial; cualquier
+  cambio de precio o condiciones debe revisarse antes de activar.
+- (+) Los eventos analíticos registran estado y canal, nunca contenido de campos.
+- (−) El buzón pasa a ser el sistema de conservación y debe tener acceso,
+  borrado, seguridad y plazos definidos.
+- (−) Un proceso comercial más complejo requerirá una ADR específica para CRM.
+
+**Referencias.**
+
+- [API de envío de Resend](https://resend.com/docs/api-reference/emails/send-email)
+- [DPA de Resend](https://resend.com/legal/dpa)
+- [Precios de Resend](https://resend.com/pricing/)
