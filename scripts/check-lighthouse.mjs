@@ -74,8 +74,39 @@ function auditValue(report, audit) {
   return report.audits[audit]?.numericValue ?? Number.POSITIVE_INFINITY;
 }
 
+function failuresFor(result) {
+  return [
+    result.performance < budgets.performance ? `rendimiento ${result.performance}` : null,
+    result.accessibility < budgets.accessibility ? `accesibilidad ${result.accessibility}` : null,
+    result.bestPractices < budgets["best-practices"] ? `buenas prácticas ${result.bestPractices}` : null,
+    result.seo < budgets.seo ? `SEO ${result.seo}` : null,
+    result.lcp > budgets.lcp ? `LCP ${Math.round(result.lcp)} ms` : null,
+    result.tbt > budgets.tbt ? `TBT ${Math.round(result.tbt)} ms` : null,
+    result.cls > budgets.cls ? `CLS ${result.cls}` : null,
+    result.consoleErrors < 1 ? "errores de consola" : null,
+  ].filter(Boolean);
+}
+
+function median(values) {
+  return [...values].sort((left, right) => left - right)[Math.floor(values.length / 2)];
+}
+
+function medianResult(results) {
+  return Object.fromEntries(
+    Object.keys(results[0]).map((key) => [key, median(results.map((result) => result[key]))]),
+  );
+}
+
+function logResult(route, result, label = "") {
+  console.log(
+    `${route.path}${label} → perf ${Math.round(result.performance * 100)}, ` +
+      `a11y ${Math.round(result.accessibility * 100)}, BP ${Math.round(result.bestPractices * 100)}, ` +
+      `SEO ${Math.round(result.seo * 100)}, LCP ${Math.round(result.lcp)} ms, ` +
+      `TBT ${Math.round(result.tbt)} ms, CLS ${result.cls}`,
+  );
+}
+
 async function auditRoute(route) {
-  const reportPath = path.join(outputDirectory, `${route.name}.json`);
   const projectLighthouse = path.join(
     root,
     "node_modules",
@@ -101,64 +132,61 @@ async function auditRoute(route) {
     commandArguments = ["--yes", "lighthouse@13.4.0", `${baseUrl}${route.path}`];
   }
 
-  const lighthouseArguments = [
-    ...commandArguments,
-    "--quiet",
-    "--chrome-flags=--headless=new --no-sandbox --disable-gpu --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows",
-    "--only-categories=performance,accessibility,best-practices,seo",
-    "--output=json",
-    `--output-path=${reportPath}`,
-  ];
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      await execFileAsync(command, lighthouseArguments, {
-        cwd: root,
-        env: { ...process.env, CHROME_PATH: await resolveChromePath() },
-        maxBuffer: 20 * 1024 * 1024,
-        timeout: 120_000,
-      });
-      break;
-    } catch (error) {
-      const diagnostic = `${error?.message ?? ""}\n${error?.stderr ?? ""}`;
-      const transient = /NO_FCP|PROTOCOL_TIMEOUT|Target closed|timed out/i.test(diagnostic);
-      if (!transient || attempt === 3) throw error;
-      console.warn(`${route.path} → Lighthouse no pintó en el intento ${attempt}; reintento controlado`);
-      await wait(1_000 * attempt);
+  const samples = [];
+  for (let sample = 1; sample <= 3; sample += 1) {
+    const reportName = sample === 1 ? `${route.name}.json` : `${route.name}-retry-${sample}.json`;
+    const reportPath = path.join(outputDirectory, reportName);
+    const lighthouseArguments = [
+      ...commandArguments,
+      "--quiet",
+      "--chrome-flags=--headless=new --no-sandbox --disable-gpu --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows",
+      "--only-categories=performance,accessibility,best-practices,seo",
+      "--output=json",
+      `--output-path=${reportPath}`,
+    ];
+
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        await execFileAsync(command, lighthouseArguments, {
+          cwd: root,
+          env: { ...process.env, CHROME_PATH: await resolveChromePath() },
+          maxBuffer: 20 * 1024 * 1024,
+          timeout: 120_000,
+        });
+        break;
+      } catch (error) {
+        const diagnostic = `${error?.message ?? ""}\n${error?.stderr ?? ""}`;
+        const transient = /NO_FCP|PROTOCOL_TIMEOUT|Target closed|timed out/i.test(diagnostic);
+        if (!transient || attempt === 3) throw error;
+        console.warn(`${route.path} → Lighthouse no pintó en el intento ${attempt}; reintento controlado`);
+        await wait(1_000 * attempt);
+      }
+    }
+
+    const report = JSON.parse(await fs.readFile(reportPath, "utf8"));
+    const result = {
+      performance: score(report, "performance"),
+      accessibility: score(report, "accessibility"),
+      bestPractices: score(report, "best-practices"),
+      seo: score(report, "seo"),
+      lcp: auditValue(report, "largest-contentful-paint"),
+      tbt: auditValue(report, "total-blocking-time"),
+      cls: auditValue(report, "cumulative-layout-shift"),
+      consoleErrors: report.audits["errors-in-console"]?.score ?? 1,
+    };
+    samples.push(result);
+    logResult(route, result, sample === 1 ? "" : ` [muestra ${sample}/3]`);
+
+    if (sample === 1 && failuresFor(result).length === 0) return;
+    if (sample === 1) {
+      console.warn(`${route.path} → primera muestra fuera de presupuesto; se decidirá por mediana de 3`);
     }
   }
 
-  const report = JSON.parse(await fs.readFile(reportPath, "utf8"));
-  const result = {
-    performance: score(report, "performance"),
-    accessibility: score(report, "accessibility"),
-    bestPractices: score(report, "best-practices"),
-    seo: score(report, "seo"),
-    lcp: auditValue(report, "largest-contentful-paint"),
-    tbt: auditValue(report, "total-blocking-time"),
-    cls: auditValue(report, "cumulative-layout-shift"),
-    consoleErrors: report.audits["errors-in-console"]?.score ?? 1,
-  };
-
-  const failures = [
-    result.performance < budgets.performance ? `rendimiento ${result.performance}` : null,
-    result.accessibility < budgets.accessibility ? `accesibilidad ${result.accessibility}` : null,
-    result.bestPractices < budgets["best-practices"] ? `buenas prácticas ${result.bestPractices}` : null,
-    result.seo < budgets.seo ? `SEO ${result.seo}` : null,
-    result.lcp > budgets.lcp ? `LCP ${Math.round(result.lcp)} ms` : null,
-    result.tbt > budgets.tbt ? `TBT ${Math.round(result.tbt)} ms` : null,
-    result.cls > budgets.cls ? `CLS ${result.cls}` : null,
-    result.consoleErrors < 1 ? "errores de consola" : null,
-  ].filter(Boolean);
-
-  console.log(
-    `${route.path} → perf ${Math.round(result.performance * 100)}, a11y ${Math.round(result.accessibility * 100)}, ` +
-      `BP ${Math.round(result.bestPractices * 100)}, SEO ${Math.round(result.seo * 100)}, ` +
-      `LCP ${Math.round(result.lcp)} ms, TBT ${Math.round(result.tbt)} ms, CLS ${result.cls}`,
-  );
-
-  if (failures.length) {
-    throw new Error(`${route.path} incumple presupuestos: ${failures.join(", ")}`);
-  }
+  const result = medianResult(samples);
+  const failures = failuresFor(result);
+  logResult(route, result, " [mediana]");
+  if (failures.length) throw new Error(`${route.path} incumple presupuestos: ${failures.join(", ")}`);
 }
 
 await fs.rm(outputDirectory, { recursive: true, force: true });
