@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-14 22:12 Europe/Madrid.
+Actualizado: 2026-07-15 15:48 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,6 +10,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
+| Preparación Fase 6 (`5fd4304a...`) | Vercel legacy, privacidad Git y controles de lanzamiento | En curso; retirada Vercel cerrada y guardas Git preparadas |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -96,16 +97,21 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   pública del código y datos.
 - ADR-008 fija consentimiento básico: no se consulta configuración ni se carga
   GA4 o Clarity antes de aceptar; publicidad permanece siempre denegada.
+- ADR-009 fija GitHub privado en el plan gratuito: cada rama pasa el gate local,
+  los pushes directos a `main` están bloqueados y solo se fusiona una PR con el
+  `Quality gate` remoto del SHA actual verde.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
+- El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
+  históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
 - Naming está abierto solo como investigación. Selección, sociedad, dominio y
   contacto siguen pendientes.
 
 ## Orden siguiente
 
-1. Mantener previews, indexación y publicación apagadas.
-2. No configurar IDs reales hasta aprobar proveedores, textos y entornos.
-3. Esperar al dominio definitivo para canonical, sitemap público, Search Console
-   y datos estructurados finales.
+1. Decidir mercado/idiomas y sistema completo de captación antes de implementar
+   URLs internacionales o contacto.
+2. Mantener previews, indexación, analítica real y publicación apagadas hasta
+   completar identidad, permisos, legal, dominio y autorización expresa.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
 efecto lateral de esta coordinación.

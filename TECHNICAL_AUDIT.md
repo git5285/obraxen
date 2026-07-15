@@ -10,8 +10,9 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
   prerenderizados; no queda builder o plantilla HTML legacy.
 - Preview cerrada: `noindex,nofollow`, sitemap vacío, sin dominio y sin
   despliegues Git automáticos.
-- Repositorio público con `main` protegido por `Quality gate`; no se detectan
-  secretos o credenciales en los archivos versionados.
+- Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
+  hook versionado bloquea pushes directos a `main`. No se detectan secretos o
+  credenciales en los archivos versionados.
 - La puerta pública falla por identidad, sociedad, contacto, revisión legal y
   autorizaciones documentales de los casos, como está previsto.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
@@ -111,6 +112,20 @@ despliegue durante la consolidación. El proyecto remoto se corrigió de preset
 `vercel build` generó correctamente `.vercel/output` y el artefacto local se
 eliminó después de verificarlo.
 
+La revisión externa posterior detectó siete deployments históricos marcados como
+`Production / Ready`, protegidos por Vercel Authentication pero con la antigua web
+estática y contacto ficticio. Se retiraron por sus siete IDs exactos el 15 de julio
+de 2026. La comprobación posterior devuelve cero deployments, cero dominios, ningún
+`Latest Production URL` y HTTP 404 en las siete URLs y los tres alias conocidos.
+El proyecto remoto se conserva para un futuro despliegue expresamente autorizado.
+
+La exposición del repositorio se cerró el 15 de julio mediante visibilidad
+privada. El plan gratuito no conserva la protección remota de ramas privadas, por
+lo que ADR-009 adopta tres guardas: `npm run check:quality` antes de cada push,
+bloqueo local absoluto de pushes a `main` y fusión exclusiva de PRs cuyo check
+remoto esté verde. El control es suficiente para el único colaborador actual y
+debe revisarse antes de conceder nuevos permisos de escritura.
+
 ## Deuda y bloqueos
 
 | Elemento | Estado | Siguiente condición |
@@ -122,7 +137,7 @@ eliminó después de verificarlo.
 | Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
 | Dominio, canonical y Search Console | Sin dato | Dominio definitivo |
-| Producción | Desactivada | Auditoría final y autorización expresa |
+| Producción | Sin deployments ni dominios | Auditoría final y autorización expresa |
 
 ## Comandos de cierre
 

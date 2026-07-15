@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -eu
+
+zero_sha="0000000000000000000000000000000000000000"
+run_quality=false
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ -z "${local_ref:-}" ]; then
+    continue
+  fi
+
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "Push directo a main bloqueado: usa una rama y fusiona una PR con Quality gate verde." >&2
+    exit 1
+  fi
+
+  case "$remote_ref" in
+    refs/heads/*)
+      if [ "$local_sha" != "$zero_sha" ]; then
+        run_quality=true
+      fi
+      ;;
+  esac
+done
+
+if [ "$run_quality" = true ]; then
+  repository_root="$(git rev-parse --show-toplevel)"
+  cd "$repository_root"
+  echo "Ejecutando el gate local antes del push..."
+  npm run check:quality
+fi

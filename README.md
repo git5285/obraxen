@@ -6,8 +6,8 @@ legales se prerenderizan en build; navegación y consentimiento son las dos isla
 cliente propias.
 
 La web sigue en preview cerrada: `noindex,nofollow`, sin dominio, sin contacto y
-con los despliegues Git de Vercel desactivados. La visibilidad pública del
-repositorio no autoriza publicar o desplegar el sitio.
+con los despliegues Git de Vercel desactivados. El repositorio es privado y esa
+privacidad tampoco autoriza publicar o desplegar el sitio.
 
 > **Identidad pendiente:** “RemainOn” es solo una referencia interna heredada de
 > la carpeta. No es una marca seleccionada. La empresa todavía no está
@@ -30,7 +30,8 @@ repositorio no autoriza publicar o desplegar el sitio.
 - `css/` — tokens y estilos existentes consumidos por Next.
 - `img/` — activos optimizados e importados por el build.
 - `tests/` — Vitest y Playwright.
-- `.github/workflows/quality.yml` — gate obligatorio de GitHub Actions.
+- `.github/workflows/quality.yml` — gate remoto de GitHub Actions para cada PR.
+- `.githooks/pre-push` — bloquea pushes directos a `main` y ejecuta el gate local.
 
 El generador Node y las plantillas HTML anteriores se retiraron tras alcanzar
 paridad. `npm run build`, CI y Vercel tienen ahora una sola implementación:
@@ -70,6 +71,22 @@ npm run check:quality # gate completo local
 El gate remoto ejecuta el mismo `npm run check`, 46 pruebas Playwright y
 presupuestos Lighthouse móviles en portada, hub y un caso. Los informes se
 conservan como artefactos durante 14 días.
+
+## Gobernanza Git gratuita
+
+GitHub Free no permite exigir checks desde el servidor en un repositorio privado.
+Por eso el proyecto combina pull requests, CI visible y un hook versionado. Cada
+clon debe activarlo una vez:
+
+```sh
+git config core.hooksPath .githooks
+```
+
+El hook rechaza cualquier push directo a `main` y ejecuta `npm run check:quality`
+antes de subir una rama. Una PR solo puede fusionarse cuando el `Quality gate` del
+SHA actual esté verde; `--no-verify` no forma parte del flujo permitido. Si se
+incorporan más colaboradores, se reevaluará GitHub Pro o un forge que imponga la
+misma política en servidor.
 
 ## Renderizado y Vercel
 
@@ -129,13 +146,13 @@ Canonical, URLs e imágenes sociales absolutas solo aparecen cuando existe un
 dominio real. El sitemap permanece vacío hasta que toda la puerta pública se
 complete.
 
-## Repositorio público
+## Repositorio privado
 
 La revisión vigente está en
 [`REPOSITORY_EXPOSURE.md`](REPOSITORY_EXPOSURE.md). No se detectaron secretos o
-credenciales versionados. Sí son visibles la estrategia, la coordinación y los
-datos de casos; cambiar la visibilidad o reescribir el historial requiere una
-decisión separada.
+credenciales versionados. La estrategia, la coordinación y los datos de casos
+estuvieron accesibles mientras el repositorio fue público; privatizarlo evita
+nuevas consultas, pero no revoca copias realizadas durante ese periodo.
 
 ## Fuentes de verdad
 
