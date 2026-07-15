@@ -27,7 +27,7 @@ npm run check:activation
 ```
 
 Debe devolver `READY_FOR_PROTECTED_CANDIDATE`. El estado actual devuelve
-`NO-GO` con 38 incidencias verificables; el detalle y el contrato de entrada
+`NO-GO` con 37 incidencias verificables; el detalle y el contrato de entrada
 están en `ACTIVATION_GATE.md`. Ese comando no sustituye la auditoría de la URL ni
 la decisión humana de publicación.
 
@@ -104,6 +104,6 @@ regresión grave de seguridad/accesibilidad.
 ## 6. Estado actual
 
 **NO-GO.** Fases técnicas 6.1–6.6 y puerta ejecutable 6.7.0 completas. Fase 6.7
-registra 38 incidencias externas de identidad, sociedad, dominio, buzones,
+registra 37 incidencias externas de identidad, sociedad, dominio, buzones,
 permisos, revisión legal/lingüística y aceptación del proveedor. Vercel permanece
 sin deployments ni dominios y `git.deploymentEnabled` continúa desactivado.

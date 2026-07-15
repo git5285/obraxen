@@ -21,20 +21,29 @@ Resultado actual:
 
 | Bloque | Incidencias | Estado |
 |---|---:|---|
-| Identidad, sociedad y contacto | 8 | Pendiente |
+| Identidad, sociedad y contacto | 7 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
 | Permisos de seis casos y fotografías | 24 | Pendiente |
-| **Total** | **38** | **NO-GO** |
+| **Total** | **37** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
+
+Entrada incorporada el 15 de julio de 2026: `Obraxen` queda seleccionado por el
+usuario e integrado como nombre comercial. La selección no equivale a
+certificación registral o marcaria. La sociedad comunicada como prevista aún no
+está constituida; razón social, CIF y domicilio continúan `null`. Para el dominio
+comunicado, el RDAP de `.com` no devolvió un objeto y no existían DNS ni MX,
+mientras una comprobación comercial separada lo marcó como no disponible. No se
+acredita por tanto registro, disponibilidad ni control; dominio y buzón
+permanecen `null` hasta verificar titularidad y entrega.
 
 ## Expediente mínimo que debe recibirse
 
 ### 1. Identidad y contacto
 
-- nombre comercial definitivo;
+- nombre comercial definitivo: **resuelto con `Obraxen`**;
 - sociedad constituida, razón social, CIF/NIF y domicilio validado;
 - dominio definitivo;
 - email público y buzón separado para derechos de privacidad;
@@ -62,6 +71,11 @@ elegirse una vía:
 
 Una confirmación interna o la posesión de fotografías no equivale a permiso de
 publicación.
+
+El usuario ha elegido la vía `autorizar` para los seis casos. Esta instrucción
+mantiene su valor de confirmación interna, pero no cambia ningún caso a
+`documentada`: falta identificar la capacidad del autorizante, el alcance sobre
+nombre y fotografías, una referencia documental y la revisión legal.
 
 ## Diligencia pública sobre Resend
 
