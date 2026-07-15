@@ -168,16 +168,21 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
             const style = getComputedStyle(element);
             if (style.display === "none" || style.visibility === "hidden") return false;
             const rect = element.getBoundingClientRect();
-            return rect.width > 0 && (
-              rect.right > document.documentElement.clientWidth + 1 || rect.left < -1
-            );
+            const visibleInternalOverflow = style.overflowX === "visible"
+              && element.scrollWidth > element.clientWidth + 1
+              && rect.left + element.scrollWidth > document.documentElement.clientWidth + 1;
+            return rect.width > 0 && (rect.right > document.documentElement.clientWidth + 1
+              || rect.left < -1
+              || visibleInternalOverflow);
           })
           .map((element) => ({
             selector: `${element.tagName.toLowerCase()}${element.className ? `.${String(element.className).trim().replaceAll(" ", ".")}` : ""}`,
             rect: element.getBoundingClientRect().toJSON(),
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
             text: element.textContent?.trim().slice(0, 80),
           })),
-        textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .relato .linea")]
+        textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .relato .linea, .catalogo li")]
           .filter((element) => element.scrollWidth > element.clientWidth + 1)
           .map((element) => ({
             text: element.textContent?.trim(),

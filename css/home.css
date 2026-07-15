@@ -193,9 +193,10 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
 
 .catalogo{margin-top:36px;background:var(--brand-surface);border:1px solid var(--brand-line);border-radius:var(--radius-md);padding:28px 30px}
 .catalogo h3{font-size:1rem;margin-bottom:16px}
-.catalogo ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 24px}
+.catalogo ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px 24px}
 .catalogo li{
-  font-size:.9rem;color:var(--brand-ink-2);display:flex;align-items:center;gap:10px;
+  min-width:0;font-size:.9rem;color:var(--brand-ink-2);display:flex;align-items:center;gap:10px;
+  overflow-wrap:anywhere;hyphens:auto;
 }
 .catalogo li::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--brand-primary);flex:none}
 
