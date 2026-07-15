@@ -93,12 +93,12 @@ cambios staged sin propietario.
   intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
   liberada sin despliegue. El run posterior de `main` `29431531128` está verde.
 - Consolidación técnica inmediata entregada mediante la PR `#13`, commit
-  `a635299`: reflow en/de/es/fr probado desde 320 px, contacto y legales sin
+  inicial `a635299` y cabeza validada `1317129`: reflow en/de/es/fr probado desde 320 px, contacto y legales sin
   colisión CSS, navegación tipada, metadata absoluta verificable, SLA no
   acreditado retirado y presupuestos SEO diferenciados entre preview y público.
   El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
   intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
-  liberada sin despliegue.
+  liberada sin despliegue. El run Linux de la PR `29439664817` está verde.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
