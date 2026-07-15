@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-15 17:32 Europe/Madrid.
+Actualizado: 2026-07-15 17:39 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -10,7 +10,6 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 | Tarea | Alcance exclusivo | Estado |
 |---|---|---|
 | Naming (`019f60e5...`) | Investigación sin escritura funcional | En curso; ningún nombre seleccionado |
-| Fase 6 UE (`3531129d...`) | i18n en/de/es/fr, captación cerrada, QA y documentación | En curso; implementación y gates técnicos completados, cierre documental en revisión |
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -86,6 +85,12 @@ cambios staged sin propietario.
   por CI en PR, hook local y gobernanza obligatoria. El run posterior de `main`
   `29421963694` está verde, la preview fue omitida y la claim `5fd4304a...` queda
   liberada.
+- Fases 6.1–6.6 completadas en `codex/phase-6-eu-i18n`, commit `21f525f`:
+  52 páginas en/de/es/fr, rutas equivalentes, datos localizados, contacto Resend
+  fail-closed, revisión profesional como gate, ADR-010/011 y runbook NO-GO. El
+  gate local pasa con 75 unitarias, 87 Playwright correctas, 6 omisiones
+  intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
+  liberada sin despliegue.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
