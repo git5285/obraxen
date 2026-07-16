@@ -30,4 +30,3 @@ No se leyeron candidatos ni archivos del repositorio fuera de las instrucciones 
 - No se formularon preguntas: el alcance y la definición de terminado ya eran explícitos.
 - Motivo: no fue posible comprobar el pie localizado entre 320 y 390 CSS px sin observar una implementación o página renderizada.
 - Alcance semántico: la ausencia de evidencia no se convirtió en evidencia de ausencia de desbordamiento.
-

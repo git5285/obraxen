@@ -12,4 +12,5 @@ export interface HookDenial {
   };
 }
 
-export function evaluateToolUse(input: ToolUseInput): HookDenial | null;
+export function evaluateToolUse(input: ToolUseInput, policy?: AgentPolicy): HookDenial | null;
+import type { AgentPolicy } from "../../automation/agents/policy.mjs";

@@ -12,6 +12,7 @@ vi.mock("@/lib/contact", async (importOriginal) => {
           apiKey: `re_${"1".repeat(30)}`,
           toEmail: "contact@example.com",
           fromEmail: "web@example.com",
+          rateLimitMode: "vercel-waf",
           issues: [],
         }
       : {
@@ -19,6 +20,7 @@ vi.mock("@/lib/contact", async (importOriginal) => {
           apiKey: null,
           toEmail: null,
           fromEmail: null,
+          rateLimitMode: null,
           issues: ["disabled"],
         },
   };

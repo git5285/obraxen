@@ -24,6 +24,7 @@ const publicIdentity: Brand = {
 
 const environment = {
   CONTACT_FORM_ENABLED: "true",
+  CONTACT_RATE_LIMIT_MODE: "vercel-waf",
   RESEND_API_KEY: `re_${"1".repeat(30)}`,
   CONTACT_TO_EMAIL: "contact@example.com",
   CONTACT_FROM_EMAIL: "web@example.com",
@@ -34,14 +35,25 @@ describe("contact capture gate", () => {
     expect(resolveContactConfig(environment).enabled).toBe(false);
   });
 
-  it("accepts a coherent free-provider configuration only after legal readiness", () => {
+  it("accepts a coherent provider configuration only after legal and abuse-control readiness", () => {
     expect(resolveContactConfig(environment, publicIdentity)).toEqual({
       enabled: true,
       apiKey: environment.RESEND_API_KEY,
       toEmail: environment.CONTACT_TO_EMAIL,
       fromEmail: environment.CONTACT_FROM_EMAIL,
+      rateLimitMode: "vercel-waf",
       issues: [],
     });
+  });
+
+  it("stays closed until external rate limiting is explicitly accredited", () => {
+    const config = resolveContactConfig({
+      ...environment,
+      CONTACT_RATE_LIMIT_MODE: undefined,
+    }, publicIdentity);
+    expect(config.enabled).toBe(false);
+    expect(config.rateLimitMode).toBeNull();
+    expect(config.issues).toContain("CONTACT_RATE_LIMIT_MODE debe acreditar vercel-waf");
   });
 
   it("validates bounded lead data and omits field content from attribution", () => {
