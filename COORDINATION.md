@@ -1,13 +1,16 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 17:30 Europe/Madrid.
+Actualizado: 2026-07-16 19:01 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No quedan tareas editoras activas. La claim `82c80eb6...` corrigió y liberó el
+No quedan tareas editoras activas. La claim `019f67e9...` trasladó el primer
+diff autónomo aprobado a la PR `#18` y quedó liberada tras registrar su
+handoff. La PR permanece separada de `main` y no autoriza despliegue ni
+publicación. La claim `82c80eb6...` corrigió y liberó el
 aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
 transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
 autónoma antes de continuar. La entrega autónoma v2 de la claim `810dee7b...`
@@ -159,6 +162,16 @@ cambios staged sin propietario.
 - El hook `pre-push` ya elimina en un subshell las variables Git locales antes
   de sus gates. La regresión sacrificial y el gate completo pasan sin alterar
   refs, HEADs o `core.bare`; handoff `82c80eb6...`.
+- El sistema autónomo v2 se integró mediante la PR `#17` en el merge
+  `c081e5e`, sobre la cabeza exacta `ecb585c`. El Quality gate de PR
+  `29511590757` estaba verde; el workflow alojado continúa manual y en sombra,
+  y la automatización local conserva como máximo un único diff sin autoridad
+  para commit, push, PR, merge, despliegue o publicación.
+- El primer diff activo aceptado se trasladó sin cambios a la PR `#18`:
+  enlace de salto localizado en contacto y regresión de teclado, dos rutas y 16
+  inserciones. La activación antes/después coincide exactamente en `NO-GO`,
+  con 35 bloqueos y ambos interruptores públicos apagados; handoff
+  `019f67e9...`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -190,6 +203,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   autónomo se promueve solo a `active + allowLocalDiff`: un builder, un worktree,
   un lease, rutas exactas y auditor con veto. Commit, push, PR, merge, despliegue
   y publicación continúan deshabilitados.
+- La aceptación humana del primer diff permitió trasladarlo manualmente a la PR
+  `#18`; no amplía la autoridad del ciclo autónomo ni constituye autorización
+  para fusionar esa PR.
 - La ejecución alojada permanece manual y en sombra hasta disponer de una
   credencial de inferencia y un presupuesto explícito; el horario local de seis
   horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
@@ -203,12 +219,14 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Resolver las 35 incidencias de la puerta 6.7 con revisión profesional de
+1. Revisar la PR `#18` únicamente sobre su SHA con Quality gate verde; su
+   preparación no autoriza merge, preview ni publicación.
+2. Resolver las 35 incidencias de la puerta 6.7 con revisión profesional de
    en/de/es/fr, identidad, sociedad, teléfono, permisos, legal y DPA/proveedor
    según `ACTIVATION_GATE.md`.
-2. Solo después y con autorización expresa, crear una preview protegida, auditar
+3. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
-3. Mantener previews, indexación, formulario, analítica real y publicación
+4. Mantener previews, indexación, formulario, analítica real y publicación
    apagados hasta completar esas condiciones.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
