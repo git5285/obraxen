@@ -22,6 +22,13 @@ function activePolicy() {
   return policy;
 }
 
+function shadowPolicy() {
+  const policy = structuredClone(loadPolicy());
+  policy.mode = "shadow";
+  policy.authority.allowLocalDiff = false;
+  return policy;
+}
+
 function activationReport() {
   return {
     schemaVersion: 1 as const,
@@ -35,13 +42,15 @@ function activationReport() {
 }
 
 describe("autonomous-agent policy", () => {
-  it("starts in shadow mode with one writer and no external authority", () => {
+  it("starts in active local-diff mode with one writer and no external authority", () => {
     const policy = loadPolicy();
-    expect(policy.mode).toBe("shadow");
+    expect(policy.mode).toBe("active");
     expect(policy.limits.maxConcurrentWriters).toBe(1);
+    expect(policy.limits.maxPendingLocalDiffs).toBe(1);
     expect(policy.authority).toMatchObject({
       allowScout: true,
-      allowLocalDiff: false,
+      allowMemoryPersistence: true,
+      allowLocalDiff: true,
       allowCommit: false,
       allowPush: false,
       allowDraftPullRequest: false,
@@ -49,6 +58,12 @@ describe("autonomous-agent policy", () => {
       allowDeploy: false,
       allowPublish: false,
       allowNetwork: false,
+    });
+    expect(policy.memory).toMatchObject({
+      schemaVersion: 1,
+      maxEpisodicRuns: 120,
+      contextRecentRuns: 8,
+      maxContextBytes: 32768,
     });
   });
 
@@ -58,11 +73,26 @@ describe("autonomous-agent policy", () => {
     expect(() => validatePolicy(policy)).toThrow("permanently human-gated");
   });
 
+  it("rejects more than one pending autonomous local diff", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    policy.limits.maxPendingLocalDiffs = 2;
+    expect(() => validatePolicy(policy)).toThrow("exactly one pending");
+  });
+
   it("rejects incoherent authority escalation", () => {
     const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
     policy.mode = "active";
     policy.authority.allowPush = true;
     expect(() => validatePolicy(policy)).toThrow("push authority requires commit authority");
+  });
+
+  it("rejects incoherent memory retention and context budgets", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    policy.memory.contextRecentRuns = policy.memory.maxEpisodicRuns + 1;
+    expect(() => validatePolicy(policy)).toThrow("exceeds retained episodic runs");
+    policy.memory.contextRecentRuns = 1;
+    policy.memory.maxContextBytes = 100;
+    expect(() => validatePolicy(policy)).toThrow("at least 4096");
   });
 
   it("treats a valid activation NO-GO exit 1 as expected", () => {
@@ -115,7 +145,7 @@ describe("autonomous-agent policy", () => {
       allowedPaths: ["src/components/project-card.tsx"],
       addedLines: 1,
       deletedLines: 1,
-    });
+    }, shadowPolicy());
     expect(result.ok).toBe(false);
     expect(result.violations).toContain("policy does not authorize local diffs");
   });
@@ -139,7 +169,7 @@ describe("custom-agent pre-tool hook", () => {
       agent_type: "builder",
       tool_name: "apply_patch",
       tool_input: { patch: "*** Update File: src/components/project-card.tsx" },
-    });
+    }, shadowPolicy());
     expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
     expect(result?.hookSpecificOutput.permissionDecisionReason).toContain("modo activo");
   });

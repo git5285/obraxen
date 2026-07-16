@@ -31,8 +31,27 @@ function enumeration(value, label, allowed) {
   return value;
 }
 
+function exactKeys(value, label, allowed) {
+  const present = Object.keys(value);
+  const unexpected = present.filter((key) => !allowed.includes(key));
+  const missing = allowed.filter((key) => !Object.hasOwn(value, key));
+  if (unexpected.length > 0) throw new Error(`${label} has unexpected keys: ${unexpected.join(", ")}`);
+  if (missing.length > 0) throw new Error(`${label} is missing keys: ${missing.join(", ")}`);
+}
+
 function baseSha(value, label) {
   if (!/^[0-9a-f]{40}$/.test(value ?? "")) throw new Error(`${label} must be a 40 character git SHA`);
+  return value;
+}
+
+function nullableNonNegativeNumber(value, label, { integer = false } = {}) {
+  if (value === null) return value;
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+    throw new Error(`${label} must be null or a non-negative number`);
+  }
+  if (integer && !Number.isInteger(value)) {
+    throw new Error(`${label} must be null or a non-negative integer`);
+  }
   return value;
 }
 
@@ -153,6 +172,126 @@ export function validateAuditorOutput(value) {
     throw new Error("pass auditor output cannot contain blocker or high findings");
   }
   string(output.reason, "auditor output.reason");
+  return output;
+}
+
+function validateSelectedFinding(value, label = "run report.selectedFinding") {
+  if (value === null) return null;
+  const finding = object(value, label);
+  exactKeys(finding, label, [
+    "id", "domain", "summary", "evidence", "impact", "confidence", "risk",
+    "candidatePaths", "verification", "conflicts",
+  ]);
+  for (const key of ["id", "summary"]) string(finding[key], `${label}.${key}`);
+  enumeration(finding.domain, `${label}.domain`, [
+    "evidence", "ux", "accessibility", "seo", "localization", "performance",
+    "security", "testing", "reliability", "maintainability",
+  ]);
+  enumeration(finding.impact, `${label}.impact`, ["low", "medium", "high"]);
+  enumeration(finding.confidence, `${label}.confidence`, ["low", "medium", "high"]);
+  enumeration(finding.risk, `${label}.risk`, ["low", "medium", "high"]);
+  const evidence = array(finding.evidence, `${label}.evidence`);
+  if (evidence.length === 0) throw new Error(`${label}.evidence must not be empty`);
+  for (const [index, rawEvidence] of evidence.entries()) {
+    const item = object(rawEvidence, `${label}.evidence[${index}]`);
+    exactKeys(item, `${label}.evidence[${index}]`, ["source", "fact"]);
+    string(item.source, `${label}.evidence[${index}].source`);
+    string(item.fact, `${label}.evidence[${index}].fact`);
+  }
+  stringArray(finding.candidatePaths, `${label}.candidatePaths`, { nonEmpty: true });
+  stringArray(finding.verification, `${label}.verification`, { nonEmpty: true });
+  stringArray(finding.conflicts, `${label}.conflicts`);
+  return finding;
+}
+
+export function validateRunReport(value) {
+  const output = common(value, "run report");
+  exactKeys(output, "run report", [
+    "schemaVersion", "status", "mode", "runId", "baseSha", "selectedFinding",
+    "activeConflicts", "policyBlockers", "changedPaths", "checks",
+    "auditorVerdict", "externalAction", "learned_rules", "usage", "traceId",
+    "reason",
+  ]);
+  enumeration(output.status, "run report.status", [
+    "no_op", "shadow_finding", "blocked", "local_diff", "draft_pr",
+  ]);
+  enumeration(output.mode, "run report.mode", ["shadow", "active", "disabled"]);
+  string(output.runId, "run report.runId");
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(output.runId)) {
+    throw new Error("run report.runId contains unsafe characters");
+  }
+  baseSha(output.baseSha, "run report.baseSha");
+  const finding = validateSelectedFinding(output.selectedFinding);
+  stringArray(output.activeConflicts, "run report.activeConflicts");
+  stringArray(output.policyBlockers, "run report.policyBlockers");
+  const changedPaths = stringArray(output.changedPaths, "run report.changedPaths");
+  const checks = array(output.checks, "run report.checks");
+  for (const [index, rawCheck] of checks.entries()) {
+    const check = object(rawCheck, `run report.checks[${index}]`);
+    exactKeys(check, `run report.checks[${index}]`, ["command", "status", "summary"]);
+    string(check.command, `run report.checks[${index}].command`);
+    enumeration(check.status, `run report.checks[${index}].status`, ["passed", "failed", "skipped"]);
+    string(check.summary, `run report.checks[${index}].summary`);
+  }
+  if (output.auditorVerdict !== null) {
+    enumeration(output.auditorVerdict, "run report.auditorVerdict", ["pass", "veto", "needs_human"]);
+  }
+  enumeration(output.externalAction, "run report.externalAction", ["none", "local_diff", "draft_pr"]);
+  const learnedRules = array(output.learned_rules, "run report.learned_rules");
+  for (const [index, rawRule] of learnedRules.entries()) {
+    const rule = object(rawRule, `run report.learned_rules[${index}]`);
+    exactKeys(rule, `run report.learned_rules[${index}]`, ["rule", "source", "status", "reason"]);
+    string(rule.rule, `run report.learned_rules[${index}].rule`);
+    string(rule.source, `run report.learned_rules[${index}].source`);
+    enumeration(rule.status, `run report.learned_rules[${index}].status`, ["proposed"]);
+    string(rule.reason, `run report.learned_rules[${index}].reason`);
+  }
+  const usage = object(output.usage, "run report.usage");
+  exactKeys(usage, "run report.usage", [
+    "inputTokens", "outputTokens", "totalTokens", "costUsd", "durationMs",
+  ]);
+  nullableNonNegativeNumber(usage.inputTokens, "run report.usage.inputTokens", { integer: true });
+  nullableNonNegativeNumber(usage.outputTokens, "run report.usage.outputTokens", { integer: true });
+  nullableNonNegativeNumber(usage.totalTokens, "run report.usage.totalTokens", { integer: true });
+  nullableNonNegativeNumber(usage.costUsd, "run report.usage.costUsd");
+  nullableNonNegativeNumber(usage.durationMs, "run report.usage.durationMs", { integer: true });
+  if (
+    usage.inputTokens !== null
+    && usage.outputTokens !== null
+    && usage.totalTokens !== null
+    && usage.totalTokens !== usage.inputTokens + usage.outputTokens
+  ) throw new Error("run report.usage.totalTokens must equal inputTokens plus outputTokens");
+  if (output.traceId !== null) string(output.traceId, "run report.traceId");
+  string(output.reason, "run report.reason");
+
+  const mutationStatuses = new Set(["local_diff", "draft_pr"]);
+  if (output.mode !== "active" && mutationStatuses.has(output.status)) {
+    throw new Error("only active mode can report a repository mutation");
+  }
+  if (mutationStatuses.has(output.status) && changedPaths.length === 0) {
+    throw new Error(`${output.status} requires changedPaths`);
+  }
+  if (!mutationStatuses.has(output.status) && changedPaths.length !== 0) {
+    throw new Error(`${output.status} cannot report changedPaths`);
+  }
+  if (new Set(["shadow_finding", "local_diff", "draft_pr"]).has(output.status) && !finding) {
+    throw new Error(`${output.status} requires selectedFinding`);
+  }
+  if (output.status === "no_op" && finding) {
+    throw new Error("no_op requires selectedFinding null");
+  }
+  if (output.status === "draft_pr" && output.externalAction !== "draft_pr") {
+    throw new Error("draft_pr status requires draft_pr externalAction");
+  }
+  if (output.status === "local_diff" && output.externalAction !== "local_diff") {
+    throw new Error("local_diff status requires local_diff externalAction");
+  }
+  if (!mutationStatuses.has(output.status) && output.externalAction !== "none") {
+    throw new Error(`${output.status} requires externalAction none`);
+  }
+  if (output.mode === "shadow" && output.auditorVerdict !== null) {
+    throw new Error("shadow reports cannot claim an auditor verdict");
+  }
   return output;
 }
 

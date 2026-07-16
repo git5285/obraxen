@@ -26,12 +26,38 @@ Every role response also passes through `contracts.mjs`. A token, prose answer,
 malformed JSON or incomplete shape is a blocked run even when the model claims
 success.
 
+## Durable memory and context
+
+`memory.mjs` gives each cycle bounded long-term memory without turning old model
+output into authority. It stores immutable run reports and a compact derived
+index below Git's common directory, so every worktree sees the same history
+while generated state stays outside commits.
+
+Each cycle receives only the most recent runs and the most relevant open
+findings. Every recalled finding carries its last observed SHA and is marked for
+revalidation when the repository has moved. Duplicate findings are grouped by
+domain and candidate paths. Token, cost and duration totals include only values
+reported by the runtime; the system never invents telemetry.
+
+Learned rules are retained only as quarantined proposals. They are not placed in
+the agent context and cannot edit prompts, policy or code. Promotion remains a
+separate human-reviewed repository change.
+
+Useful commands:
+
+```sh
+node automation/agents/memory.mjs status
+node automation/agents/memory.mjs context --base-sha "$(git rev-parse HEAD)"
+node automation/agents/memory.mjs record --file report.json
+```
+
 ## Current mode
 
-`policy.json` starts in `shadow`. The scout and director can operate, but
-`allowLocalDiff` is false. The pre-tool hook deterministically denies every
-builder tool call in this state, even if a prompt invokes the builder directly.
-Merge, deployment and publication are permanently human-gated.
+`policy.json` is currently `active` only for isolated local diffs after three
+reviewed shadow canaries converged safely. `allowLocalDiff` is true, while
+commit, push, draft PR, merge, deployment and publication remain false. The
+pre-tool hook still denies the builder unless both active mode and local-diff
+authority are present, and it cannot use Git, network or protected paths.
 
 The project `.codex/config.toml` replaces the unsafe global default with
 workspace-only writes and no shell network. Custom-agent hooks add a second,
@@ -44,6 +70,7 @@ Policy limits have explicit enforcement owners:
 | Limit | Enforcement |
 |---|---|
 | concurrent writers | shared atomic lease |
+| pending local diffs | preflight blocks the writer at one awaiting-review claim |
 | findings | response contract validator |
 | changed files and diff lines | deterministic diff policy |
 | run time | Codex `job_max_runtime_seconds` plus the director deadline |
@@ -92,22 +119,32 @@ Promotion is intentionally incremental:
 
 Never enable automatic merge, deployment or publication.
 
+The current authorization stops at step 4. A local diff must pass the complete
+gate and independent audit, then remain available for human review; it cannot
+commit or leave the machine.
+
 ## Scheduling
 
-The recurring automation is deliberately not created by repository files.
-Codex Scheduled Tasks need an explicit cadence and local runs require the Mac,
-Codex and this project to remain available. Start with a read-only cadence,
-review the first runs, and use a hosted orchestrator later only if true 24/7
-operation is required.
+The Codex Scheduled Task runs one bounded cycle every six hours. It may now
+produce one isolated local diff, but cannot commit, push or create a PR. Local
+runs require the Mac, Codex and this worktree to remain available, so they
+provide continuity but not a 24/7 availability guarantee. The repository also
+contains a compiled GitHub Agentic Workflow source as the hosted route; it
+remains manual-only and shadow-only until its inference credential, budget and
+canary gate are approved.
 
-The initial prompt should explicitly invoke
-`$remainon-continuous-improvement`, request one shadow cycle, forbid changes and
-require the structured final report. Do not schedule the builder directly.
+The prompt invokes `$remainon-continuous-improvement` and requests one complete
+policy-controlled cycle. It never schedules the builder directly; the director
+may invoke it only after preflight, selection, claim, lease and manifest gates.
 
-## Why no Agents SDK service yet
+## Hosted evolution path
 
-Codex 0.144.2 already supplies custom roles, subagents, worktrees, hooks, skills
-and recurring tasks. An Agents SDK service would add an API key, queue, database,
-sandbox lifecycle and operational cost before the native shadow loop is proven.
-It remains the phase-two option for a hosted 24/7 controller with durable
-approvals, traces, evals and sandbox snapshots.
+The recommended progression is local shadow, hosted shadow, active local diffs,
+then draft pull requests. Automatic merge, deployment and publication never
+enter the autonomous authority set. `AUTONOMOUS_IMPROVEMENT.md` records the
+architecture, availability limits and promotion gates.
+
+GitHub Actions is the first hosted runner because the repository, claims, pull
+requests and quality gate already live there. A separate Agents SDK controller
+is justified later only if durable pause/resume approvals, centralized traces,
+cross-repository queues or sandbox snapshots become necessary.

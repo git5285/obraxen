@@ -1,9 +1,10 @@
 {
   "schemaVersion": 1,
-  "mode": "shadow",
+  "mode": "active",
   "project": "remainon",
   "limits": {
     "maxConcurrentWriters": 1,
+    "maxPendingLocalDiffs": 1,
     "maxActiveSystemPullRequests": 1,
     "maxFindingsPerRun": 3,
     "maxChangedFiles": 8,
@@ -12,9 +13,19 @@
     "maxRunSeconds": 1800,
     "leaseTtlSeconds": 2100
   },
+  "memory": {
+    "schemaVersion": 1,
+    "maxEpisodicRuns": 120,
+    "maxOpenFindings": 200,
+    "maxProposedRules": 50,
+    "contextRecentRuns": 8,
+    "contextOpenFindings": 12,
+    "maxContextBytes": 32768
+  },
   "authority": {
     "allowScout": true,
-    "allowLocalDiff": false,
+    "allowMemoryPersistence": true,
+    "allowLocalDiff": true,
     "allowCommit": false,
     "allowPush": false,
     "allowDraftPullRequest": false,

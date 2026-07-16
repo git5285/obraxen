@@ -40,7 +40,7 @@ export function readClaims(worktree) {
     ));
 }
 
-export function deriveGating({ policy, lease, worktrees, claimFailures = [] }) {
+export function deriveGating({ policy, lease, worktrees, activeClaims = [], claimFailures = [] }) {
   const unreadableWorktrees = [...new Set([
     ...worktrees
       .filter((entry) => (entry.status ?? []).some((line) => String(line).startsWith("unreadable: ")))
@@ -48,20 +48,29 @@ export function deriveGating({ policy, lease, worktrees, claimFailures = [] }) {
     ...claimFailures.map((failure) => failure.path),
   ])];
   const scanComplete = unreadableWorktrees.length === 0;
+  const pendingLocalDiffs = activeClaims.filter((claim) => new Set([
+    "esperando_revision",
+    "awaiting_review",
+  ]).has(claim.state));
+  const pendingLimit = policy.limits?.maxPendingLocalDiffs ?? 1;
+  const pendingLimitReached = pendingLocalDiffs.length >= pendingLimit;
 
   return {
     unreadableWorktrees,
+    pendingLocalDiffs,
     eligibility: {
       scout: policy.mode !== "disabled" && policy.authority.allowScout && scanComplete,
       writer: policy.mode === "active"
         && policy.authority.allowLocalDiff
         && !lease
+        && !pendingLimitReached
         && scanComplete,
     },
     blockers: [
       ...(scanComplete ? [] : ["unreadable_worktrees"]),
       ...(policy.mode === "shadow" ? ["policy_mode_shadow"] : []),
       ...(lease ? ["writer_lease_exists"] : []),
+      ...(pendingLimitReached ? ["pending_local_diff_limit"] : []),
     ],
   };
 }
@@ -96,7 +105,13 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
   });
   const activeClaims = claims.filter((claim) => !new Set(["liberado", "released"]).has(claim.state));
   const lease = readLease(root);
-  const gating = deriveGating({ policy, lease, worktrees: detailedWorktrees, claimFailures });
+  const gating = deriveGating({
+    policy,
+    lease,
+    worktrees: detailedWorktrees,
+    activeClaims,
+    claimFailures,
+  });
 
   return {
     schemaVersion: 1,
@@ -109,6 +124,7 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
     activeClaims,
     claimFailures,
     unreadableWorktrees: gating.unreadableWorktrees,
+    pendingLocalDiffs: gating.pendingLocalDiffs,
     lease,
     eligibility: gating.eligibility,
     blockers: gating.blockers,

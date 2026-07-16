@@ -1,3 +1,4 @@
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
 assets/solutions/**/originals/*.jpeg filter=lfs diff=lfs merge=lfs -text
 img/architecture-hall-illustrative.png filter=lfs diff=lfs merge=lfs -text
 img/sectors/distribucion.jpg filter=lfs diff=lfs merge=lfs -text
