@@ -1,0 +1,43 @@
+{
+  "status": "shadow_finding",
+  "mode": "shadow",
+  "runId": "eval-4-learned-rule-with-skill-run-1",
+  "baseSha": null,
+  "selectedFinding": {
+    "type": "learned_rule_proposal",
+    "summary": "Preserve evidence-based quality assertions and correct the implementation when runner-specific layout artifacts expose a regression.",
+    "fixtureOnly": true
+  },
+  "evidence": [
+    {
+      "source": "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/evals/intake-20260716/fixtures/human-correction-handoff.md",
+      "fact": "An explicit user decision rejected lowering the 320 px reflow assertion, accepted hardening the layout, and stated that the rule applies to testing and layout regressions across future runs."
+    }
+  ],
+  "activeConflicts": [
+    {
+      "status": "unknown",
+      "reason": "Not evaluated because this controlled task authorizes only the report phase and explicitly excludes preflight."
+    }
+  ],
+  "policyBlockers": [
+    "Shadow mode forbids claims, leases, worktrees, diffs, commits, pull requests, and builder invocation."
+  ],
+  "changedPaths": [],
+  "checks": {
+    "preflight": "not_run",
+    "deterministic": "not_run",
+    "reason": "Only the shadow report phase was authorized."
+  },
+  "auditorVerdict": "not_run",
+  "externalAction": "none",
+  "nextHumanDecision": "Accept, revise, or reject the proposed learned rule; this shadow cycle does not activate or persist it.",
+  "learned_rules": [
+    {
+      "rule": "[quality-gates] — never lower an evidence-based assertion to make CI green because the failure is evidence to correct the implementation, not permission to weaken the gate",
+      "source": "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/evals/intake-20260716/fixtures/human-correction-handoff.md — explicit user decision rejected lowering the 320 px reflow assertion and accepted hardening the layout against the runner artifact",
+      "status": "proposed",
+      "reason": "The correction states a reusable decision principle and explicitly scopes it to testing and layout regressions across future runs, so it generalizes beyond the synthetic incident."
+    }
+  ]
+}

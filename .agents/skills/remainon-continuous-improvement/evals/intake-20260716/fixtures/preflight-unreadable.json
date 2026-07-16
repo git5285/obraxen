@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "mode": "shadow",
+  "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "worktrees": [
+    {
+      "path": "/repo/main",
+      "head": null,
+      "branch": null,
+      "status": ["unreadable: fatal: this operation must be run in a work tree"]
+    },
+    {
+      "path": "/repo/agent",
+      "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "branch": "codex/eval",
+      "status": []
+    }
+  ],
+  "activeClaims": [],
+  "lease": null,
+  "eligibility": {
+    "scout": true,
+    "writer": false
+  },
+  "blockers": ["policy_mode_shadow"]
+}
