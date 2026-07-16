@@ -3,7 +3,6 @@ import {
   mkdirSync,
   readFileSync,
   renameSync,
-  rmdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -54,7 +53,12 @@ export function acquireLease(repo, owner, now = new Date()) {
     acquiredAt: now.toISOString(),
     heartbeatAt: now.toISOString(),
   };
-  writeFileSync(paths.owner, `${JSON.stringify(record, null, 2)}\n`, { flag: "wx" });
+  try {
+    writeFileSync(paths.owner, `${JSON.stringify(record, null, 2)}\n`, { flag: "wx" });
+  } catch (error) {
+    rmSync(paths.directory, { recursive: true, force: true });
+    throw error;
+  }
   return { acquired: true, owner: record };
 }
 
@@ -69,8 +73,13 @@ export function heartbeatLease(repo, token, now = new Date()) {
   assertToken(record, token);
   const updated = { ...record, heartbeatAt: now.toISOString() };
   const temporary = `${paths.owner}.${process.pid}.tmp`;
-  writeFileSync(temporary, `${JSON.stringify(updated, null, 2)}\n`, { flag: "wx" });
-  renameSync(temporary, paths.owner);
+  try {
+    writeFileSync(temporary, `${JSON.stringify(updated, null, 2)}\n`, { flag: "wx" });
+    renameSync(temporary, paths.owner);
+  } catch (error) {
+    rmSync(temporary, { force: true });
+    throw error;
+  }
   return updated;
 }
 
@@ -78,8 +87,7 @@ export function releaseLease(repo, token) {
   const paths = getLeasePaths(repo);
   const record = readLease(repo);
   assertToken(record, token);
-  rmSync(paths.owner);
-  rmdirSync(paths.directory);
+  rmSync(paths.directory, { recursive: true, force: true });
   return { released: true, runId: record.runId };
 }
 

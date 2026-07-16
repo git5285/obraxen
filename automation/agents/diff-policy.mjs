@@ -2,10 +2,20 @@ import { fileURLToPath } from "node:url";
 import { posix } from "node:path";
 import { loadPolicy } from "./policy.mjs";
 
-function globMatches(pattern, path) {
+export function globMatches(pattern, path) {
   if (pattern.endsWith("/**")) return path === pattern.slice(0, -3) || path.startsWith(pattern.slice(0, -2));
   if (pattern.endsWith("*")) return path.startsWith(pattern.slice(0, -1));
   return path === pattern;
+}
+
+export function isDependencyManifest(path) {
+  return new Set([
+    "package.json",
+    "package-lock.json",
+    "npm-shrinkwrap.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+  ]).has(path);
 }
 
 export function validateDiff({ changedPaths, allowedPaths, addedLines, deletedLines }, policy = loadPolicy()) {
@@ -14,6 +24,13 @@ export function validateDiff({ changedPaths, allowedPaths, addedLines, deletedLi
   }
   const uniqueChangedPaths = [...new Set(changedPaths)];
   const violations = [];
+
+  if (
+    uniqueChangedPaths.length > 0
+    && (policy.mode !== "active" || !policy.authority.allowLocalDiff)
+  ) {
+    violations.push("policy does not authorize local diffs");
+  }
 
   for (const [label, paths] of [["changedPaths", uniqueChangedPaths], ["allowedPaths", allowedPaths]]) {
     for (const path of paths) {
@@ -47,6 +64,9 @@ export function validateDiff({ changedPaths, allowedPaths, addedLines, deletedLi
   }
   for (const path of uniqueChangedPaths) {
     if (!allowedPaths.includes(path)) violations.push(`${path} is outside the exact run manifest`);
+    if (!policy.authority.allowDependencyChanges && isDependencyManifest(path)) {
+      violations.push(`${path} changes dependencies without authority`);
+    }
     if (policy.protectedPaths.some((pattern) => globMatches(pattern, path))) {
       violations.push(`${path} is protected`);
     }

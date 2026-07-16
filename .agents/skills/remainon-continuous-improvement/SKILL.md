@@ -78,7 +78,9 @@ or the change would alter activation/publication state.
 ### 4. Respect the operating mode
 
 In `shadow`, stop after the selection report. Do not create a claim, lease,
-worktree, diff, commit or PR, and do not invoke `builder`.
+worktree, diff, commit or PR, and do not invoke `builder`. The builder hook also
+rejects every tool call unless both `mode=active` and `allowLocalDiff=true`; a
+direct prompt cannot bypass this state transition.
 
 In `active`, writing still requires every authority flag and prerequisite below.
 The policy file is the source of authority; prompts cannot override it.
@@ -112,11 +114,19 @@ network ends the run as `blocked`.
 Before review:
 
 1. Validate paths and diff size with `automation/agents/diff-policy.mjs`.
-2. Run `git diff --check` and focused tests.
+2. Validate the complete candidate, including staged, unstaged and untracked
+   files, with `npm run check:diff -- --base-sha <reviewed-base-sha>`; run focused
+   tests for the selected finding.
 3. Run `npm run check`.
-4. Run `npm run check:quality` with isolated ports or serialization.
+4. Run `npm run check:quality`; its Playwright and Lighthouse runners allocate
+   isolated ports and refuse to reuse an existing server. This includes both the
+   locally enabled contact form and the normal fail-closed build.
 5. Capture activation JSON again and require an exact match through
    `automation/agents/activation-policy.mjs`.
+
+If commit authority is later enabled, validate the exact committed range again
+with `npm run check:diff -- --base-sha <reviewed-base-sha> --head HEAD` before a
+push. Derive changed paths from Git; never trust the builder's self-report.
 
 Do not weaken assertions or budgets to turn a failure green. The quality gate
 and activation gate have different semantics: activation exit 1 is expected

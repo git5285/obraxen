@@ -15,6 +15,13 @@ import {
   validateScoutOutput,
 } from "../../automation/agents/contracts.mjs";
 
+function activePolicy() {
+  const policy = structuredClone(loadPolicy());
+  policy.mode = "active";
+  policy.authority.allowLocalDiff = true;
+  return policy;
+}
+
 function activationReport() {
   return {
     schemaVersion: 1 as const,
@@ -85,30 +92,64 @@ describe("autonomous-agent policy", () => {
   });
 
   it("enforces exact paths, protected paths and diff budgets", () => {
+    const policy = activePolicy();
     expect(validateDiff({
       changedPaths: ["src/components/card.tsx"],
       allowedPaths: ["src/components/card.tsx"],
       addedLines: 20,
       deletedLines: 2,
-    }).ok).toBe(true);
+    }, policy).ok).toBe(true);
     const result = validateDiff({
       changedPaths: ["data/brand.json"],
       allowedPaths: ["data/brand.json"],
       addedLines: 1,
       deletedLines: 1,
-    });
+    }, policy);
     expect(result.ok).toBe(false);
     expect(result.violations).toContain("data/brand.json is protected");
+  });
+
+  it("rejects every local diff while policy remains in shadow mode", () => {
+    const result = validateDiff({
+      changedPaths: ["src/components/project-card.tsx"],
+      allowedPaths: ["src/components/project-card.tsx"],
+      addedLines: 1,
+      deletedLines: 1,
+    });
+    expect(result.ok).toBe(false);
+    expect(result.violations).toContain("policy does not authorize local diffs");
+  });
+
+  it("enforces dependency authority independently from the protected path list", () => {
+    const policy = activePolicy();
+    policy.protectedPaths = policy.protectedPaths.filter((path) => !path.startsWith("package"));
+    const result = validateDiff({
+      changedPaths: ["package.json"],
+      allowedPaths: ["package.json"],
+      addedLines: 1,
+      deletedLines: 1,
+    }, policy);
+    expect(result.violations).toContain("package.json changes dependencies without authority");
   });
 });
 
 describe("custom-agent pre-tool hook", () => {
+  it("blocks the builder deterministically while policy remains in shadow mode", () => {
+    const result = evaluateToolUse({
+      agent_type: "builder",
+      tool_name: "apply_patch",
+      tool_input: { patch: "*** Update File: src/components/project-card.tsx" },
+    });
+    expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
+    expect(result?.hookSpecificOutput.permissionDecisionReason).toContain("modo activo");
+  });
+
   it("blocks Git mutation by the builder", () => {
     const result = evaluateToolUse({
       agent_type: "builder",
       tool_name: "Shell",
       tool_input: { command: "git push origin feature" },
-    });
+    }, activePolicy());
     expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 
@@ -117,7 +158,23 @@ describe("custom-agent pre-tool hook", () => {
       agent_type: "builder",
       tool_name: "apply_patch",
       tool_input: { patch: "*** Update File: data/brand.json" },
-    });
+    }, activePolicy());
+    expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
+  });
+
+  it.each([
+    "package.json",
+    "package-lock.json",
+    "next.config.ts",
+    "src/app/api/contact/route.ts",
+    "src/app/api/analytics-config/route.ts",
+    "src/components/consent-manager.tsx",
+  ])("blocks safety-critical path %s", (path) => {
+    const result = evaluateToolUse({
+      agent_type: "builder",
+      tool_name: "apply_patch",
+      tool_input: { patch: `*** Update File: ${path}` },
+    }, activePolicy());
     expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 
@@ -126,7 +183,7 @@ describe("custom-agent pre-tool hook", () => {
       agent_type: "builder",
       tool_name: "Shell",
       tool_input: { command: "npm run test -- tests/card.test.ts" },
-    })).toBeNull();
+    }, activePolicy())).toBeNull();
     expect(evaluateToolUse({
       agent_type: "default",
       tool_name: "Shell",
@@ -141,13 +198,31 @@ describe("custom-agent pre-tool hook", () => {
       "command curl https://example.invalid",
       "/usr/bin/git -C /tmp/repo push origin unsafe",
       "/usr/bin/curl https://example.invalid",
+      "git apply proposed.patch",
+      "npm exec -- mutate-worktree",
+      "dd if=payload.txt of=src/components/project-card.tsx",
+      "node scripts/mutate-worktree.mjs",
+      "bash scripts/mutate-worktree.sh",
     ]) {
       expect(evaluateToolUse({
         agent_type: "builder",
         tool_name: "Shell",
         tool_input: { command },
-      })?.hookSpecificOutput.permissionDecision).toBe("deny");
+      }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
     }
+  });
+
+  it("allows only apply_patch for an active builder write", () => {
+    expect(evaluateToolUse({
+      agent_type: "builder",
+      tool_name: "apply_patch",
+      tool_input: { patch: "*** Update File: src/components/project-card.tsx" },
+    }, activePolicy())).toBeNull();
+    expect(evaluateToolUse({
+      agent_type: "builder",
+      tool_name: "Write",
+      tool_input: { path: "src/components/project-card.tsx" },
+    }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 });
 

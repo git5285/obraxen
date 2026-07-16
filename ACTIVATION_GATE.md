@@ -111,6 +111,14 @@ versiones revisadas, decisión sobre transferencias y subencargados, configuraci
 de tracking, conservación y procedimiento de baja/borrado. Hasta entonces,
 `formularioRevisionAprobada` permanece en `false`.
 
+La activación técnica exige además una regla distribuida de limitación de
+solicitudes para `/api/contact/`, configurada y probada en el proveedor de borde.
+Solo después se puede fijar `CONTACT_RATE_LIMIT_MODE=vercel-waf`. Sin ese valor,
+la configuración del formulario permanece cerrada aunque el resto de variables
+exista. El límite en memoria continúa como defensa secundaria, no como garantía
+entre instancias. Esta precondición de entorno no se suma a las 35 incidencias de
+datos del expediente: ambas puertas deben estar verdes de forma independiente.
+
 ## Secuencia de cierre
 
 1. Recibir y verificar el expediente anterior.
@@ -118,7 +126,8 @@ de tracking, conservación y procedimiento de baja/borrado. Hasta entonces,
    `npm run check:activation`.
 3. Con cero bloqueos y autorización expresa, crear una preview protegida del SHA
    exacto, sin dominio web ni producción conectados.
-4. Auditar idiomas, permisos, formulario real, consentimiento, metadata, CSP,
+4. Auditar idiomas, permisos, entrega del formulario real, límite externo de
+   solicitudes y respuesta ante abuso, consentimiento, metadata, CSP,
    navegadores, móvil, accesibilidad, Lighthouse y exposición histórica.
 5. Registrar responsable, URL, SHA, variables, rollback y decisión `GO`,
    `GO con condiciones` o `NO-GO`.

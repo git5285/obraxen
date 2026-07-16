@@ -29,13 +29,31 @@ success.
 ## Current mode
 
 `policy.json` starts in `shadow`. The scout and director can operate, but
-`allowLocalDiff` is false and the builder must not be invoked. Merge,
-deployment and publication are permanently human-gated.
+`allowLocalDiff` is false. The pre-tool hook deterministically denies every
+builder tool call in this state, even if a prompt invokes the builder directly.
+Merge, deployment and publication are permanently human-gated.
 
 The project `.codex/config.toml` replaces the unsafe global default with
 workspace-only writes and no shell network. Custom-agent hooks add a second,
 deterministic block for Git mutation, dependency installation, external tools
-and protected publication surfaces.
+and every path in `protectedPaths`. In active mode, the builder may write only
+through `apply_patch`, only to canonical paths explicitly present in its manifest.
+
+Policy limits have explicit enforcement owners:
+
+| Limit | Enforcement |
+|---|---|
+| concurrent writers | shared atomic lease |
+| findings | response contract validator |
+| changed files and diff lines | deterministic diff policy |
+| run time | Codex `job_max_runtime_seconds` plus the director deadline |
+| correction iterations | director state machine; the auditor never repairs |
+| lease TTL | investigation signal only; stale leases are never auto-reclaimed |
+| active system PRs | reconciled with live PR state before any PR action |
+
+The last three are orchestration gates rather than claims of enforcement by the
+filesystem hook. With PR authority disabled in shadow, their safe result is a
+block or no-op.
 
 ## Manual canary
 
@@ -44,6 +62,7 @@ Run from a clean isolated worktree:
 ```sh
 node automation/agents/policy.mjs
 node automation/agents/preflight.mjs --json
+npm run check:diff
 npm run check:activation -- --json
 ```
 
