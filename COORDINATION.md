@@ -1,15 +1,16 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 16:27 Europe/Madrid.
+Actualizado: 2026-07-16 17:13 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No hay tareas editoras activas. La claim `9548505b...` queda liberada tras el
-cierre local de la auditoría y endurecimiento del sistema de mejora continua;
-no hubo push, cambio en Git remoto, despliegue ni publicación.
+La claim `810dee7b...` mantiene reservados memoria, contratos, política,
+documentación, workflow alojado y pruebas del sistema autónomo v2. La tarea ha
+completado tres canarios sombra sin mutaciones y está cerrando su gate, handoff
+y entrega por PR; no autoriza despliegue ni publicación.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -145,9 +146,15 @@ cambios staged sin propietario.
   unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
   previstas, WebKit y Lighthouse; handoff `9548505b...`.
 - Automatización local `remainon-shadow-improvement` creada y activa con cadencia
-  de seis horas sobre el worktree dedicado. Ejecuta un ciclo de lectura con
-  director/scout, preflight y contrato estructurado; no invoca builder ni tiene
-  autoridad de diff, Git remoto, despliegue o publicación.
+  de seis horas sobre el worktree dedicado. Tras la promoción autorizada ejecuta
+  el ciclo completo y puede dejar un único diff local aislado; no tiene autoridad
+  de commit, Git remoto, PR, despliegue o publicación.
+- Memoria autónoma v1 preparada en `codex/autonomous-agents`: episodios
+  inmutables fuera del worktree, índice acotado, deduplicación por dominio/rutas,
+  revalidación por SHA, reglas en cuarentena y telemetría solo medida. Tres
+  scouts reales sobre `218655f` produjeron un `no_op` y dos confirmaciones del
+  mismo hueco de accesibilidad; memoria conserva un hallazgo con dos
+  ocurrencias. El workflow alojado Codex compila estricto en sombra/manual.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -175,11 +182,13 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - La activación de `/api/contact/` exige además una regla distribuida de límite
   de solicitudes acreditada mediante `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el
   límite en memoria es solo defensa secundaria.
-- El sistema autónomo permanece en modo sombra: scout y director pueden
-  inspeccionar, pero el builder no obtiene herramientas ni autoridad de diff;
-  merge, despliegue y publicación continúan siendo decisiones humanas.
-- La automatización de seis horas solo acumula canarios sombra revisables. Pasar
-  a `mode=active` exige una PR y decisión humana independientes.
+- Tras tres canarios sombra y autorización expresa del usuario, el sistema
+  autónomo se promueve solo a `active + allowLocalDiff`: un builder, un worktree,
+  un lease, rutas exactas y auditor con veto. Commit, push, PR, merge, despliegue
+  y publicación continúan deshabilitados.
+- La ejecución alojada permanece manual y en sombra hasta disponer de una
+  credencial de inferencia y un presupuesto explícito; el horario local de seis
+  horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.

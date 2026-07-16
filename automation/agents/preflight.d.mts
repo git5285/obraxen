@@ -7,14 +7,20 @@ export interface ParsedClaim {
 }
 
 export interface GatingInput {
-  policy: { mode: string; authority: { allowScout: boolean; allowLocalDiff: boolean } };
+  policy: {
+    mode: string;
+    limits?: { maxPendingLocalDiffs: number };
+    authority: { allowScout: boolean; allowLocalDiff: boolean };
+  };
   lease: unknown;
   worktrees: Array<{ path: string; status?: string[] }>;
+  activeClaims?: ParsedClaim[];
   claimFailures?: Array<{ path: string; reason: string }>;
 }
 
 export interface Gating {
   unreadableWorktrees: string[];
+  pendingLocalDiffs: ParsedClaim[];
   eligibility: { scout: boolean; writer: boolean };
   blockers: string[];
 }

@@ -92,4 +92,22 @@ describe("fail-closed gating (DISCOVERED-20260716-01)", () => {
     expect(gating.eligibility).toEqual({ scout: false, writer: false });
     expect(gating.blockers).toEqual(["unreadable_worktrees"]);
   });
+
+  it("allows at most one pending autonomous local diff", () => {
+    const pendingClaim = parseClaim(`# Pending candidate
+- thread_id: pending-1
+- estado: esperando_revision
+- archivos:
+  - src/components/project-card.tsx
+`, ".coordination/claims/pending-1.md", "/repo/candidate");
+    const gating = deriveGating({
+      policy: activePolicy,
+      lease: null,
+      worktrees: readable,
+      activeClaims: [pendingClaim],
+    });
+    expect(gating.pendingLocalDiffs).toEqual([pendingClaim]);
+    expect(gating.eligibility).toEqual({ scout: true, writer: false });
+    expect(gating.blockers).toContain("pending_local_diff_limit");
+  });
 });
