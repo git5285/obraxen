@@ -7,11 +7,12 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 
 ## Tareas activas
 
-La claim `019f6b94...` migra los identificadores operativos a Obraxen y prepara
-el expediente de activación. La automatización local permanece pausada solo
-durante el cambio para no ejecutar contra rutas antiguas. La claim `019f67e9...`
-trasladó el primer diff autónomo aprobado a la PR `#18`; el Quality gate del SHA
-exacto quedó verde y la PR se fusionó en `7c73b49` sin despliegue ni publicación.
+No hay claims activas. La claim `019f6b94...` cerró la migración operativa a
+Obraxen mediante la PR `#20`, fusionada en `9231a7a` con Quality remoto verde.
+El ejecutor aislado está sincronizado en ese SHA, conserva cuatro episodios de
+memoria y la automatización local vuelve a estar activa. La claim `019f67e9...`
+trasladó el primer diff autónomo aprobado a la PR `#18`, fusionada previamente
+en `7c73b49`. Ninguno de estos cierres desplegó ni publicó el sitio.
 La claim `82c80eb6...` corrigió y liberó el
 aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
 transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
