@@ -1,16 +1,17 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 17:13 Europe/Madrid.
+Actualizado: 2026-07-16 17:30 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-La claim `810dee7b...` mantiene reservados memoria, contratos, política,
-documentación, workflow alojado y pruebas del sistema autónomo v2. La tarea ha
-completado tres canarios sombra sin mutaciones y está cerrando su gate, handoff
-y entrega por PR; no autoriza despliegue ni publicación.
+No quedan tareas editoras activas. La claim `82c80eb6...` corrigió y liberó el
+aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
+transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
+autónoma antes de continuar. La entrega autónoma v2 de la claim `810dee7b...`
+también está liberada; no autoriza despliegue ni publicación.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -155,6 +156,9 @@ cambios staged sin propietario.
   scouts reales sobre `218655f` produjeron un `no_op` y dos confirmaciones del
   mismo hueco de accesibilidad; memoria conserva un hallazgo con dos
   ocurrencias. El workflow alojado Codex compila estricto en sombra/manual.
+- El hook `pre-push` ya elimina en un subshell las variables Git locales antes
+  de sus gates. La regresión sacrificial y el gate completo pasan sin alterar
+  refs, HEADs o `core.bare`; handoff `82c80eb6...`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
