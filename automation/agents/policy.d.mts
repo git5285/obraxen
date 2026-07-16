@@ -4,6 +4,7 @@ export interface AgentPolicy {
   project: "remainon";
   limits: {
     maxConcurrentWriters: number;
+    maxPendingLocalDiffs: number;
     maxActiveSystemPullRequests: number;
     maxFindingsPerRun: number;
     maxChangedFiles: number;
@@ -12,8 +13,18 @@ export interface AgentPolicy {
     maxRunSeconds: number;
     leaseTtlSeconds: number;
   };
+  memory: {
+    schemaVersion: 1;
+    maxEpisodicRuns: number;
+    maxOpenFindings: number;
+    maxProposedRules: number;
+    contextRecentRuns: number;
+    contextOpenFindings: number;
+    maxContextBytes: number;
+  };
   authority: {
     allowScout: boolean;
+    allowMemoryPersistence: boolean;
     allowLocalDiff: boolean;
     allowCommit: boolean;
     allowPush: boolean;

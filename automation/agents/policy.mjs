@@ -22,6 +22,7 @@ export function validatePolicy(policy) {
 
   for (const key of [
     "maxConcurrentWriters",
+    "maxPendingLocalDiffs",
     "maxActiveSystemPullRequests",
     "maxFindingsPerRun",
     "maxChangedFiles",
@@ -34,9 +35,34 @@ export function validatePolicy(policy) {
   if (policy.limits.maxConcurrentWriters !== 1) {
     throw new Error("RemainOn permits exactly one autonomous writer");
   }
+  if (policy.limits.maxPendingLocalDiffs !== 1) {
+    throw new Error("RemainOn permits exactly one pending autonomous local diff");
+  }
+
+  if (policy.memory?.schemaVersion !== 1) {
+    throw new Error("policy.memory.schemaVersion must be 1");
+  }
+  for (const key of [
+    "maxEpisodicRuns",
+    "maxOpenFindings",
+    "maxProposedRules",
+    "contextRecentRuns",
+    "contextOpenFindings",
+    "maxContextBytes",
+  ]) requirePositiveInteger(policy.memory, key);
+  if (policy.memory.contextRecentRuns > policy.memory.maxEpisodicRuns) {
+    throw new Error("policy.memory.contextRecentRuns exceeds retained episodic runs");
+  }
+  if (policy.memory.contextOpenFindings > policy.memory.maxOpenFindings) {
+    throw new Error("policy.memory.contextOpenFindings exceeds retained findings");
+  }
+  if (policy.memory.maxContextBytes < 4096) {
+    throw new Error("policy.memory.maxContextBytes must be at least 4096");
+  }
 
   for (const key of [
     "allowScout",
+    "allowMemoryPersistence",
     "allowLocalDiff",
     "allowCommit",
     "allowPush",

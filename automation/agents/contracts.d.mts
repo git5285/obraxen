@@ -31,9 +31,35 @@ export interface AuditorOutput {
   reason: string;
 }
 
+export interface RunReport {
+  schemaVersion: 1;
+  status: "no_op" | "shadow_finding" | "blocked" | "local_diff" | "draft_pr";
+  mode: "shadow" | "active" | "disabled";
+  runId: string;
+  baseSha: string;
+  selectedFinding: null | Record<string, unknown>;
+  activeConflicts: string[];
+  policyBlockers: string[];
+  changedPaths: string[];
+  checks: Array<Record<string, unknown>>;
+  auditorVerdict: null | "pass" | "veto" | "needs_human";
+  externalAction: "none" | "local_diff" | "draft_pr";
+  learned_rules: Array<Record<string, unknown>>;
+  usage: {
+    inputTokens: number | null;
+    outputTokens: number | null;
+    totalTokens: number | null;
+    costUsd: number | null;
+    durationMs: number | null;
+  };
+  traceId: string | null;
+  reason: string;
+}
+
 export function validateScoutOutput(value: ScoutOutput, policy?: AgentPolicy): ScoutOutput;
 export function validateBuilderOutput(value: BuilderOutput): BuilderOutput;
 export function validateAuditorOutput(value: AuditorOutput): AuditorOutput;
+export function validateRunReport(value: unknown): RunReport;
 export function parseRoleOutput(role: "scout", text: string): ScoutOutput;
 export function parseRoleOutput(role: "builder", text: string): BuilderOutput;
 export function parseRoleOutput(role: "auditor", text: string): AuditorOutput;
