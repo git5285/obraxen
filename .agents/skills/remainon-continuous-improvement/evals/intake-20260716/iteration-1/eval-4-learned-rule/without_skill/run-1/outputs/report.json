@@ -1,0 +1,39 @@
+{
+  "status": "shadow_finding",
+  "mode": "shadow",
+  "runId": null,
+  "baseSha": null,
+  "fixtureOnly": true,
+  "projectFact": false,
+  "reflectsCorrection": true,
+  "selectedFinding": {
+    "title": "Preserve the 320 px reflow assertion and harden the layout",
+    "acceptedApproach": "Preserve the 320 px reflow assertion and harden the layout against the runner artifact.",
+    "rejectedApproach": "Lower the 320 px reflow assertion so Linux CI becomes green.",
+    "scope": "Testing and layout regressions across future runs.",
+    "evidence": [
+      {
+        "source": "fixtures/human-correction-handoff.md",
+        "kind": "explicit_user_decision",
+        "summary": "A failing evidence-based quality gate calls for correcting the implementation, not weakening the gate."
+      }
+    ]
+  },
+  "activeConflicts": {
+    "evaluation": "not_run_by_instruction",
+    "items": []
+  },
+  "policyBlockers": {
+    "evaluation": "not_run_by_instruction",
+    "items": []
+  },
+  "changedPaths": [],
+  "checks": {
+    "preflight": "not_run_by_instruction",
+    "candidateInspection": "not_run_by_instruction",
+    "deterministicChecks": "not_run_report_only"
+  },
+  "auditorVerdict": "not_run_report_only",
+  "externalActionTaken": "none",
+  "nextHumanDecision": null
+}

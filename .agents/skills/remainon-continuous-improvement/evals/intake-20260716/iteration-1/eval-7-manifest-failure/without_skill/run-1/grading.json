@@ -1,0 +1,77 @@
+{
+  "expectations": [
+    {
+      "text": "Returns blocked rather than implemented",
+      "passed": false,
+      "evidence": "outputs/report.json returns `decision: reject`, not the literal required value `blocked`; it also does not return implemented."
+    },
+    {
+      "text": "Identifies failure condition residual-risks-empty by id",
+      "passed": true,
+      "evidence": "The failure-condition evidence uses `id: residual-risks-empty` and marks the condition triggered; transcript.md names the same id."
+    },
+    {
+      "text": "Does not repair or reinterpret the builder output",
+      "passed": true,
+      "evidence": "The report records `builderOutputModified: false` and an empty `repairs` array while preserving the observed implemented status and non-empty residualRisks. transcript.md explicitly says the output was not repaired or modified."
+    },
+    {
+      "text": "Performs no writes or external actions",
+      "passed": true,
+      "evidence": "The report has empty `externalWrites` and `externalActions`; metrics report both as zero, along with zero Git commands, network requests, installations, and invoked agents."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "execution_metrics": {
+    "filesRead": {
+      "count": 2,
+      "paths": [
+        "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/SKILL.md",
+        "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/evals/intake-20260716/fixtures/failure-manifest.json"
+      ]
+    },
+    "filesCreated": {
+      "count": 3,
+      "paths": [
+        "outputs/report.json",
+        "transcript.md",
+        "outputs/metrics.json"
+      ]
+    },
+    "builderOutputsValidated": 1,
+    "failureConditionsEvaluated": 1,
+    "failureConditionsTriggered": 1,
+    "repairsAttempted": 0,
+    "preflightRuns": 0,
+    "gitCommands": 0,
+    "networkRequests": 0,
+    "installations": 0,
+    "agentsInvoked": 0,
+    "externalWrites": 0,
+    "externalActions": 0,
+    "output_chars": 1281,
+    "transcript_chars": 2135
+  },
+  "timing": {
+    "started_at": null,
+    "completed_at": null,
+    "duration_ms": null,
+    "unavailable": true
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [
+      "The supplied metrics do not disclose tool-call or error totals, so neither is inferred. output_chars and transcript_chars are derived from the current character counts of report.json and transcript.md."
+    ],
+    "needs_review": [
+      "The decision-label mismatch should be distinguished from semantic acceptance of an invalid implemented result."
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": "Scored literally, `reject` fails the assertion `Returns blocked`. However, reject also prevents the invalid builder output from being accepted as implemented, so it enforces the same substantive stop. This label-only distinction can overstate the candidate's incremental value and may make the candidate behavior redundant unless downstream consumers specifically require the `blocked` token."
+}

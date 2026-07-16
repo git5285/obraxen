@@ -16,6 +16,8 @@ No se crea una URL candidata hasta que una PR demuestre simultáneamente:
 - en/de/es/fr con estado `aprobada`, revisor y fecha;
 - Resend aprobado documentalmente, DPA archivado, subencargados, transferencias,
   conservación y buzón responsable revisados;
+- regla externa de limitación de solicitudes para `/api/contact/` configurada y
+  probada; el límite en memoria no sustituye este control distribuido;
 - seis casos documentados para nombre y fotografías, o anonimizados;
 - `npm run check:quality`, auditoría de dependencias y revisión de exposición en
   verde;
@@ -41,7 +43,8 @@ salida.
 1. Crear una rama/PR exclusiva de activación y reservar sus archivos.
 2. Configurar el entorno Vercel `preview` con autenticación comprobada.
 3. Incorporar secretos solo en Vercel/GitHub: IDs de proyecto, token, dominio de
-   envío, `RESEND_API_KEY`, buzones y, si se aprueban, IDs analíticos.
+   envío, `RESEND_API_KEY`, buzones y, si se aprueban, IDs analíticos. Registrar
+   `CONTACT_RATE_LIMIT_MODE=vercel-waf` solo después de acreditar la regla externa.
 4. Generar un build nuevo después de fijar esas variables. Las páginas se
    prerenderizan: cambiar una variable en Vercel no modifica un artefacto ya
    construido ni una URL candidata existente.
@@ -67,6 +70,8 @@ Sobre la URL exacta, comprobar en los cuatro idiomas:
 - permisos de cada fotografía/cliente y ausencia de metadatos sensibles;
 - entrega real de una consulta de prueba, recepción, respuesta, borrado y ausencia
   de PII en logs/analítica;
+- rechazo o ralentización verificable de abuso en `/api/contact/` desde más de
+  una instancia, sin bloquear el flujo legítimo ni registrar el contenido;
 - CSP, cabeceras, dependencias, Lighthouse, Axe, Chromium, WebKit y móvil real;
 - páginas, aliases y deployments antiguos inaccesibles.
 
@@ -86,7 +91,7 @@ Tras autorización expresa:
 3. validar redirecciones, canonical, sitemap, robots e indexación;
 4. enviar sitemap a Search Console;
 5. activar formulario y analítica solo si sus aprobaciones independientes están
-   registradas;
+   registradas y la limitación externa del formulario está verificada;
 6. ejecutar smoke inmediato y monitorizar logs sin PII.
 
 ## 5. Rollback

@@ -371,6 +371,8 @@ test("redirects, closed routes, contact API and security policy fail closed", as
 
   const closedRoute = await request.get("/en/solutions/");
   expect(closedRoute.status()).toBe(404);
+  const qaHarness = await request.get("/qa/contact-harness/");
+  expect(qaHarness.status()).toBe(404);
   const contact = await request.post("/api/contact/", { data: {} });
   expect(contact.status()).toBe(503);
 

@@ -4,6 +4,11 @@ set -eu
 
 zero_sha="0000000000000000000000000000000000000000"
 run_quality=false
+remote_name="${1:-origin}"
+repository_root="$(git rev-parse --show-toplevel)"
+base_ref="refs/remotes/${remote_name}/main"
+
+. "$repository_root/.githooks/git-env.sh"
 
 while read -r local_ref local_sha remote_ref remote_sha; do
   if [ -z "${local_ref:-}" ]; then
@@ -18,6 +23,12 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   case "$remote_ref" in
     refs/heads/*)
       if [ "$local_sha" != "$zero_sha" ]; then
+        if ! git show-ref --verify --quiet "$base_ref"; then
+          echo "No se puede verificar el diff: falta $base_ref." >&2
+          exit 1
+        fi
+        cd "$repository_root"
+        run_without_local_git_env npm run check:diff -- --base-ref "$base_ref" --head "$local_sha"
         run_quality=true
       fi
       ;;
@@ -25,8 +36,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 done
 
 if [ "$run_quality" = true ]; then
-  repository_root="$(git rev-parse --show-toplevel)"
   cd "$repository_root"
   echo "Ejecutando el gate local antes del push..."
-  npm run check:quality
+  run_without_local_git_env npm run check:quality
 fi

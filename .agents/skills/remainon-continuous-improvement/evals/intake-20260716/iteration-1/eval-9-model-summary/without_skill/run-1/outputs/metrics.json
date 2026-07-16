@@ -1,0 +1,15 @@
+{
+  "files_read": 3,
+  "fixture_claims_evaluated": 2,
+  "numeric_claims_evaluated": 2,
+  "original_urls_provided": 0,
+  "original_transcripts_provided": 0,
+  "timestamps_provided": 0,
+  "reproducible_measurements_provided": 0,
+  "requests_rejected": 1,
+  "claims_promoted_as_facts": 0,
+  "durable_knowledge_files_changed": 0,
+  "output_files_written": 3,
+  "network_calls_made": 0,
+  "agents_spawned": 0
+}

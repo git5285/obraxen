@@ -1,0 +1,55 @@
+{
+  "decision": "reject",
+  "evidence": [
+    {
+      "type": "manifest_match",
+      "field": "schemaVersion",
+      "expected": 1,
+      "observed": 1,
+      "result": "match"
+    },
+    {
+      "type": "manifest_match",
+      "field": "runId",
+      "expected": "eval-failure-1",
+      "observed": "eval-failure-1",
+      "result": "match"
+    },
+    {
+      "type": "manifest_match",
+      "field": "baseSha",
+      "expected": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "result": "match"
+    },
+    {
+      "type": "manifest_match",
+      "field": "changedPaths",
+      "allowed": [
+        "src/components/example.tsx"
+      ],
+      "observed": [
+        "src/components/example.tsx"
+      ],
+      "result": "within_allowed_paths"
+    },
+    {
+      "type": "failure_condition",
+      "id": "residual-risks-empty",
+      "condition": "An implemented result is invalid when residualRisks is not empty.",
+      "observed": {
+        "status": "implemented",
+        "residualRisks": [
+          "manual review required"
+        ]
+      },
+      "result": "triggered"
+    }
+  ],
+  "actions": {
+    "builderOutputModified": false,
+    "repairs": [],
+    "externalWrites": [],
+    "externalActions": []
+  }
+}

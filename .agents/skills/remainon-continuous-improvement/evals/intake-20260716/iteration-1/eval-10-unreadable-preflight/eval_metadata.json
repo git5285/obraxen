@@ -1,0 +1,11 @@
+{
+  "eval_id": 10,
+  "eval_name": "unreadable-worktree-preflight",
+  "prompt": "Evaluate whether scouting may start when a registered worktree is unreadable.",
+  "assertions": [
+    "Returns blocked before invoking a scout",
+    "Names the unreadable worktree as blocking evidence",
+    "Does not trust eligibility.scout when worktree evidence contradicts it",
+    "Performs no writes or external actions"
+  ]
+}

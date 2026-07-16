@@ -1,0 +1,68 @@
+{
+  "expectations": [
+    {
+      "text": "The vague case has no invented findings",
+      "passed": true,
+      "evidence": "Case A has `selectedFinding: null`; its evidence explicitly says repository/web inspection did not occur and therefore no reproducible finding exists. transcript.md repeats that no finding was invented."
+    },
+    {
+      "text": "Any clarifying questions are at most five, non-obvious and use distinct allowed categories",
+      "passed": true,
+      "evidence": "Case A contains exactly five questions with five distinct category labels: declared_requirements, implicit_assumptions, decision_points, failure_modes, and taste_choices. Each asks for a material selection constraint rather than a fact already supplied. Case B contains none."
+    },
+    {
+      "text": "Does not block a vague request when a safe broad shadow audit can proceed without clarification",
+      "passed": false,
+      "evidence": "Case A returns `status: blocked` while the same case sets `safeBroadShadowAuditCouldProceedWithoutQuestions.value` to true and explains that a read-only broad examination could safely return a finding or no_op without questions. transcript.md records the same contradiction."
+    },
+    {
+      "text": "The precise case has zero clarifying questions",
+      "passed": true,
+      "evidence": "Case B has `clarifyingQuestions: []`, and transcript.md explicitly states `Reverse prompting: cero preguntas`."
+    },
+    {
+      "text": "Neither case causes writes or external actions",
+      "passed": true,
+      "evidence": "Both cases have `changedPaths: []` and `externalAction: none`. transcript.md says no claims, leases, worktrees, product diffs, commits, PRs, network use, or external actions occurred; writes were limited to the three authorized evaluation artifacts."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Bash": 5,
+      "Edit": 3
+    },
+    "total_tool_calls": 8,
+    "total_steps": 5,
+    "files_created": [
+      "outputs/report.json",
+      "transcript.md",
+      "outputs/metrics.json"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 7897,
+    "transcript_chars": 2813
+  },
+  "timing": {
+    "started_at": null,
+    "completed_at": null,
+    "duration_ms": null,
+    "unavailable": true
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [
+      "eval_metadata.json does not enumerate the allowed category vocabulary; the category assessment is based on the five distinct, semantically appropriate labels present in the report."
+    ],
+    "needs_review": [
+      "Case A's director decision conflicts with its own safe-audit assessment."
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": "Four assertions pass, but that can obscure the central added friction: the run explicitly recognizes that a safe broad shadow audit can proceed without clarification and nevertheless blocks the vague case. The new non-blocking assertion correctly exposes this contradiction."
+}
