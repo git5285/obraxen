@@ -15,5 +15,6 @@ AUDITORIA-EXTERNA-*.md
 # Configuración local de herramientas
 .claude/
 .vercel/
+.env
 .env.local
 .env.*.local
