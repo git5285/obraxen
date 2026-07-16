@@ -40,6 +40,7 @@ const editorialReview = z.object({
 export const brandSchema = z.object({
   nombreTemporalNoPublicable: nullableText,
   nombre: nullableText,
+  nombreRevisionAprobada: z.boolean(),
   nombreLegal: nullableText,
   cif: nullableText,
   empresaConstituida: z.boolean(),

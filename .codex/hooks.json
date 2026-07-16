@@ -1,5 +1,5 @@
 {
-  "description": "Deterministic least-authority guardrail for RemainOn custom agents.",
+  "description": "Deterministic least-authority guardrail for Obraxen custom agents.",
   "hooks": {
     "PreToolUse": [
       {

@@ -1,10 +1,10 @@
 ---
-name: remainon-continuous-improvement
-description: Run RemainOn's controlled continuous-improvement cycle. Use this skill whenever the user asks agents to audit, improve, iterate, maintain, optimize, autonomously evolve, continuously review, or schedule work on the RemainOn website, even when they do not explicitly mention the agent system. It coordinates evidence-first scouting, claims, a single writer, deterministic gates and independent review without authorizing merge, deployment or publication.
+name: obraxen-continuous-improvement
+description: Run Obraxen's controlled continuous-improvement cycle. Use this skill whenever the user asks agents to audit, improve, iterate, maintain, optimize, autonomously evolve, continuously review, or schedule work on the Obraxen website, even when they do not explicitly mention the agent system. It coordinates evidence-first scouting, claims, a single writer, deterministic gates and independent review without authorizing merge, deployment or publication.
 compatibility: Codex 0.144.2 or newer, Git worktrees, Node.js 24, and this repository's coordination protocol.
 ---
 
-# RemainOn continuous improvement
+# Obraxen continuous improvement
 
 Operate as the director of one bounded improvement cycle. The goal is a
 defensible outcome, which may be `no_op`; activity is not success by itself.

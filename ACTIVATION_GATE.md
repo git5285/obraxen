@@ -21,11 +21,11 @@ Resultado actual:
 
 | Bloque | Incidencias | Estado |
 |---|---:|---|
-| Identidad, sociedad y contacto | 5 | Pendiente |
+| Nombre, identidad, sociedad y contacto | 6 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
 | Permisos de seis casos y fotografías | 24 | Pendiente |
-| **Total** | **35** | **NO-GO** |
+| **Total** | **36** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
@@ -42,9 +42,12 @@ constituida; razón social, CIF y domicilio continúan `null`.
 
 ## Expediente mínimo que debe recibirse
 
-### 1. Identidad y contacto
+### 1. Nombre, identidad y contacto
 
-- nombre comercial definitivo: **resuelto con `Obraxen`**;
+- nombre comercial seleccionado: **resuelto con `Obraxen`**;
+- búsqueda profesional registral y marcaria: **pendiente**; la comprobación
+  preliminar de `NAMING_CLEARANCE.md` encontró usos exactos en construcción e
+  ingeniería y no permite tratar el nombre como despejado;
 - sociedad constituida, razón social, CIF/NIF y domicilio validado;
 - dominio definitivo: **resuelto con `obraxen.com`**;
 - email público y buzón separado para derechos de privacidad: **resueltos con
@@ -116,7 +119,7 @@ solicitudes para `/api/contact/`, configurada y probada en el proveedor de borde
 Solo después se puede fijar `CONTACT_RATE_LIMIT_MODE=vercel-waf`. Sin ese valor,
 la configuración del formulario permanece cerrada aunque el resto de variables
 exista. El límite en memoria continúa como defensa secundaria, no como garantía
-entre instancias. Esta precondición de entorno no se suma a las 35 incidencias de
+entre instancias. Esta precondición de entorno no se suma a las 36 incidencias de
 datos del expediente: ambas puertas deben estar verdes de forma independiente.
 
 ## Secuencia de cierre

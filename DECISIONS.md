@@ -65,9 +65,9 @@ grabación propia (ver guía de grabación).
 **Estado:** Aceptada · **consecuencia negativa (SEO) resuelta 2026-07-14**
 
 **Contexto.** `Obraxen` fue seleccionado expresamente como nombre comercial el
-15 de julio de 2026. “RemainOn” es exclusivamente un identificador interno
-temporal y no puede publicarse. `data/brand.json` mantiene ese límite en
-`nombreTemporalNoPublicable`. La empresa todavía no está constituida y la
+15 de julio de 2026. El identificador interno temporal anterior no puede
+publicarse y fue retirado de `data/brand.json` al completar la migración
+operativa a Obraxen. La empresa todavía no está constituida y la
 selección no acredita disponibilidad registral o marcaria; la forma jurídica
 prevista es una sociedad limitada.
 Antes, el nombre, el dominio y los contactos estaban hardcodeados en ~18 puntos
