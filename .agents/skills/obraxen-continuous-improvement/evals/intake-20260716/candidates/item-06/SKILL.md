@@ -1,6 +1,6 @@
 ---
-name: remainon-continuous-improvement-item-06
-description: Experimental no-op overlay for keeping model summaries out of durable RemainOn knowledge.
+name: obraxen-continuous-improvement-item-06
+description: Experimental no-op overlay for keeping model summaries out of durable Obraxen knowledge.
 ---
 
 Read and follow the production skill at `../../../../SKILL.md`, then apply only

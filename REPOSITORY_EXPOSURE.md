@@ -22,9 +22,9 @@ publicación.
   de `.coordination/` estuvieron visibles mientras el repositorio fue público.
   No contienen credenciales, pero sí contexto estratégico y de ejecución.
 - Los siete deployments Vercel legacy que conservaban la web estática provisional
-  se eliminaron por ID el 15 de julio de 2026. El proyecto `remainon-web` permanece
-  preparado, pero sin deployments, dominios ni alias accesibles; todas las URLs
-  históricas comprobadas responden 404.
+  se eliminaron por ID el 15 de julio de 2026. El proyecto fue renombrado a
+  `obraxen`; permanece sin deployments y con la publicación bloqueada. El alias
+  automático `obraxen.vercel.app` está reservado, pero no sirve contenido.
 
 ## Controles adoptados
 

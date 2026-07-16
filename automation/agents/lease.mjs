@@ -17,7 +17,7 @@ function git(repo, args) {
 export function getLeasePaths(repo) {
   const commonDirRaw = git(repo, ["rev-parse", "--git-common-dir"]);
   const commonDir = isAbsolute(commonDirRaw) ? commonDirRaw : resolve(repo, commonDirRaw);
-  const directory = join(commonDir, "codex-agent-state", "remainon", "writer-lease");
+  const directory = join(commonDir, "codex-agent-state", "obraxen", "writer-lease");
   return { directory, owner: join(directory, "owner.json") };
 }
 

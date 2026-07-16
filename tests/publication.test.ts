@@ -11,6 +11,7 @@ import type { Brand, Project } from "@/lib/schemas";
 const publicBrand: Brand = {
   ...brand,
   nombre: "Marca validada",
+  nombreRevisionAprobada: true,
   nombreLegal: "Sociedad validada, S.L.",
   cif: "B00000000",
   empresaConstituida: true,
@@ -80,6 +81,13 @@ describe("publication gate", () => {
     expect(() => getPublicationState({
       ...publicBrand,
       formularioRevisionAprobada: false,
+    }, documentedProjects)).toThrow(PublicationConfigurationError);
+  });
+
+  it("blocks publication until the commercial name has professional clearance", () => {
+    expect(() => getPublicationState({
+      ...publicBrand,
+      nombreRevisionAprobada: false,
     }, documentedProjects)).toThrow(PublicationConfigurationError);
   });
 

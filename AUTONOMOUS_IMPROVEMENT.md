@@ -1,4 +1,4 @@
-# Sistema de mejora autónoma de RemainOn
+# Sistema de mejora autónoma de Obraxen
 
 ## Objetivo y límite
 
