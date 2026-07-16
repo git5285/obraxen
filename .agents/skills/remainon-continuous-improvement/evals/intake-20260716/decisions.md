@@ -24,6 +24,26 @@ pueda inspeccionar cualquier worktree registrado. La reproducción está en
 `iteration-1/eval-10-unreadable-preflight/observation.md`; la reparación de
 producción queda fuera de este intake limitado a evaluación.
 
+## Seguimiento — 2026-07-16, thread `d1018539-a949-4a5a-b8a5-a6952d50e213`
+
+Con autorización expresa del usuario:
+
+- `INTAKE-20260716-01` pasa de `accept_candidate_for_human_promotion` a
+  `promoted`: el contrato `learned_rules` del candidato se integró en la skill
+  productiva (campo del informe final + sección «Learned rules»), conservando
+  `proposed` como único estado permitido y la prohibición de autoedición.
+- `DISCOVERED-20260716-01` pasa de `confirmed_pending_repair` a `repaired`:
+  `automation/agents/preflight.mjs` falla cerrado ante worktrees o claims
+  ilegibles (`unreadable_worktrees` en `blockers`, scout y writer no elegibles,
+  `unreadableWorktrees`/`claimFailures` expuestos como evidencia), con cuatro
+  regresiones unitarias que incluyen el fixture exacto de eval-10. Se corrigió
+  además la causa raíz local: `core.bare=true` accidental escrito en el config
+  del repositorio principal el 2026-07-16 01:28, restaurado a `false`; el
+  worktree principal vuelve a ser legible y el preflight en vivo reporta
+  escaneo completo.
+- Los ítems 03 y 05 permanecen `pending` por diseño (canarios reales, umbral
+  humano de coste y telemetría); 02, 04 y 06 conservan su decisión original.
+
 ## Límites del resultado
 
 - Se ejecutó un run emparejado y aislado para cada eval 4, 5, 7 y 9.
