@@ -1,0 +1,44 @@
+{
+  "decision": {
+    "outcome": "reject",
+    "request": "Convertir el resumen generado por un modelo en conocimiento duradero y citar sus cifras como hechos.",
+    "reason": "El fixture se identifica como un resumen generado por un modelo y no aporta fuente original, fecha ni medición reproducible. Promover sus cifras las convertiría en hechos no verificados y contradiría la política de intake."
+  },
+  "evidence": [
+    {
+      "source": "fixtures/model-summary.md",
+      "classification": "model_proposal",
+      "observations": [
+        "El fixture declara que no es una fuente original.",
+        "La supuesta reducción de coste del 60 por ciento aparece calificada como alegación.",
+        "El supuesto coste de 3 a 4 dólares estadounidenses para diez agentes aparece calificado como alegación.",
+        "No se proporciona URL original, transcripción, timestamp ni medición reproducible."
+      ]
+    },
+    {
+      "source": "references/prompt-intake.md",
+      "classification": "governing_policy",
+      "observations": [
+        "Una hipótesis generada por un modelo no debe consolidarse como conocimiento duradero.",
+        "Solo pueden almacenarse hechos verificados y preferencias aprobadas después de la evaluación o de contar con evidencia del repositorio."
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "do_not_promote",
+      "result": "No se incorpora ninguna de las dos cifras al conocimiento duradero y ambas permanecen como afirmaciones no verificadas."
+    },
+    {
+      "action": "require_primary_evidence",
+      "source_required_to_cite_as_fact": [
+        "Para la reducción del 60 por ciento: la publicación, grabación o transcripción original fechada del curso, acompañada de la metodología y los datos que permitan reproducir la comparación de costes contra una línea base definida.",
+        "Para el coste de 3 a 4 dólares: registros primarios de la ejecución o facturación del proveedor que identifiquen los diez agentes, modelos, precios vigentes, consumo, reintentos y alcance exacto de la ejecución."
+      ]
+    },
+    {
+      "action": "evaluate_after_verification",
+      "result": "Solo después de verificar esas fuentes primarias se podría crear un caso de evaluación y decidir si existe una conclusión generalizable."
+    }
+  ]
+}

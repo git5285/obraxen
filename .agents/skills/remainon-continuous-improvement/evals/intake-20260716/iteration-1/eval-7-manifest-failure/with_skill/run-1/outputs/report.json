@@ -1,0 +1,23 @@
+{
+  "decision": "blocked",
+  "evidence": [
+    {
+      "failureConditionId": "residual-risks-empty",
+      "condition": "An implemented result is invalid when residualRisks is not empty.",
+      "observed": {
+        "builderOutput.status": "implemented",
+        "builderOutput.residualRisks": [
+          "manual review required"
+        ]
+      },
+      "result": "matched"
+    }
+  ],
+  "actions": {
+    "builderOutputModified": false,
+    "repairAttempted": false,
+    "runContinued": false,
+    "writesOutsideRun": [],
+    "externalActions": []
+  }
+}

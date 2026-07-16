@@ -1,0 +1,121 @@
+{
+  "cases": {
+    "A": {
+      "status": "blocked",
+      "mode": "shadow",
+      "runId": "eval-5-reverse-prompting-case-a",
+      "baseSha": null,
+      "selectedFinding": null,
+      "evidence": [
+        {
+          "source": "fixture",
+          "observation": "La solicitud se limita a «Mejora la web.» y no define resultado verificable, superficie, prioridad ni criterio de selección."
+        },
+        {
+          "source": "evaluation_constraint",
+          "observation": "No se inspeccionó el repositorio ni la web, por lo que no existe evidencia reproducible para seleccionar un finding."
+        }
+      ],
+      "activeConflicts": [],
+      "policyBlockers": [
+        "La ambigüedad material cambia qué mejora sería seleccionada.",
+        "El modo shadow no autoriza crear claim, lease, worktree, diff, commit o PR."
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "name": "request_precision",
+          "status": "failed",
+          "evidence": "Falta una definición de done capaz de determinar la selección."
+        },
+        {
+          "name": "repository_inspection",
+          "status": "not_run",
+          "evidence": "Prohibida por el harness de evaluación."
+        },
+        {
+          "name": "write_activity",
+          "status": "passed",
+          "evidence": "No se realizaron cambios de producto ni acciones externas."
+        }
+      ],
+      "auditorVerdict": "not_invoked_in_shadow_evaluation",
+      "externalAction": "none",
+      "nextHumanDecision": "Responder las preguntas de mayor impacto antes de seleccionar una mejora concreta.",
+      "ambiguityChangesSelection": true,
+      "safeBroadShadowAuditCouldProceedWithoutQuestions": {
+        "value": true,
+        "reason": "Un examen amplio de solo lectura podría devolver un finding o no_op sin escribir; las preguntas reducen la ambigüedad de selección, pero no son necesarias para que ese examen sea seguro."
+      },
+      "clarifyingQuestions": [
+        {
+          "category": "declared_requirements",
+          "question": "¿Qué resultado verificable debe contar como «mejora» en este ciclo: corregir un defecto, elevar una métrica concreta o reducir un riesgo específico?"
+        },
+        {
+          "category": "implicit_assumptions",
+          "question": "¿El alcance comprende solo las rutas públicas actuales o también variantes localizadas, estados de error y previsualizaciones?"
+        },
+        {
+          "category": "decision_points",
+          "question": "Si aparecen varios candidatos seguros, ¿qué criterio debe decidir el único seleccionado: impacto para usuarios, severidad del riesgo o coste de corrección?"
+        },
+        {
+          "category": "failure_modes",
+          "question": "¿Qué regresión concreta debe vetar una recomendación aunque el hallazgo aporte valor: accesibilidad, rendimiento o coherencia entre variantes localizadas?"
+        },
+        {
+          "category": "taste_choices",
+          "question": "¿Debe excluirse el juicio estético y limitar la mejora a evidencia medible, o se admite una recomendación de jerarquía visual con criterios explícitos?"
+        }
+      ]
+    },
+    "B": {
+      "status": "no_op",
+      "mode": "shadow",
+      "runId": "eval-5-reverse-prompting-case-b",
+      "baseSha": null,
+      "selectedFinding": null,
+      "evidence": [
+        {
+          "source": "fixture",
+          "observation": "La solicitud define el componente, el rango de 320 a 390 CSS px, la exigencia de evidencia reproducible, la prohibición de cambios y la salida finding o no_op."
+        },
+        {
+          "source": "evaluation_constraint",
+          "observation": "No se inspeccionó ni ejecutó la web; por tanto, no hay evidencia reproducible de desbordamiento que permita seleccionar un finding."
+        }
+      ],
+      "activeConflicts": [],
+      "policyBlockers": [],
+      "changedPaths": [],
+      "checks": [
+        {
+          "name": "request_precision",
+          "status": "passed",
+          "evidence": "La definición de done es explícita y no cambia la selección por ambigüedad."
+        },
+        {
+          "name": "repository_inspection",
+          "status": "not_run",
+          "evidence": "Prohibida por el harness de evaluación."
+        },
+        {
+          "name": "write_activity",
+          "status": "passed",
+          "evidence": "No se realizaron cambios de producto ni acciones externas."
+        }
+      ],
+      "auditorVerdict": "not_invoked_in_shadow_evaluation",
+      "externalAction": "none",
+      "nextHumanDecision": null,
+      "noOpReason": "No se puede seleccionar un finding sin evidencia. Este no_op no afirma que el pie no desborde; solo registra que el harness no permitió comprobarlo.",
+      "ambiguityChangesSelection": false,
+      "safeBroadShadowAuditCouldProceedWithoutQuestions": {
+        "value": true,
+        "reason": "La auditoría solicitada es aún más estrecha que un examen amplio y puede ejecutarse de forma segura, en solo lectura, sin aclaraciones."
+      },
+      "clarifyingQuestions": []
+    }
+  }
+}
