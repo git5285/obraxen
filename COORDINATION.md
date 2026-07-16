@@ -1,14 +1,17 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 01:09 Europe/Madrid.
+Actualizado: 2026-07-16 17:30 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No hay tareas editoras activas. La claim `4b65f9d3...` queda liberada tras la
-entrega de la Fase 6.7.2 en la PR `#16`.
+No quedan tareas editoras activas. La claim `82c80eb6...` corrigió y liberó el
+aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
+transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
+autónoma antes de continuar. La entrega autónoma v2 de la claim `810dee7b...`
+también está liberada; no autoriza despliegue ni publicación.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -121,6 +124,41 @@ cambios staged sin propietario.
   y DMARC están operativos. El gate baja de 37 a 35 incidencias y permanece
   `NO-GO`. El run `29457427094` está verde, la preview fue omitida y la claim
   `4b65f9d3...` queda liberada sin despliegue.
+- Sistema de mejora continua con agentes creado en la rama
+  `codex/autonomous-agents` (commits `8eca8bf` y `9616cf8`): director, scout,
+  builder único y auditor con veto, en modo sombra y sin autoridad de
+  publicación; handoff `6751b2a1...`.
+- Intake de conocimiento 2026-07-16 evaluado con evals emparejadas: ítem 01
+  aceptado, 02 rechazado, 03/05 pendientes de canarios, 04/06 `no_op`; regresión
+  `DISCOVERED-20260716-01` descubierta y reproducida; artefactos en
+  `.agents/skills/remainon-continuous-improvement/evals/intake-20260716/`;
+  handoff `71dfbceb...`.
+- Seguimiento del intake entregado: preflight con fail-closed ante worktrees o
+  claims ilegibles (cuatro regresiones unitarias, fixture de eval-10), contrato
+  `learned_rules` promovido al informe de la skill, y `core.bare=true`
+  accidental del repositorio principal restaurado a `false`; handoff
+  `d1018539...`.
+- Auditoría y endurecimiento del sistema autónomo cerrados localmente en
+  `a160a16`: el builder queda bloqueado de forma determinista en modo sombra,
+  las superficies críticas están protegidas, el lease limpia fallos parciales,
+  `check:diff` valida toda la candidata desde la base revisada y QA usa puertos
+  aislados. El formulario habilitado tiene prueba navegador propia y exige
+  limitación externa acreditada antes de activarse. El gate final pasa con 144
+  unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
+  previstas, WebKit y Lighthouse; handoff `9548505b...`.
+- Automatización local `remainon-shadow-improvement` creada y activa con cadencia
+  de seis horas sobre el worktree dedicado. Tras la promoción autorizada ejecuta
+  el ciclo completo y puede dejar un único diff local aislado; no tiene autoridad
+  de commit, Git remoto, PR, despliegue o publicación.
+- Memoria autónoma v1 preparada en `codex/autonomous-agents`: episodios
+  inmutables fuera del worktree, índice acotado, deduplicación por dominio/rutas,
+  revalidación por SHA, reglas en cuarentena y telemetría solo medida. Tres
+  scouts reales sobre `218655f` produjeron un `no_op` y dos confirmaciones del
+  mismo hueco de accesibilidad; memoria conserva un hallazgo con dos
+  ocurrencias. El workflow alojado Codex compila estricto en sombra/manual.
+- El hook `pre-push` ya elimina en un subshell las variables Git locales antes
+  de sus gates. La regresión sacrificial y el gate completo pasan sin alterar
+  refs, HEADs o `core.bare`; handoff `82c80eb6...`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -145,6 +183,16 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   con segmentos localizados y revisión profesional obligatoria por idioma.
 - ADR-011 fija Resend como adaptador técnico sin base propia; formulario y API
   permanecen fail-closed hasta aprobación documental, identidad legal y entorno.
+- La activación de `/api/contact/` exige además una regla distribuida de límite
+  de solicitudes acreditada mediante `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el
+  límite en memoria es solo defensa secundaria.
+- Tras tres canarios sombra y autorización expresa del usuario, el sistema
+  autónomo se promueve solo a `active + allowLocalDiff`: un builder, un worktree,
+  un lease, rutas exactas y auditor con veto. Commit, push, PR, merge, despliegue
+  y publicación continúan deshabilitados.
+- La ejecución alojada permanece manual y en sombra hasta disponer de una
+  credencial de inferencia y un presupuesto explícito; el horario local de seis
+  horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.

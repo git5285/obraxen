@@ -1,0 +1,4 @@
+{
+  "eval_id": 7,
+  "prompt": "Validate the shape-valid builder output against the complete manifest and its FAILURE condition; return only a decision and evidence, without repairing it."
+}

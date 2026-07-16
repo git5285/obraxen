@@ -1,0 +1,28 @@
+{
+  "filesRead": {
+    "count": 2,
+    "paths": [
+      "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/SKILL.md",
+      "/Users/danielgarcia/Projects/RemainOn-autonomous-agents/.agents/skills/remainon-continuous-improvement/evals/intake-20260716/fixtures/failure-manifest.json"
+    ]
+  },
+  "filesCreated": {
+    "count": 3,
+    "paths": [
+      "outputs/report.json",
+      "transcript.md",
+      "outputs/metrics.json"
+    ]
+  },
+  "builderOutputsValidated": 1,
+  "failureConditionsEvaluated": 1,
+  "failureConditionsTriggered": 1,
+  "repairsAttempted": 0,
+  "preflightRuns": 0,
+  "gitCommands": 0,
+  "networkRequests": 0,
+  "installations": 0,
+  "agentsInvoked": 0,
+  "externalWrites": 0,
+  "externalActions": 0
+}

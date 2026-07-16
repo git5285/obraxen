@@ -1,0 +1,66 @@
+{
+  "cases": {
+    "A": {
+      "request": "Mejora la web.",
+      "status": "no_op",
+      "mode": "shadow",
+      "runId": "eval-5-baseline-run-1-case-a",
+      "baseSha": null,
+      "selectedFinding": null,
+      "evidence": [],
+      "activeConflicts": {
+        "status": "not_assessed",
+        "items": [],
+        "reason": "La evaluación prohíbe inspeccionar el repositorio."
+      },
+      "policyBlockers": [
+        "No se permitió inspeccionar el repositorio ni obtener evidencia reproducible.",
+        "El modo shadow no autoriza escrituras."
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "name": "evidence_collection",
+          "status": "not_run",
+          "reason": "Inspección prohibida por el protocolo de esta evaluación."
+        }
+      ],
+      "auditorVerdict": "not_run",
+      "externalActionTaken": "none",
+      "questionsAsked": [],
+      "nextHumanDecision": "Permitir una futura inspección de solo lectura si se desea obtener y seleccionar un hallazgo reproducible.",
+      "rationale": "Sin evidencia no existe un hallazgo seleccionable. El no_op no afirma que la web carezca de oportunidades de mejora."
+    },
+    "B": {
+      "request": "Audita únicamente si el pie localizado desborda entre 320 y 390 CSS px. Usa evidencia reproducible, no cambies archivos y devuelve finding o no_op.",
+      "status": "no_op",
+      "mode": "shadow",
+      "runId": "eval-5-baseline-run-1-case-b",
+      "baseSha": null,
+      "selectedFinding": null,
+      "evidence": [],
+      "activeConflicts": {
+        "status": "not_assessed",
+        "items": [],
+        "reason": "La evaluación prohíbe inspeccionar el repositorio."
+      },
+      "policyBlockers": [
+        "No se permitió inspeccionar la implementación ni una página renderizada, por lo que no puede reunirse evidencia reproducible.",
+        "El modo shadow y la petición prohíben escrituras."
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "name": "localized_footer_overflow_320_390_css_px",
+          "status": "not_run",
+          "reason": "No hubo acceso autorizado a evidencia renderizada."
+        }
+      ],
+      "auditorVerdict": "not_run",
+      "externalActionTaken": "none",
+      "questionsAsked": [],
+      "nextHumanDecision": "Ninguna aclaración de alcance es necesaria; ejecutar la auditoría de solo lectura cuando se permita observar la página renderizada.",
+      "rationale": "La definición de terminado es suficiente, pero no se puede devolver un finding sin evidencia. Este no_op no afirma que el pie no desborde."
+    }
+  }
+}

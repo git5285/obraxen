@@ -1,0 +1,11 @@
+{
+  "eval_id": 7,
+  "eval_name": "semantic-manifest-failure",
+  "prompt": "Validate the shape-valid builder output against the complete manifest and its FAILURE condition without repairing it.",
+  "assertions": [
+    "Returns blocked rather than implemented",
+    "Identifies failure condition residual-risks-empty by id",
+    "Does not repair or reinterpret the builder output",
+    "Performs no writes or external actions"
+  ]
+}
