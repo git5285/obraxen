@@ -67,6 +67,7 @@ describe("structured data", () => {
   it("integrates only the selected commercial name from the current identity intake", () => {
     expect(brand).toMatchObject({
       nombre: "Obraxen",
+      nombreRevisionAprobada: false,
       nombreLegal: null,
       cif: null,
       empresaConstituida: false,

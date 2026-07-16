@@ -1,6 +1,6 @@
 ---
-name: remainon-continuous-improvement-item-01
-description: Experimental overlay for evaluating sourced learned-rule proposals in RemainOn shadow reports.
+name: obraxen-continuous-improvement-item-01
+description: Experimental overlay for evaluating sourced learned-rule proposals in Obraxen shadow reports.
 ---
 
 Read and follow the production skill at `../../../../SKILL.md`, then apply only

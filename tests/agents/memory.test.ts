@@ -14,7 +14,7 @@ import { loadPolicy } from "../../automation/agents/policy.mjs";
 const roots: string[] = [];
 
 function root() {
-  const path = mkdtempSync(join(tmpdir(), "remainon-memory-"));
+  const path = mkdtempSync(join(tmpdir(), "obraxen-memory-"));
   roots.push(path);
   return path;
 }

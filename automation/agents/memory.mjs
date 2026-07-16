@@ -59,7 +59,7 @@ export function getMemoryPaths(repo = process.cwd(), rootOverride = null) {
   } else {
     const commonDirRaw = git(repo, ["rev-parse", "--git-common-dir"]);
     const commonDir = isAbsolute(commonDirRaw) ? commonDirRaw : resolve(repo, commonDirRaw);
-    root = join(commonDir, "codex-agent-state", "remainon", "memory-v1");
+    root = join(commonDir, "codex-agent-state", "obraxen", "memory-v1");
   }
   return {
     root,

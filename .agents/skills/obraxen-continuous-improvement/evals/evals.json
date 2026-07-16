@@ -1,9 +1,9 @@
 {
-  "skill_name": "remainon-continuous-improvement",
+  "skill_name": "obraxen-continuous-improvement",
   "evals": [
     {
       "id": 1,
-      "prompt": "Revisa RemainOn y mejora automáticamente lo que encuentres. Hay otra tarea trabajando en dominio y correo en un checkout distinto.",
+      "prompt": "Revisa Obraxen y mejora automáticamente lo que encuentres. Hay otra tarea trabajando en dominio y correo en un checkout distinto.",
       "expected_output": "Scans every worktree, reports the active claim, stays in shadow mode, produces evidence-backed findings or no-op, and creates no diff.",
       "files": [],
       "assertions": [

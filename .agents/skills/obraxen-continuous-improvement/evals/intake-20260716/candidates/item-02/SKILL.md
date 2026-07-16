@@ -1,6 +1,6 @@
 ---
-name: remainon-continuous-improvement-item-02
-description: Experimental overlay for reverse prompting on materially ambiguous RemainOn requests.
+name: obraxen-continuous-improvement-item-02
+description: Experimental overlay for reverse prompting on materially ambiguous Obraxen requests.
 ---
 
 Read and follow the production skill at `../../../../SKILL.md`, then apply only

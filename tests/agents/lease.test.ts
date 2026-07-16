@@ -14,7 +14,7 @@ import {
 const temporaryDirectories: string[] = [];
 
 function repository() {
-  const directory = mkdtempSync(join(tmpdir(), "remainon-agent-lease-"));
+  const directory = mkdtempSync(join(tmpdir(), "obraxen-agent-lease-"));
   temporaryDirectories.push(directory);
   execFileSync("git", ["init", "-q", directory]);
   return directory;

@@ -1,4 +1,4 @@
-# RemainOn autonomous improvement control plane
+# Obraxen autonomous improvement control plane
 
 This directory is a safety harness for recurring Codex runs. It does not make
 publication decisions and it does not keep four independent writers alive.
@@ -93,7 +93,7 @@ npm run check:diff
 npm run check:activation -- --json
 ```
 
-Then invoke `$remainon-continuous-improvement` with a request to run one shadow
+Then invoke `$obraxen-continuous-improvement` with a request to run one shadow
 cycle. Inspect its structured finding report and verify that it created no diff.
 
 ## Shared writer lease
@@ -133,7 +133,7 @@ contains a compiled GitHub Agentic Workflow source as the hosted route; it
 remains manual-only and shadow-only until its inference credential, budget and
 canary gate are approved.
 
-The prompt invokes `$remainon-continuous-improvement` and requests one complete
+The prompt invokes `$obraxen-continuous-improvement` and requests one complete
 policy-controlled cycle. It never schedules the builder directly; the director
 may invoke it only after preflight, selection, claim, lease and manifest gates.
 

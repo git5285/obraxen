@@ -18,7 +18,7 @@ export function validatePolicy(policy) {
   if (!new Set(["shadow", "active", "disabled"]).has(policy.mode)) {
     throw new Error("policy.mode must be shadow, active, or disabled");
   }
-  if (policy.project !== "remainon") throw new Error("policy.project must be remainon");
+  if (policy.project !== "obraxen") throw new Error("policy.project must be obraxen");
 
   for (const key of [
     "maxConcurrentWriters",
@@ -33,10 +33,10 @@ export function validatePolicy(policy) {
   ]) requirePositiveInteger(policy.limits, key);
 
   if (policy.limits.maxConcurrentWriters !== 1) {
-    throw new Error("RemainOn permits exactly one autonomous writer");
+    throw new Error("Obraxen permits exactly one autonomous writer");
   }
   if (policy.limits.maxPendingLocalDiffs !== 1) {
-    throw new Error("RemainOn permits exactly one pending autonomous local diff");
+    throw new Error("Obraxen permits exactly one pending autonomous local diff");
   }
 
   if (policy.memory?.schemaVersion !== 1) {

@@ -304,7 +304,7 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Resolver las 35 incidencias que informa `npm run check:activation` mediante el
+Resolver las 36 incidencias que informa `npm run check:activation` mediante el
 expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
 en/de/es/fr, identidad y sociedad, permisos de casos/fotografías, revisión legal,
 aceptación documentada del proveedor y teléfono o WhatsApp. Con cero bloqueos y
