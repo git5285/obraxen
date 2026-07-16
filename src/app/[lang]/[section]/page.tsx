@@ -142,6 +142,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
     const enabled = resolveContactConfig(process.env).enabled;
     return (
       <div className="legal-shell">
+        <a className="skip" href="#contact-content">{dictionary.common.skipToContent}</a>
         <nav className="legal-nav contact-nav" aria-label={dictionary.common.mainNavigation}>
           <div>
             <LogoMark brandName={brand.nombre} href={getPath(lang, "home")} homeLabel={dictionary.common.home} />
