@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 16:24 Europe/Madrid.
+Actualizado: 2026-07-16 16:27 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -9,7 +9,7 @@ Este tablero resume el estado actual. Las reservas exactas viven en
 
 No hay tareas editoras activas. La claim `9548505b...` queda liberada tras el
 cierre local de la auditoría y endurecimiento del sistema de mejora continua;
-no hubo push, despliegue ni publicación.
+no hubo push, cambio en Git remoto, despliegue ni publicación.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -144,6 +144,10 @@ cambios staged sin propietario.
   limitación externa acreditada antes de activarse. El gate final pasa con 144
   unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
   previstas, WebKit y Lighthouse; handoff `9548505b...`.
+- Automatización local `remainon-shadow-improvement` creada y activa con cadencia
+  de seis horas sobre el worktree dedicado. Ejecuta un ciclo de lectura con
+  director/scout, preflight y contrato estructurado; no invoca builder ni tiene
+  autoridad de diff, Git remoto, despliegue o publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -174,6 +178,8 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - El sistema autónomo permanece en modo sombra: scout y director pueden
   inspeccionar, pero el builder no obtiene herramientas ni autoridad de diff;
   merge, despliegue y publicación continúan siendo decisiones humanas.
+- La automatización de seis horas solo acumula canarios sombra revisables. Pasar
+  a `mode=active` exige una PR y decisión humana independientes.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
