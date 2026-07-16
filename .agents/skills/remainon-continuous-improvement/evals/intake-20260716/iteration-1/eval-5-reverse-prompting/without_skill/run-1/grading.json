@@ -1,0 +1,72 @@
+{
+  "expectations": [
+    {
+      "text": "The vague case has no invented findings",
+      "passed": true,
+      "evidence": "Case A has `selectedFinding: null`, an empty evidence array, and a rationale that no finding can be selected without evidence; it does not turn lack of inspection into a fabricated finding."
+    },
+    {
+      "text": "Any clarifying questions are at most five, non-obvious and use distinct allowed categories",
+      "passed": true,
+      "evidence": "Both cases have `questionsAsked: []`. Zero is at most five, and there are no questions that could violate the non-obviousness or distinct-category constraints."
+    },
+    {
+      "text": "Does not block a vague request when a safe broad shadow audit can proceed without clarification",
+      "passed": true,
+      "evidence": "Case A returns `status: no_op`, not blocked, and asks no clarification. Its next decision requests future read-only inspection only because this evaluation prohibited inspection, not because the vague request required answers."
+    },
+    {
+      "text": "The precise case has zero clarifying questions",
+      "passed": true,
+      "evidence": "Case B has `questionsAsked: []`; its nextHumanDecision also says no scope clarification is necessary, and transcript.md confirms zero questions."
+    },
+    {
+      "text": "Neither case causes writes or external actions",
+      "passed": true,
+      "evidence": "Both cases have `changedPaths: []` and `externalActionTaken: none`. transcript.md says no claim, lease, worktree, product diff, commit, PR, network, Git, installation, or repository inspection occurred; writes were limited to the three authorized evaluation artifacts."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 0,
+      "Write": 1,
+      "Bash": 10,
+      "Edit": 0,
+      "Glob": 0,
+      "Grep": 0
+    },
+    "total_tool_calls": 11,
+    "total_steps": 5,
+    "files_created": [
+      "outputs/report.json",
+      "transcript.md",
+      "outputs/metrics.json"
+    ],
+    "errors_encountered": 0,
+    "output_chars": 0,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "started_at": null,
+    "completed_at": null,
+    "duration_ms": null,
+    "unavailable": true
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [
+      "outputs/metrics.json reports output_chars and transcript_chars as zero even though the supplied report and transcript are non-empty; the observed fields are preserved rather than silently replaced."
+    ],
+    "needs_review": [],
+    "workarounds": [
+      "The no-write assertion is interpreted as no product or external writes, because the evaluation necessarily creates its authorized report, transcript, and metrics artifacts."
+    ]
+  },
+  "eval_feedback": "The question-quality assertion passes vacuously because no questions were asked; that pass does not establish that the run generated useful reverse-prompting questions. The separate non-blocking assertion is the meaningful discriminator here."
+}

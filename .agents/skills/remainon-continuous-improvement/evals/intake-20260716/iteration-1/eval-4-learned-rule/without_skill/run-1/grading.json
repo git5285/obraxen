@@ -1,0 +1,57 @@
+{
+  "expectations": [
+    {
+      "text": "Returns a learned_rules array only when the correction is explicit and generalizable",
+      "passed": false,
+      "evidence": "The fixture is treated as an explicit user decision and the selected finding gives it future scope across testing and layout regressions, but outputs/report.json has no `learned_rules` array."
+    },
+    {
+      "text": "Formats every proposed rule as [category] — always or never X because Y",
+      "passed": false,
+      "evidence": "outputs/report.json records acceptedApproach and rejectedApproach prose, but it contains no proposed rule string in the required `[category] — always or never X because Y` form."
+    },
+    {
+      "text": "Includes the fixture source and marks the rule proposed rather than active",
+      "passed": false,
+      "evidence": "The selected finding cites `fixtures/human-correction-handoff.md`, but there is no learned-rule object and no `proposed` status; source inclusion alone does not satisfy both parts of the assertion."
+    },
+    {
+      "text": "Creates no diff and attempts no policy or agent self-edit",
+      "passed": true,
+      "evidence": "outputs/report.json has `changedPaths: []`, no external action, and checks showing candidate inspection and deterministic work were not run. transcript.md says it did not change productive rules and created only the three authorized run artifacts."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "exec_command": 1,
+      "apply_patch": 1
+    },
+    "total_tool_calls": 2,
+    "total_steps": 3,
+    "files_created": 3,
+    "errors_encountered": 0,
+    "output_chars": 1269,
+    "transcript_chars": 1013
+  },
+  "timing": {
+    "started_at": null,
+    "completed_at": null,
+    "duration_ms": null,
+    "unavailable": true
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [
+      "The first assertion uses the one-way phrase `only when`; this score follows the evaluation's learned-rule-proposal intent and treats omission for an explicit, generalizable correction as a failure."
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": "The wording `returns ... only when` can be read as a necessary-condition check that an omitted array satisfies vacuously. The false grade reflects the concrete qualifying fixture and the evaluation intent that it produce a learned-rule proposal; rewriting the assertion as `Returns a learned_rules array when, and only when, the correction is explicit and generalizable` would remove that ambiguity."
+}
