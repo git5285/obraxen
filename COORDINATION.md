@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 01:09 Europe/Madrid.
+Actualizado: 2026-07-16 15:20 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -121,6 +121,20 @@ cambios staged sin propietario.
   y DMARC están operativos. El gate baja de 37 a 35 incidencias y permanece
   `NO-GO`. El run `29457427094` está verde, la preview fue omitida y la claim
   `4b65f9d3...` queda liberada sin despliegue.
+- Sistema de mejora continua con agentes creado en la rama
+  `codex/autonomous-agents` (commits `8eca8bf` y `9616cf8`): director, scout,
+  builder único y auditor con veto, en modo sombra y sin autoridad de
+  publicación; handoff `6751b2a1...`.
+- Intake de conocimiento 2026-07-16 evaluado con evals emparejadas: ítem 01
+  aceptado, 02 rechazado, 03/05 pendientes de canarios, 04/06 `no_op`; regresión
+  `DISCOVERED-20260716-01` descubierta y reproducida; artefactos en
+  `.agents/skills/remainon-continuous-improvement/evals/intake-20260716/`;
+  handoff `71dfbceb...`.
+- Seguimiento del intake entregado: preflight con fail-closed ante worktrees o
+  claims ilegibles (cuatro regresiones unitarias, fixture de eval-10), contrato
+  `learned_rules` promovido al informe de la skill, y `core.bare=true`
+  accidental del repositorio principal restaurado a `false`; handoff
+  `d1018539...`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
