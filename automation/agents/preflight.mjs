@@ -40,6 +40,32 @@ export function readClaims(worktree) {
     ));
 }
 
+export function deriveGating({ policy, lease, worktrees, claimFailures = [] }) {
+  const unreadableWorktrees = [...new Set([
+    ...worktrees
+      .filter((entry) => (entry.status ?? []).some((line) => String(line).startsWith("unreadable: ")))
+      .map((entry) => entry.path),
+    ...claimFailures.map((failure) => failure.path),
+  ])];
+  const scanComplete = unreadableWorktrees.length === 0;
+
+  return {
+    unreadableWorktrees,
+    eligibility: {
+      scout: policy.mode !== "disabled" && policy.authority.allowScout && scanComplete,
+      writer: policy.mode === "active"
+        && policy.authority.allowLocalDiff
+        && !lease
+        && scanComplete,
+    },
+    blockers: [
+      ...(scanComplete ? [] : ["unreadable_worktrees"]),
+      ...(policy.mode === "shadow" ? ["policy_mode_shadow"] : []),
+      ...(lease ? ["writer_lease_exists"] : []),
+    ],
+  };
+}
+
 export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
   const root = git(repo, ["rev-parse", "--show-toplevel"]);
   const worktrees = parseWorktrees(git(root, ["worktree", "list", "--porcelain"]));
@@ -59,9 +85,18 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
       status,
     };
   });
-  const claims = detailedWorktrees.flatMap((worktree) => readClaims(worktree.path));
+  const claimFailures = [];
+  const claims = detailedWorktrees.flatMap((worktree) => {
+    try {
+      return readClaims(worktree.path);
+    } catch (error) {
+      claimFailures.push({ path: worktree.path, reason: error.message });
+      return [];
+    }
+  });
   const activeClaims = claims.filter((claim) => !new Set(["liberado", "released"]).has(claim.state));
   const lease = readLease(root);
+  const gating = deriveGating({ policy, lease, worktrees: detailedWorktrees, claimFailures });
 
   return {
     schemaVersion: 1,
@@ -72,17 +107,11 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
     branch: git(root, ["branch", "--show-current"]) || null,
     worktrees: detailedWorktrees,
     activeClaims,
+    claimFailures,
+    unreadableWorktrees: gating.unreadableWorktrees,
     lease,
-    eligibility: {
-      scout: policy.mode !== "disabled" && policy.authority.allowScout,
-      writer: policy.mode === "active"
-        && policy.authority.allowLocalDiff
-        && !lease,
-    },
-    blockers: [
-      ...(policy.mode === "shadow" ? ["policy_mode_shadow"] : []),
-      ...(lease ? ["writer_lease_exists"] : []),
-    ],
+    eligibility: gating.eligibility,
+    blockers: gating.blockers,
   };
 }
 
