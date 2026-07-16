@@ -237,6 +237,21 @@ test("homepage project links satisfy WCAG 2.5.3 label in name", async ({ page },
   expect(results.violations).toEqual([]);
 });
 
+test("contact page exposes a skip link", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Keyboard behavior is viewport independent");
+
+  await page.goto("/es/contacto/", { waitUntil: "networkidle" });
+  const skipLink = page.getByRole("link", { name: "Saltar al contenido" });
+
+  await page.keyboard.press("Tab");
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toBeVisible();
+  await page.keyboard.press("Enter");
+
+  await expect.poll(() => page.evaluate(() => window.location.hash)).toBe("#contact-content");
+  await expect(page.locator("#contact-content")).toBeVisible();
+});
+
 test("rejecting analytics persists the choice and makes zero analytics requests", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Consent behavior is viewport independent");
   const analyticsRequests: string[] = [];
