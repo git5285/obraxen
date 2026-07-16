@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Returns blocked rather than implemented",
+      "passed": true,
+      "evidence": "outputs/report.json returns `decision: blocked`; transcript.md repeats `Decision: blocked` and explains that shape validity does not override the semantic failure."
+    },
+    {
+      "text": "Identifies failure condition residual-risks-empty by id",
+      "passed": true,
+      "evidence": "The report's evidence names `failureConditionId: residual-risks-empty` and marks it matched; the transcript names the same id."
+    },
+    {
+      "text": "Does not repair or reinterpret the builder output",
+      "passed": true,
+      "evidence": "The report records `builderOutputModified: false`, `repairAttempted: false`, and the original observed status and residual-risk value. transcript.md states no repair was attempted and does not replace the builder output's implemented status."
+    },
+    {
+      "text": "Performs no writes or external actions",
+      "passed": true,
+      "evidence": "The report records empty `writesOutsideRun` and `externalActions` arrays; metrics record zero writes outside the run and zero external actions. Only the three evaluation output artifacts are counted as created."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "schemaVersion": 1,
+    "observations": {
+      "inputFilesRead": 3,
+      "manifestFailureConditions": 1,
+      "failureConditionsEvaluated": 1,
+      "failureConditionsMatched": 1,
+      "builderResidualRiskItems": 1,
+      "repairsAttempted": 0,
+      "externalActionsTaken": 0,
+      "writesOutsideRun": 0,
+      "outputArtifactsCreated": 3
+    },
+    "output_chars": 556,
+    "transcript_chars": 991
+  },
+  "timing": {
+    "started_at": null,
+    "completed_at": null,
+    "duration_ms": null,
+    "unavailable": true
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [
+      "The supplied metrics do not disclose tool-call or error totals, so neither is inferred. output_chars and transcript_chars are derived from the current character counts of report.json and transcript.md."
+    ],
+    "needs_review": [],
+    "workarounds": []
+  }
+}

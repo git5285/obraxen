@@ -1,0 +1,4 @@
+{
+  "eval_id": 5,
+  "prompt": "Process one vague and one precise shadow request independently; return director decisions and only indispensable clarifying questions, without inspecting or editing the repository."
+}

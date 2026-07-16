@@ -1,0 +1,4 @@
+{
+  "eval_id": 4,
+  "prompt": "Run only the shadow report phase and decide whether the explicit human correction fixture contains a generalizable learned rule; do not edit or activate rules."
+}

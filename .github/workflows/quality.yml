@@ -35,6 +35,9 @@ jobs:
       - name: Lint, types, unit tests and Next.js build
         run: npm run check
 
+      - name: Contact form browser tests with enabled UI
+        run: npm run test:e2e:contact
+
       - name: Browser tests
         run: npm run test:e2e
 

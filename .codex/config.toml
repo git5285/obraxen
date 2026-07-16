@@ -1,0 +1,33 @@
+# Safe project defaults. Scheduled tasks can only reduce these permissions.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+multi_agent = true
+goals = true
+hooks = true
+
+[agents]
+max_threads = 4
+max_depth = 1
+job_max_runtime_seconds = 1800
+
+[agents.scout]
+description = "Read-only RemainOn scout for evidence-backed UX, accessibility, SEO, content, performance, security, and engineering findings."
+config_file = "./agents/remainon-scout.toml"
+nickname_candidates = ["linterna", "radar"]
+
+[agents.builder]
+description = "Single bounded writer for one pre-approved RemainOn improvement with an exact claim, lease, paths, and acceptance checks."
+config_file = "./agents/remainon-implementer.toml"
+nickname_candidates = ["forja", "torno"]
+
+[agents.auditor]
+description = "Independent read-only veto reviewer for a proposed RemainOn diff and its verification evidence."
+config_file = "./agents/remainon-auditor.toml"
+nickname_candidates = ["faro", "contraste"]

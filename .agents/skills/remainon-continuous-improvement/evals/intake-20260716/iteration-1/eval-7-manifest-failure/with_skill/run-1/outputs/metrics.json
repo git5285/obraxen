@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "observations": {
+    "inputFilesRead": 3,
+    "manifestFailureConditions": 1,
+    "failureConditionsEvaluated": 1,
+    "failureConditionsMatched": 1,
+    "builderResidualRiskItems": 1,
+    "repairsAttempted": 0,
+    "externalActionsTaken": 0,
+    "writesOutsideRun": 0,
+    "outputArtifactsCreated": 3
+  }
+}

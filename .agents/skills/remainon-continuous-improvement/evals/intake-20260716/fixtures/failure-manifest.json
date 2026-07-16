@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "manifest": {
+    "runId": "eval-failure-1",
+    "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "allowedPaths": ["src/components/example.tsx"],
+    "failureConditions": [
+      {
+        "id": "residual-risks-empty",
+        "condition": "An implemented result is invalid when residualRisks is not empty."
+      }
+    ]
+  },
+  "builderOutput": {
+    "schemaVersion": 1,
+    "status": "implemented",
+    "runId": "eval-failure-1",
+    "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "changedPaths": ["src/components/example.tsx"],
+    "checksRun": [
+      {
+        "command": "npm test",
+        "status": "passed",
+        "summary": "all focused tests passed"
+      }
+    ],
+    "residualRisks": ["manual review required"],
+    "reason": "shape-valid result"
+  }
+}

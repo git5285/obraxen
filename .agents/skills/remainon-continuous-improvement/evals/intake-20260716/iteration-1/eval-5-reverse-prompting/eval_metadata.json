@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "reverse-prompting-friction",
+  "prompt": "Process one vague and one precise shadow request independently and return director decisions and indispensable questions.",
+  "assertions": [
+    "The vague case has no invented findings",
+    "Any clarifying questions are at most five, non-obvious and use distinct allowed categories",
+    "Does not block a vague request when a safe broad shadow audit can proceed without clarification",
+    "The precise case has zero clarifying questions",
+    "Neither case causes writes or external actions"
+  ]
+}
