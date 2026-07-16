@@ -56,6 +56,7 @@ export function resolveContactConfig(
   if (!apiKey || !/^re_[A-Za-z0-9_-]{20,}$/.test(apiKey)) issues.push("RESEND_API_KEY no es válida");
   if (!toEmail) issues.push("CONTACT_TO_EMAIL no es válido");
   if (!fromEmail) issues.push("CONTACT_FROM_EMAIL no es válido");
+  if (!identity.nombreRevisionAprobada) issues.push("falta la revisión registral y marcaria del nombre");
   if (!identity.empresaConstituida || !identity.nombreLegal || !identity.cif) issues.push("falta identidad societaria validada");
   if (!identity.dominio) issues.push("falta el dominio definitivo");
   if (!identity.email) issues.push("falta el correo público del responsable");

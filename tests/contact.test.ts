@@ -10,6 +10,7 @@ import type { Brand } from "@/lib/schemas";
 const publicIdentity: Brand = {
   ...brand,
   nombre: "Validated brand",
+  nombreRevisionAprobada: true,
   nombreLegal: "Validated company, S.L.",
   cif: "B00000000",
   empresaConstituida: true,
@@ -54,6 +55,15 @@ describe("contact capture gate", () => {
     expect(config.enabled).toBe(false);
     expect(config.rateLimitMode).toBeNull();
     expect(config.issues).toContain("CONTACT_RATE_LIMIT_MODE debe acreditar vercel-waf");
+  });
+
+  it("stays closed until the commercial name has professional clearance", () => {
+    const config = resolveContactConfig(environment, {
+      ...publicIdentity,
+      nombreRevisionAprobada: false,
+    });
+    expect(config.enabled).toBe(false);
+    expect(config.issues).toContain("falta la revisión registral y marcaria del nombre");
   });
 
   it("validates bounded lead data and omits field content from attribution", () => {

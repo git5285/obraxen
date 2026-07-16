@@ -7,8 +7,8 @@ Actualizado: 15 de julio de 2026
 Ámbito: empresa, oferta, evidencia, ventas, alianzas y evolución de la web
 
 Nombre comercial: `Obraxen`, seleccionado por el usuario el 15 de julio de 2026;
-la selección no sustituye comprobaciones registrales o marcarias. `RemainOn`
-sigue siendo solo un identificador interno heredado.
+la selección no sustituye comprobaciones registrales o marcarias. El
+identificador temporal anterior está retirado de la configuración operativa.
 
 Este documento centraliza la investigación sectorial y el aprendizaje utilizable
 del corpus BECOSAN/deepEX. No convierte material de terceros en experiencia propia,

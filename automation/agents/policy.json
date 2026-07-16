@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "active",
-  "project": "remainon",
+  "project": "obraxen",
   "limits": {
     "maxConcurrentWriters": 1,
     "maxPendingLocalDiffs": 1,

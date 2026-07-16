@@ -1,6 +1,6 @@
 ---
-name: remainon-continuous-improvement-item-04
-description: Experimental overlay for semantic FAILURE conditions in RemainOn run manifests.
+name: obraxen-continuous-improvement-item-04
+description: Experimental overlay for semantic FAILURE conditions in Obraxen run manifests.
 ---
 
 Read and follow the production skill at `../../../../SKILL.md`, then apply only
