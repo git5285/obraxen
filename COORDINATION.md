@@ -1,14 +1,15 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 15:20 Europe/Madrid.
+Actualizado: 2026-07-16 16:24 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No hay tareas editoras activas. La claim `4b65f9d3...` queda liberada tras la
-entrega de la Fase 6.7.2 en la PR `#16`.
+No hay tareas editoras activas. La claim `9548505b...` queda liberada tras el
+cierre local de la auditoría y endurecimiento del sistema de mejora continua;
+no hubo push, despliegue ni publicación.
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -135,6 +136,14 @@ cambios staged sin propietario.
   `learned_rules` promovido al informe de la skill, y `core.bare=true`
   accidental del repositorio principal restaurado a `false`; handoff
   `d1018539...`.
+- Auditoría y endurecimiento del sistema autónomo cerrados localmente en
+  `a160a16`: el builder queda bloqueado de forma determinista en modo sombra,
+  las superficies críticas están protegidas, el lease limpia fallos parciales,
+  `check:diff` valida toda la candidata desde la base revisada y QA usa puertos
+  aislados. El formulario habilitado tiene prueba navegador propia y exige
+  limitación externa acreditada antes de activarse. El gate final pasa con 144
+  unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
+  previstas, WebKit y Lighthouse; handoff `9548505b...`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -159,6 +168,12 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   con segmentos localizados y revisión profesional obligatoria por idioma.
 - ADR-011 fija Resend como adaptador técnico sin base propia; formulario y API
   permanecen fail-closed hasta aprobación documental, identidad legal y entorno.
+- La activación de `/api/contact/` exige además una regla distribuida de límite
+  de solicitudes acreditada mediante `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el
+  límite en memoria es solo defensa secundaria.
+- El sistema autónomo permanece en modo sombra: scout y director pueden
+  inspeccionar, pero el builder no obtiene herramientas ni autoridad de diff;
+  merge, despliegue y publicación continúan siendo decisiones humanas.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
   históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
