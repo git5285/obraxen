@@ -11,11 +11,13 @@ repositorio es privado y esa privacidad tampoco autoriza publicar o desplegar el
 sitio.
 
 > **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
-> `data/brand.json`. “RemainOn” queda solo como referencia interna heredada de la
-> carpeta. `obraxen.com`, `info@obraxen.com` y `privacy@obraxen.com` están
+> `data/brand.json`. El identificador temporal anterior está retirado de la
+> configuración operativa. `obraxen.com`, `info@obraxen.com` y
+> `privacy@obraxen.com` están
 > verificados e integrados. La empresa todavía no está constituida; razón social,
 > CIF, domicilio y teléfono permanecen en `null`. La selección no sustituye
-> comprobaciones registrales o marcarias.
+> comprobaciones registrales o marcarias y la comprobación preliminar actual
+> mantiene el nombre en NO-GO para publicación. Véase `NAMING_CLEARANCE.md`.
 
 ## Arquitectura
 

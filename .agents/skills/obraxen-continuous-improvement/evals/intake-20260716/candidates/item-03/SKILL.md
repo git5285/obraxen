@@ -1,6 +1,6 @@
 ---
-name: remainon-continuous-improvement-item-03
-description: Experimental overlay for three-frame RemainOn scouting; not approved for production.
+name: obraxen-continuous-improvement-item-03
+description: Experimental overlay for three-frame Obraxen scouting; not approved for production.
 ---
 
 Read and follow the production skill at `../../../../SKILL.md`, then apply only

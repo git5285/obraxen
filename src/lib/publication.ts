@@ -71,6 +71,9 @@ export function getPublicationIssues(
     brand[field] ? [] : [`brand.${field} es obligatorio para publicar`],
   );
 
+  if (!brand.nombreRevisionAprobada) {
+    issues.push("el nombre comercial necesita revisión registral y marcaria aprobada antes de publicar");
+  }
   if (!brand.empresaConstituida) {
     issues.push("la sociedad debe estar constituida antes de publicar");
   }

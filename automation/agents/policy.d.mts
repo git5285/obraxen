@@ -1,7 +1,7 @@
 export interface AgentPolicy {
   schemaVersion: 1;
   mode: "shadow" | "active" | "disabled";
-  project: "remainon";
+  project: "obraxen";
   limits: {
     maxConcurrentWriters: number;
     maxPendingLocalDiffs: number;

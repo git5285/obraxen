@@ -12,10 +12,10 @@ function git(repo: string, ...args: string[]) {
 }
 
 function repository() {
-  const repo = mkdtempSync(join(tmpdir(), "remainon-diff-check-"));
+  const repo = mkdtempSync(join(tmpdir(), "obraxen-diff-check-"));
   temporaryDirectories.push(repo);
   git(repo, "init", "-q", "-b", "main");
-  git(repo, "config", "user.name", "RemainOn test");
+  git(repo, "config", "user.name", "Obraxen test");
   git(repo, "config", "user.email", "test@example.invalid");
   writeFileSync(join(repo, "example.txt"), "base\n");
   git(repo, "add", "example.txt");
