@@ -148,6 +148,23 @@ Return a compact JSON-compatible report containing:
 - changed paths, or an empty array;
 - checks and auditor verdict;
 - external action taken, normally `none`;
+- `learned_rules`: sourced rule proposals, or an empty array (see below);
 - exact next human decision, if any.
 
 Never claim continuous operation merely because a single cycle completed.
+
+### Learned rules
+
+When a handoff records an explicit human correction, decide whether it expresses
+a reusable rule rather than an anecdote. Only then add a `learned_rules` entry:
+
+- `rule`: `[category] — always/never X because Y`;
+- `source`: the exact handoff or fixture path plus the supporting fact;
+- `status`: always `proposed`;
+- `reason`: why the rule generalizes beyond the single incident.
+
+Never activate or persist a proposed rule, edit this skill or the policy from a
+rule, infer a human correction from model output, or emit a rule when the
+evidence is an isolated outcome. An empty array is preferable to a weak
+proposal. Promoting a proposed rule into durable behavior is always a separate
+human-reviewed change.
