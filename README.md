@@ -66,17 +66,21 @@ npm run dev          # servidor de desarrollo
 npm run build        # build de producción Next.js
 npm run start        # sirve el build ya generado
 npm run test         # pruebas unitarias y de render
+npm run check:diff   # valida todo el cambio desde la base revisada
+npm run test:e2e:contact # formulario real habilitado en arnés local seguro
 npm run test:e2e     # rutas, responsive, accesibilidad, foco y cabeceras
 npm run lighthouse:ci
 npm run check        # lint + tipos + unitarias + build
 npm run check:quality # gate completo local
 ```
 
-El gate ejecuta 100 pruebas Vitest y 95 ejecuciones Playwright configuradas en
-Chromium móvil/escritorio y smoke WebKit. Incluye reflow multilingüe entre 320 y
-390 px, ramas de seguridad de la API de contacto y metadata con dominio inyectado,
-además de presupuestos Lighthouse en portada, hub y caso localizados. Los informes
-se conservan como artefactos durante 14 días.
+El gate ejecuta Vitest, el formulario habilitado en un arnés que no existe en
+Vercel, la suite Playwright cerrada en Chromium móvil/escritorio y smoke WebKit,
+y Lighthouse sobre un build cerrado. Playwright y Lighthouse seleccionan puertos
+locales libres y no reutilizan servidores preexistentes. Incluye reflow
+multilingüe entre 320 y 390 px, ramas de seguridad de la API de contacto y
+metadata con dominio inyectado, además de presupuestos Lighthouse en portada,
+hub y caso localizados. Los informes se conservan como artefactos durante 14 días.
 
 ## Gobernanza Git gratuita
 
@@ -88,8 +92,9 @@ clon debe activarlo una vez:
 git config core.hooksPath .githooks
 ```
 
-El hook rechaza cualquier push directo a `main` y ejecuta `npm run check:quality`
-antes de subir una rama. Una PR solo puede fusionarse cuando el `Quality gate` del
+El hook rechaza cualquier push directo a `main`, valida con `check:diff` el rango
+completo desde la base de `main` hasta el SHA que se intenta subir y ejecuta
+`npm run check:quality`. Una PR solo puede fusionarse cuando el `Quality gate` del
 SHA actual esté verde; `--no-verify` no forma parte del flujo permitido. Si se
 incorporan más colaboradores, se reevaluará GitHub Pro o un forge que imponga la
 misma política en servidor.
@@ -141,11 +146,14 @@ estables. El selector conserva la página equivalente. Canonical, `hreflang`,
 apertura formal.
 
 ADR-011 selecciona Resend como adaptador inicial sin base de leads ni adjuntos.
-El endpoint valida origen, tamaño, campos, honeypot, tiempo y rate limit efímero;
-no registra contenido personal. La UI queda desactivada hasta reunir identidad
-legal, textos legales, DPA/proveedor aprobado y variables reales; dominio y buzón
-coincidente ya están preparados. Las traducciones actuales también requieren revisor profesional y fecha
-por cada idioma antes de publicar.
+El endpoint valida origen, tamaño, campos, honeypot, tiempo y un límite efímero de
+defensa; no registra contenido personal. La activación exige además una regla
+externa distribuida para `/api/contact/` y
+`CONTACT_RATE_LIMIT_MODE=vercel-waf`. La UI queda desactivada hasta reunir
+identidad legal, textos legales, DPA/proveedor aprobado, esa regla y variables
+reales; dominio y buzón coincidente ya están preparados. Las traducciones
+actuales también requieren revisor profesional y fecha por cada idioma antes de
+publicar.
 
 ## Datos y puerta de publicación
 

@@ -4,18 +4,18 @@ Estado: **bloqueado**. Los textos de `aviso-legal` y `privacidad` son borradores
 de trabajo y no sustituyen la revisión de un profesional.
 
 Situación societaria confirmada: la empresa **todavía no está constituida**. La
-forma jurídica prevista es una **sociedad limitada**. “RemainOn” es solo un nombre
-interno temporal y no puede utilizarse como nombre comercial ni razón social. El
-análisis de nombres no autoriza todavía una selección ni integración; la
-constitución sigue pendiente y no deben rellenarse datos provisionales.
+forma jurídica prevista es una **sociedad limitada**. `Obraxen` está seleccionado
+por el usuario como nombre comercial y `obraxen.com`, `info@obraxen.com` y
+`privacy@obraxen.com` están acreditados operativamente. Esto no equivale a razón
+social ni a disponibilidad registral o marcaria. “RemainOn” queda únicamente como
+identificador histórico interno. La constitución sigue pendiente y no deben
+rellenarse datos legales provisionales.
 
 ## Datos pendientes
 
-- Nombre comercial definitivo.
 - Constitución de la sociedad limitada.
 - Razón social, CIF/NIF y datos registrales resultantes de la constitución.
-- Email de contacto y de ejercicio de derechos.
-- Dominio definitivo.
+- Teléfono o WhatsApp publicable.
 - Datos del Registro Mercantil, si resultan aplicables.
 - Proveedor definitivo del formulario y contrato de encargo de tratamiento.
 - Proveedores definitivos de alojamiento, correo y recursos técnicos.
@@ -49,6 +49,10 @@ automáticamente en autorización comercial.
 - Resend es el adaptador técnico seleccionado, pero no debe activarse hasta
   aceptar y archivar el DPA, revisar subencargados, ubicación, conservación y
   transferencias, y registrar `formularioRevisionAprobada: true`.
+- Antes de activar `/api/contact/` debe existir y probarse una regla externa de
+  limitación de solicitudes para esa ruta. Solo entonces puede configurarse
+  `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el límite en memoria de la aplicación es
+  una defensa secundaria y no garantiza control distribuido entre instancias.
 - El formulario no almacena leads en una base propia ni admite adjuntos. El buzón
   receptor será el sistema de conservación y necesita plazos, accesos, borrado y
   medidas de seguridad definidos.
@@ -62,7 +66,8 @@ automáticamente en autorización comercial.
   solicitudes de analítica cuando se rechaza.
 - La CSP permite únicamente los orígenes técnicos necesarios para una futura
   activación; permitir un origen no activa el proveedor. Search Console se
-  configurará cuando exista dominio.
+  configurará únicamente tras conectar la web al dominio y autorizar la
+  indexación, no por la mera existencia de `obraxen.com`.
 - Antes de activar Clarity debe confirmarse en su panel el modo de consentimiento,
   el enmascarado y la configuración separada de producción. Antes de activar GA4
   debe revisarse la propiedad, retención, señales de Google y ausencia de
@@ -75,7 +80,8 @@ automáticamente en autorización comercial.
 3. Documentar o anonimizar cada caso y sus fotografías.
 4. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
 5. Registrar revisor y fecha para en/de/es/fr solo después de revisión profesional.
-6. Aprobar el proveedor de captación y verificar dominio, buzones y DPA.
+6. Aprobar el proveedor de captación, verificar dominio, buzones y DPA, y probar
+   el límite externo de solicitudes de `/api/contact/`.
 7. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
 
 ## Fuentes oficiales consultadas

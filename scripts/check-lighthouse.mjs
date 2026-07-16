@@ -4,16 +4,15 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { chromium } from "@playwright/test";
 import { getLighthouseBudgets } from "./lighthouse-budgets.ts";
+import { resolveQaPort } from "./qa-port.mjs";
 
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const outputDirectory = path.join(root, ".lighthouseci");
 const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
-const requestedPort = Number(process.env.QA_PORT ?? "3000");
-if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65_535) {
-  throw new Error("QA_PORT must be an integer between 1 and 65535");
-}
+const requestedPort = await resolveQaPort();
 const baseUrl = `http://127.0.0.1:${requestedPort}`;
+let serverExitResult = null;
 const routes = [
   { name: "home-en", path: "/en/" },
   { name: "projects-de", path: "/de/projekte/" },
@@ -54,9 +53,18 @@ function wait(milliseconds) {
 
 async function waitForServer() {
   for (let attempt = 0; attempt < 120; attempt += 1) {
+    if (serverExitResult) {
+      throw new Error(`Next.js terminó antes de estar listo: ${JSON.stringify(serverExitResult)}`);
+    }
     try {
       const response = await fetch(baseUrl);
-      if (response.ok) return;
+      if (response.ok) {
+        await wait(100);
+        if (serverExitResult) {
+          throw new Error(`El puerto ${requestedPort} estaba ocupado por otro servidor`);
+        }
+        return;
+      }
     } catch {
       // El proceso puede seguir arrancando.
     }
@@ -196,7 +204,10 @@ const server = spawn(
   [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(requestedPort)],
   { cwd: root, env: process.env, stdio: ["ignore", "pipe", "pipe"] },
 );
-const serverExit = new Promise((resolve) => server.once("exit", resolve));
+const serverExit = new Promise((resolve) => server.once("exit", (code, signal) => {
+  serverExitResult = { code, signal };
+  resolve(serverExitResult);
+}));
 
 let serverOutput = "";
 server.stdout.on("data", (chunk) => { serverOutput += chunk; });

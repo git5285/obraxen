@@ -1,10 +1,11 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   acquireLease,
+  getLeasePaths,
   heartbeatLease,
   readLease,
   releaseLease,
@@ -56,5 +57,23 @@ describe("shared autonomous writer lease", () => {
     expect(() => releaseLease(repo, "wrong-token")).toThrow("token mismatch");
     expect(releaseLease(repo, "token-1")).toEqual({ released: true, runId: "run-1" });
     expect(readLease(repo)).toBeNull();
+  });
+
+  it("cleans up an incomplete acquisition before allowing the next writer", () => {
+    const repo = repository();
+    const unserializable = { ...owner("broken"), unsupported: 1n } as unknown as ReturnType<typeof owner>;
+    expect(() => acquireLease(repo, unserializable))
+      .toThrow("BigInt");
+    expect(existsSync(getLeasePaths(repo).directory)).toBe(false);
+    expect(acquireLease(repo, owner("token-1")).acquired).toBe(true);
+  });
+
+  it("removes abandoned heartbeat files when the owner releases the lease", () => {
+    const repo = repository();
+    acquireLease(repo, owner("token-1"));
+    const paths = getLeasePaths(repo);
+    writeFileSync(`${paths.owner}.abandoned.tmp`, "partial");
+    expect(releaseLease(repo, "token-1")).toEqual({ released: true, runId: "run-1" });
+    expect(existsSync(paths.directory)).toBe(false);
   });
 });

@@ -18,4 +18,3 @@
 - reflectsCorrection: true.
 - The report preserves the 320 px reflow assertion and records layout hardening against the runner artifact as the accepted approach.
 - The rejected approach remains lowering the assertion merely to make Linux CI green.
-

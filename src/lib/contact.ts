@@ -30,6 +30,7 @@ export type ContactConfig = {
   apiKey: string | null;
   toEmail: string | null;
   fromEmail: string | null;
+  rateLimitMode: "vercel-waf" | null;
   issues: readonly string[];
 };
 
@@ -45,9 +46,13 @@ export function resolveContactConfig(
   const apiKey = environment.RESEND_API_KEY?.trim() ?? null;
   const toEmail = validEmail(environment.CONTACT_TO_EMAIL);
   const fromEmail = validEmail(environment.CONTACT_FROM_EMAIL);
+  const rateLimitMode = environment.CONTACT_RATE_LIMIT_MODE === "vercel-waf"
+    ? "vercel-waf"
+    : null;
   const issues: string[] = [];
 
   if (environment.CONTACT_FORM_ENABLED !== "true") issues.push("CONTACT_FORM_ENABLED no está activo");
+  if (!rateLimitMode) issues.push("CONTACT_RATE_LIMIT_MODE debe acreditar vercel-waf");
   if (!apiKey || !/^re_[A-Za-z0-9_-]{20,}$/.test(apiKey)) issues.push("RESEND_API_KEY no es válida");
   if (!toEmail) issues.push("CONTACT_TO_EMAIL no es válido");
   if (!fromEmail) issues.push("CONTACT_FROM_EMAIL no es válido");
@@ -69,6 +74,7 @@ export function resolveContactConfig(
     apiKey: apiKey && /^re_[A-Za-z0-9_-]{20,}$/.test(apiKey) ? apiKey : null,
     toEmail,
     fromEmail,
+    rateLimitMode,
     issues,
   };
 }
