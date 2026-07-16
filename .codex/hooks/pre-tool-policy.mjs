@@ -107,7 +107,7 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
       return deny("El implementador debe usar apply_patch para escribir y scripts npm versionados para verificar.");
     }
     if (command && commandMentionsProtectedPath(command, policy)) {
-      return deny("El implementador intentó tocar una superficie protegida por la política de RemainOn.");
+      return deny("El implementador intentó tocar una superficie protegida por la política de Obraxen.");
     }
     if (writeToolPattern.test(toolName)) {
       if (!applyPatchToolPattern.test(toolName)) {
@@ -121,7 +121,7 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
         paths.some((path) => policy.protectedPaths.some((pattern) => globMatches(pattern, path)))
         || (!policy.authority.allowDependencyChanges && paths.some(isDependencyManifest))
       ) {
-        return deny("El implementador intentó tocar una superficie protegida por la política de RemainOn.");
+        return deny("El implementador intentó tocar una superficie protegida por la política de Obraxen.");
       }
     }
   }

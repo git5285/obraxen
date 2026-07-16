@@ -1,6 +1,7 @@
 {
-  "nombreTemporalNoPublicable": "RemainOn",
+  "nombreTemporalNoPublicable": null,
   "nombre": "Obraxen",
+  "nombreRevisionAprobada": false,
   "nombreLegal": null,
   "cif": null,
   "empresaConstituida": false,

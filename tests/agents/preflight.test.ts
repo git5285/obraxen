@@ -55,7 +55,7 @@ describe("fail-closed gating (DISCOVERED-20260716-01)", () => {
 
   it("fails closed on the reproduced eval-10 fixture: unreadable worktree disables scout", () => {
     const fixture = JSON.parse(readFileSync(fileURLToPath(new URL(
-      "../../.agents/skills/remainon-continuous-improvement/evals/intake-20260716/fixtures/preflight-unreadable.json",
+      "../../.agents/skills/obraxen-continuous-improvement/evals/intake-20260716/fixtures/preflight-unreadable.json",
       import.meta.url,
     )), "utf8"));
     const gating = deriveGating({

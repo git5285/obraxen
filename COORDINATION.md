@@ -1,16 +1,18 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 19:01 Europe/Madrid.
+Actualizado: 2026-07-16 22:17 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Tareas activas
 
-No quedan tareas editoras activas. La claim `019f67e9...` trasladó el primer
-diff autónomo aprobado a la PR `#18` y quedó liberada tras registrar su
-handoff. La PR permanece separada de `main` y no autoriza despliegue ni
-publicación. La claim `82c80eb6...` corrigió y liberó el
+La claim `019f6b94...` migra los identificadores operativos a Obraxen y prepara
+el expediente de activación. La automatización local permanece pausada solo
+durante el cambio para no ejecutar contra rutas antiguas. La claim `019f67e9...`
+trasladó el primer diff autónomo aprobado a la PR `#18`; el Quality gate del SHA
+exacto quedó verde y la PR se fusionó en `7c73b49` sin despliegue ni publicación.
+La claim `82c80eb6...` corrigió y liberó el
 aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
 transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
 autónoma antes de continuar. La entrega autónoma v2 de la claim `810dee7b...`
@@ -134,7 +136,7 @@ cambios staged sin propietario.
 - Intake de conocimiento 2026-07-16 evaluado con evals emparejadas: ítem 01
   aceptado, 02 rechazado, 03/05 pendientes de canarios, 04/06 `no_op`; regresión
   `DISCOVERED-20260716-01` descubierta y reproducida; artefactos en
-  `.agents/skills/remainon-continuous-improvement/evals/intake-20260716/`;
+  `.agents/skills/obraxen-continuous-improvement/evals/intake-20260716/`;
   handoff `71dfbceb...`.
 - Seguimiento del intake entregado: preflight con fail-closed ante worktrees o
   claims ilegibles (cuatro regresiones unitarias, fixture de eval-10), contrato
@@ -149,7 +151,7 @@ cambios staged sin propietario.
   limitación externa acreditada antes de activarse. El gate final pasa con 144
   unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
   previstas, WebKit y Lighthouse; handoff `9548505b...`.
-- Automatización local `remainon-shadow-improvement` creada y activa con cadencia
+- Automatización local `obraxen-continuous-improvement` creada y activa con cadencia
   de seis horas sobre el worktree dedicado. Tras la promoción autorizada ejecuta
   el ciclo completo y puede dejar un único diff local aislado; no tiene autoridad
   de commit, Git remoto, PR, despliegue o publicación.
@@ -172,6 +174,14 @@ cambios staged sin propietario.
   inserciones. La activación antes/después coincide exactamente en `NO-GO`,
   con 35 bloqueos y ambos interruptores públicos apagados; handoff
   `019f67e9...`.
+- La PR `#18` se fusionó por decisión humana en `7c73b49` después de confirmar
+  el Quality run `29518104881`; el worktree candidato duplicado coincidía byte
+  por byte con los dos archivos funcionales y fue retirado.
+- La migración operativa a Obraxen renombra skill, roles, workflow alojado,
+  política y espacio de memoria sin ampliar autoridad. La comprobación pública
+  de naming encontró usos exactos de `OBRAZEN` en construcción e ingeniería;
+  por ello la puerta ejecutable incorpora una revisión profesional adicional y
+  pasa de 35 a 36 incidencias, todavía `NO-GO`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -210,8 +220,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   credencial de inferencia y un presupuesto explícito; el horario local de seis
   horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
-- El proyecto Vercel se conserva sin deployments ni dominios; sus diez URLs
-  históricas y alias comprobados responden 404 tras la retirada del 15 de julio.
+- El proyecto Vercel se conserva sin deployments; el alias automático
+  `obraxen.vercel.app` está reservado y no sirve contenido. Los alias históricos
+  retirados continúan sin exponer la web.
 - `Obraxen` está seleccionado e integrado como nombre comercial por instrucción
   expresa del usuario. `obraxen.com`, `info@obraxen.com` y el alias de privacidad
   están verificados; esto no acredita disponibilidad registral o marcaria y la
@@ -219,10 +230,10 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Revisar la PR `#18` únicamente sobre su SHA con Quality gate verde; su
-   preparación no autoriza merge, preview ni publicación.
-2. Resolver las 35 incidencias de la puerta 6.7 con revisión profesional de
-   en/de/es/fr, identidad, sociedad, teléfono, permisos, legal y DPA/proveedor
+1. Integrar la migración operativa a Obraxen, sincronizar su clon dedicado y
+   reanudar la automatización sin ampliar sus permisos.
+2. Resolver las 36 incidencias de la puerta 6.7 con revisión profesional de
+   nombre, en/de/es/fr, identidad, sociedad, teléfono, permisos, legal y DPA/proveedor
    según `ACTIVATION_GATE.md`.
 3. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.

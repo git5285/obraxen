@@ -49,7 +49,7 @@ afterEach(() => {
 
 describe("pre-push Git environment isolation", () => {
   it("initializes a temporary repository without mutating the hook repository", () => {
-    const root = mkdtempSync(join(tmpdir(), "remainon-git-hook-"));
+    const root = mkdtempSync(join(tmpdir(), "obraxen-git-hook-"));
     temporaryRoots.push(root);
     const source = join(root, "source");
     const target = join(root, "target");

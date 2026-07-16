@@ -1,6 +1,6 @@
 ---
-name: RemainOn hosted shadow improvement
-description: Runs one bounded, evidence-first RemainOn improvement audit with durable memory and no product mutation
+name: Obraxen hosted shadow improvement
+description: Runs one bounded, evidence-first Obraxen improvement audit with durable memory and no product mutation
 on:
   workflow_dispatch:
 permissions:
@@ -8,7 +8,7 @@ permissions:
   actions: read
   pull-requests: read
 concurrency:
-  group: remainon-hosted-shadow-improvement
+  group: obraxen-hosted-shadow-improvement
   cancel-in-progress: false
 engine: codex
 strict: true
@@ -20,8 +20,8 @@ sandbox:
     sudo: false
 tools:
   repo-memory:
-    branch-name: memory/remainon-continuous-improvement
-    description: "Bounded immutable run reports and derived RemainOn shadow findings"
+    branch-name: memory/obraxen-continuous-improvement
+    description: "Bounded immutable run reports and derived Obraxen shadow findings"
     file-glob:
       - "state.json"
       - "runs/*.json"
@@ -49,9 +49,9 @@ safe-outputs:
   noop:
 ---
 
-# RemainOn hosted shadow cycle
+# Obraxen hosted shadow cycle
 
-You are the hosted **director and read-only scout** for RemainOn. Run exactly one
+You are the hosted **director and read-only scout** for Obraxen. Run exactly one
 bounded improvement cycle. This workflow is a hosted shadow canary, not a
 builder. A defensible `no_op` is better than weak or duplicated work.
 

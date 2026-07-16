@@ -7,9 +7,13 @@ Situación societaria confirmada: la empresa **todavía no está constituida**. 
 forma jurídica prevista es una **sociedad limitada**. `Obraxen` está seleccionado
 por el usuario como nombre comercial y `obraxen.com`, `info@obraxen.com` y
 `privacy@obraxen.com` están acreditados operativamente. Esto no equivale a razón
-social ni a disponibilidad registral o marcaria. “RemainOn” queda únicamente como
-identificador histórico interno. La constitución sigue pendiente y no deben
+social ni a disponibilidad registral o marcaria. El identificador temporal
+anterior queda únicamente en el historial. La constitución sigue pendiente y no deben
 rellenarse datos legales provisionales.
+
+La comprobación preliminar documentada en `NAMING_CLEARANCE.md` encontró usos
+exactos de `OBRAZEN` en construcción e ingeniería. La publicación exige un
+dictamen profesional favorable y `nombreRevisionAprobada: true`.
 
 ## Datos pendientes
 
