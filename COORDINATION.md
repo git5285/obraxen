@@ -1,23 +1,19 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-17 17:32 Europe/Madrid.
+Actualizado: 2026-07-17 19:58 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
-## Tareas activas
+## Fuente de verdad actual
 
-No hay claims activas. La claim `019f6b94...` cerró la migración operativa a
-Obraxen mediante la PR `#20`, fusionada en `9231a7a` con Quality remoto verde.
-El ejecutor aislado está sincronizado en ese SHA, conserva cuatro episodios de
-memoria y la automatización local vuelve a estar activa. La claim `019f67e9...`
-trasladó el primer diff autónomo aprobado a la PR `#18`, fusionada previamente
-en `7c73b49`. Ninguno de estos cierres desplegó ni publicó el sitio.
-La claim `82c80eb6...` corrigió y liberó el
-aislamiento del entorno Git del hook `pre-push`. El primer intento de envío no
-transmitió ninguna referencia: se restauraron y verificaron `main` y la rama
-autónoma antes de continuar. La entrega autónoma v2 de la claim `810dee7b...`
-también está liberada; no autoriza despliegue ni publicación.
+Las claims activas no se duplican en este tablero: se consultan directamente en
+`.coordination/claims/` y con `node automation/agents/preflight.mjs --json`.
+Esto evita que una frase estática como “no hay claims activas” quede obsoleta al
+abrir la siguiente tarea. El último `main` verificado antes de esta actualización
+es `36d0e42`, resultado de la PR `#28`; no desplegó ni publicó el sitio.
+
+## Contexto de consolidación
 
 El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
 `AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
@@ -186,10 +182,17 @@ cambios staged sin propietario.
 - La declaración expresa del responsable del 17 de julio de 2026 queda
   registrada para los seis casos con alcance sobre nombre y fotografías web,
   referencia interna y revisión legal aprobada. Los bloqueos de casos bajan de
-  24 a 0 y la puerta completa queda en `NO-GO` con 12 entradas restantes. La
-  rama `codex/document-case-authorizations` se tramita mediante la PR `#24`;
-  su primer Quality remoto terminó verde y la integración exige repetirlo para
-  el SHA final. No se crea preview, despliegue o publicación.
+  24 a 0 y la puerta completa queda en `NO-GO` con 12 entradas restantes. La PR
+  `#24` documentó las seis autorizaciones y dejó `main` en `5138804` con Quality
+  verde, sin crear preview, despliegue o publicación.
+- La PR `#25` alineó la CTA con la disponibilidad real del formulario y quedó en
+  `0c9d559` tras el Quality run `29598825792`.
+- La PR `#26` retiró el borrador de proyectos del árbol actual sin reescribir el
+  historial y quedó en `5b54612` tras el Quality run `29599860133`.
+- La PR `#27` integró los cierres locales por checksum y quedó en `3f5104b` tras
+  el Quality run `29600701899`.
+- La PR `#28` endureció Claude/agentes, protegió los presupuestos de calidad y
+  fijó GitHub Actions a SHA; quedó en `36d0e42` tras el Quality run `29601590641`.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -241,14 +244,12 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Integrar la migración operativa a Obraxen, sincronizar su clon dedicado y
-   reanudar la automatización sin ampliar sus permisos.
-2. Resolver las 12 incidencias restantes de la puerta 6.7 con revisión
+1. Resolver las 12 incidencias restantes de la puerta 6.7 con revisión
    profesional de nombre, en/de/es/fr, identidad, sociedad, teléfono, legal y
    DPA/proveedor según `ACTIVATION_GATE.md`.
-3. Solo después y con autorización expresa, crear una preview protegida, auditar
+2. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
-4. Mantener previews, indexación, formulario, analítica real y publicación
+3. Mantener previews, indexación, formulario, analítica real y publicación
    apagados hasta completar esas condiciones.
 
 No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
