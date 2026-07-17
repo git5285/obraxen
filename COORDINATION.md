@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-16 22:17 Europe/Madrid.
+Actualizado: 2026-07-17 17:19 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -183,6 +183,12 @@ cambios staged sin propietario.
   de naming encontró usos exactos de `OBRAZEN` en construcción e ingeniería;
   por ello la puerta ejecutable incorpora una revisión profesional adicional y
   pasa de 35 a 36 incidencias, todavía `NO-GO`.
+- La declaración expresa del responsable del 17 de julio de 2026 queda
+  registrada para los seis casos con alcance sobre nombre y fotografías web,
+  referencia interna y revisión legal aprobada. Los bloqueos de casos bajan de
+  24 a 0 y la puerta completa queda en `NO-GO` con 12 entradas restantes. La
+  rama local `codex/document-case-authorizations` pasa el gate completo sin
+  push, PR, preview, despliegue o publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
@@ -194,6 +200,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - `ROADMAP.md` controla la migración a Next.js y la entrega.
 - `data/brand.json`, `data/proyectos.json` y `data/ofertas.json` siguen siendo las
   fuentes estructuradas de identidad, casos y ofertas.
+- Los seis casos están en `documentada` mediante referencias internas
+  `AUTH-RESP-20260717-*`; nombres y fotografías web están cubiertos y los
+  originales permanecen fuera del repositorio.
 - ADR-007 fija Next.js con prerenderizado y cabeceras como implementación única;
   no se usa `output: export` ni se mantiene la base legacy.
 - `REPOSITORY_EXPOSURE.md` controla los riesgos derivados de la visibilidad
@@ -233,9 +242,9 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 1. Integrar la migración operativa a Obraxen, sincronizar su clon dedicado y
    reanudar la automatización sin ampliar sus permisos.
-2. Resolver las 36 incidencias de la puerta 6.7 con revisión profesional de
-   nombre, en/de/es/fr, identidad, sociedad, teléfono, permisos, legal y DPA/proveedor
-   según `ACTIVATION_GATE.md`.
+2. Resolver las 12 incidencias restantes de la puerta 6.7 con revisión
+   profesional de nombre, en/de/es/fr, identidad, sociedad, teléfono, legal y
+   DPA/proveedor según `ACTIVATION_GATE.md`.
 3. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
 4. Mantener previews, indexación, formulario, analítica real y publicación

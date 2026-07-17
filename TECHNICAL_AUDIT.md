@@ -108,10 +108,11 @@ Cada caso registra ahora:
 - referencia documental;
 - revisión legal.
 
-Los seis casos están en `confirmada_internamente`, solo con alcance declarado
-para identificar al cliente. Falta soporte documental, alcance de fotografías y
-revisión legal. `publicar: true` falla cerrado hasta completar o anonimizar todos
-los casos.
+Los seis casos están en `documentada`. La declaración expresa del responsable
+del 17 de julio de 2026 cubre nombre del cliente y fotografías web; cada caso
+registra una referencia interna y revisión legal `aprobada`. Los originales se
+conservan fuera del repositorio. `publicar: true` sigue fallando cerrado por las
+12 entradas restantes de identidad, legal/proveedor e idiomas.
 
 Las fechas de ejecución cuyo año no estaba confirmado se almacenan como `null`;
 ya no hay textos del tipo “año pendiente de confirmar” en los datos públicos.

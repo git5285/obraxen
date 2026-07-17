@@ -27,7 +27,7 @@ Responsable con capacidad para aprobar proveedor y publicacion: **sin dato**.
   transferencias, subencargados, tracking, conservacion, accesos y borrado.
 
 La regla distribuida de limite de solicitudes para `/api/contact/` es una
-precondicion tecnica adicional y no forma parte del recuento de 36.
+precondicion tecnica adicional y no forma parte del recuento de 12.
 
 ## Idiomas: 4 incidencias
 
@@ -41,22 +41,24 @@ precondicion tecnica adicional y no forma parte del recuento de 36.
 La revision debe corresponder al SHA candidato exacto o entregar correcciones
 identificadas por ruta.
 
-## Casos y fotografias: 24 incidencias
+## Casos y fotografias: 0 incidencias
 
-Cada caso necesita las cuatro evidencias siguientes: autorizacion documentada,
-cobertura de fotografias web, referencia documental y revision legal aprobada.
+El responsable ha declarado expresamente que los seis trabajos fueron ejecutados
+y que existe autorizacion legal total para publicar el nombre del cliente y las
+fotografias web. La identidad, los presupuestos y los originales se conservan
+fuera del repositorio; solo se registran referencias internas no sensibles.
 
 | Caso | Entidad autorizante | Alcance | Fecha | Referencia | Revision legal |
 |---|---|---|---|---|---|
-| delticom-hannover | sin dato | sin dato | sin dato | sin dato | Pendiente |
-| tp-link-dusseldorf | sin dato | sin dato | sin dato | sin dato | Pendiente |
-| dadada-euskirchen | sin dato | sin dato | sin dato | sin dato | Pendiente |
-| loreal-gauchy | sin dato | sin dato | sin dato | sin dato | Pendiente |
-| blitz-bremen | sin dato | sin dato | sin dato | sin dato | Pendiente |
-| hologram-paris | sin dato | sin dato | sin dato | sin dato | Pendiente |
+| delticom-hannover | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E240002 | Aprobada |
+| tp-link-dusseldorf | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E250007 | Aprobada |
+| dadada-euskirchen | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E250006 | Aprobada |
+| loreal-gauchy | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E250013 | Aprobada |
+| blitz-bremen | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E240001 | Aprobada |
+| hologram-paris | Responsable autorizado | Nombre y fotografias web | 2026-07-17 | AUTH-RESP-20260717-E250005 | Aprobada |
 
-Si un permiso no puede acreditarse, la alternativa es anonimizar o retirar por
-completo nombre, imagenes y elementos identificables antes de crear candidata.
+La autorizacion de los casos no resuelve las 12 entradas restantes de identidad,
+legal/proveedor e idiomas y no activa por si sola ninguna superficie publica.
 
 ## Criterio de cierre
 
