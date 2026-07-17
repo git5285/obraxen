@@ -2,7 +2,7 @@
 
 - thread_id: close-local-coordination-20260717-5b54612
 - fecha: 2026-07-17 19:31 Europe/Madrid
-- estado: pendiente_de_entrega_remota
+- estado: completado
 - base: 5b546128e2b910733c68bc1a2fb9d46788faf11b
 
 ## Resultado
@@ -16,8 +16,10 @@
 - Los cuatro SHA-256 de entrada coinciden antes y despues de la integracion.
 - Las tres claims de trabajo incorporadas constan como `liberado`.
 - El preflight reconoce la claim actual como unico escritor y la lease compartida corresponde al manifiesto exacto.
+- Auditoria independiente: `PASS` tras distinguir la hora de inicio y cierre del handoff de seguridad.
+- `Quality gate` remoto correcto para `0312e301589e3a799f4742880b066ad6c3feb252` (run `29600701899`).
+- PR #27 fusionada por squash en `3f5104b9f11a5deb24b6bc7d9d3d6a6d195acb3e`.
 
-## Pendiente
+## Limite vigente
 
-- Ejecutar gates local y remoto para el SHA exacto, fusionar por PR y liberar esta claim.
 - No desplegar ni publicar.
