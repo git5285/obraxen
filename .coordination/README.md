@@ -25,7 +25,7 @@ staged, conservar un checksum o manifiesto antes y después de la intervención.
 # <titulo de tarea>
 - thread_id: <id completo>
 - actualizado: <AAAA-MM-DD HH:MM zona>
-- estado: reservado | en_curso | bloqueado | liberado
+- estado: reservado | en_curso | bloqueado | esperando_revision | liberado
 - objetivo: <una frase>
 - archivos:
   - <ruta exacta o glob acotado>
@@ -54,3 +54,17 @@ Prioridad: reserva anterior válida, luego división explícita por archivos y, 
 no es posible, trabajo secuencial o transferencia autorizada. Ninguna urgencia
 autoriza a sobrescribir cambios ajenos. El historial de claims y handoffs no se
 borra durante una limpieza documental: permite reconstruir propiedad y decisiones.
+
+Toda claim que no esté en `liberado` conserva propiedad exclusiva sobre sus
+rutas. `bloqueado` describe un impedimento de la tarea propietaria; no autoriza
+a otro escritor. `esperando_revision` conserva el diff y la reserva hasta que
+una revisión humana lo promueva, rechace, transfiera o libere explícitamente.
+
+El preflight registra cada clon por identidad de `origin` en el estado privado
+del usuario y revisa los worktrees de todos los clones registrados. Un registro
+corrupto, inaccesible u obsoleto bloquea el trabajo de scout y writer; nunca se
+elimina ni se reclama automáticamente. Antes de retirar uno, una persona debe
+comprobar el proceso, lease, worktrees, estado Git, claims y handoffs asociados.
+Una migración del protocolo exige detener primero todos los runners antiguos:
+ningún writer puede operar mientras exista un clon registrado con una versión
+legacy o con un lease legacy retenido.
