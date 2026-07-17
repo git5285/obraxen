@@ -24,6 +24,7 @@ import tpLinkZone from "../../img/proyectos/tp-link/resultado-zona.webp";
 import pulidoImage from "../../img/pulido.jpg";
 import recrecidosImage from "../../img/recrecidos.jpg";
 import { brand, getBrandTranslation } from "./brand";
+import { resolveContactConfig } from "./contact";
 import { getDictionary, getPath, type Locale } from "./i18n";
 import { projects } from "./projects";
 
@@ -82,18 +83,19 @@ export function getHomepage(locale: Locale) {
   const dictionary = getDictionary(locale);
   const brandCopy = getBrandTranslation(locale);
   const hasContactChannel = Boolean(brand.email || brand.telefono || brand.whatsapp);
+  const contactFormEnabled = resolveContactConfig(process.env).enabled;
   const navigationItems: readonly NavigationItem[] = dictionary.navigation.items.map((item) =>
     item.section
       ? { label: item.label, href: `#${item.section}`, section: item.section }
       : { label: item.label, href: getPath(locale, item.route) },
   );
   const cta = {
-    href: hasContactChannel
+    href: contactFormEnabled
       ? getPath(locale, "contact")
       : projects.length
         ? getPath(locale, "projects")
         : "#services",
-    text: hasContactChannel
+    text: contactFormEnabled
       ? dictionary.cta.assessment
       : projects.length
         ? dictionary.cta.projects
