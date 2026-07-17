@@ -1,9 +1,41 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+const contactMock = vi.hoisted(() => ({ enabled: false }));
+
+vi.mock("@/lib/contact", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/contact")>();
+  return {
+    ...actual,
+    resolveContactConfig: () => contactMock.enabled
+      ? {
+          enabled: true,
+          apiKey: `re_${"1".repeat(30)}`,
+          toEmail: "info@obraxen.com",
+          fromEmail: "web@obraxen.com",
+          rateLimitMode: "vercel-waf",
+          issues: [],
+        }
+      : {
+          enabled: false,
+          apiKey: null,
+          toEmail: null,
+          fromEmail: null,
+          rateLimitMode: null,
+          issues: ["disabled"],
+        },
+  };
+});
+
 import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
+import { getHomepage } from "@/lib/homepage";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
 import { projects } from "@/lib/projects";
+
+afterEach(() => {
+  contactMock.enabled = false;
+});
 
 describe("localized Next.js homepage", () => {
   it.each(locales)("renders the complete %s homepage without mixed project content", async (locale) => {
@@ -22,11 +54,25 @@ describe("localized Next.js homepage", () => {
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
 
-  it.each(locales)("exposes the verified email contact flow on the %s homepage", async (locale) => {
+  it.each(locales)("uses projects while the contact form is unavailable on the %s homepage", async (locale) => {
+    contactMock.enabled = false;
     const dictionary = getDictionary(locale);
+    expect(getHomepage(locale).cta).toEqual({
+      href: getPath(locale, "projects"),
+      text: dictionary.cta.projects,
+    });
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
-    expect(html).toContain(dictionary.cta.assessment);
-    expect(html).toContain(`href="${getPath(locale, "contact")}"`);
+    expect(html).toContain('href="mailto:info@obraxen.com"');
+  });
+
+  it.each(locales)("uses assessment when the contact form is enabled on the %s homepage", async (locale) => {
+    contactMock.enabled = true;
+    const dictionary = getDictionary(locale);
+    expect(getHomepage(locale).cta).toEqual({
+      href: getPath(locale, "contact"),
+      text: dictionary.cta.assessment,
+    });
+    const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
     expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
