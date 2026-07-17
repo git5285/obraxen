@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-17 17:19 Europe/Madrid.
+Actualizado: 2026-07-17 17:32 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
@@ -187,8 +187,9 @@ cambios staged sin propietario.
   registrada para los seis casos con alcance sobre nombre y fotografías web,
   referencia interna y revisión legal aprobada. Los bloqueos de casos bajan de
   24 a 0 y la puerta completa queda en `NO-GO` con 12 entradas restantes. La
-  rama local `codex/document-case-authorizations` pasa el gate completo sin
-  push, PR, preview, despliegue o publicación.
+  rama `codex/document-case-authorizations` se tramita mediante la PR `#24`;
+  su primer Quality remoto terminó verde y la integración exige repetirlo para
+  el SHA final. No se crea preview, despliegue o publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
