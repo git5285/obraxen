@@ -1,8 +1,8 @@
 # Preservación del endurecimiento de preflight
 
 - thread_id: 019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-preflight
-- actualizado: 2026-07-17 11:03 Europe/Madrid
-- estado: en_curso
+- actualizado: 2026-07-17 11:06 Europe/Madrid
+- estado: liberado
 - objetivo: preservar sin alteraciones funcionales el diff de preflight transferido por autorización expresa del usuario.
 - rama: codex/preserve-preflight-019f6d48
 - base: e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa
@@ -20,5 +20,6 @@
   - automation/agents/preflight.mjs: 8341953501aade0a3c0979094438201e23003c08948a7d945679ad05e99f66d0
   - automation/agents/preflight.d.mts: 514fd9b6f2a35a93ebac30a4f99ffb28a9114c25f8ee018a1b94231b0391229d
   - tests/agents/preflight.test.ts: f194e466333bdab09beb053f2e6e01849e67d297d9861706aa85c0445429f91c
+- commit_preservacion: 5bef441b398d3d56ea415e660c7bd19036632637
 - consumidores: revisión humana y futura remediación de gobernanza; sin autoridad de push, PR, merge, despliegue o publicación.
-- siguiente_paso: verificar hashes, ejecutar regresiones enfocadas y crear un commit local exacto de preservación.
+- siguiente_paso: preservación terminada; cualquier remediación posterior requiere una nueva claim y revisión separada.
