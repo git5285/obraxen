@@ -1,8 +1,8 @@
 # Handoff: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- terminado: `2026-07-17 14:45 CEST`
-- resultado: protocolo v3 integrado mediante squash en `main`, gates remotos verdes, preview Vercel omitida y claim liberada; sin despliegue ni publicación.
+- terminado: `2026-07-17 15:25 CEST`
+- resultado: protocolo v3 integrado mediante squash en `main`; PR `#23` abierta y promovida a revisión, trazabilidad corregida y claim liberada; sin fusionar la PR de cierre, desplegar ni publicar.
 - archivos_cambiados: `.coordination/README.md`, `automation/agents/README.md`, `automation/agents/lease.mjs`, `automation/agents/lease.d.mts`, `automation/agents/preflight.mjs`, `automation/agents/preflight.d.mts`, `tests/agents/lease.test.ts`, `tests/agents/preflight.test.ts`, `.coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`, `.coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`.
 - commits_tecnicos: `f4be03b17deeb33dbd4be29cbc9cf7a80bf8a573`, `5cb3e1b4080131073ee92e5673f17af472b45879`, `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f`.
 - commit_integracion: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762` mediante squash de la PR `#22`.
@@ -22,6 +22,10 @@
 - SHA final de PR `22c706a9b0f842910d9440f62bb7122a107b635a`: `Quality gate` remoto verde.
 - `main` en `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`: workflow `29580746090` verde en 6m14s; `Gated Vercel preview` omitida.
 - Commit squash con un único padre y autor `git5285 <215871158+git5285@users.noreply.github.com>`; los commits con identidad local de prueba no se promovieron individualmente a `main`.
+- Commit inicial de cierre `562e690de807f1400da99251328e4cdf60f60987`: `Quality gate` remoto `29582170873` verde en 5m23s y `Gated Vercel preview` omitida.
+- La corrección actual genera un nuevo SHA: su `Quality gate` exacto debe quedar verde antes de revisar una posible fusión; el handoff evita declarar de forma autorreferencial un SHA que todavía no existe al crear el commit.
+- `npm run check:quality` del director sobre la candidata corregida: 187 unitarias, build de 52 páginas, 2 E2E de contacto, 89 E2E estándar, 8 omisiones previstas y Lighthouse OK en 3 rutas.
+- El auditor independiente confirmó el alcance, claim, lease, activación y diff, y sus observaciones corregibles quedaron resueltas. Conservó el veto automático esperado porque `.coordination/**` es superficie protegida y no pudo iniciar Vitest en su entorno por la firma del binding nativo; esto no amplía la autoridad autónoma ni sustituye el gate reproducible del director y de GitHub.
 
 ## Corte local v3
 
@@ -50,11 +54,13 @@
 
 - El usuario autorizó secuencialmente pasar la PR a revisión y fusionarla exclusivamente mediante squash; ninguna de esas decisiones autorizó despliegue o publicación.
 - La PR [#22](https://github.com/git5285/obraxen/pull/22) quedó fusionada; la rama remota de gobernanza se preservó y `main` avanzó de `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa` a `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`.
-- El cierre actual se limita a esta claim y este handoff en `codex/release-governance-claim`; no incluye push ni PR.
+- El cierre actual se limita a esta claim y este handoff en `codex/release-governance-claim`. Su commit inicial `562e690de807f1400da99251328e4cdf60f60987` se subió mediante una autorización posterior y abrió la PR [#23](https://github.com/git5285/obraxen/pull/23).
+- La PR `#23` pasó su primer `Quality gate`, fue promovida a revisión y recibió una revisión final que bloqueó la fusión hasta corregir las referencias obsoletas a su propio estado.
+- El usuario autorizó esta corrección, su commit y push, la actualización de la descripción de la PR y la repetición de los gates. Fusión, despliegue y publicación permanecen fuera de alcance.
 
 ## Pendiente
 
-- Decidir por separado si se sube la rama mínima de cierre y se abre su PR.
+- Revisar el SHA vigente de la PR `#23` cuando el `Quality gate` exacto esté verde y decidir por separado si se fusiona.
 - Sin despliegue ni publicación.
 
-- mensaje_enviado_a: tarea actual de Codex y PR #22 fusionada.
+- mensaje_enviado_a: tarea actual de Codex, PR #22 fusionada y PR #23 abierta.

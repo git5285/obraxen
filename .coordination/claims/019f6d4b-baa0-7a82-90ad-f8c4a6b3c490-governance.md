@@ -1,9 +1,9 @@
 # Claim: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- actualizado: `2026-07-17 14:45 CEST`
+- actualizado: `2026-07-17 15:35 CEST`
 - estado: liberado
-- objetivo: cerrar la coordinación v3 ya fusionada, liberar su reserva y registrar el resultado remoto sin desplegar ni publicar.
+- objetivo: corregir la trazabilidad de la PR `#23`, validar su nuevo SHA y volver a liberar la reserva sin fusionar, desplegar ni publicar.
 - rama: `codex/release-governance-claim`
 - base: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`
 
@@ -14,8 +14,15 @@
 ## Cierre post-merge autorizado
 
 - El usuario indicó `Siguiente` después de identificar como próximo paso una rama mínima para liberar esta claim y registrar la fusión.
-- Alcance exclusivo: estos dos metadatos propios y un commit local. Sin push, PR, despliegue ni publicación.
+- La autorización inicial de esa fase cubría exclusivamente estos dos metadatos propios y un commit local; las acciones remotas posteriores se autorizaron por separado y se registran debajo.
 - PR `#22` fusionada por squash en `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`; `Quality gate` de `main` verde y preview Vercel omitida.
+
+## Corrección de trazabilidad de la PR #23
+
+- La PR `#23` se abrió como borrador sobre `562e690de807f1400da99251328e4cdf60f60987`, pasó su `Quality gate` y después se promovió a revisión mediante una autorización separada.
+- La revisión final detectó que esta claim, el handoff y la descripción remota aún presentaban el push y la PR como pendientes.
+- El usuario indicó `de acuerdo, sigue entonces` después de identificar como siguiente paso exacto corregir esa trazabilidad, crear y subir un nuevo SHA y repetir los gates.
+- Esta autorización se limita a los dos metadatos propios, su commit y push en `codex/release-governance-claim`, la descripción de la PR `#23` y la verificación local/remota. No autoriza fusión, despliegue ni publicación.
 
 ## Cambios ajenos preservados
 
@@ -25,9 +32,9 @@
 
 ## Límites
 
-- Autorizado manualmente en este cierre: actualizar estos dos metadatos propios y crear un commit local en `codex/release-governance-claim`.
+- La autorización inicial cubrió estos dos metadatos propios y un commit local en `codex/release-governance-claim`; decisiones humanas posteriores autorizaron su push, la apertura de la PR `#23`, su paso a revisión y esta corrección de trazabilidad.
 - La promoción, paso a revisión y fusión squash de la PR `#22` se ejecutaron mediante decisiones humanas separadas; no ampliaron `policy.json`.
-- Sin push ni PR de este cierre, despliegue o publicación en esta fase.
+- La PR `#23` no se fusiona en esta fase. Despliegue y publicación siguen sin autorización.
 - Sin limpiar worktrees, claims o handoffs ajenos.
 - Sin cambiar los bypasses del hook `pre-push`; quedan fuera de esta iteración.
 
@@ -67,6 +74,13 @@
 - [x] PR `#22` promovida a revisión y fusionada por squash tras autorización humana.
 - [x] `Quality gate` posterior de `main` verde y preview Vercel omitida.
 - [x] Cierre post-merge registrado y reserva liberada.
+- [x] Commit inicial de cierre `562e690de807f1400da99251328e4cdf60f60987` subido a `codex/release-governance-claim` y PR `#23` abierta como borrador.
+- [x] `Quality gate` de `562e690de807f1400da99251328e4cdf60f60987` verde y preview Vercel omitida.
+- [x] PR `#23` promovida a revisión mediante una decisión humana separada.
+- [x] Revisión final detectó y acotó la contradicción de trazabilidad antes de fusionar.
+- [x] Claim y handoff corregidos para reflejar la PR `#23` y conservar la fusión como decisión separada.
+- [x] `npm run check:quality` local de la candidata corregida verde: 187 unitarias, 52 páginas, 2 E2E de contacto, 89 E2E estándar, 8 omisiones previstas y Lighthouse en presupuesto.
+- [x] Auditor independiente reejecutado; sus observaciones corregibles de estado, redacción y descripción remota quedaron resueltas. El veto automático por `.coordination/**` permanece deliberadamente como requisito de promoción humana.
 
 ## Resultado
 
@@ -84,8 +98,10 @@
 - SHA final revisado de la PR: `22c706a9b0f842910d9440f62bb7122a107b635a`; `Quality gate` remoto verde.
 - Integración squash: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`, autor `git5285`, un único padre `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa`.
 - Workflow posterior de `main` `29580746090`: `Quality gate` verde; `Gated Vercel preview` omitida. Publicación permanece `NO-GO` con 36 bloqueos.
+- Cierre remoto: PR [#23](https://github.com/git5285/obraxen/pull/23) abierta sobre el commit inicial `562e690de807f1400da99251328e4cdf60f60987`, promovida a revisión y con su primer `Quality gate` verde; no se fusionó ni desplegó.
+- Esta actualización elimina las referencias obsoletas que presentaban la apertura de la PR `#23` como una decisión todavía pendiente. El SHA vigente de la PR debe conservar `Quality gate` remoto verde antes de cualquier decisión humana de fusión.
 
 ## Pendiente humano
 
-- Decidir por separado si se sube `codex/release-governance-claim` y se abre una PR mínima para incorporar este cierre a `main`.
+- Revisar el SHA vigente de la PR `#23` únicamente cuando su `Quality gate` remoto esté verde y decidir la fusión por separado.
 - Despliegue y publicación continúan sin autorización.
