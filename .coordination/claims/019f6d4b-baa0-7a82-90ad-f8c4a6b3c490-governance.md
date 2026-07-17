@@ -1,23 +1,21 @@
 # Claim: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- actualizado: `2026-07-17 12:48 CEST`
-- estado: esperando_revision
-- objetivo: endurecer el control de escritor único y ejecutar el corte local, secuencial y reversible de los consumidores legacy al protocolo v3.
-- rama: `codex/governance-shared-coordination`
-- base: `1d31657504002e65e950b42f25e6e51e6f3dd326`
+- actualizado: `2026-07-17 14:45 CEST`
+- estado: liberado
+- objetivo: cerrar la coordinación v3 ya fusionada, liberar su reserva y registrar el resultado remoto sin desplegar ni publicar.
+- rama: `codex/release-governance-claim`
+- base: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`
 
 - archivos:
-  - automation/agents/lease.mjs
-  - automation/agents/lease.d.mts
-  - automation/agents/preflight.mjs
-  - automation/agents/preflight.d.mts
-  - tests/agents/lease.test.ts
-  - tests/agents/preflight.test.ts
-  - automation/agents/README.md
-  - .coordination/README.md
   - .coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md
   - .coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md
+
+## Cierre post-merge autorizado
+
+- El usuario indicó `Siguiente` después de identificar como próximo paso una rama mínima para liberar esta claim y registrar la fusión.
+- Alcance exclusivo: estos dos metadatos propios y un commit local. Sin push, PR, despliegue ni publicación.
+- PR `#22` fusionada por squash en `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`; `Quality gate` de `main` verde y preview Vercel omitida.
 
 ## Cambios ajenos preservados
 
@@ -27,8 +25,9 @@
 
 ## Límites
 
-- Autorizados manualmente en esta fase: commit de los dos metadatos propios, push de `codex/governance-shared-coordination` y creación de una PR borrador hacia `main`.
-- Sin fusión, despliegue ni publicación; tampoco se convierte la PR a lista para revisión sin una decisión posterior.
+- Autorizado manualmente en este cierre: actualizar estos dos metadatos propios y crear un commit local en `codex/release-governance-claim`.
+- La promoción, paso a revisión y fusión squash de la PR `#22` se ejecutaron mediante decisiones humanas separadas; no ampliaron `policy.json`.
+- Sin push ni PR de este cierre, despliegue o publicación en esta fase.
 - Sin limpiar worktrees, claims o handoffs ajenos.
 - Sin cambiar los bypasses del hook `pre-push`; quedan fuera de esta iteración.
 
@@ -64,7 +63,10 @@
 - [x] Promoción manual limitada autorizada y remoto reconciliado.
 - [x] Metadatos de promoción comprometidos y rama subida.
 - [x] PR borrador creada y handoff remoto registrado.
-- [ ] `Quality gate` remoto del SHA final verificado.
+- [x] `Quality gate` remoto del SHA final verificado.
+- [x] PR `#22` promovida a revisión y fusionada por squash tras autorización humana.
+- [x] `Quality gate` posterior de `main` verde y preview Vercel omitida.
+- [x] Cierre post-merge registrado y reserva liberada.
 
 ## Resultado
 
@@ -79,9 +81,11 @@
 - Auditoría operativa independiente: `PASS`; no encontró split-brain, consumidor legacy conocido, pérdida de refs ni acción remota. Su entorno no pudo iniciar Vitest con el Node 24 firmado de Codex, pero cargó el protocolo v3 con ese runtime y reprodujo 40/40 con Node 26; la ejecución directora pasó 40/40 con Node `v24.14.0`.
 - El corte local no realizó push, PR, fusión, despliegue ni publicación; la promoción manual posterior queda acotada por la autorización anterior.
 - Promoción manual: commit `136ab2c75876501ba0bb595e0ac72a3e4b18fa3d` subido y PR borrador [#22](https://github.com/git5285/obraxen/pull/22) abierta hacia `main`; el primer `Quality gate` se inició sobre ese SHA.
+- SHA final revisado de la PR: `22c706a9b0f842910d9440f62bb7122a107b635a`; `Quality gate` remoto verde.
+- Integración squash: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`, autor `git5285`, un único padre `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa`.
+- Workflow posterior de `main` `29580746090`: `Quality gate` verde; `Gated Vercel preview` omitida. Publicación permanece `NO-GO` con 36 bloqueos.
 
 ## Pendiente humano
 
-- Revisar el SHA técnico `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f` y este registro de coordinación.
-- Subir este handoff final y verificar el `Quality gate` remoto del nuevo SHA exacto.
-- Mantener la PR en borrador; fusión, despliegue y publicación requieren decisiones posteriores.
+- Decidir por separado si se sube `codex/release-governance-claim` y se abre una PR mínima para incorporar este cierre a `main`.
+- Despliegue y publicación continúan sin autorización.

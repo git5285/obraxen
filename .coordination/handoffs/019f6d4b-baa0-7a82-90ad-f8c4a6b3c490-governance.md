@@ -1,10 +1,11 @@
 # Handoff: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- terminado: `2026-07-17 12:48 CEST`
-- resultado: protocolo v3 implementado, corte local completado y PR borrador #22 creada; pendiente `Quality gate` remoto del SHA final y revisión humana.
+- terminado: `2026-07-17 14:45 CEST`
+- resultado: protocolo v3 integrado mediante squash en `main`, gates remotos verdes, preview Vercel omitida y claim liberada; sin despliegue ni publicación.
 - archivos_cambiados: `.coordination/README.md`, `automation/agents/README.md`, `automation/agents/lease.mjs`, `automation/agents/lease.d.mts`, `automation/agents/preflight.mjs`, `automation/agents/preflight.d.mts`, `tests/agents/lease.test.ts`, `tests/agents/preflight.test.ts`, `.coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`, `.coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`.
 - commits_tecnicos: `f4be03b17deeb33dbd4be29cbc9cf7a80bf8a573`, `5cb3e1b4080131073ee92e5673f17af472b45879`, `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f`.
+- commit_integracion: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762` mediante squash de la PR `#22`.
 
 ## Verificaciones
 
@@ -18,6 +19,9 @@
 - `git diff --check`: pasa.
 - Diff policy autónoma: veto esperado por más de 400 líneas y seis superficies protegidas; no se debilitó ni se eludió.
 - Reauditoría adversarial de `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f`: no encontró bypass técnico material en lease, identidad, cutover ni parser de claims; el veto se limitó a que la claim y este handoff aún citaban `5cb3e1b` y 39/186, defecto de trazabilidad corregido aquí.
+- SHA final de PR `22c706a9b0f842910d9440f62bb7122a107b635a`: `Quality gate` remoto verde.
+- `main` en `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`: workflow `29580746090` verde en 6m14s; `Gated Vercel preview` omitida.
+- Commit squash con un único padre y autor `git5285 <215871158+git5285@users.noreply.github.com>`; los commits con identidad local de prueba no se promovieron individualmente a `main`.
 
 ## Corte local v3
 
@@ -42,10 +46,15 @@
 - Commit de promoción inicial `136ab2c75876501ba0bb595e0ac72a3e4b18fa3d` subido a `origin/codex/governance-shared-coordination`; PR borrador [#22](https://github.com/git5285/obraxen/pull/22) creada hacia `main`.
 - El primer `Quality gate` se inició sobre `136ab2c`; este handoff final generará un nuevo SHA y exige repetir el gate local y esperar el gate remoto exacto.
 
+## Cierre post-merge
+
+- El usuario autorizó secuencialmente pasar la PR a revisión y fusionarla exclusivamente mediante squash; ninguna de esas decisiones autorizó despliegue o publicación.
+- La PR [#22](https://github.com/git5285/obraxen/pull/22) quedó fusionada; la rama remota de gobernanza se preservó y `main` avanzó de `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa` a `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`.
+- El cierre actual se limita a esta claim y este handoff en `codex/release-governance-claim`; no incluye push ni PR.
+
 ## Pendiente
 
-- Subir el commit documental final y verificar su `Quality gate` remoto.
-- Mantener la PR borrador sin fusión hasta una decisión humana posterior.
-- Sin fusión, despliegue ni publicación.
+- Decidir por separado si se sube la rama mínima de cierre y se abre su PR.
+- Sin despliegue ni publicación.
 
-- mensaje_enviado_a: tarea actual de Codex y PR borrador #22.
+- mensaje_enviado_a: tarea actual de Codex y PR #22 fusionada.
