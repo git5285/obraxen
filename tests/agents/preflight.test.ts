@@ -30,7 +30,7 @@ function repository() {
   mkdirSync(join(directory, "automation", "agents"), { recursive: true });
   writeFileSync(
     join(directory, "automation", "agents", "lease.mjs"),
-    "export const COORDINATION_PROTOCOL_VERSION = 2;\n",
+    "export const COORDINATION_PROTOCOL_VERSION = 3;\n",
   );
   execFileSync("git", [
     "-C",

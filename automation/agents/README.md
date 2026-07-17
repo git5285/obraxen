@@ -127,7 +127,7 @@ clone bindings and stale leases are never removed or reclaimed automatically;
 inspect the associated process, worktree, Git status, claim and handoff before
 a human removes any of that state.
 
-Protocol version 2 is an explicit cutover gate. Acquisition is denied while any
+Protocol version 3 is an explicit cutover gate. Acquisition is denied while any
 registered clone still uses the legacy Git-common-dir lease or retains a legacy
 owner record. Before enabling a writer after promotion, stop every old scheduler
 or manual runner, inventory clones that may not have registered yet, and update

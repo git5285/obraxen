@@ -21,8 +21,12 @@ const DEFAULT_REMOTE_PORTS = new Map([
   ["ssh:", "22"],
   ["git:", "9418"],
 ]);
+const REMOTE_HOST_ALIASES = new Map([
+  ["www.github.com", "github.com"],
+  ["ssh.github.com", "github.com"],
+]);
 const CASE_INSENSITIVE_REPOSITORY_HOSTS = new Set(["github.com"]);
-export const COORDINATION_PROTOCOL_VERSION = 2;
+export const COORDINATION_PROTOCOL_VERSION = 3;
 
 function git(repo, args) {
   return execFileSync("git", ["-C", repo, ...args], {
@@ -58,8 +62,13 @@ function stripFileRepositorySuffix(value) {
   return stripped;
 }
 
-function normalizeRemoteHost(hostname) {
+function normalizeRawRemoteHost(hostname) {
   return hostname.replace(/\.$/, "").toLowerCase();
+}
+
+function normalizeRemoteHost(hostname) {
+  const normalized = normalizeRawRemoteHost(hostname);
+  return REMOTE_HOST_ALIASES.get(normalized) ?? normalized;
 }
 
 function normalizeRemoteRepositoryPath(hostname, path) {
@@ -73,6 +82,24 @@ function normalizeRemoteRepositoryPath(hostname, path) {
   return CASE_INSENSITIVE_REPOSITORY_HOSTS.has(hostname)
     ? stripped.toLowerCase()
     : stripped;
+}
+
+function canonicalizeStoredRepositoryIdentity(identity) {
+  if (identity.startsWith("file:")) return identity;
+  const separator = identity.indexOf("/");
+  if (separator <= 0) throw new Error("clone binding has an invalid repositoryIdentity");
+  const authority = identity.slice(0, separator);
+  const path = identity.slice(separator + 1);
+  const portSeparator = authority.lastIndexOf(":");
+  const hasPort = portSeparator > 0 && /^\d+$/.test(authority.slice(portSeparator + 1));
+  const rawHostname = normalizeRawRemoteHost(
+    hasPort ? authority.slice(0, portSeparator) : authority,
+  );
+  const hostname = normalizeRemoteHost(rawHostname);
+  const rawPort = hasPort ? authority.slice(portSeparator + 1) : "";
+  const port = rawHostname === "ssh.github.com" && rawPort === "443" ? "" : rawPort;
+  const host = `${hostname}${port ? `:${port}` : ""}`;
+  return `${host}/${normalizeRemoteRepositoryPath(hostname, path)}`;
 }
 
 export function normalizeRepositoryIdentity(remote, repo = process.cwd()) {
@@ -90,10 +117,16 @@ export function normalizeRepositoryIdentity(remote, repo = process.cwd()) {
     if (parsed.protocol === "file:") {
       return `file:${stripFileRepositorySuffix(resolve(fileURLToPath(parsed)))}`;
     }
-    const port = parsed.port && parsed.port !== DEFAULT_REMOTE_PORTS.get(parsed.protocol)
+    const rawHostname = normalizeRawRemoteHost(parsed.hostname);
+    const githubSshEndpoint = rawHostname === "ssh.github.com"
+      && parsed.protocol === "ssh:"
+      && parsed.port === "443";
+    const port = parsed.port
+      && parsed.port !== DEFAULT_REMOTE_PORTS.get(parsed.protocol)
+      && !githubSshEndpoint
       ? `:${parsed.port}`
       : "";
-    const hostname = normalizeRemoteHost(parsed.hostname);
+    const hostname = normalizeRemoteHost(rawHostname);
     const host = `${hostname}${port}`;
     if (!host) throw new Error("origin remote does not include a host");
     return `${host}/${normalizeRemoteRepositoryPath(hostname, parsed.pathname)}`;
@@ -299,6 +332,13 @@ export function readRegisteredClones(repo, stateHome = null) {
     }) : [];
 
   for (const binding of bindings) {
+    const canonicalIdentity = canonicalizeStoredRepositoryIdentity(binding.repositoryIdentity);
+    if (
+      canonicalIdentity === paths.repositoryIdentity
+      && binding.repositoryIdentity !== paths.repositoryIdentity
+    ) {
+      throw new Error(`clone binding uses a legacy repository identity: ${binding.commonDir}`);
+    }
     if (
       binding.repositoryIdentity === paths.repositoryIdentity
       && !recordsByCommonDir.has(binding.commonDir)

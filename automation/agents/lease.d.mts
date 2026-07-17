@@ -39,7 +39,7 @@ export interface CoordinationPaths {
   leaseTokens: string;
 }
 
-export const COORDINATION_PROTOCOL_VERSION: 2;
+export const COORDINATION_PROTOCOL_VERSION: 3;
 export function readCoordinationProtocolVersion(repo: string): number | null;
 export function normalizeRepositoryIdentity(remote: string, repo?: string): string;
 export function getRepositoryIdentity(repo: string): string;

@@ -9,7 +9,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   acquireLease,
@@ -34,7 +34,7 @@ function repository() {
   mkdirSync(join(directory, "automation", "agents"), { recursive: true });
   writeFileSync(
     join(directory, "automation", "agents", "lease.mjs"),
-    "export const COORDINATION_PROTOCOL_VERSION = 2;\n",
+    "export const COORDINATION_PROTOCOL_VERSION = 3;\n",
   );
   return directory;
 }
@@ -77,6 +77,10 @@ describe("shared autonomous writer lease", () => {
       .toBe(ssh);
     expect(normalizeRepositoryIdentity("https://github.com/git5285/obrax%65n.git"))
       .toBe(ssh);
+    expect(normalizeRepositoryIdentity("https://www.github.com/git5285/obraxen.git"))
+      .toBe(ssh);
+    expect(normalizeRepositoryIdentity("ssh://git@ssh.github.com:443/git5285/obraxen.git"))
+      .toBe(ssh);
     expect(https).not.toContain("secret");
     expect(normalizeRepositoryIdentity("../obraxen.git", "/tmp/clone"))
       .toBe("file:/tmp/obraxen");
@@ -114,6 +118,32 @@ describe("shared autonomous writer lease", () => {
 
     expect(() => acquireLease(second, owner("token-1"), new Date(), state))
       .toThrow("clone binding has no registry entry");
+  });
+
+  it("fails closed on a binding that uses an equivalent legacy GitHub identity", () => {
+    const legacy = repository();
+    const current = repository();
+    const state = stateHome();
+    const commonDirRaw = execFileSync(
+      "git",
+      ["-C", legacy, "rev-parse", "--git-common-dir"],
+      { encoding: "utf8" },
+    ).trim();
+    const commonDir = resolve(legacy, commonDirRaw);
+    const cloneIndex = join(state, "obraxen", "agent-coordination-v1", "clone-index");
+    mkdirSync(cloneIndex, { recursive: true });
+    writeFileSync(
+      join(cloneIndex, `${createHash("sha256").update(commonDir).digest("hex")}.json`),
+      `${JSON.stringify({
+        schemaVersion: 1,
+        repositoryIdentity: "github.com/Git5285/Obraxen",
+        commonDir,
+        registeredAt: "2026-07-17T00:00:00.000Z",
+      })}\n`,
+    );
+
+    expect(() => acquireLease(current, owner("token-1"), new Date(), state))
+      .toThrow("clone binding uses a legacy repository identity");
   });
 
   it("denies direct acquisition after a registered clone changes origin", () => {
