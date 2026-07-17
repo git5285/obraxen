@@ -1,7 +1,8 @@
 # Handoff: retirada reversible del borrador de proyectos
 
 - thread_id: audit-security-20260717-0c9d559
-- fecha: 2026-07-17 19:20 Europe/Madrid
+- fecha_inicio: 2026-07-17 19:20 Europe/Madrid
+- fecha_cierre: 2026-07-17 19:29 Europe/Madrid
 - estado: completado
 - base: 0c9d559c6ac4bed51bf6573d03d5abfe314ddd62
 
