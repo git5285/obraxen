@@ -161,6 +161,21 @@ describe("autonomous-agent policy", () => {
     }, policy);
     expect(result.violations).toContain("package.json changes dependencies without authority");
   });
+
+  it.each([
+    "CLAUDE.md",
+    "scripts/lighthouse-budgets.ts",
+    "scripts/qa-port.d.mts",
+  ])("protects operational guardrail %s from autonomous diffs", (path) => {
+    const result = validateDiff({
+      changedPaths: [path],
+      allowedPaths: [path],
+      addedLines: 1,
+      deletedLines: 1,
+    }, activePolicy());
+    expect(result.ok).toBe(false);
+    expect(result.violations).toContain(`${path} is protected`);
+  });
 });
 
 describe("custom-agent pre-tool hook", () => {

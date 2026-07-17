@@ -1,7 +1,8 @@
 # Handoff: integrar cierres locales de coordinacion
 
 - thread_id: close-local-coordination-20260717-5b54612
-- fecha: 2026-07-17 19:31 Europe/Madrid
+- fecha_inicio: 2026-07-17 19:31 Europe/Madrid
+- fecha_cierre: 2026-07-17 19:42 Europe/Madrid
 - estado: completado
 - base: 5b546128e2b910733c68bc1a2fb9d46788faf11b
 
