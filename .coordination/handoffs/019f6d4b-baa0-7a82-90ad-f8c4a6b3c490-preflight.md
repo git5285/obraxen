@@ -17,4 +17,4 @@
 - verificaciones: hashes SHA-256 de los tres archivos funcionales idénticos antes y después de la transferencia; npm run test -- tests/agents/preflight.test.ts, 13/13; git diff --check correcto; preflight sin claims ilegibles y con writer=false durante la transferencia.
 - decisiones: la claim anterior quedó liberada y registra la autorización; los dos archivos no versionados de 019f6d23 se excluyeron del staging y conservaron sus hashes; no se modificó policy.json.
 - pendiente: revisión y remediación de gobernanza en una tarea separada; no se hizo push, PR, merge, despliegue ni publicación.
-- mensaje_enviado_a: tarea 019f6d48-235b-7b51-974b-cd621cf09bbc y usuario.
+- mensaje_enviado_a: usuario de esta tarea; no se reactivó la tarea anterior para evitar concurrencia sobre el mismo checkout.
