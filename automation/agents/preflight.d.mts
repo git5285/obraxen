@@ -4,12 +4,16 @@ export interface ParsedClaim {
   threadId: string;
   state: string;
   files: string[];
+  invalidFileEntries: string[];
 }
 
 export interface GatingInput {
   policy: {
     mode: string;
-    limits?: { maxPendingLocalDiffs: number };
+    limits?: {
+      maxConcurrentWriters?: number;
+      maxPendingLocalDiffs?: number;
+    };
     authority: { allowScout: boolean; allowLocalDiff: boolean };
   };
   lease: unknown;
@@ -21,6 +25,9 @@ export interface GatingInput {
 export interface Gating {
   unreadableWorktrees: string[];
   pendingLocalDiffs: ParsedClaim[];
+  activeWriterClaims: ParsedClaim[];
+  unknownStateClaims: ParsedClaim[];
+  unscopedActiveClaims: ParsedClaim[];
   eligibility: { scout: boolean; writer: boolean };
   blockers: string[];
 }

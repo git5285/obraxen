@@ -1,0 +1,24 @@
+# Preservación del endurecimiento de preflight
+
+- thread_id: 019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-preflight
+- actualizado: 2026-07-17 11:03 Europe/Madrid
+- estado: en_curso
+- objetivo: preservar sin alteraciones funcionales el diff de preflight transferido por autorización expresa del usuario.
+- rama: codex/preserve-preflight-019f6d48
+- base: e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa
+- archivos:
+  - automation/agents/preflight.mjs
+  - automation/agents/preflight.d.mts
+  - tests/agents/preflight.test.ts
+  - .coordination/claims/019f6d48-235b-7b51-974b-cd621cf09bbc.md
+  - .coordination/handoffs/019f6d48-235b-7b51-974b-cd621cf09bbc.md
+  - .coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-preflight.md
+  - .coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-preflight.md
+- cambios_ajenos_detectados: sí; los archivos no versionados de la tarea 019f6d23 sobre .codex/config.toml y su coordinación quedan fuera del staging y se preservan por hash.
+- autorización_transferencia: usuario, 2026-07-17; registrada también en la claim 019f6d48-235b-7b51-974b-cd621cf09bbc.
+- hashes_funcionales_recibidos:
+  - automation/agents/preflight.mjs: 8341953501aade0a3c0979094438201e23003c08948a7d945679ad05e99f66d0
+  - automation/agents/preflight.d.mts: 514fd9b6f2a35a93ebac30a4f99ffb28a9114c25f8ee018a1b94231b0391229d
+  - tests/agents/preflight.test.ts: f194e466333bdab09beb053f2e6e01849e67d297d9861706aa85c0445429f91c
+- consumidores: revisión humana y futura remediación de gobernanza; sin autoridad de push, PR, merge, despliegue o publicación.
+- siguiente_paso: verificar hashes, ejecutar regresiones enfocadas y crear un commit local exacto de preservación.

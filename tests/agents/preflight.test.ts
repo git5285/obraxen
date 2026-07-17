@@ -34,6 +34,42 @@ detached
       worktree: "/repo/agent",
     });
   });
+
+  it("normalizes inline-code fields and parses a reserved-files heading", () => {
+    const claim = parseClaim(`# Work
+- thread_id: \`abc\`
+- estado: \`liberado\`
+
+## Archivos reservados
+
+- \`src/a.ts\`
+- tests/a.test.ts
+
+## Notes
+`, ".coordination/claims/abc.md", "/repo/agent");
+    expect(claim).toMatchObject({
+      threadId: "abc",
+      state: "liberado",
+      files: ["src/a.ts", "tests/a.test.ts"],
+      invalidFileEntries: [],
+    });
+  });
+
+  it("retains invalid file-list entries so gating can fail closed", () => {
+    const claim = parseClaim(`# Work
+- thread_id: abc
+- estado: bloqueado
+
+## Archivos reservados
+
+- src/a.ts
+- sin rutas exactas todavía
+`, ".coordination/claims/abc.md", "/repo/agent");
+    expect(claim).toMatchObject({
+      files: ["src/a.ts"],
+      invalidFileEntries: ["sin rutas exactas todavía"],
+    });
+  });
 });
 
 describe("fail-closed gating (DISCOVERED-20260716-01)", () => {
@@ -109,5 +145,65 @@ describe("fail-closed gating (DISCOVERED-20260716-01)", () => {
     expect(gating.pendingLocalDiffs).toEqual([pendingClaim]);
     expect(gating.eligibility).toEqual({ scout: true, writer: false });
     expect(gating.blockers).toContain("pending_local_diff_limit");
+  });
+
+  it.each(["reservado", "en_curso"])(
+    "denies a second writer while a claim is %s",
+    (state) => {
+      const writerClaim = parseClaim(`# Writer
+- thread_id: writer-1
+- estado: ${state}
+- archivos:
+  - src/a.ts
+`, ".coordination/claims/writer-1.md", "/repo/writer");
+      const gating = deriveGating({
+        policy: activePolicy,
+        lease: null,
+        worktrees: readable,
+        activeClaims: [writerClaim],
+      });
+      expect(gating.activeWriterClaims).toEqual([writerClaim]);
+      expect(gating.eligibility.writer).toBe(false);
+      expect(gating.blockers).toContain("active_writer_claim_limit");
+    },
+  );
+
+  it("fails closed when an active claim has no extractable paths", () => {
+    const unscopedClaim = parseClaim(`# Writer
+- thread_id: writer-1
+- estado: bloqueado
+
+## Archivos reservados
+- sin rutas exactas todavía
+`, ".coordination/claims/writer-1.md", "/repo/writer");
+    const gating = deriveGating({
+      policy: activePolicy,
+      lease: null,
+      worktrees: readable,
+      activeClaims: [unscopedClaim],
+    });
+    expect(unscopedClaim.files).toEqual([]);
+    expect(unscopedClaim.invalidFileEntries).toEqual(["sin rutas exactas todavía"]);
+    expect(gating.unscopedActiveClaims).toEqual([unscopedClaim]);
+    expect(gating.eligibility.writer).toBe(false);
+    expect(gating.blockers).toContain("active_claim_paths_unknown");
+  });
+
+  it("fails closed when an active claim has an unknown state", () => {
+    const unknownClaim = parseClaim(`# Writer
+- thread_id: writer-1
+- estado: maybe
+- archivos:
+  - src/a.ts
+`, ".coordination/claims/writer-1.md", "/repo/writer");
+    const gating = deriveGating({
+      policy: activePolicy,
+      lease: null,
+      worktrees: readable,
+      activeClaims: [unknownClaim],
+    });
+    expect(gating.unknownStateClaims).toEqual([unknownClaim]);
+    expect(gating.eligibility.writer).toBe(false);
+    expect(gating.blockers).toContain("active_claim_state_unknown");
   });
 });
