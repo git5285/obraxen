@@ -1,0 +1,31 @@
+# Handoff: CTA de portada alineada con el gate de contacto
+
+- thread_id: active-20260717-homepage-cta-main-5138804
+- terminado: 2026-07-17 19:14 Europe/Madrid
+- resultado: La CTA principal queda condicionada a la disponibilidad real del formulario y fue fusionada mediante la PR #25 en `0c9d559c6ac4bed51bf6573d03d5abfe314ddd62`, sin despliegue ni publicación.
+- archivos_cambiados:
+  - src/lib/homepage.ts
+  - tests/homepage.test.tsx
+- verificaciones:
+  - Diff policy: 2 archivos, 54 inserciones y 6 eliminaciones, sin violaciones.
+  - Prueba focal: 24/24.
+  - npm run check: 191/191 unitarias, lint, typecheck y build de 52 páginas.
+  - npm run check:quality: 2/2 contacto, 89 E2E correctas, 8 omisiones intencionadas, WebKit y Lighthouse dentro de presupuesto.
+  - Activación antes/después idéntica: NO-GO con 12 bloqueos, publicación no autorizada e interruptor apagado.
+  - Auditor independiente: pass sin hallazgos.
+  - Hash destino `600f75d8...` para `src/lib/homepage.ts` y `21a8a19a...` para `tests/homepage.test.tsx`, idénticos al origen.
+  - Promoción limitada: 51/51 pruebas focales de política y CTA; autorización temporal restaurada exactamente a `allowCommit=false`.
+  - Rango `5138804..0a11f50`: únicamente `src/lib/homepage.ts` y `tests/homepage.test.tsx`.
+  - `Quality gate` remoto: correcto para el SHA exacto `0a11f509197b86f08fb87fa675d1f7f56da5df44` (run `29598825792`).
+  - PR #25: fusionada por squash; commit de main `0c9d559c6ac4bed51bf6573d03d5abfe314ddd62`.
+- decisiones:
+  - Se reaplicó únicamente el diff funcional preservado sobre main 51388047862b8a5c690ad42980bbde5aa3d35bb9.
+  - La configuración de Codex, la memoria, la activación y las superficies protegidas no se modificaron.
+  - El diff se trasladó a la carpeta principal en la rama `codex/improve-homepage-cta-5138804` por autorización expresa del usuario.
+  - `allowCommit` se habilitó solo durante el commit local autorizado y se restauró a `false` inmediatamente después.
+  - El usuario indicó proceder con el cierre controlado el 17 de julio de 2026; se registró la aceptación humana sin eludir la política de commit.
+  - Se creó el commit local `0a11f509197b86f08fb87fa675d1f7f56da5df44` con exactamente dos archivos y se entregó únicamente mediante la PR #25.
+  - La PR se fusionó solo después de verificar el SHA revisado y el control remoto verde; no hubo despliegue ni publicación.
+- pendiente:
+  - Mantener sin publicar hasta resolver los 12 bloqueos de activación.
+- mensaje_enviado_a: tarea actual del usuario.
