@@ -2,7 +2,7 @@
 
 - thread_id: audit-security-20260717-0c9d559
 - fecha: 2026-07-17 19:20 Europe/Madrid
-- estado: pendiente_de_entrega_remota
+- estado: completado
 - base: 0c9d559c6ac4bed51bf6573d03d5abfe314ddd62
 
 ## Resultado
@@ -21,8 +21,9 @@
 - Activacion: `NO-GO` con 12 bloqueos; `publicationAuthorized=false`; `publishSwitch=false`.
 - Auditor independiente: `PASS` sin defectos funcionales o de seguridad.
 - Commit inicial del paquete: `5769159`.
+- `Quality gate` remoto correcto para el SHA final `4153f5eb7bb4e3eff164f9b8d4714d625fb16d09` (run `29599860133`).
+- PR #26 fusionada por squash en `5b546128e2b910733c68bc1a2fb9d46788faf11b`.
 
-## Pendiente
+## Limite vigente
 
-- Crear PR manual, verificar `Quality gate` remoto para el SHA exacto y fusionar solo con resultado verde.
 - No desplegar ni publicar.
