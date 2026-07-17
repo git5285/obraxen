@@ -1,6 +1,6 @@
 # Auditoría técnica
 
-Última verificación: 15 de julio de 2026. Stack: Next.js 16.2.10, React 19,
+Última verificación: 17 de julio de 2026. Stack: Next.js 16.2.10, React 19,
 TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 ## Estado
@@ -13,9 +13,10 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 - Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
   hook versionado bloquea pushes directos a `main`. No se detectan secretos o
   credenciales en los archivos versionados.
-- La puerta pública falla por identidad, sociedad, contacto, revisión legal,
-  revisión profesional de los cuatro idiomas, proveedor de captación y
-  autorizaciones documentales de los casos, como está previsto.
+- La puerta pública falla por identidad, sociedad, contacto, revisión
+  registral/marcaria, revisión legal, revisión profesional de los cuatro idiomas
+  y proveedor de captación, como está previsto. Los seis casos ya están
+  documentados para nombre y fotografías web.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
   permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
 
@@ -23,11 +24,11 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/en/` | 98 | 100 | 100 | 66 | 2.463 ms | 3 ms | 0 |
-| `/de/projekte/` | 100 | 100 | 100 | 66 | 1.805 ms | 2 ms | 0 |
-| `/fr/projets/blitz-bremen/` | 98 | 100 | 100 | 66 | 2.382 ms | 2 ms | 0 |
+| `/en/` | 97 | 100 | 100 | 69 | 2.513 ms | 26 ms | 0 |
+| `/de/projekte/` | 99 | 100 | 100 | 69 | 2.109 ms | 25 ms | 0 |
+| `/fr/projets/blitz-bremen/` | 100 | 100 | 100 | 69 | 1.807 ms | 24 ms | 0 |
 
-El SEO 66 es deliberado mientras la preview siga noindex. Los tres perfiles
+El SEO 69 es deliberado mientras la preview siga noindex. Los tres perfiles
 superan el presupuesto de rendimiento compuesto 90, accesibilidad y buenas
 prácticas 100, LCP de laboratorio 3 s local/3,25 s en CI, TBT 200 ms y CLS 0,1.
 El SEO exige 65 mientras el sitio permanezca en preview noindex y sube a 95 en
@@ -36,11 +37,12 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 100 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 194 pruebas Vitest y build de producción.
 - Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
-- Playwright: 95 ejecuciones configuradas en Chromium móvil/escritorio y smoke
-  WebKit; 7 omisiones intencionales por cobertura exclusiva de navegador/viewport.
+- Playwright estándar: 97 ejecuciones configuradas; 89 correctas y 8 omisiones
+  intencionales en Chromium móvil/escritorio y smoke WebKit. El formulario
+  habilitado añade 2 pruebas Chromium en un arnés local fail-closed.
 - 28 rutas de contenido representativas verificadas a 390 × 844 y 1.440 × 1.000,
   más equivalencia de rutas en los cuatro idiomas y reflow de titulares en/de/es/fr
   a 320, 360, 375 y 390 px.
@@ -154,7 +156,7 @@ debe revisarse antes de conceder nuevos permisos de escritura.
 | Consentimiento | Implementado y probado | Mantener antes de GA4 o Clarity |
 | IDs de GA4 y Clarity | Sin dato | Proveedores, textos y entornos aprobados |
 | CSP sin `unsafe-inline` de script | Aplazado | SRI estable o cambio justificado a render dinámico |
-| Permisos de clientes y fotografías | Bloqueo público | Documento, alcance y revisión por caso |
+| Permisos de clientes y fotografías | Documentados | Conservar referencias, alcance y originales externos |
 | Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
 | Traducciones en/de/es/fr | Borradores completos | Revisor profesional y fecha por idioma |

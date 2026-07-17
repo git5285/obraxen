@@ -373,8 +373,9 @@ protegidas ni rulesets para repositorios privados. El repositorio tiene un únic
 colaborador y la web continúa sin deployments, dominios, analítica real o
 autorización de publicación.
 
-**Decisión.** Mantener GitHub Free y cambiar `git5285/remainon-web` a privado.
-GitHub Actions conserva `Quality gate` en cada pull request, pero su aprobación se
+**Decisión.** Mantener GitHub Free y cambiar a privado el repositorio, entonces
+llamado `git5285/remainon-web` y actualmente `git5285/obraxen`. GitHub Actions
+conserva `Quality gate` en cada pull request, pero su aprobación se
 impone mediante el protocolo del proyecto en lugar de una regla remota de pago.
 
 Cada clon activa `.githooks/pre-push` mediante
