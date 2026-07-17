@@ -12,6 +12,9 @@ test-results/
 *.tsbuildinfo
 AUDITORIA-EXTERNA-*.md
 
+# Datos de trabajo no publicables
+data/proyectos.borrador.json
+
 # Configuración local de herramientas
 .claude/
 .vercel/
