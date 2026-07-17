@@ -2,13 +2,23 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readLease } from "./lease.mjs";
+import {
+  COORDINATION_PROTOCOL_VERSION,
+  readCoordinationProtocolVersion,
+  readLegacyLease,
+  readLease,
+  readRegisteredClones,
+  registerClone,
+  verifyRegisteredClone,
+} from "./lease.mjs";
 import { loadPolicy } from "./policy.mjs";
 
 const RELEASED_CLAIM_STATES = new Set(["liberado", "released"]);
-const WRITER_CLAIM_STATES = new Set(["reservado", "reserved", "en_curso", "in_progress"]);
 const KNOWN_ACTIVE_CLAIM_STATES = new Set([
-  ...WRITER_CLAIM_STATES,
+  "reservado",
+  "reserved",
+  "en_curso",
+  "in_progress",
   "bloqueado",
   "blocked",
   "esperando_revision",
@@ -16,7 +26,10 @@ const KNOWN_ACTIVE_CLAIM_STATES = new Set([
 ]);
 
 function git(repo, args) {
-  return execFileSync("git", ["-C", repo, ...args], { encoding: "utf8" }).trim();
+  return execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  }).trim();
 }
 
 export function parseWorktrees(output) {
@@ -74,12 +87,27 @@ function parseClaimFiles(text) {
 }
 
 export function parseClaim(text, source, worktree) {
-  const rawState = text.match(/^-\s+estado:\s*([^\n]+)$/m)?.[1] ?? "unknown";
-  const rawThreadId = text.match(/^-\s+thread_id:\s*([^\n]+)$/m)?.[1] ?? "unknown";
-  const state = normalizeClaimValue(rawState).toLowerCase();
-  const threadId = normalizeClaimValue(rawThreadId);
+  const states = [...text.matchAll(/^-\s+estado:\s*([^\n]*)$/gm)]
+    .map((match) => normalizeClaimValue(match[1]));
+  const threadIds = [...text.matchAll(/^-\s+thread_id:\s*([^\n]*)$/gm)]
+    .map((match) => normalizeClaimValue(match[1]));
+  const metadataErrors = [];
+  if (states.length !== 1 || !states[0]) metadataErrors.push("estado must appear exactly once");
+  if (threadIds.length !== 1 || !threadIds[0]) {
+    metadataErrors.push("thread_id must appear exactly once");
+  }
+  const state = metadataErrors.length === 0 ? states[0].toLowerCase() : "unknown";
+  const threadId = metadataErrors.length === 0 ? threadIds[0] : "unknown";
   const { files, invalidFileEntries } = parseClaimFiles(text);
-  return { source, worktree, threadId, state, files, invalidFileEntries };
+  return {
+    source,
+    worktree,
+    threadId,
+    state,
+    files,
+    invalidFileEntries,
+    metadataErrors,
+  };
 }
 
 export function readClaims(worktree) {
@@ -95,19 +123,30 @@ export function readClaims(worktree) {
     ));
 }
 
-export function deriveGating({ policy, lease, worktrees, activeClaims = [], claimFailures = [] }) {
+export function deriveGating({
+  policy,
+  lease,
+  worktrees,
+  activeClaims = [],
+  claimFailures = [],
+  coordinationFailures = [],
+  cloneFailures = [],
+  legacyLeases = [],
+}) {
   const unreadableWorktrees = [...new Set([
     ...worktrees
       .filter((entry) => (entry.status ?? []).some((line) => String(line).startsWith("unreadable: ")))
       .map((entry) => entry.path),
     ...claimFailures.map((failure) => failure.path),
+    ...coordinationFailures.map((failure) => failure.path),
+    ...cloneFailures.map((failure) => failure.path),
   ])];
   const scanComplete = unreadableWorktrees.length === 0;
   const pendingLocalDiffs = activeClaims.filter((claim) => new Set([
     "esperando_revision",
     "awaiting_review",
   ]).has(claim.state));
-  const activeWriterClaims = activeClaims.filter((claim) => WRITER_CLAIM_STATES.has(claim.state));
+  const activeWriterClaims = activeClaims;
   const unknownStateClaims = activeClaims.filter((claim) => !KNOWN_ACTIVE_CLAIM_STATES.has(claim.state));
   const unscopedActiveClaims = activeClaims.filter((claim) => (
     claim.files.length === 0 || (claim.invalidFileEntries ?? []).length > 0
@@ -116,6 +155,7 @@ export function deriveGating({ policy, lease, worktrees, activeClaims = [], clai
   const writerLimitReached = activeWriterClaims.length >= writerLimit;
   const pendingLimit = policy.limits?.maxPendingLocalDiffs ?? 1;
   const pendingLimitReached = pendingLocalDiffs.length >= pendingLimit;
+  const leaseExists = Boolean(lease) || legacyLeases.length > 0;
 
   return {
     unreadableWorktrees,
@@ -127,7 +167,7 @@ export function deriveGating({ policy, lease, worktrees, activeClaims = [], clai
       scout: policy.mode !== "disabled" && policy.authority.allowScout && scanComplete,
       writer: policy.mode === "active"
         && policy.authority.allowLocalDiff
-        && !lease
+        && !leaseExists
         && !writerLimitReached
         && unknownStateClaims.length === 0
         && unscopedActiveClaims.length === 0
@@ -138,6 +178,7 @@ export function deriveGating({ policy, lease, worktrees, activeClaims = [], clai
       ...(scanComplete ? [] : ["unreadable_worktrees"]),
       ...(policy.mode === "shadow" ? ["policy_mode_shadow"] : []),
       ...(lease ? ["writer_lease_exists"] : []),
+      ...(legacyLeases.length > 0 ? ["legacy_writer_lease_exists"] : []),
       ...(writerLimitReached ? ["active_writer_claim_limit"] : []),
       ...(unknownStateClaims.length > 0 ? ["active_claim_state_unknown"] : []),
       ...(unscopedActiveClaims.length > 0 ? ["active_claim_paths_unknown"] : []),
@@ -146,16 +187,64 @@ export function deriveGating({ policy, lease, worktrees, activeClaims = [], clai
   };
 }
 
-export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function recordFailure(failures, path, error) {
+  const reason = errorMessage(error);
+  if (!failures.some((failure) => failure.path === path && failure.reason === reason)) {
+    failures.push({ path, reason });
+  }
+}
+
+export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), options = {}) {
   const root = git(repo, ["rev-parse", "--show-toplevel"]);
-  const worktrees = parseWorktrees(git(root, ["worktree", "list", "--porcelain"]));
+  const stateHome = options.stateHome ?? null;
+  const coordinationFailures = [];
+  let registeredClones = [];
+  try {
+    registerClone(root, { now: options.now ?? new Date(), stateHome });
+    registeredClones = readRegisteredClones(root, stateHome);
+  } catch (error) {
+    recordFailure(coordinationFailures, root, error);
+  }
+
+  const cloneCandidates = new Map([[root, { root }]]);
+  for (const clone of registeredClones) cloneCandidates.set(clone.root, clone);
+
+  const cloneFailures = [];
+  const legacyLeases = [];
+  const worktreeByPath = new Map();
+  for (const clone of cloneCandidates.values()) {
+    try {
+      if (clone.commonDir) verifyRegisteredClone(clone);
+      const legacyLease = readLegacyLease(clone.root);
+      if (legacyLease) legacyLeases.push({ clone: clone.root, owner: legacyLease });
+      for (const entry of parseWorktrees(git(clone.root, ["worktree", "list", "--porcelain"]))) {
+        if (readCoordinationProtocolVersion(entry.worktree) !== COORDINATION_PROTOCOL_VERSION) {
+          recordFailure(
+            cloneFailures,
+            entry.worktree,
+            new Error("registered worktree uses an incompatible coordination protocol"),
+          );
+          continue;
+        }
+        worktreeByPath.set(entry.worktree, entry);
+      }
+    } catch (error) {
+      cloneFailures.push({ path: clone.root, reason: errorMessage(error) });
+    }
+  }
+
+  const worktrees = [...worktreeByPath.values()];
   const detailedWorktrees = worktrees.map((entry) => {
     const path = entry.worktree;
     let status = [];
     try {
       status = git(path, ["status", "--short"]).split("\n").filter(Boolean);
     } catch (error) {
-      status = [`unreadable: ${error.message}`];
+      status = [`unreadable: ${errorMessage(error)}`];
     }
     return {
       path,
@@ -170,18 +259,26 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
     try {
       return readClaims(worktree.path);
     } catch (error) {
-      claimFailures.push({ path: worktree.path, reason: error.message });
+      claimFailures.push({ path: worktree.path, reason: errorMessage(error) });
       return [];
     }
   });
   const activeClaims = claims.filter((claim) => !RELEASED_CLAIM_STATES.has(claim.state));
-  const lease = readLease(root);
+  let lease = null;
+  try {
+    lease = readLease(root, stateHome);
+  } catch (error) {
+    recordFailure(coordinationFailures, root, error);
+  }
   const gating = deriveGating({
     policy,
     lease,
     worktrees: detailedWorktrees,
     activeClaims,
     claimFailures,
+    coordinationFailures,
+    cloneFailures,
+    legacyLeases,
   });
 
   return {
@@ -191,9 +288,13 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy()) {
     repoRoot: root,
     baseSha: git(root, ["rev-parse", "HEAD"]),
     branch: git(root, ["branch", "--show-current"]) || null,
+    registeredClones,
     worktrees: detailedWorktrees,
     activeClaims,
     claimFailures,
+    coordinationFailures,
+    cloneFailures,
+    legacyLeases,
     unreadableWorktrees: gating.unreadableWorktrees,
     pendingLocalDiffs: gating.pendingLocalDiffs,
     activeWriterClaims: gating.activeWriterClaims,

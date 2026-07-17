@@ -5,6 +5,7 @@ export interface ParsedClaim {
   state: string;
   files: string[];
   invalidFileEntries: string[];
+  metadataErrors: string[];
 }
 
 export interface GatingInput {
@@ -20,6 +21,9 @@ export interface GatingInput {
   worktrees: Array<{ path: string; status?: string[] }>;
   activeClaims?: ParsedClaim[];
   claimFailures?: Array<{ path: string; reason: string }>;
+  coordinationFailures?: Array<{ path: string; reason: string }>;
+  cloneFailures?: Array<{ path: string; reason: string }>;
+  legacyLeases?: Array<{ clone: string; owner: unknown }>;
 }
 
 export interface Gating {
@@ -36,4 +40,8 @@ export function parseWorktrees(output: string): Array<Record<string, string | tr
 export function parseClaim(text: string, source: string, worktree: string): ParsedClaim;
 export function readClaims(worktree: string): ParsedClaim[];
 export function deriveGating(input: GatingInput): Gating;
-export function buildPreflight(repo?: string): Record<string, unknown>;
+export function buildPreflight(
+  repo?: string,
+  policy?: GatingInput["policy"],
+  options?: { stateHome?: string | null; now?: Date },
+): Record<string, unknown>;

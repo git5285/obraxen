@@ -10,7 +10,8 @@ The scheduled task is the **director**. It can delegate to three project agents:
 1. `scout` inspects the repository in read-only mode and returns up to
    three structured findings.
 2. `builder` is the only writer. It requires an isolated worktree,
-   one exact claim, a global lease, an unchanged base SHA and an exact path list.
+   one exact claim, a machine-user-shared lease, an unchanged base SHA and an
+   exact path list.
 3. `auditor` independently reviews the resulting diff and can veto it.
 
 This gives four logical roles including the director, but only one possible
@@ -31,7 +32,9 @@ success.
 `memory.mjs` gives each cycle bounded long-term memory without turning old model
 output into authority. It stores immutable run reports and a compact derived
 index below Git's common directory, so every worktree sees the same history
-while generated state stays outside commits.
+while generated state stays outside commits. This memory remains local to one
+clone; unlike the writer lease and clone registry, it is not shared across
+independent clones.
 
 Each cycle receives only the most recent runs and the most relevant open
 findings. Every recalled finding carries its last observed SHA and is marked for
@@ -69,8 +72,8 @@ Policy limits have explicit enforcement owners:
 
 | Limit | Enforcement |
 |---|---|
-| concurrent writers | shared atomic lease |
-| pending local diffs | preflight blocks the writer at one awaiting-review claim |
+| concurrent writers | machine-shared atomic lease keyed by normalized `origin` |
+| pending local diffs | every non-released claim blocks a second writer; awaiting-review claims also enforce the pending limit |
 | findings | response contract validator |
 | changed files and diff lines | deterministic diff policy |
 | run time | Codex `job_max_runtime_seconds` plus the director deadline |
@@ -96,11 +99,54 @@ npm run check:activation -- --json
 Then invoke `$obraxen-continuous-improvement` with a request to run one shadow
 cycle. Inspect its structured finding report and verify that it created no diff.
 
+`preflight.mjs` is read-only with respect to the repository, but it updates the
+current clone's heartbeat in the private coordination registry outside the
+checkout. Production CLI calls use one fixed state root below
+`~/.local/state/obraxen`; tests inject an isolated absolute root through the
+module API.
+
 ## Shared writer lease
 
-`lease.mjs` stores its lock below Git's common directory, not in a worktree.
-Every worktree therefore sees the same writer lease. Acquisition is atomic and
-records run id, token, host, PID, worktree, base SHA, exact claim and paths.
+`lease.mjs` stores its lock in private user state, keyed by a normalized
+credential-free `origin` identity. HTTPS and SCP-style SSH clones of the same
+remote therefore share one atomic lease even when they have independent Git
+directories. The record includes run id, token, host, PID, worktree, base SHA,
+exact claim and paths.
+
+This is not a distributed lock: different OS users or machines do not share the
+state root. A hosted writer would require a separate external coordination
+mechanism; the current hosted route therefore remains shadow-only.
+
+The same state root contains a registry keyed by each clone's Git common
+directory. Every preflight registers its current clone, validates every known
+clone's root, common directory and origin, and merges all of their worktree and
+claim scans. A corrupt entry, changed origin, missing clone or unreadable
+worktree fails closed. An immutable machine-local binding also prevents a clone
+from escaping its existing state merely by changing `origin`. Registry entries,
+clone bindings and stale leases are never removed or reclaimed automatically;
+inspect the associated process, worktree, Git status, claim and handoff before
+a human removes any of that state.
+
+Protocol version 2 is an explicit cutover gate. Acquisition is denied while any
+registered clone still uses the legacy Git-common-dir lease or retains a legacy
+owner record. Before enabling a writer after promotion, stop every old scheduler
+or manual runner, inventory clones that may not have registered yet, and update
+or explicitly retire every legacy clone. New code cannot prevent an unknown or
+already-running legacy binary from ignoring the new state, so mixed-version
+writers are never an allowed deployment mode.
+
+Heartbeat and release operations use a token-scoped atomic operation lock. This
+prevents a delayed operation from overwriting or deleting a newer acquisition.
+Lease tokens are reserved permanently by hash and cannot be reused. An
+abandoned operation lock or token reservation is an investigation signal and
+is not reclaimed automatically.
+
+Inspect the shared location, clone records and current owner without changing
+them:
+
+```sh
+node automation/agents/lease.mjs status
+```
 
 An expired heartbeat is only evidence for investigation. The script never
 reclaims a stale lease automatically; first inspect the recorded process,
@@ -125,13 +171,15 @@ commit or leave the machine.
 
 ## Scheduling
 
-The Codex Scheduled Task runs one bounded cycle every six hours. It may now
-produce one isolated local diff, but cannot commit, push or create a PR. Local
-runs require the Mac, Codex and this worktree to remain available, so they
-provide continuity but not a 24/7 availability guarantee. The repository also
-contains a compiled GitHub Agentic Workflow source as the hosted route; it
-remains manual-only and shadow-only until its inference credential, budget and
-canary gate are approved.
+Scheduling is external Codex application state and must be verified there; the
+repository does not prove that a task exists or is enabled. When configured,
+the intended task runs one bounded cycle every six hours and may produce one
+isolated local diff, but cannot commit, push or create a PR. Local runs require
+the Mac, Codex and the registered clone to remain available, so they provide
+continuity but not a 24/7 availability guarantee. The repository also contains
+a compiled GitHub Agentic Workflow source as the hosted route; it remains
+manual-only and shadow-only until its inference credential, budget and canary
+gate are approved.
 
 The prompt invokes `$obraxen-continuous-improvement` and requests one complete
 policy-controlled cycle. It never schedules the builder directly; the director
