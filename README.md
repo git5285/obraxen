@@ -171,9 +171,10 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 - autorización documentada de cada caso para nombre y fotografías;
 - referencia verificable y revisión legal aprobada por caso.
 
-La situación actual de los seis casos es `confirmada_internamente`: existe una
-declaración del equipo para identificar al cliente, pero falta soporte documental,
-alcance para fotografías y revisión legal. Esto mantiene la publicación cerrada.
+Los seis casos están en `documentada`: la declaración expresa del responsable
+del 17 de julio de 2026 cubre nombre del cliente y fotografías web, con referencia
+interna y revisión legal aprobada por caso. Los originales permanecen fuera del
+repositorio. Las 12 entradas restantes mantienen la publicación cerrada.
 
 Canonical, URLs e imágenes sociales absolutas ya se generan contra el dominio
 real en los artefactos locales. El sitemap permanece vacío hasta que toda la

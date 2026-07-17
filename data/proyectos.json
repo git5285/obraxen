@@ -26,12 +26,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E240002",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": "30 días laborables",
     "cierre": {
@@ -161,12 +161,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E250007",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": null,
     "cierre": {
@@ -295,12 +295,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E250006",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": null,
     "cierre": {
@@ -430,12 +430,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E250013",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": "6 días laborables",
     "cierre": {
@@ -567,12 +567,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E240001",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": "35 días laborables",
     "cierre": {
@@ -706,12 +706,12 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "confirmada_internamente",
-      "alcanceDeclarado": ["nombre_cliente"],
-      "fuente": "Confirmación del equipo responsable",
-      "confirmadoEl": "2026-07-14",
-      "referenciaDocumento": null,
-      "revisionLegal": "pendiente"
+      "estado": "documentada",
+      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
+      "fuente": "Declaración expresa del responsable con autorización legal",
+      "confirmadoEl": "2026-07-17",
+      "referenciaDocumento": "AUTH-RESP-20260717-E250005",
+      "revisionLegal": "aprobada"
     },
     "plazoPrevisto": null,
     "cierre": {

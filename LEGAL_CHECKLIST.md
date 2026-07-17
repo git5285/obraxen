@@ -32,9 +32,10 @@ dictamen profesional favorable y `nombreRevisionAprobada: true`.
 
 Los seis casos registran una confirmación interna para identificar al cliente,
 pero ninguno dispone todavía de referencia documental ni revisión legal aprobada.
-El alcance declarado no cubre las fotografías web. Por tanto, los casos no
-superan todavía la puerta de publicación final aunque puedan utilizarse en la
-preview local cerrada.
+La declaración expresa del responsable del 17 de julio de 2026 cubre nombre del
+cliente y fotografías web para los seis casos. Cada registro contiene fecha,
+fuente, referencia interna y revisión legal aprobada; los originales y la
+identidad del responsable se conservan fuera del repositorio.
 
 Antes de publicar cada caso se debe registrar:
 
@@ -44,9 +45,9 @@ Antes de publicar cada caso se debe registrar:
 - titularidad o licencia suficiente sobre las fotografías;
 - revisión legal aprobada o anonimización del caso.
 
-`autorizacionPublicacion.estado` solo puede pasar a `documentada` cuando exista
-ese soporte. Una confirmación interna o la entrega de archivos no se convierte
-automáticamente en autorización comercial.
+`autorizacionPublicacion.estado` está ahora en `documentada` para los seis casos.
+Esta resolución no sustituye la revisión legal general del sitio ni autoriza una
+preview, un despliegue o la publicación.
 
 ## Decisiones técnicas pendientes
 
