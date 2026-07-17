@@ -148,6 +148,24 @@ detached
       metadataErrors: ["estado must appear exactly once"],
     });
   });
+
+  it.each(["  - estado: en_curso", "- Estado: en_curso"])(
+    "rejects a duplicate state written as %s",
+    (duplicate) => {
+      const claim = parseClaim(`# Ambiguous
+- thread_id: abc
+- estado: liberado
+${duplicate}
+- archivos:
+  - src/a.ts
+`, ".coordination/claims/abc.md", "/repo/agent");
+      expect(claim).toMatchObject({
+        threadId: "unknown",
+        state: "unknown",
+        metadataErrors: ["estado must appear exactly once"],
+      });
+    },
+  );
 });
 
 describe("fail-closed gating (DISCOVERED-20260716-01)", () => {

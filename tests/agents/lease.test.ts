@@ -1,6 +1,13 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -66,6 +73,10 @@ describe("shared autonomous writer lease", () => {
       .toBe(ssh);
     expect(normalizeRepositoryIdentity("https://github.com./git5285/obraxen.git"))
       .toBe(ssh);
+    expect(normalizeRepositoryIdentity("https://github.com/Git5285/Obraxen.git"))
+      .toBe(ssh);
+    expect(normalizeRepositoryIdentity("https://github.com/git5285/obrax%65n.git"))
+      .toBe(ssh);
     expect(https).not.toContain("secret");
     expect(normalizeRepositoryIdentity("../obraxen.git", "/tmp/clone"))
       .toBe("file:/tmp/obraxen");
@@ -90,6 +101,19 @@ describe("shared autonomous writer lease", () => {
     expect(acquireLease(second, { ...owner("token-2"), runId: "run-2" }, new Date(), state))
       .toMatchObject({ acquired: false, reason: "lease_exists" });
     expect(readLease(second, state)?.token).toBe("token-1");
+  });
+
+  it("fails closed when a clone binding has no registry entry", () => {
+    const first = repository();
+    const second = repository();
+    const state = stateHome();
+    registerClone(first, { stateHome: state });
+    const coordination = getCoordinationPaths(first, state);
+    const [record] = readdirSync(coordination.clones);
+    rmSync(join(coordination.clones, record));
+
+    expect(() => acquireLease(second, owner("token-1"), new Date(), state))
+      .toThrow("clone binding has no registry entry");
   });
 
   it("denies direct acquisition after a registered clone changes origin", () => {

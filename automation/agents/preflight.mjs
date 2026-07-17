@@ -87,9 +87,9 @@ function parseClaimFiles(text) {
 }
 
 export function parseClaim(text, source, worktree) {
-  const states = [...text.matchAll(/^-\s+estado:\s*([^\n]*)$/gm)]
+  const states = [...text.matchAll(/^[\t ]*-[\t ]+estado:[\t ]*([^\n]*)$/gim)]
     .map((match) => normalizeClaimValue(match[1]));
-  const threadIds = [...text.matchAll(/^-\s+thread_id:\s*([^\n]*)$/gm)]
+  const threadIds = [...text.matchAll(/^[\t ]*-[\t ]+thread_id:[\t ]*([^\n]*)$/gim)]
     .map((match) => normalizeClaimValue(match[1]));
   const metadataErrors = [];
   if (states.length !== 1 || !states[0]) metadataErrors.push("estado must appear exactly once");

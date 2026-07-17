@@ -21,6 +21,7 @@ const DEFAULT_REMOTE_PORTS = new Map([
   ["ssh:", "22"],
   ["git:", "9418"],
 ]);
+const CASE_INSENSITIVE_REPOSITORY_HOSTS = new Set(["github.com"]);
 export const COORDINATION_PROTOCOL_VERSION = 2;
 
 function git(repo, args) {
@@ -61,13 +62,27 @@ function normalizeRemoteHost(hostname) {
   return hostname.replace(/\.$/, "").toLowerCase();
 }
 
+function normalizeRemoteRepositoryPath(hostname, path) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(path);
+  } catch {
+    throw new Error("origin remote contains invalid path encoding");
+  }
+  const stripped = stripRepositorySuffix(decoded);
+  return CASE_INSENSITIVE_REPOSITORY_HOSTS.has(hostname)
+    ? stripped.toLowerCase()
+    : stripped;
+}
+
 export function normalizeRepositoryIdentity(remote, repo = process.cwd()) {
   const value = String(remote ?? "").trim();
   if (!value) throw new Error("origin remote is required for shared coordination state");
 
   const scpStyle = value.match(/^(?:[^@/]+@)?([^:/]+):(.+)$/);
   if (scpStyle && !value.includes("://")) {
-    return `${normalizeRemoteHost(scpStyle[1])}/${stripRepositorySuffix(scpStyle[2])}`;
+    const hostname = normalizeRemoteHost(scpStyle[1]);
+    return `${hostname}/${normalizeRemoteRepositoryPath(hostname, scpStyle[2])}`;
   }
 
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) {
@@ -78,9 +93,10 @@ export function normalizeRepositoryIdentity(remote, repo = process.cwd()) {
     const port = parsed.port && parsed.port !== DEFAULT_REMOTE_PORTS.get(parsed.protocol)
       ? `:${parsed.port}`
       : "";
-    const host = `${normalizeRemoteHost(parsed.hostname)}${port}`;
+    const hostname = normalizeRemoteHost(parsed.hostname);
+    const host = `${hostname}${port}`;
     if (!host) throw new Error("origin remote does not include a host");
-    return `${host}/${stripRepositorySuffix(parsed.pathname)}`;
+    return `${host}/${normalizeRemoteRepositoryPath(hostname, parsed.pathname)}`;
   }
 
   return `file:${stripFileRepositorySuffix(resolve(repo, value))}`;
@@ -172,13 +188,19 @@ function validateCloneRecord(record, repositoryIdentity) {
 
 function validateCloneBinding(binding, repositoryIdentity, commonDir) {
   if (binding?.schemaVersion !== 1) throw new Error("clone binding has an unsupported schema");
+  if (typeof binding.repositoryIdentity !== "string" || !binding.repositoryIdentity) {
+    throw new Error("clone binding is missing repositoryIdentity");
+  }
+  if (typeof binding.commonDir !== "string" || !isAbsolute(binding.commonDir)) {
+    throw new Error("clone binding commonDir must be absolute");
+  }
+  if (!binding.registeredAt) throw new Error("clone binding is missing registeredAt");
   if (binding.repositoryIdentity !== repositoryIdentity) {
     throw new Error("registered clone origin has changed");
   }
   if (binding.commonDir !== commonDir) {
     throw new Error("clone binding key does not match its Git common directory");
   }
-  if (!binding.registeredAt) throw new Error("clone binding is missing registeredAt");
 }
 
 function getCloneBindingPath(paths, commonDir) {
@@ -251,8 +273,7 @@ export function registerClone(repo, options = {}) {
 
 export function readRegisteredClones(repo, stateHome = null) {
   const paths = getCoordinationPaths(repo, stateHome);
-  if (!existsSync(paths.clones)) return [];
-  return readdirSync(paths.clones)
+  const records = existsSync(paths.clones) ? readdirSync(paths.clones)
     .filter((name) => name.endsWith(".json"))
     .sort()
     .map((name) => {
@@ -262,7 +283,35 @@ export function readRegisteredClones(repo, stateHome = null) {
         throw new Error(`clone registry key is invalid: ${name}`);
       }
       return record;
-    });
+    }) : [];
+  const recordsByCommonDir = new Map(records.map((record) => [record.commonDir, record]));
+
+  const bindings = existsSync(paths.cloneIndex) ? readdirSync(paths.cloneIndex)
+    .filter((name) => name.endsWith(".json"))
+    .sort()
+    .map((name) => {
+      const binding = JSON.parse(readFileSync(join(paths.cloneIndex, name), "utf8"));
+      validateCloneBinding(binding, binding?.repositoryIdentity, binding?.commonDir);
+      if (name !== `${hash(binding.commonDir)}.json`) {
+        throw new Error(`clone binding key is invalid: ${name}`);
+      }
+      return binding;
+    }) : [];
+
+  for (const binding of bindings) {
+    if (
+      binding.repositoryIdentity === paths.repositoryIdentity
+      && !recordsByCommonDir.has(binding.commonDir)
+    ) {
+      throw new Error(`clone binding has no registry entry: ${binding.commonDir}`);
+    }
+  }
+  for (const record of records) {
+    if (!readCloneBinding(paths, record.commonDir)) {
+      throw new Error(`clone registry entry has no binding: ${record.commonDir}`);
+    }
+  }
+  return records;
 }
 
 export function verifyRegisteredClone(record) {
