@@ -1,8 +1,8 @@
 # Claim: endurecer guardarrailes de agentes y CI
 
 - thread_id: harden-agent-guardrails-20260717-3f5104b
-- actualizado: 2026-07-17 19:43 Europe/Madrid
-- estado: en_curso
+- actualizado: 2026-07-17 19:56 Europe/Madrid
+- estado: liberado
 - objetivo: Reducir permisos locales de Claude, publicar instrucciones durables, proteger los presupuestos de calidad y fijar GitHub Actions a SHA verificados.
 - archivos:
   - .claude/settings.json
@@ -17,7 +17,7 @@
   - .coordination/handoffs/harden-agent-guardrails-20260717-3f5104b.md
 - cambios_ajenos_detectados: Ninguno; main esta limpio y los registros locales previos ya quedaron integrados en la PR #27.
 - consumidores: Claude Code local, agentes autonomos, GitHub Actions y tareas humanas del repositorio.
-- siguiente_paso: aplicar el manifiesto, ejecutar pruebas focales y completas, auditar y entregar por PR con Quality verde.
+- siguiente_paso: Ninguno; la PR #28 se fusiono con Quality verde y la configuracion local quedo validada.
 
 ## Fuentes verificadas
 
@@ -31,3 +31,9 @@
 
 - Los dos archivos `.claude/` son configuracion local ignorada y no formaran parte del commit.
 - No se amplian permisos autonomos, no se cambian dependencias y no se despliega ni publica.
+
+## Cierre remoto
+
+- SHA revisado: `0ce007f5c8de63a20ee85f59082c20b42f15a869`.
+- `Quality gate` correcto: run `29601590641`.
+- PR #28 fusionada por squash en `36d0e4293dd68fc26112e24496f8138f70444dd1`.
