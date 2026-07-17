@@ -36,13 +36,15 @@ describe("structured data", () => {
     }
   });
 
-  it("keeps client publication evidence explicit and fail-closed", () => {
+  it("keeps client publication evidence explicit and traceable", () => {
     for (const project of projects) {
       expect(project.autorizacionPublicacion).toMatchObject({
-        estado: "confirmada_internamente",
-        alcanceDeclarado: ["nombre_cliente"],
-        referenciaDocumento: null,
-        revisionLegal: "pendiente",
+        estado: "documentada",
+        alcanceDeclarado: ["nombre_cliente", "fotografias_web"],
+        fuente: "Declaración expresa del responsable con autorización legal",
+        confirmadoEl: "2026-07-17",
+        referenciaDocumento: `AUTH-RESP-20260717-${project.referencia}`,
+        revisionLegal: "aprobada",
       });
     }
   });

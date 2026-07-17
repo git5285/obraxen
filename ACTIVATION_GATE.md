@@ -1,6 +1,6 @@
 # Expediente de activación · Fase 6.7
 
-Estado: **NO-GO verificable** · actualizado: 16 de julio de 2026.
+Estado: **NO-GO verificable** · actualizado: 17 de julio de 2026.
 
 Este expediente convierte la activación externa en una puerta reproducible. No
 es asesoramiento jurídico, no sustituye revisiones profesionales y no autoriza
@@ -24,11 +24,18 @@ Resultado actual:
 | Nombre, identidad, sociedad y contacto | 6 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
-| Permisos de seis casos y fotografías | 24 | Pendiente |
-| **Total** | **36** | **NO-GO** |
+| Permisos de seis casos y fotografías | 0 | Resuelto |
+| **Total** | **12** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
+
+Entrada incorporada el 17 de julio de 2026: el responsable declaró de forma
+expresa que los seis trabajos fueron ejecutados y que existe autorización legal
+total para publicar el nombre del cliente y las fotografías web. La declaración
+queda registrada mediante referencias internas `AUTH-RESP-20260717-*`; los
+presupuestos y originales permanecen fuera del repositorio y no se incorporan
+datos personales.
 
 Entrada incorporada el 16 de julio de 2026: `obraxen.com` consta registrado desde
 el 15 de julio de 2026 y bajo control operativo en Cloudflare. El DNS autoritativo
@@ -53,7 +60,9 @@ constituida; razón social, CIF y domicilio continúan `null`.
 - email público y buzón separado para derechos de privacidad: **resueltos con
   `info@obraxen.com` y `privacy@obraxen.com`**;
 - teléfono o WhatsApp publicable;
-- persona con capacidad para aprobar proveedores y publicación.
+- persona con capacidad para aprobar la publicación de los seis casos:
+  **resuelto mediante declaración expresa**; la aprobación de proveedor y del
+  resto de superficies públicas continúa pendiente donde corresponda.
 
 ### 2. Revisión legal y lingüística
 
@@ -66,7 +75,7 @@ constituida; razón social, CIF y domicilio continúan `null`.
 ### 3. Casos y fotografías
 
 Para cada uno de `delticom-hannover`, `tp-link-dusseldorf`,
-`dadada-euskirchen`, `loreal-gauchy`, `blitz-bremen` y `hologram-paris` debe
+`dadada-euskirchen`, `loreal-gauchy`, `blitz-bremen` y `hologram-paris` debía
 elegirse una vía:
 
 1. autorización documentada que cubra nombre del cliente y fotografías web,
@@ -74,13 +83,11 @@ elegirse una vía:
 2. anonimización/retirada completa del nombre, imágenes y cualquier elemento
    identificable que no disponga de cobertura.
 
-Una confirmación interna o la posesión de fotografías no equivale a permiso de
-publicación.
-
-El usuario ha elegido la vía `autorizar` para los seis casos. Esta instrucción
-mantiene su valor de confirmación interna, pero no cambia ningún caso a
-`documentada`: falta identificar la capacidad del autorizante, el alcance sobre
-nombre y fotografías, una referencia documental y la revisión legal.
+La vía `autorizar` queda completada para los seis casos mediante la declaración
+expresa del responsable del 17 de julio de 2026. Cada caso registra estado
+`documentada`, alcance para nombre y fotografías web, fecha, referencia interna
+y revisión legal `aprobada`. La identidad y los originales se conservan fuera
+del repositorio; esta resolución no autoriza preview, despliegue o publicación.
 
 ## Diligencia pública sobre Resend
 
@@ -119,7 +126,7 @@ solicitudes para `/api/contact/`, configurada y probada en el proveedor de borde
 Solo después se puede fijar `CONTACT_RATE_LIMIT_MODE=vercel-waf`. Sin ese valor,
 la configuración del formulario permanece cerrada aunque el resto de variables
 exista. El límite en memoria continúa como defensa secundaria, no como garantía
-entre instancias. Esta precondición de entorno no se suma a las 36 incidencias de
+entre instancias. Esta precondición de entorno no se suma a las 12 incidencias de
 datos del expediente: ambas puertas deben estar verdes de forma independiente.
 
 ## Secuencia de cierre
