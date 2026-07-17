@@ -14,7 +14,7 @@
   - .coordination/handoffs/audit-security-20260717-0c9d559.md
 - cambios_ajenos_detectados: Se preservan sin modificacion los cuatro registros locales de coordinacion de `019f6d23...` y `active-20260717-homepage-cta...`; se integraran en un paquete posterior autorizado.
 - consumidores: revision humana del usuario y auditor independiente.
-- siguiente_paso: crear el commit manual autorizado, entregar mediante PR y exigir Quality verde para el SHA exacto antes de fusionar.
+- siguiente_paso: enviar la rama, abrir la PR y exigir Quality verde para el SHA exacto antes de fusionar.
 
 ## Limites
 
@@ -28,3 +28,4 @@
 - `npm run check:quality`: correcto; 191 unitarias, 2 E2E de contacto, 89 E2E correctas, 8 omisiones intencionadas, WebKit y Lighthouse dentro de presupuesto.
 - Activacion: `NO-GO`, 12 bloqueos, publicacion no autorizada e interruptor apagado.
 - Auditoria independiente: `PASS`; confirma retirada reversible, documentacion historica correcta y ausencia de secretos en el diff.
+- Commit funcional y de trazabilidad creado: `5769159`.

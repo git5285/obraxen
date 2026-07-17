@@ -20,6 +20,7 @@
 - Lighthouse: tres rutas localizadas dentro de presupuesto.
 - Activacion: `NO-GO` con 12 bloqueos; `publicationAuthorized=false`; `publishSwitch=false`.
 - Auditor independiente: `PASS` sin defectos funcionales o de seguridad.
+- Commit inicial del paquete: `5769159`.
 
 ## Pendiente
 
