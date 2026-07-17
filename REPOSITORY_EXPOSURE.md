@@ -1,6 +1,6 @@
 # Revisión de exposición del repositorio
 
-Fecha: 15 de julio de 2026. Estado: repositorio privado en GitHub Free por
+Actualizado: 17 de julio de 2026. Estado: repositorio privado en GitHub Free por
 decisión expresa del usuario; la web continúa sin autorización de despliegue o
 publicación.
 
@@ -21,6 +21,10 @@ publicación.
 - `STRATEGY.md`, `research/sector-map.csv`, los borradores de datos y el historial
   de `.coordination/` estuvieron visibles mientras el repositorio fue público.
   No contienen credenciales, pero sí contexto estratégico y de ejecución.
+- `data/proyectos.borrador.json` se retiró del árbol Git actual y su ruta quedó
+  ignorada para evitar reintroducciones accidentales. La retirada no borra el
+  archivo de commits anteriores, clones existentes ni copias obtenidas durante
+  el periodo de exposición.
 - Los siete deployments Vercel legacy que conservaban la web estática provisional
   se eliminaron por ID el 15 de julio de 2026. El proyecto fue renombrado a
   `obraxen`; permanece sin deployments y con la publicación bloqueada. El alias
@@ -46,6 +50,8 @@ publicación.
    antes de subir ramas.
 7. `AGENTS.md` prohíbe omitir el hook o fusionar un SHA cuyo check remoto no esté
    verde. La protección se reevalúa si aumenta el número de colaboradores.
+8. Los datos de trabajo precontractuales se mantienen fuera del árbol versionado;
+   el sitio y el gate de activación solo consumen `data/proyectos.json`.
 
 ## Decisión de visibilidad
 
