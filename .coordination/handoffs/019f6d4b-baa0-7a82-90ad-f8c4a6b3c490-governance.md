@@ -1,8 +1,8 @@
 # Handoff: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- terminado: `2026-07-17 12:34 CEST`
-- resultado: protocolo v3 implementado y corte local completado; promoción manual a PR borrador autorizada y en curso.
+- terminado: `2026-07-17 12:48 CEST`
+- resultado: protocolo v3 implementado, corte local completado y PR borrador #22 creada; pendiente `Quality gate` remoto del SHA final y revisión humana.
 - archivos_cambiados: `.coordination/README.md`, `automation/agents/README.md`, `automation/agents/lease.mjs`, `automation/agents/lease.d.mts`, `automation/agents/preflight.mjs`, `automation/agents/preflight.d.mts`, `tests/agents/lease.test.ts`, `tests/agents/preflight.test.ts`, `.coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`, `.coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md`.
 - commits_tecnicos: `f4be03b17deeb33dbd4be29cbc9cf7a80bf8a573`, `5cb3e1b4080131073ee92e5673f17af472b45879`, `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f`.
 
@@ -39,11 +39,13 @@
 - El usuario autorizó mediante `Siguiente` el commit de estos metadatos, el push de la rama de gobernanza y una PR borrador hacia `main`; esta decisión no cambia `policy.json` ni concede autoridad autónoma.
 - `origin/main` se verificó en `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa`, sin PR abierta ni rama remota homónima.
 - CTA y los archivos no versionados `019f6d23` permanecen fuera del alcance. Cada SHA subido debe pasar el gate local y el SHA final exige `Quality gate` remoto verde.
+- Commit de promoción inicial `136ab2c75876501ba0bb595e0ac72a3e4b18fa3d` subido a `origin/codex/governance-shared-coordination`; PR borrador [#22](https://github.com/git5285/obraxen/pull/22) creada hacia `main`.
+- El primer `Quality gate` se inició sobre `136ab2c`; este handoff final generará un nuevo SHA y exige repetir el gate local y esperar el gate remoto exacto.
 
 ## Pendiente
 
-- Crear la PR borrador y registrar su URL y SHA final.
-- Mantener la PR sin fusión hasta revisión humana y `Quality gate` remoto verde.
+- Subir el commit documental final y verificar su `Quality gate` remoto.
+- Mantener la PR borrador sin fusión hasta una decisión humana posterior.
 - Sin fusión, despliegue ni publicación.
 
-- mensaje_enviado_a: tarea actual de Codex.
+- mensaje_enviado_a: tarea actual de Codex y PR borrador #22.

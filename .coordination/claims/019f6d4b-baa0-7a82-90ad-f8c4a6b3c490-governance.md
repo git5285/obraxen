@@ -1,8 +1,8 @@
 # Claim: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- actualizado: `2026-07-17 12:42 CEST`
-- estado: en_curso
+- actualizado: `2026-07-17 12:48 CEST`
+- estado: esperando_revision
 - objetivo: endurecer el control de escritor único y ejecutar el corte local, secuencial y reversible de los consumidores legacy al protocolo v3.
 - rama: `codex/governance-shared-coordination`
 - base: `1d31657504002e65e950b42f25e6e51e6f3dd326`
@@ -62,8 +62,8 @@
 - [x] Worktree CTA migrado a una rama standby v3 con la candidata preservada.
 - [x] Preflight posterior sin consumidores incompatibles y auditoría de cierre completada.
 - [x] Promoción manual limitada autorizada y remoto reconciliado.
-- [ ] Metadatos de promoción comprometidos y rama subida.
-- [ ] PR borrador creada y handoff remoto registrado.
+- [x] Metadatos de promoción comprometidos y rama subida.
+- [x] PR borrador creada y handoff remoto registrado.
 - [ ] `Quality gate` remoto del SHA final verificado.
 
 ## Resultado
@@ -78,8 +78,10 @@
 - Preflight desde los tres consumidores: `cloneFailures=[]`, `claimFailures=[]`, `coordinationFailures=[]`, `scout=true` y `writer=false`; los bloqueos esperados son `active_writer_claim_limit` y `pending_local_diff_limit` por esta candidata retenida en revisión. Lease compartida ausente y `legacyLeases=[]`.
 - Auditoría operativa independiente: `PASS`; no encontró split-brain, consumidor legacy conocido, pérdida de refs ni acción remota. Su entorno no pudo iniciar Vitest con el Node 24 firmado de Codex, pero cargó el protocolo v3 con ese runtime y reprodujo 40/40 con Node 26; la ejecución directora pasó 40/40 con Node `v24.14.0`.
 - El corte local no realizó push, PR, fusión, despliegue ni publicación; la promoción manual posterior queda acotada por la autorización anterior.
+- Promoción manual: commit `136ab2c75876501ba0bb595e0ac72a3e4b18fa3d` subido y PR borrador [#22](https://github.com/git5285/obraxen/pull/22) abierta hacia `main`; el primer `Quality gate` se inició sobre ese SHA.
 
 ## Pendiente humano
 
 - Revisar el SHA técnico `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f` y este registro de coordinación.
-- Ejecutar la promoción manual autorizada y detenerse con la PR en borrador; fusión, despliegue y publicación requieren decisiones posteriores.
+- Subir este handoff final y verificar el `Quality gate` remoto del nuevo SHA exacto.
+- Mantener la PR en borrador; fusión, despliegue y publicación requieren decisiones posteriores.
