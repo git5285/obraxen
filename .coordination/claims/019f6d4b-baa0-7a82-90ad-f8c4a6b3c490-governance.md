@@ -1,23 +1,34 @@
 # Claim: coordinación compartida entre clones
 
 - thread_id: `019f6d4b-baa0-7a82-90ad-f8c4a6b3c490`
-- actualizado: `2026-07-17 12:48 CEST`
-- estado: esperando_revision
-- objetivo: endurecer el control de escritor único y ejecutar el corte local, secuencial y reversible de los consumidores legacy al protocolo v3.
-- rama: `codex/governance-shared-coordination`
-- base: `1d31657504002e65e950b42f25e6e51e6f3dd326`
+- actualizado: `2026-07-17 16:17 CEST`
+- estado: liberado
+- objetivo: corregir la cronología y el alcance probatorio del lease de la PR `#23`, validar un nuevo SHA y volver a liberar la reserva sin fusionar, desplegar ni publicar.
+- rama: `codex/release-governance-claim`
+- base: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`
 
 - archivos:
-  - automation/agents/lease.mjs
-  - automation/agents/lease.d.mts
-  - automation/agents/preflight.mjs
-  - automation/agents/preflight.d.mts
-  - tests/agents/lease.test.ts
-  - tests/agents/preflight.test.ts
-  - automation/agents/README.md
-  - .coordination/README.md
   - .coordination/claims/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md
   - .coordination/handoffs/019f6d4b-baa0-7a82-90ad-f8c4a6b3c490-governance.md
+
+## Cierre post-merge autorizado
+
+- El usuario indicó `Siguiente` después de identificar como próximo paso una rama mínima para liberar esta claim y registrar la fusión.
+- La autorización inicial de esa fase cubría exclusivamente estos dos metadatos propios y un commit local; las acciones remotas posteriores se autorizaron por separado y se registran debajo.
+- PR `#22` fusionada por squash en `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`; `Quality gate` de `main` verde y preview Vercel omitida.
+
+## Corrección de trazabilidad de la PR #23
+
+- La PR `#23` se abrió como borrador sobre `562e690de807f1400da99251328e4cdf60f60987`, pasó su `Quality gate` y después se promovió a revisión mediante una autorización separada.
+- La revisión final detectó que esta claim, el handoff y la descripción remota aún presentaban el push y la PR como pendientes.
+- El usuario indicó `de acuerdo, sigue entonces` después de identificar como siguiente paso exacto corregir esa trazabilidad, crear y subir un nuevo SHA y repetir los gates.
+- Esta autorización se limita a los dos metadatos propios, su commit y push en `codex/release-governance-claim`, la descripción de la PR `#23` y la verificación local/remota. No autoriza fusión, despliegue ni publicación.
+
+## Corrección de la evidencia del lease
+
+- La revisión formal de `ec9107638a237f216489c246faaad0eb06422205` quedó bloqueada porque el handoff declaraba la tarea terminada antes del único registro durable del token de lease y presentaba ese registro como prueba suficiente de adquisición.
+- El usuario indicó `Siguiente` después de identificar como próximo paso exacto corregir esta trazabilidad, generar y subir otro SHA y repetir los gates.
+- Esta autorización conserva el mismo alcance de dos metadatos propios y la descripción de la PR `#23`; no autoriza fusión, despliegue ni publicación.
 
 ## Cambios ajenos preservados
 
@@ -27,8 +38,9 @@
 
 ## Límites
 
-- Autorizados manualmente en esta fase: commit de los dos metadatos propios, push de `codex/governance-shared-coordination` y creación de una PR borrador hacia `main`.
-- Sin fusión, despliegue ni publicación; tampoco se convierte la PR a lista para revisión sin una decisión posterior.
+- La autorización inicial cubrió estos dos metadatos propios y un commit local en `codex/release-governance-claim`; decisiones humanas posteriores autorizaron su push, la apertura de la PR `#23`, su paso a revisión y esta corrección de trazabilidad.
+- La promoción, paso a revisión y fusión squash de la PR `#22` se ejecutaron mediante decisiones humanas separadas; no ampliaron `policy.json`.
+- La PR `#23` no se fusiona en esta fase. Despliegue y publicación siguen sin autorización.
 - Sin limpiar worktrees, claims o handoffs ajenos.
 - Sin cambiar los bypasses del hook `pre-push`; quedan fuera de esta iteración.
 
@@ -64,7 +76,19 @@
 - [x] Promoción manual limitada autorizada y remoto reconciliado.
 - [x] Metadatos de promoción comprometidos y rama subida.
 - [x] PR borrador creada y handoff remoto registrado.
-- [ ] `Quality gate` remoto del SHA final verificado.
+- [x] `Quality gate` remoto del SHA final verificado.
+- [x] PR `#22` promovida a revisión y fusionada por squash tras autorización humana.
+- [x] `Quality gate` posterior de `main` verde y preview Vercel omitida.
+- [x] Cierre post-merge registrado y reserva liberada.
+- [x] Commit inicial de cierre `562e690de807f1400da99251328e4cdf60f60987` subido a `codex/release-governance-claim` y PR `#23` abierta como borrador.
+- [x] `Quality gate` de `562e690de807f1400da99251328e4cdf60f60987` verde y preview Vercel omitida.
+- [x] PR `#23` promovida a revisión mediante una decisión humana separada.
+- [x] Revisión final detectó y acotó la contradicción de trazabilidad antes de fusionar.
+- [x] Claim y handoff corregidos para reflejar la PR `#23` y conservar la fusión como decisión separada.
+- [x] `npm run check:quality` local de la candidata corregida verde: 187 unitarias, 52 páginas, 2 E2E de contacto, 89 E2E estándar, 8 omisiones previstas y Lighthouse en presupuesto.
+- [x] La primera reauditoría corrigió sus observaciones de estado, redacción y descripción remota; la revisión formal posterior de `ec9107638a237f216489c246faaad0eb06422205` detectó además que la cronología y el alcance probatorio del lease no eran reproducibles.
+- [x] La claim se reabrió antes de tocar el handoff y se adquirió un nuevo lease exacto para esta corrección.
+- [x] El auditor con lease activo confirmó que el defecto material quedó corregido; conservó solo el veto esperado por `.coordination/**` y una limitación aislada de su runtime Node 24.
 
 ## Resultado
 
@@ -79,9 +103,16 @@
 - Auditoría operativa independiente: `PASS`; no encontró split-brain, consumidor legacy conocido, pérdida de refs ni acción remota. Su entorno no pudo iniciar Vitest con el Node 24 firmado de Codex, pero cargó el protocolo v3 con ese runtime y reprodujo 40/40 con Node 26; la ejecución directora pasó 40/40 con Node `v24.14.0`.
 - El corte local no realizó push, PR, fusión, despliegue ni publicación; la promoción manual posterior queda acotada por la autorización anterior.
 - Promoción manual: commit `136ab2c75876501ba0bb595e0ac72a3e4b18fa3d` subido y PR borrador [#22](https://github.com/git5285/obraxen/pull/22) abierta hacia `main`; el primer `Quality gate` se inició sobre ese SHA.
+- SHA final revisado de la PR: `22c706a9b0f842910d9440f62bb7122a107b635a`; `Quality gate` remoto verde.
+- Integración squash: `dd8566d92c4fa0f76b3af0a6f036fdc094c88762`, autor `git5285`, un único padre `e9e7818d33d850a904a9d0c758d3bd4f6b71cfaa`.
+- Workflow posterior de `main` `29580746090`: `Quality gate` verde; `Gated Vercel preview` omitida. Publicación permanece `NO-GO` con 36 bloqueos.
+- Cierre remoto: PR [#23](https://github.com/git5285/obraxen/pull/23) abierta sobre el commit inicial `562e690de807f1400da99251328e4cdf60f60987`, promovida a revisión y con su primer `Quality gate` verde; no se fusionó ni desplegó.
+- Esta actualización elimina las referencias obsoletas que presentaban la apertura de la PR `#23` como una decisión todavía pendiente. El SHA vigente de la PR debe conservar `Quality gate` remoto verde antes de cualquier decisión humana de fusión.
+- Revisión formal de `ec9107638a237f216489c246faaad0eb06422205`: veto material porque el handoff indicaba `terminado` a las `15:25 CEST`, antes de `firstUsedAt=2026-07-17T13:27:13.555Z`, y porque la reserva durable del token se crea antes del lock y no conserva base, claim ni rutas.
+- Lease de esta corrección: `runId=trace-pr23-lease-correction-ec910763`, adquirido a `2026-07-17T14:04:12.485Z` sobre `ec9107638a237f216489c246faaad0eb06422205` y limitado a esta claim y su handoff. El registro sanitizado del propietario, sin token, tiene SHA-256 `7463b1f66785ee10052b56bd07c3c85890ead647603085c243dc3e9486073ba5`.
+- Director con Node `v24.14.0`: `npm run check`, `check:diff` y `check:quality` verdes; el auditor reprodujo el contenido y la cronología, aunque su propio binding nativo no inició Vitest con Node 24. La activación antes/después coincide en `NO-GO` con 36 bloqueos.
 
 ## Pendiente humano
 
-- Revisar el SHA técnico `5cbd3cd33ebc26726085fb4dd2a8181e6b95f71f` y este registro de coordinación.
-- Subir este handoff final y verificar el `Quality gate` remoto del nuevo SHA exacto.
-- Mantener la PR en borrador; fusión, despliegue y publicación requieren decisiones posteriores.
+- Generar y subir un nuevo SHA, repetir el `Quality gate` remoto y revisar únicamente ese SHA; la fusión se decide por separado.
+- Despliegue y publicación continúan sin autorización.
