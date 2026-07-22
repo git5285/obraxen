@@ -188,12 +188,12 @@ cambios staged sin propietario.
   de naming encontró usos exactos de `OBRAZEN` en construcción e ingeniería;
   por ello la puerta ejecutable incorpora una revisión profesional adicional y
   pasa de 35 a 36 incidencias, todavía `NO-GO`.
-- La declaración expresa del responsable del 17 de julio de 2026 queda
-  registrada para los seis casos con alcance sobre nombre y fotografías web,
-  referencia interna y revisión legal aprobada. Los bloqueos de casos bajan de
-  24 a 0 y la puerta completa queda en `NO-GO` con 12 entradas restantes. La PR
-  `#24` documentó las seis autorizaciones y dejó `main` en `5138804` con Quality
-  verde, sin crear preview, despliegue o publicación.
+- La PR `#24` registró la declaración expresa del responsable del 17 de julio de
+  2026 para los seis casos mediante referencias internas y el modelo de entonces
+  la trató como autorización documentada y revisión legal aprobada. La prioridad
+  de evidencia tipada posterior corrige esa promoción: conserva la declaración,
+  pero vuelve a exigir documento y revisión profesional por separado. No hubo
+  preview, despliegue o publicación.
 - La PR `#25` alineó la CTA con la disponibilidad real del formulario y quedó en
   `0c9d559` tras el Quality run `29598825792`.
 - La PR `#26` retiró el borrador de proyectos del árbol actual sin reescribir el
@@ -213,9 +213,11 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 - `ROADMAP.md` controla la migración a Next.js y la entrega.
 - `data/brand.json`, `data/proyectos.json` y `data/ofertas.json` siguen siendo las
   fuentes estructuradas de identidad, casos y ofertas.
-- Los seis casos están en `documentada` mediante referencias internas
-  `AUTH-RESP-20260717-*`; nombres y fotografías web están cubiertos y los
-  originales permanecen fuera del repositorio.
+- Los seis casos conservan declaraciones del responsable mediante referencias
+  internas `AUTH-RESP-20260717-*`, con alcance declarado para nombres y
+  fotografías web. Esas referencias no son documentos ni revisiones legales;
+  ambos niveles siguen pendientes y los originales permanecen fuera del
+  repositorio.
 - ADR-007 fija Next.js con prerenderizado y cabeceras como implementación única;
   no se usa `output: export` ni se mantiene la base legacy.
 - `REPOSITORY_EXPOSURE.md` controla los riesgos derivados de la visibilidad
@@ -269,9 +271,10 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
 ## Orden siguiente
 
-1. Resolver las 12 incidencias restantes de la puerta 6.7 con revisión
-   profesional de nombre, en/de/es/fr, identidad, sociedad, teléfono, legal y
-   DPA/proveedor según `ACTIVATION_GATE.md`.
+1. Resolver las 24 incidencias de la puerta 6.7: identidad, sociedad, contacto,
+   legal, DPA/proveedor, revisión profesional de nombre e idiomas y, para cada
+   caso, documento de autorización más revisión legal verificada según
+   `ACTIVATION_GATE.md`.
 2. Solo después y con autorización expresa, crear una preview protegida, auditar
    el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
 3. Mantener previews, indexación, formulario, analítica real y publicación

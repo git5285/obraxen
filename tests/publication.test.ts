@@ -31,21 +31,33 @@ const publicBrand: Brand = {
   publicar: true,
 };
 
-const undocumentedProjects: readonly Project[] = projects.map((project, index) =>
-  index === 0
-    ? {
-        ...project,
-        autorizacionPublicacion: {
-          estado: "confirmada_internamente",
-          alcanceDeclarado: ["nombre_cliente"],
-          fuente: "Confirmación interna de prueba",
-          confirmadoEl: "2026-07-17",
-          referenciaDocumento: null,
-          revisionLegal: "pendiente",
+const publishableProjects: readonly Project[] = projects.map((project) => {
+  const documentReference = `AUTH-DOC-TEST-${project.referencia}`;
+
+  return {
+    ...project,
+    autorizacionPublicacion: {
+      evidencias: [
+        ...project.autorizacionPublicacion.evidencias,
+        {
+          tipo: "documento_referenciado",
+          alcance: ["nombre_cliente", "fotografias_web"],
+          entidadAutorizante: "Entidad autorizante de prueba",
+          emitidoEl: "2026-07-17",
+          referenciaDocumento: documentReference,
         },
-      }
-    : project,
-);
+        {
+          tipo: "revision_legal_verificada",
+          documentoRevisado: documentReference,
+          revisor: "Revisor legal de prueba",
+          revisadoEl: "2026-07-17",
+          referenciaRevision: `LEGAL-REVIEW-TEST-${project.referencia}`,
+          resultado: "aprobada",
+        },
+      ],
+    },
+  };
+});
 
 describe("publication gate", () => {
   it("keeps the current project in closed preview", () => {
@@ -58,7 +70,7 @@ describe("publication gate", () => {
   });
 
   it("allows publication only with complete validated identity", () => {
-    expect(getPublicationState(publicBrand, projects)).toMatchObject({
+    expect(getPublicationState(publicBrand, publishableProjects)).toMatchObject({
       mode: "public",
       isPublic: true,
       issues: [],
@@ -71,9 +83,17 @@ describe("publication gate", () => {
     );
   });
 
-  it("blocks publication while client names and photographs lack documentary support", () => {
-    expect(() => getPublicationState(publicBrand, undocumentedProjects)).toThrow(
+  it("does not promote a responsible declaration into a document or legal review", () => {
+    expect(() => getPublicationState(publicBrand, projects)).toThrow(
       PublicationConfigurationError,
+    );
+    const issues = getPublicationState({ ...publicBrand, publicar: false }, projects).issues;
+    expect(issues).toHaveLength(projects.length * 2);
+    expect(issues).toContain(
+      `${projects[0].slug}: falta un documento de autorización que cubra nombre y fotografías`,
+    );
+    expect(issues).toContain(
+      `${projects[0].slug}: falta una revisión legal verificada del documento de autorización`,
     );
   });
 
@@ -81,24 +101,24 @@ describe("publication gate", () => {
     expect(() => getPublicationState({
       ...publicBrand,
       revisionTraducciones: brand.revisionTraducciones,
-    }, projects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toThrow(PublicationConfigurationError);
     expect(() => getPublicationState({
       ...publicBrand,
       formularioRevisionAprobada: false,
-    }, projects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toThrow(PublicationConfigurationError);
   });
 
   it("blocks publication until the commercial name has professional clearance", () => {
     expect(() => getPublicationState({
       ...publicBrand,
       nombreRevisionAprobada: false,
-    }, projects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toThrow(PublicationConfigurationError);
   });
 
   it("requires a dedicated privacy address before publication", () => {
     expect(() => getPublicationState({
       ...publicBrand,
       emailPrivacidad: null,
-    }, projects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toThrow(PublicationConfigurationError);
   });
 });
