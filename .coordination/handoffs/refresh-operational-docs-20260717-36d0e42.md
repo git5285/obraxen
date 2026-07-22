@@ -2,7 +2,8 @@
 
 - thread_id: refresh-operational-docs-20260717-36d0e42
 - fecha_inicio: 2026-07-17 19:57 Europe/Madrid
-- estado: pendiente_de_entrega_remota
+- fecha_cierre: 2026-07-17 20:11 Europe/Madrid
+- estado: completado
 - base: 36d0e4293dd68fc26112e24496f8138f70444dd1
 
 ## Resultado
@@ -21,8 +22,10 @@
 - `npm run check:quality`: correcto con 194 unitarias, 52 paginas, 2 E2E de contacto, 89 E2E correctas, 8 omisiones intencionadas, WebKit y Lighthouse dentro de presupuesto.
 - Activacion: `NO-GO`, 12 bloqueos, publicacion no autorizada e interruptor apagado.
 - Auditoria independiente: `PASS` sin hallazgos.
+- `Quality gate` remoto: correcto en la ejecucion `29602517674` para el SHA exacto `87dc13bbaae5763e84a67802681fb82be47c13ab`.
+- PR #29: fusionada por squash en `ec89feef00fe9abb31bf61487ea811e34e01eb2f`.
 
 ## Pendiente
 
-- Ejecutar gate completo, auditoria independiente y `Quality gate` remoto del SHA exacto.
+- Ninguno dentro de este alcance.
 - No desplegar ni publicar.

@@ -304,13 +304,13 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Resolver las 12 incidencias que informa `npm run check:activation` mediante el
-expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
-en/de/es/fr, identidad y sociedad, revisión legal general,
-aceptación documentada del proveedor y teléfono o WhatsApp. Con cero bloqueos y
-autorización expresa se construirá una URL candidata protegida, se auditará y se
-pedirá la decisión de publicación. Hasta entonces, formulario, despliegues,
-indexación y analítica real permanecen apagados.
+Resolver todas las incidencias que informe `npm run check:activation` mediante
+el expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
+en/de/es/fr, identidad y sociedad, revisión legal general, aceptación documentada
+del proveedor, teléfono o WhatsApp y, para cada caso, documento verificable y
+revisión legal. Con cero bloqueos y autorización expresa se construirá una URL
+candidata protegida, se auditará y se pedirá la decisión de publicación. Hasta
+entonces, formulario, despliegues, indexación y analítica real permanecen apagados.
 
 ## Referencias oficiales de implementacion
 

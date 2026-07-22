@@ -171,10 +171,12 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 - autorización documentada de cada caso para nombre y fotografías;
 - referencia verificable y revisión legal aprobada por caso.
 
-Los seis casos están en `documentada`: la declaración expresa del responsable
-del 17 de julio de 2026 cubre nombre del cliente y fotografías web, con referencia
-interna y revisión legal aprobada por caso. Los originales permanecen fuera del
-repositorio. Las 12 entradas restantes mantienen la publicación cerrada.
+Los seis casos conservan una declaración expresa del responsable del 17 de julio
+de 2026 sobre el nombre del cliente y las fotografías web. Esa evidencia interna
+no equivale al documento de autorización ni a su revisión legal; ambas capas
+siguen pendientes para cada caso. Los originales permanecen fuera del
+repositorio. `npm run check:activation` mantiene el recuento canónico y la
+publicación cerrada mientras exista cualquier bloqueo.
 
 Canonical, URLs e imágenes sociales absolutas ya se generan contra el dominio
 real en los artefactos locales. El sitemap permanece vacío hasta que toda la
@@ -209,6 +211,7 @@ tareas; no son contenido público del sitio.
 ## Próximo hito
 
 Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: revisión profesional
-de en/de/es/fr, identidad y sociedad, teléfono, permisos, legal y DPA/proveedor;
-después se audita una URL candidata y se decide expresamente si publicar.
+de en/de/es/fr, identidad y sociedad, teléfono, documentos y revisión legal de
+los casos, legal general y DPA/proveedor; después se audita una URL candidata y
+se decide expresamente si publicar.
 Indexación, analítica real, formulario y despliegue continúan bloqueados.
