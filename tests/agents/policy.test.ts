@@ -232,9 +232,20 @@ describe("autonomous-agent policy", () => {
   });
 
   it.each([
+    ".gitattributes",
+    ".gitignore",
+    ".npmrc",
+    ".nvmrc",
+    "AUTONOMOUS_IMPROVEMENT.md",
     "CLAUDE.md",
+    "NAMING_CLEARANCE.md",
+    "data/ofertas.schema.json",
+    "data/proyectos.schema.json",
+    "eslint.config.mjs",
     "scripts/lighthouse-budgets.ts",
     "scripts/qa-port.d.mts",
+    "tsconfig.json",
+    "vitest.config.ts",
   ])("protects operational guardrail %s from autonomous diffs", (path) => {
     const result = validateDiff({
       changedPaths: [path],
@@ -244,6 +255,10 @@ describe("autonomous-agent policy", () => {
     }, activePolicy());
     expect(result.ok).toBe(false);
     expect(result.violations).toContain(`${path} is protected`);
+  });
+
+  it("does not retain removed project draft paths in policy", () => {
+    expect(activePolicy().protectedPaths).not.toContain("data/proyectos.borrador.json");
   });
 });
 
