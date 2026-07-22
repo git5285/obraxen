@@ -1,6 +1,6 @@
 # Expediente de activación · Fase 6.7
 
-Estado: **NO-GO verificable** · actualizado: 17 de julio de 2026.
+Estado: **NO-GO verificable** · actualizado: 18 de julio de 2026.
 
 Este expediente convierte la activación externa en una puerta reproducible. No
 es asesoramiento jurídico, no sustituye revisiones profesionales y no autoriza
@@ -24,8 +24,8 @@ Resultado actual:
 | Nombre, identidad, sociedad y contacto | 6 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
-| Permisos de seis casos y fotografías | 0 | Resuelto |
-| **Total** | **12** | **NO-GO** |
+| Permisos de seis casos y fotografías | 12 | Pendiente |
+| **Total** | **24** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
@@ -35,7 +35,8 @@ expresa que los seis trabajos fueron ejecutados y que existe autorización legal
 total para publicar el nombre del cliente y las fotografías web. La declaración
 queda registrada mediante referencias internas `AUTH-RESP-20260717-*`; los
 presupuestos y originales permanecen fuera del repositorio y no se incorporan
-datos personales.
+datos personales. Esa entrada acredita únicamente que la declaración se hizo:
+no es un documento de autorización ni una revisión legal profesional.
 
 Entrada incorporada el 16 de julio de 2026: `obraxen.com` consta registrado desde
 el 15 de julio de 2026 y bajo control operativo en Cloudflare. El DNS autoritativo
@@ -61,8 +62,9 @@ constituida; razón social, CIF y domicilio continúan `null`.
   `info@obraxen.com` y `privacy@obraxen.com`**;
 - teléfono o WhatsApp publicable;
 - persona con capacidad para aprobar la publicación de los seis casos:
-  **resuelto mediante declaración expresa**; la aprobación de proveedor y del
-  resto de superficies públicas continúa pendiente donde corresponda.
+  **declaración recibida, acreditación documental pendiente**; la aprobación de
+  proveedor y del resto de superficies públicas continúa pendiente donde
+  corresponda.
 
 ### 2. Revisión legal y lingüística
 
@@ -83,11 +85,13 @@ elegirse una vía:
 2. anonimización/retirada completa del nombre, imágenes y cualquier elemento
    identificable que no disponga de cobertura.
 
-La vía `autorizar` queda completada para los seis casos mediante la declaración
-expresa del responsable del 17 de julio de 2026. Cada caso registra estado
-`documentada`, alcance para nombre y fotografías web, fecha, referencia interna
-y revisión legal `aprobada`. La identidad y los originales se conservan fuera
-del repositorio; esta resolución no autoriza preview, despliegue o publicación.
+Los seis casos conservan la declaración expresa del responsable del 17 de julio
+de 2026 como `declaracion_responsable`, con alcance para nombre y fotografías,
+fecha y referencia interna. Para completar la vía `autorizar` falta, en cada
+caso, un `documento_referenciado` que cubra ese alcance y una
+`revision_legal_verificada` enlazada al documento. La identidad y los originales
+se conservan fuera del repositorio; no existe autorización de preview,
+despliegue o publicación.
 
 ## Diligencia pública sobre Resend
 
@@ -126,7 +130,7 @@ solicitudes para `/api/contact/`, configurada y probada en el proveedor de borde
 Solo después se puede fijar `CONTACT_RATE_LIMIT_MODE=vercel-waf`. Sin ese valor,
 la configuración del formulario permanece cerrada aunque el resto de variables
 exista. El límite en memoria continúa como defensa secundaria, no como garantía
-entre instancias. Esta precondición de entorno no se suma a las 12 incidencias de
+entre instancias. Esta precondición de entorno no se suma a las 24 incidencias de
 datos del expediente: ambas puertas deben estar verdes de forma independiente.
 
 ## Secuencia de cierre

@@ -43,20 +43,24 @@ export function getProjectPublicationIssues(projects: readonly Project[]): strin
   return projects.flatMap((project) => {
     const authorization = project.autorizacionPublicacion;
     const issues: string[] = [];
+    const documents = authorization.evidencias.filter(
+      (evidence) => evidence.tipo === "documento_referenciado",
+    );
+    const publicationDocument = documents.find((evidence) =>
+      requiredProjectScopes.every((scope) => evidence.alcance.includes(scope)),
+    );
+    const approvedReview = publicationDocument
+      ? authorization.evidencias.find((evidence) =>
+          evidence.tipo === "revision_legal_verificada"
+          && evidence.documentoRevisado === publicationDocument.referenciaDocumento
+          && evidence.resultado === "aprobada")
+      : undefined;
 
-    if (authorization.estado !== "documentada") {
-      issues.push(`${project.slug}: la autorización de publicación debe estar documentada`);
+    if (!publicationDocument) {
+      issues.push(`${project.slug}: falta un documento de autorización que cubra nombre y fotografías`);
     }
-    for (const scope of requiredProjectScopes) {
-      if (!authorization.alcanceDeclarado.includes(scope)) {
-        issues.push(`${project.slug}: la autorización no cubre ${scope}`);
-      }
-    }
-    if (!authorization.referenciaDocumento) {
-      issues.push(`${project.slug}: falta la referencia documental de la autorización`);
-    }
-    if (authorization.revisionLegal !== "aprobada") {
-      issues.push(`${project.slug}: la autorización necesita revisión legal aprobada`);
+    if (!approvedReview) {
+      issues.push(`${project.slug}: falta una revisión legal verificada del documento de autorización`);
     }
 
     return issues;

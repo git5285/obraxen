@@ -103,44 +103,65 @@ const projectTranslation = z.object({
   imagenes: z.array(localizedImage).min(3),
 }).strict();
 
-const projectPublicationAuthorizationSchema = z.object({
-  estado: z.enum([
-    "pendiente",
-    "confirmada_internamente",
-    "documentada",
-    "denegada",
-  ]),
-  alcanceDeclarado: z.array(z.enum([
-    "nombre_cliente",
-    "fotografias_web",
-    "logotipo",
-  ])).refine(
-    (items) => new Set(items).size === items.length,
-    "El alcance de publicación no puede contener duplicados",
-  ),
-  fuente: nullableText,
-  confirmadoEl: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
-  referenciaDocumento: nullableText,
-  revisionLegal: z.enum(["pendiente", "aprobada", "no_aplica"]),
-}).strict().superRefine((authorization, context) => {
-  if (
-    ["confirmada_internamente", "documentada"].includes(authorization.estado) &&
-    (!authorization.fuente || !authorization.confirmadoEl)
-  ) {
-    context.addIssue({
-      code: "custom",
-      message: "Una autorización confirmada necesita fuente y fecha",
-    });
-  }
+const publicationScope = z.enum([
+  "nombre_cliente",
+  "fotografias_web",
+  "logotipo",
+]);
 
-  if (
-    authorization.estado === "documentada" &&
-    (!authorization.referenciaDocumento || authorization.revisionLegal !== "aprobada")
-  ) {
-    context.addIssue({
-      code: "custom",
-      message: "La publicación documentada necesita referencia y revisión legal aprobada",
-    });
+const publicationScopes = z.array(publicationScope).min(1).refine(
+  (items) => new Set(items).size === items.length,
+  "El alcance de publicación no puede contener duplicados",
+);
+
+const evidenceDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+const projectPublicationEvidenceSchema = z.discriminatedUnion("tipo", [
+  z.object({
+    tipo: z.literal("declaracion_responsable"),
+    alcance: publicationScopes,
+    fuente: text,
+    declaracion: text,
+    declaradoEl: evidenceDate,
+    referenciaInterna: text,
+  }).strict(),
+  z.object({
+    tipo: z.literal("documento_referenciado"),
+    alcance: publicationScopes,
+    entidadAutorizante: text,
+    emitidoEl: evidenceDate,
+    referenciaDocumento: text,
+  }).strict(),
+  z.object({
+    tipo: z.literal("revision_legal_verificada"),
+    documentoRevisado: text,
+    revisor: text,
+    revisadoEl: evidenceDate,
+    referenciaRevision: text,
+    resultado: z.enum(["aprobada", "cambios_requeridos", "denegada"]),
+  }).strict(),
+]);
+
+const projectPublicationAuthorizationSchema = z.object({
+  evidencias: z.array(projectPublicationEvidenceSchema).min(1),
+}).strict().superRefine((authorization, context) => {
+  const documentReferences = new Set(
+    authorization.evidencias
+      .filter((evidence) => evidence.tipo === "documento_referenciado")
+      .map((evidence) => evidence.referenciaDocumento),
+  );
+
+  for (const [index, evidence] of authorization.evidencias.entries()) {
+    if (
+      evidence.tipo === "revision_legal_verificada"
+      && !documentReferences.has(evidence.documentoRevisado)
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["evidencias", index, "documentoRevisado"],
+        message: "Una revisión legal debe enlazar un documento referenciado en el mismo expediente",
+      });
+    }
   }
 });
 
