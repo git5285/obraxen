@@ -1,17 +1,26 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-17 19:58 Europe/Madrid.
+Actualizado: 2026-07-22 13:10 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas viven en
 `.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
 
 ## Fuente de verdad actual
 
-Las claims activas no se duplican en este tablero: se consultan directamente en
-`.coordination/claims/` y con `node automation/agents/preflight.mjs --json`.
-Esto evita que una frase estática como “no hay claims activas” quede obsoleta al
-abrir la siguiente tarea. El último `main` verificado antes de esta actualización
-es `36d0e42`, resultado de la PR `#28`; no desplegó ni publicó el sitio.
+Las claims activas no se duplican en este tablero: `preflight.mjs` combina los
+marcadores de `.coordination/claims/` con el log operativo append-only compartido
+fuera del checkout. Esto evita que una frase estatica como "no hay claims
+activas" quede obsoleta y que un cierre post-merge necesite otra PR de metadatos.
+El ultimo `main` verificado antes de esta actualizacion es `ec89fee`, resultado
+de la PR `#29`; no desplego ni publico el sitio.
+
+## Runtime obligatorio de agentes
+
+Director, scout, builder y auditor ejecutan Node, npm y los checks del proyecto
+mediante `automation/agents/runtime.mjs`. El preflight exige Node `24.18.0`, npm
+`11.16.0`, el lockfile y el arbol instalado exactos, y una carga nativa valida.
+Cada fase conserva la misma huella SHA-256; una version, dependencia o binding
+distinto bloquea tanto el scouting como la escritura.
 
 ## Contexto de consolidación
 
@@ -227,12 +236,28 @@ Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
   autónomo se promueve solo a `active + allowLocalDiff`: un builder, un worktree,
   un lease, rutas exactas y auditor con veto. Commit, push, PR, merge, despliegue
   y publicación continúan deshabilitados.
+- Una autorización humana puede agrupar commit de candidata, push de una rama
+  `codex/` y creación de PR borrador sin activar autoridad permanente. El bundle
+  fija candidata, SHA, rutas, activación, checks, orden y caducidad; cada paso se
+  reserva y consume una sola vez en el log compartido. Merge, despliegue,
+  publicación, borrado y rollback destructivo quedan excluidos y requieren una
+  decisión separada.
 - La aceptación humana del primer diff permitió trasladarlo manualmente a la PR
   `#18`; no amplía la autoridad del ciclo autónomo ni constituye autorización
   para fusionar esa PR.
 - La ejecución alojada permanece manual y en sombra hasta disponer de una
   credencial de inferencia y un presupuesto explícito; el horario local de seis
   horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
+- Cada informe de agente declara si su origen es ciclo programado, petición
+  humana, mantenimiento del plano de control o entrega. Toda la actividad se
+  conserva para operación, pero solo los ciclos `scheduled_autonomous` miden la
+  eficacia autónoma. La memoria anterior a este contrato queda como `unknown` y
+  no se reclasifica por inferencia.
+- Los ciclos autónomos programados aplican un presupuesto de atención
+  determinista 70/20/10: siete turnos de producto, dos de fiabilidad y uno de
+  mantenimiento de agentes por cada diez. La memoria valida la categoría antes
+  de escribir y un `no_op` consume igualmente su turno. Las peticiones humanas y
+  la entrega se contabilizan, pero no mueven el cursor autónomo.
 - La preview permanece cerrada; no hay autorización de publicación o despliegue.
 - El proyecto Vercel se conserva sin deployments; el alias automático
   `obraxen.vercel.app` está reservado y no sirve contenido. Los alias históricos

@@ -1,6 +1,6 @@
 # Auditoría técnica
 
-Última verificación: 17 de julio de 2026. Stack: Next.js 16.2.10, React 19,
+Última verificación: 22 de julio de 2026. Stack: Next.js 16.2.10, React 19,
 TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
 
 ## Estado
@@ -37,7 +37,7 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 194 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 259 pruebas Vitest y build de producción.
 - Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
 - Playwright estándar: 97 ejecuciones configuradas; 89 correctas y 8 omisiones
