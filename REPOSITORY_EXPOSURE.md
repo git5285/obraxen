@@ -32,11 +32,12 @@ publicación.
 
 ## Controles adoptados
 
-1. Cada caso registra estado, alcance declarado, fuente, fecha, referencia
-   documental y revisión legal de su autorización.
-2. La puerta de publicación exige estado `documentada`, alcance para
-   `nombre_cliente` y `fotografias_web`, referencia documental y revisión legal
-   `aprobada` para todos los casos.
+1. Cada caso conserva evidencias separadas por tipo: declaración del responsable,
+   documento referenciado y revisión legal verificada.
+2. La puerta de publicación no promueve una declaración. Exige un
+   `documento_referenciado` con alcance para `nombre_cliente` y
+   `fotografias_web`, y una `revision_legal_verificada` aprobada que enlace ese
+   mismo documento.
 3. Los datos desconocidos se almacenan como `null`; no se publican direcciones ni
    años incompletos.
 4. `vercel.json` mantiene los despliegues Git desactivados. La visibilidad del

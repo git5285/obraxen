@@ -153,11 +153,12 @@ rehacer al activar i18n.
 **Estado actualizado:** los seis proyectos recibidos se preparan desde
 `data/proyectos.json` tras confirmar ejecución, unidades principales y ubicaciones.
 La autorización para identificar clientes deja de ser un booleano: cada caso
-registra estado, alcance, fuente, fecha, referencia y revisión legal. La situación
-actual es confirmación interna para el nombre, sin soporte documental ni alcance
-para fotografías, de modo que la publicación final permanece bloqueada. Las 18
-imágenes seleccionadas pasaron una auditoría de calidad y privacidad documentada
-en `PHOTO_AUDIT.md`, que no sustituye la autorización de uso.
+registra por separado declaración del responsable, documento referenciado y
+revisión legal verificada. La declaración actual cubre nombre y fotografías,
+pero no constituye soporte documental ni revisión profesional, de modo que la
+publicación final permanece bloqueada. Las 18 imágenes seleccionadas pasaron una
+auditoría de calidad y privacidad documentada en `PHOTO_AUDIT.md`, que no
+sustituye la autorización de uso.
 
 **Actualización de cierre:** los seis proyectos registran entrega conforme y
 ausencia de correcciones posteriores como datos confirmados. La iteración de
