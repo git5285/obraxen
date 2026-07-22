@@ -1,6 +1,6 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-22 15:49 Europe/Madrid.
+Actualizado: 2026-07-22 16:12 Europe/Madrid.
 
 Este tablero resume el estado actual. Las reservas exactas se materializan en
 `.coordination/claims/` dentro del worktree de control del director y se registran
@@ -14,7 +14,7 @@ marcadores de los worktrees registrados con el log operativo append-only compart
 fuera del checkout. Un marcador registrado es inmutable; sus transiciones y el
 estado remoto posterior viven en ese log, sin reescribir el Markdown ni abrir otra
 PR solo para cerrar metadatos. El ultimo `main` verificado antes de esta
-actualizacion es `df755c1`, resultado de la PR `#33`; no desplego ni publico el
+actualizacion es `3fe4b29`, resultado de la PR `#34`; no desplego ni publico el
 sitio.
 
 ## Runtime obligatorio de agentes
@@ -220,6 +220,10 @@ cambios staged sin propietario.
 - La PR `#33` reconcilió la documentación de activación con esos niveles de
   evidencia y quedó en `df755c1` tras el Quality run `29924673033`; la preview
   fue omitida y no hubo despliegue ni publicación.
+- La PR `#34` protegió configuración crítica de Git, runtime, lint, TypeScript,
+  Vitest, esquemas y documentos de gobernanza frente a diffs autónomos; quedó en
+  `3fe4b29` tras el Quality run `29926358448`, con preview omitida y sin
+  despliegue ni publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
