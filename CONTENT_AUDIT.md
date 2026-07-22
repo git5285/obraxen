@@ -57,9 +57,9 @@ fuera hasta poder acreditarlos.
 - Inspección in situ: se plantea cuando hace falta concretar el alcance.
 - Resultado de un caso: distingue lo visible en las fotografías del cierre
   confirmado por el equipo y de cualquier resultado operativo todavía pendiente.
-- Nombre del cliente y fotografías: solo después de que el caso registre alcance,
-  referencia documental y revisión legal aprobada; la confirmación interna actual
-  no basta para producción.
+- Nombre del cliente y fotografías: solo después de que el caso registre un
+  `documento_referenciado` con ese alcance y una `revision_legal_verificada`
+  aprobada; la `declaracion_responsable` actual no basta para producción.
 - Preparación, reparación, nivelación y tratamiento pueden combinarse en una
   intervención, pero solo se incluyen las partidas que determine el diagnóstico.
 

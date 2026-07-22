@@ -14,9 +14,10 @@ TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
   hook versionado bloquea pushes directos a `main`. No se detectan secretos o
   credenciales en los archivos versionados.
 - La puerta pública falla por identidad, sociedad, contacto, revisión
-  registral/marcaria, revisión legal, revisión profesional de los cuatro idiomas
-  y proveedor de captación, como está previsto. Los seis casos ya están
-  documentados para nombre y fotografías web.
+  registral/marcaria, revisión legal, revisión profesional de los cuatro idiomas,
+  proveedor de captación y soporte documental/revisión legal de los seis casos,
+  como está previsto. Los casos conservan declaraciones del responsable, no
+  documentos o revisiones profesionales.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
   permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
 
@@ -37,7 +38,7 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 259 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 260 pruebas Vitest y build de producción.
 - Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
 - Playwright estándar: 97 ejecuciones configuradas; 89 correctas y 8 omisiones
@@ -103,18 +104,16 @@ Las 18 fotografías WebP carecen de metadatos sensibles y usan dimensiones y
 `sizes` explícitos. La auditoría técnica de imágenes no constituye una licencia
 de publicación.
 
-Cada caso registra ahora:
+Cada caso registra evidencias discriminadas: `declaracion_responsable`,
+`documento_referenciado` y `revision_legal_verificada`. Los niveles no se
+convierten entre sí y una revisión debe enlazar un documento del mismo expediente.
 
-- estado y alcance declarado;
-- fuente y fecha de confirmación;
-- referencia documental;
-- revisión legal.
-
-Los seis casos están en `documentada`. La declaración expresa del responsable
-del 17 de julio de 2026 cubre nombre del cliente y fotografías web; cada caso
-registra una referencia interna y revisión legal `aprobada`. Los originales se
-conservan fuera del repositorio. `publicar: true` sigue fallando cerrado por las
-12 entradas restantes de identidad, legal/proveedor e idiomas.
+Los seis casos conservan únicamente la declaración expresa del responsable del
+17 de julio de 2026, con alcance para nombre del cliente y fotografías web y una
+referencia interna. No se ha registrado el documento ni una revisión legal
+profesional. Los originales se conservan fuera del repositorio. `publicar: true`
+sigue fallando cerrado por 24 entradas: 12 de identidad, legal/proveedor e
+idiomas y 12 de documento/revisión de los casos.
 
 Las fechas de ejecución cuyo año no estaba confirmado se almacenan como `null`;
 ya no hay textos del tipo “año pendiente de confirmar” en los datos públicos.
@@ -156,7 +155,7 @@ debe revisarse antes de conceder nuevos permisos de escritura.
 | Consentimiento | Implementado y probado | Mantener antes de GA4 o Clarity |
 | IDs de GA4 y Clarity | Sin dato | Proveedores, textos y entornos aprobados |
 | CSP sin `unsafe-inline` de script | Aplazado | SRI estable o cambio justificado a render dinámico |
-| Permisos de clientes y fotografías | Documentados | Conservar referencias, alcance y originales externos |
+| Permisos de clientes y fotografías | Declaración recibida | Recibir documento y revisión legal por caso |
 | Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
 | Traducciones en/de/es/fr | Borradores completos | Revisor profesional y fecha por idioma |

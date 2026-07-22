@@ -26,12 +26,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E240002",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E240002"
+        }
+      ]
     },
     "plazoPrevisto": "30 días laborables",
     "cierre": {
@@ -161,12 +165,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E250007",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250007"
+        }
+      ]
     },
     "plazoPrevisto": null,
     "cierre": {
@@ -295,12 +303,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E250006",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250006"
+        }
+      ]
     },
     "plazoPrevisto": null,
     "cierre": {
@@ -430,12 +442,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E250013",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250013"
+        }
+      ]
     },
     "plazoPrevisto": "6 días laborables",
     "cierre": {
@@ -567,12 +583,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E240001",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E240001"
+        }
+      ]
     },
     "plazoPrevisto": "35 días laborables",
     "cierre": {
@@ -706,12 +726,16 @@
     ],
     "ejecucionConfirmada": true,
     "autorizacionPublicacion": {
-      "estado": "documentada",
-      "alcanceDeclarado": ["nombre_cliente", "fotografias_web"],
-      "fuente": "Declaración expresa del responsable con autorización legal",
-      "confirmadoEl": "2026-07-17",
-      "referenciaDocumento": "AUTH-RESP-20260717-E250005",
-      "revisionLegal": "aprobada"
+      "evidencias": [
+        {
+          "tipo": "declaracion_responsable",
+          "alcance": ["nombre_cliente", "fotografias_web"],
+          "fuente": "Declaración expresa del responsable",
+          "declaracion": "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          "declaradoEl": "2026-07-17",
+          "referenciaInterna": "AUTH-RESP-20260717-E250005"
+        }
+      ]
     },
     "plazoPrevisto": null,
     "cierre": {

@@ -3,6 +3,7 @@ import { brand } from "@/lib/brand";
 import { offers } from "@/lib/offers";
 import { projects, projectsBySlug } from "@/lib/projects";
 import { locales } from "@/lib/i18n";
+import { projectSchema } from "@/lib/schemas";
 
 describe("structured data", () => {
   it("keeps project and offer slugs unique", () => {
@@ -39,14 +40,38 @@ describe("structured data", () => {
   it("keeps client publication evidence explicit and traceable", () => {
     for (const project of projects) {
       expect(project.autorizacionPublicacion).toMatchObject({
-        estado: "documentada",
-        alcanceDeclarado: ["nombre_cliente", "fotografias_web"],
-        fuente: "Declaración expresa del responsable con autorización legal",
-        confirmadoEl: "2026-07-17",
-        referenciaDocumento: `AUTH-RESP-20260717-${project.referencia}`,
-        revisionLegal: "aprobada",
+        evidencias: [{
+          tipo: "declaracion_responsable",
+          alcance: ["nombre_cliente", "fotografias_web"],
+          fuente: "Declaración expresa del responsable",
+          declaracion: "Existe autorización legal total para publicar el nombre del cliente y las fotografías web.",
+          declaradoEl: "2026-07-17",
+          referenciaInterna: `AUTH-RESP-20260717-${project.referencia}`,
+        }],
       });
+      expect(project.autorizacionPublicacion.evidencias).not.toContainEqual(
+        expect.objectContaining({ tipo: "documento_referenciado" }),
+      );
+      expect(project.autorizacionPublicacion.evidencias).not.toContainEqual(
+        expect.objectContaining({ tipo: "revision_legal_verificada" }),
+      );
     }
+  });
+
+  it("requires a professional review to reference a document in the same dossier", () => {
+    const project = structuredClone(projects[0]);
+    project.autorizacionPublicacion.evidencias.push({
+      tipo: "revision_legal_verificada",
+      documentoRevisado: "AUTH-DOC-NOT-PRESENT",
+      revisor: "Revisor legal de prueba",
+      revisadoEl: "2026-07-17",
+      referenciaRevision: "LEGAL-REVIEW-TEST-E240002",
+      resultado: "aprobada",
+    });
+
+    expect(() => projectSchema.parse(project)).toThrow(
+      "Una revisión legal debe enlazar un documento referenciado en el mismo expediente",
+    );
   });
 
   it("represents unknown execution dates as null", () => {
