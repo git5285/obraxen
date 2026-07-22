@@ -12,6 +12,12 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  getOperationalPaths,
+  registerOperationalClaim,
+  transitionOperationalClaim,
+} from "../../automation/agents/operations.mjs";
+import {
+  applyOperationalClaimStates,
   buildPreflight,
   deriveGating,
   parseClaim,
@@ -20,6 +26,9 @@ import {
 
 const temporaryDirectories: string[] = [];
 const origin = "https://github.com/git5285/obraxen.git";
+const preflightCli = fileURLToPath(
+  new URL("../../automation/agents/preflight.mjs", import.meta.url),
+);
 
 function repository() {
   const directory = realpathSync(mkdtempSync(join(tmpdir(), "obraxen-agent-preflight-")));
@@ -67,6 +76,214 @@ afterEach(() => {
 });
 
 describe("cross-worktree preflight parsers", () => {
+  it("blocks every autonomous role when the runtime contract does not match", () => {
+    const gating = deriveGating({
+      policy: {
+        mode: "active",
+        authority: { allowScout: true, allowLocalDiff: true },
+      },
+      lease: null,
+      worktrees: [{ path: "/repo", status: [] }],
+      runtime: { ok: false },
+    });
+    expect(gating.eligibility).toEqual({ scout: false, writer: false });
+    expect(gating.blockers).toContain("runtime_contract_mismatch");
+  });
+
+  it("uses the governed policy state home and reports its resolved root", () => {
+    const repo = repository();
+    const state = stateHome();
+    const report = buildPreflight(repo, {
+      project: "obraxen",
+      mode: "active",
+      coordination: { stateHome: state },
+      authority: { allowScout: true, allowLocalDiff: true },
+    });
+
+    expect(report).toMatchObject({
+      repoRoot: repo,
+      coordinationStateRoot: expect.stringMatching(`${state}/obraxen/agent-coordination-v1/`),
+      coordinationFailures: [],
+      registeredClones: [expect.objectContaining({ root: repo })],
+      eligibility: { scout: true, writer: true },
+    });
+  });
+
+  it("forbids per-run state-home overrides in the preflight CLI", () => {
+    expect(() => execFileSync(process.execPath, [
+      preflightCli,
+      "--state-home",
+      stateHome(),
+    ], { stdio: "pipe" })).toThrow();
+  });
+
+  it("uses a matching shared release event instead of requiring a claim-file closure", () => {
+    const repo = repository();
+    const state = stateHome();
+    const path = ".coordination/claims/operational-release.md";
+    writeFileSync(join(repo, path), `# Operational release
+- thread_id: operational-release
+- estado: esperando_revision
+- archivos:
+  - src/example.ts
+`);
+    registerOperationalClaim({
+      repo,
+      stateHome: state,
+      claimPath: path,
+      eventId: "event-register-preflight",
+      occurredAt: "2026-07-18T12:00:00Z",
+    });
+    transitionOperationalClaim({
+      repo,
+      stateHome: state,
+      threadId: "operational-release",
+      eventId: "event-release-preflight",
+      occurredAt: "2026-07-18T12:01:00Z",
+      state: "liberado",
+      reason: "pull_request_merged",
+      evidence: [{
+        kind: "pull_request",
+        number: 31,
+        url: "https://github.com/git5285/obraxen/pull/31",
+        state: "MERGED",
+        headSha: "a".repeat(40),
+        mergeCommitSha: "b".repeat(40),
+        observedAt: "2026-07-18T12:01:00Z",
+      }],
+    });
+    const report = buildPreflight(repo, {
+      project: "obraxen",
+      mode: "active",
+      coordination: { stateHome: state },
+      authority: { allowScout: true, allowLocalDiff: true },
+    });
+
+    expect(report).toMatchObject({
+      operationalClaims: [expect.objectContaining({
+        threadId: "operational-release",
+        state: "liberado",
+      })],
+      activeClaims: [],
+      coordinationFailures: [],
+      eligibility: { scout: true, writer: true },
+    });
+    expect(parseClaim(
+      readFileSync(join(repo, path), "utf8"),
+      path,
+      repo,
+    ).state).toBe("esperando_revision");
+  });
+
+  it("keeps an active shared claim blocking when its worktree marker disappears", () => {
+    const repo = repository();
+    const state = stateHome();
+    const path = ".coordination/claims/operational-orphan.md";
+    writeFileSync(join(repo, path), `# Operational orphan
+- thread_id: operational-orphan
+- estado: en_curso
+- archivos:
+  - src/example.ts
+`);
+    registerOperationalClaim({
+      repo,
+      stateHome: state,
+      claimPath: path,
+      eventId: "event-register-orphan",
+      occurredAt: "2026-07-18T12:00:00Z",
+    });
+    rmSync(join(repo, path));
+    const report = buildPreflight(repo, {
+      project: "obraxen",
+      mode: "active",
+      coordination: { stateHome: state },
+      authority: { allowScout: true, allowLocalDiff: true },
+    });
+    expect(report).toMatchObject({
+      activeClaims: [expect.objectContaining({
+        threadId: "operational-orphan",
+        operationalOnly: true,
+      })],
+      eligibility: { scout: true, writer: false },
+      blockers: expect.arrayContaining(["active_writer_claim_limit"]),
+    });
+  });
+
+  it("fails closed when an event stream is corrupt or its marker drifts", () => {
+    const repo = repository();
+    const state = stateHome();
+    const path = ".coordination/claims/operational-corrupt.md";
+    writeFileSync(join(repo, path), `# Operational corrupt
+- thread_id: operational-corrupt
+- estado: en_curso
+- archivos:
+  - src/example.ts
+`);
+    registerOperationalClaim({
+      repo,
+      stateHome: state,
+      claimPath: path,
+      eventId: "event-register-corrupt",
+      occurredAt: "2026-07-18T12:00:00Z",
+    });
+    writeFileSync(join(repo, path), `${readFileSync(join(repo, path), "utf8")}\nChanged\n`);
+    const drift = buildPreflight(repo, {
+      project: "obraxen",
+      mode: "active",
+      coordination: { stateHome: state },
+      authority: { allowScout: true, allowLocalDiff: true },
+    });
+    expect(drift.coordinationFailures).toEqual([
+      expect.objectContaining({ reason: expect.stringContaining("marker does not match") }),
+    ]);
+    expect(drift.eligibility).toEqual({ scout: false, writer: false });
+
+    writeFileSync(
+      join(getOperationalPaths(repo, state).events, "event-register-corrupt.json"),
+      "{}\n",
+    );
+    const corrupt = buildPreflight(repo, {
+      project: "obraxen",
+      mode: "active",
+      coordination: { stateHome: state },
+      authority: { allowScout: true, allowLocalDiff: true },
+    });
+    expect(corrupt.coordinationFailures).toEqual([
+      expect.objectContaining({ reason: expect.stringContaining("missing keys") }),
+    ]);
+    expect(corrupt.eligibility).toEqual({ scout: false, writer: false });
+  });
+
+  it("overlays only exact claim snapshots", () => {
+    const parsed = parseClaim(`# Work
+- thread_id: exact-snapshot
+- estado: en_curso
+- archivos:
+  - src/example.ts
+`, ".coordination/claims/exact-snapshot.md", "/repo");
+    const operational = {
+      threadId: "exact-snapshot",
+      state: "liberado" as const,
+      claim: {
+        source: parsed.source,
+        contentDigest: parsed.contentDigest,
+        files: parsed.files,
+      },
+      latestEventId: "event-exact-snapshot",
+      latestOccurredAt: "2026-07-18T12:00:00Z",
+      eventCount: 2,
+      latestEvidence: [],
+    };
+    expect(applyOperationalClaimStates([parsed], [operational])).toMatchObject({
+      claims: [expect.objectContaining({ state: "liberado" })],
+      failures: [],
+    });
+    expect(applyOperationalClaimStates([parsed], [{
+      ...operational,
+      claim: { ...operational.claim, contentDigest: "f".repeat(64) },
+    }]).failures).toHaveLength(1);
+  });
+
   it("parses branches, detached worktrees and HEADs", () => {
     expect(parseWorktrees(`worktree /repo/main
 HEAD ${"a".repeat(40)}

@@ -1,9 +1,16 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  ACTIVE_CLAIM_STATES,
+  canonicalClaimState,
+  parseClaim,
+  readClaims,
+} from "./claims.mjs";
+import {
   COORDINATION_PROTOCOL_VERSION,
+  getCoordinationPaths,
   readCoordinationProtocolVersion,
   readLegacyLease,
   readLease,
@@ -11,19 +18,11 @@ import {
   registerClone,
   verifyRegisteredClone,
 } from "./lease.mjs";
+import { readOperationalClaims } from "./operations.mjs";
 import { loadPolicy } from "./policy.mjs";
+import { inspectRuntime } from "./runtime.mjs";
 
-const RELEASED_CLAIM_STATES = new Set(["liberado", "released"]);
-const KNOWN_ACTIVE_CLAIM_STATES = new Set([
-  "reservado",
-  "reserved",
-  "en_curso",
-  "in_progress",
-  "bloqueado",
-  "blocked",
-  "esperando_revision",
-  "awaiting_review",
-]);
+export { parseClaim, readClaims };
 
 function git(repo, args) {
   return execFileSync("git", ["-C", repo, ...args], {
@@ -42,85 +41,47 @@ export function parseWorktrees(output) {
     .filter((entry) => typeof entry.worktree === "string");
 }
 
-function normalizeClaimValue(value) {
-  const trimmed = value.trim();
-  const inlineCode = trimmed.match(/^(`+)([\s\S]*?)\1$/);
-  return (inlineCode?.[2] ?? trimmed).trim();
+function sameClaimSnapshot(claim, operational) {
+  return claim.source === operational.claim.source
+    && claim.contentDigest === operational.claim.contentDigest
+    && JSON.stringify(claim.files) === JSON.stringify(operational.claim.files);
 }
 
-function isClaimPath(value) {
-  if (!value || /\s/.test(value) || value.startsWith("/") || value.startsWith("~")) return false;
-  if (value.includes("\\") || !/^[A-Za-z0-9._@+*?\[\]{}!\/-]+$/.test(value)) return false;
-  if (value.split("/").some((segment) => !segment || segment === "." || segment === "..")) return false;
-  return value.includes("/") || value.includes(".") || /[*?\[\]{]/.test(value);
-}
-
-function readClaimFileList(lines, startIndex, requireIndent) {
-  const files = [];
-  const invalidFileEntries = [];
-  const itemPattern = requireIndent
-    ? /^[\t ]{2,}-\s+(.+?)\s*$/
-    : /^\s*-\s+(.+?)\s*$/;
-
-  for (let index = startIndex; index < lines.length; index += 1) {
-    const line = lines[index];
-    if (!line.trim()) continue;
-    if (/^#{1,6}\s/.test(line) || /^-\s+[a-z_]+:/i.test(line)) break;
-    const item = line.match(itemPattern);
-    if (!item) break;
-    const file = normalizeClaimValue(item[1]);
-    if (isClaimPath(file)) files.push(file);
-    else if (file) invalidFileEntries.push(file);
+export function applyOperationalClaimStates(claims, operationalClaims) {
+  const failures = [];
+  const effective = claims.map((claim) => ({ ...claim }));
+  for (const operational of operationalClaims) {
+    const matches = effective.filter((claim) => claim.threadId === operational.threadId);
+    if (matches.length === 0) {
+      if (operational.state !== "liberado") {
+        effective.push({
+          source: operational.claim.source,
+          worktree: "shared-operational-state",
+          threadId: operational.threadId,
+          state: operational.state,
+          files: operational.claim.files,
+          invalidFileEntries: [],
+          metadataErrors: [],
+          contentDigest: operational.claim.contentDigest,
+          operationalEventId: operational.latestEventId,
+          operationalOnly: true,
+        });
+      }
+      continue;
+    }
+    for (const claim of matches) {
+      if (!sameClaimSnapshot(claim, operational)) {
+        failures.push({
+          path: claim.worktree,
+          reason: `claim ${claim.threadId} marker does not match shared operational state`,
+        });
+        continue;
+      }
+      claim.state = operational.state;
+      claim.operationalEventId = operational.latestEventId;
+    }
   }
-  return { files, invalidFileEntries };
-}
-
-function parseClaimFiles(text) {
-  const lines = text.split(/\r?\n/);
-  const fieldIndex = lines.findIndex((line) => /^-\s+archivos:\s*$/i.test(line));
-  if (fieldIndex !== -1) return readClaimFileList(lines, fieldIndex + 1, true);
-
-  const headingIndex = lines.findIndex((line) => /^#{1,6}\s+(?:archivos(?:\s+reservados)?|rutas(?:\s+reservadas)?|reserved\s+files|files|paths)\s*$/i.test(line));
-  return headingIndex === -1
-    ? { files: [], invalidFileEntries: [] }
-    : readClaimFileList(lines, headingIndex + 1, false);
-}
-
-export function parseClaim(text, source, worktree) {
-  const states = [...text.matchAll(/^[\t ]*-[\t ]+estado:[\t ]*([^\n]*)$/gim)]
-    .map((match) => normalizeClaimValue(match[1]));
-  const threadIds = [...text.matchAll(/^[\t ]*-[\t ]+thread_id:[\t ]*([^\n]*)$/gim)]
-    .map((match) => normalizeClaimValue(match[1]));
-  const metadataErrors = [];
-  if (states.length !== 1 || !states[0]) metadataErrors.push("estado must appear exactly once");
-  if (threadIds.length !== 1 || !threadIds[0]) {
-    metadataErrors.push("thread_id must appear exactly once");
-  }
-  const state = metadataErrors.length === 0 ? states[0].toLowerCase() : "unknown";
-  const threadId = metadataErrors.length === 0 ? threadIds[0] : "unknown";
-  const { files, invalidFileEntries } = parseClaimFiles(text);
-  return {
-    source,
-    worktree,
-    threadId,
-    state,
-    files,
-    invalidFileEntries,
-    metadataErrors,
-  };
-}
-
-export function readClaims(worktree) {
-  const directory = resolve(worktree, ".coordination/claims");
-  if (!existsSync(directory)) return [];
-  return readdirSync(directory)
-    .filter((name) => name.endsWith(".md"))
-    .sort()
-    .map((name) => parseClaim(
-      readFileSync(resolve(directory, name), "utf8"),
-      `.coordination/claims/${name}`,
-      worktree,
-    ));
+  return { claims: effective, failures };
 }
 
 export function deriveGating({
@@ -132,6 +93,7 @@ export function deriveGating({
   coordinationFailures = [],
   cloneFailures = [],
   legacyLeases = [],
+  runtime = { ok: true },
 }) {
   const unreadableWorktrees = [...new Set([
     ...worktrees
@@ -142,12 +104,14 @@ export function deriveGating({
     ...cloneFailures.map((failure) => failure.path),
   ])];
   const scanComplete = unreadableWorktrees.length === 0;
-  const pendingLocalDiffs = activeClaims.filter((claim) => new Set([
-    "esperando_revision",
-    "awaiting_review",
-  ]).has(claim.state));
+  const runtimeReady = runtime.ok === true;
+  const pendingLocalDiffs = activeClaims.filter(
+    (claim) => canonicalClaimState(claim.state) === "esperando_revision",
+  );
   const activeWriterClaims = activeClaims;
-  const unknownStateClaims = activeClaims.filter((claim) => !KNOWN_ACTIVE_CLAIM_STATES.has(claim.state));
+  const unknownStateClaims = activeClaims.filter(
+    (claim) => !ACTIVE_CLAIM_STATES.has(canonicalClaimState(claim.state)),
+  );
   const unscopedActiveClaims = activeClaims.filter((claim) => (
     claim.files.length === 0 || (claim.invalidFileEntries ?? []).length > 0
   ));
@@ -164,7 +128,7 @@ export function deriveGating({
     unknownStateClaims,
     unscopedActiveClaims,
     eligibility: {
-      scout: policy.mode !== "disabled" && policy.authority.allowScout && scanComplete,
+      scout: policy.mode !== "disabled" && policy.authority.allowScout && scanComplete && runtimeReady,
       writer: policy.mode === "active"
         && policy.authority.allowLocalDiff
         && !leaseExists
@@ -172,7 +136,8 @@ export function deriveGating({
         && unknownStateClaims.length === 0
         && unscopedActiveClaims.length === 0
         && !pendingLimitReached
-        && scanComplete,
+        && scanComplete
+        && runtimeReady,
     },
     blockers: [
       ...(scanComplete ? [] : ["unreadable_worktrees"]),
@@ -183,6 +148,7 @@ export function deriveGating({
       ...(unknownStateClaims.length > 0 ? ["active_claim_state_unknown"] : []),
       ...(unscopedActiveClaims.length > 0 ? ["active_claim_paths_unknown"] : []),
       ...(pendingLimitReached ? ["pending_local_diff_limit"] : []),
+      ...(runtimeReady ? [] : ["runtime_contract_mismatch"]),
     ],
   };
 }
@@ -200,10 +166,19 @@ function recordFailure(failures, path, error) {
 
 export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), options = {}) {
   const root = git(repo, ["rev-parse", "--show-toplevel"]);
-  const stateHome = options.stateHome ?? null;
+  const runtime = options.runtime ?? (
+    existsSync(join(root, "package.json"))
+      && existsSync(join(root, ".nvmrc"))
+      && existsSync(join(root, "package-lock.json"))
+      ? inspectRuntime(root)
+      : { schemaVersion: 1, ok: true, fingerprint: null, blockers: [] }
+  );
+  const stateHome = options.stateHome ?? policy.coordination?.stateHome ?? null;
   const coordinationFailures = [];
   let registeredClones = [];
+  let coordinationStateRoot = null;
   try {
+    coordinationStateRoot = getCoordinationPaths(root, stateHome).root;
     registerClone(root, { now: options.now ?? new Date(), stateHome });
     registeredClones = readRegisteredClones(root, stateHome);
   } catch (error) {
@@ -263,7 +238,19 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), opti
       return [];
     }
   });
-  const activeClaims = claims.filter((claim) => !RELEASED_CLAIM_STATES.has(claim.state));
+  let operationalClaims = [];
+  try {
+    operationalClaims = readOperationalClaims(root, stateHome);
+  } catch (error) {
+    recordFailure(coordinationFailures, `${coordinationStateRoot}/operational-events`, error);
+  }
+  const effective = applyOperationalClaimStates(claims, operationalClaims);
+  for (const failure of effective.failures) {
+    recordFailure(coordinationFailures, failure.path, new Error(failure.reason));
+  }
+  const activeClaims = effective.claims.filter(
+    (claim) => canonicalClaimState(claim.state) !== "liberado",
+  );
   let lease = null;
   try {
     lease = readLease(root, stateHome);
@@ -279,17 +266,20 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), opti
     coordinationFailures,
     cloneFailures,
     legacyLeases,
+    runtime,
   });
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     project: policy.project,
     mode: policy.mode,
     repoRoot: root,
     baseSha: git(root, ["rev-parse", "HEAD"]),
     branch: git(root, ["branch", "--show-current"]) || null,
+    coordinationStateRoot,
     registeredClones,
     worktrees: detailedWorktrees,
+    operationalClaims,
     activeClaims,
     claimFailures,
     coordinationFailures,
@@ -301,15 +291,28 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), opti
     unknownStateClaims: gating.unknownStateClaims,
     unscopedActiveClaims: gating.unscopedActiveClaims,
     lease,
+    runtime,
     eligibility: gating.eligibility,
     blockers: gating.blockers,
   };
 }
 
+function argument(name) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return null;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
+  return value;
+}
+
 function main() {
-  const repoIndex = process.argv.indexOf("--repo");
-  const repo = repoIndex === -1 ? process.cwd() : process.argv[repoIndex + 1];
-  process.stdout.write(`${JSON.stringify(buildPreflight(repo), null, 2)}\n`);
+  if (process.argv.includes("--state-home")) {
+    throw new Error("per-run state-home overrides are forbidden; use the governed policy");
+  }
+  const repo = argument("--repo") ?? process.cwd();
+  const report = buildPreflight(repo);
+  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  if (report.runtime?.ok !== true) process.exitCode = 1;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
