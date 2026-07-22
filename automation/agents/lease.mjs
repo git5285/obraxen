@@ -13,6 +13,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadPolicy } from "./policy.mjs";
 
 const STATE_NAMESPACE = ["obraxen", "agent-coordination-v1"];
 const DEFAULT_REMOTE_PORTS = new Map([
@@ -145,10 +146,21 @@ export function getRepositoryIdentity(repo) {
   return normalizeRepositoryIdentity(remote, repo);
 }
 
-function getStateHome(stateHome) {
+export function resolveCoordinationStateHome(stateHome = null) {
   const selected = stateHome ?? join(homedir(), ".local", "state");
-  if (!isAbsolute(selected)) throw new Error("coordination state home must be absolute");
-  return resolve(selected);
+  if (typeof selected !== "string" || !selected) {
+    throw new Error("coordination state home must not be empty");
+  }
+  if (selected !== selected.trim()) {
+    throw new Error("coordination state home must not contain surrounding whitespace");
+  }
+  const expanded = selected === "~"
+    ? homedir()
+    : selected.startsWith("~/") ? join(homedir(), selected.slice(2)) : selected;
+  if (!isAbsolute(expanded)) {
+    throw new Error("coordination state home must be absolute or home-relative");
+  }
+  return resolve(expanded);
 }
 
 function getCommonDirectory(repo) {
@@ -166,7 +178,7 @@ function listWorktreeRoots(repo) {
 export function getCoordinationPaths(repo, stateHome = null) {
   const repositoryIdentity = getRepositoryIdentity(repo);
   const repositoryKey = hash(repositoryIdentity);
-  const namespaceRoot = join(getStateHome(stateHome), ...STATE_NAMESPACE);
+  const namespaceRoot = join(resolveCoordinationStateHome(stateHome), ...STATE_NAMESPACE);
   const root = join(namespaceRoot, repositoryKey);
   return {
     repositoryIdentity,
@@ -531,28 +543,40 @@ export function releaseLease(repo, token, stateHome = null) {
 
 function argument(name) {
   const index = process.argv.indexOf(name);
-  return index === -1 ? null : process.argv[index + 1];
+  if (index === -1) return null;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
+  return value;
 }
 
 function main() {
+  if (process.argv.includes("--state-home")) {
+    throw new Error("per-run state-home overrides are forbidden; use the governed policy");
+  }
   const [operation] = process.argv.slice(2);
   const repo = resolve(argument("--repo") ?? process.cwd());
+  const stateHome = loadPolicy().coordination.stateHome;
   let result;
   if (operation === "status") {
-    const coordination = getCoordinationPaths(repo);
+    const coordination = getCoordinationPaths(repo, stateHome);
     result = {
       repositoryIdentity: coordination.repositoryIdentity,
       stateRoot: coordination.root,
-      registeredClones: readRegisteredClones(repo),
-      owner: readLease(repo),
+      registeredClones: readRegisteredClones(repo, stateHome),
+      owner: readLease(repo, stateHome),
     };
   } else if (operation === "acquire") {
-    result = acquireLease(repo, JSON.parse(argument("--owner-json") ?? "null"));
+    result = acquireLease(
+      repo,
+      JSON.parse(argument("--owner-json") ?? "null"),
+      new Date(),
+      stateHome,
+    );
     if (!result.acquired) process.exitCode = 2;
   } else if (operation === "heartbeat") {
-    result = heartbeatLease(repo, argument("--token"));
+    result = heartbeatLease(repo, argument("--token"), new Date(), stateHome);
   } else if (operation === "release") {
-    result = releaseLease(repo, argument("--token"));
+    result = releaseLease(repo, argument("--token"), stateHome);
   } else {
     throw new Error("usage: lease.mjs status|acquire|heartbeat|release [options]");
   }

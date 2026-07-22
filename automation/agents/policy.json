@@ -2,6 +2,9 @@
   "schemaVersion": 1,
   "mode": "active",
   "project": "obraxen",
+  "coordination": {
+    "stateHome": "~/.local/state"
+  },
   "limits": {
     "maxConcurrentWriters": 1,
     "maxPendingLocalDiffs": 1,
@@ -21,6 +24,62 @@
     "contextRecentRuns": 8,
     "contextOpenFindings": 12,
     "maxContextBytes": 32768
+  },
+  "attentionBudget": {
+    "schemaVersion": 1,
+    "sequence": [
+      "product",
+      "product",
+      "reliability",
+      "product",
+      "product",
+      "agent_maintenance",
+      "product",
+      "product",
+      "reliability",
+      "product"
+    ],
+    "productDomains": [
+      "evidence",
+      "ux",
+      "accessibility",
+      "seo",
+      "localization",
+      "performance"
+    ],
+    "reliabilityDomains": [
+      "security",
+      "testing",
+      "reliability",
+      "maintainability"
+    ],
+    "agentPathPatterns": [
+      ".agents/**",
+      ".codex/**",
+      ".coordination/**",
+      ".github/workflows/obraxen-continuous-improvement*",
+      "automation/agents/**",
+      "AGENTS.md",
+      "AUTONOMOUS_IMPROVEMENT.md",
+      "COORDINATION.md"
+    ]
+  },
+  "reconciliation": {
+    "defaultBranch": "main",
+    "requiredPullRequestChecks": [
+      "Quality gate"
+    ]
+  },
+  "groupedAuthorizations": {
+    "enabled": true,
+    "maxSteps": 3,
+    "maxLifetimeSeconds": 86400,
+    "reservationTtlSeconds": 600,
+    "allowedActions": [
+      "commit_candidate",
+      "push_branch",
+      "create_draft_pull_request"
+    ]
   },
   "authority": {
     "allowScout": true,

@@ -8,8 +8,9 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   acquireLease,
@@ -21,10 +22,12 @@ import {
   readLease,
   registerClone,
   releaseLease,
+  resolveCoordinationStateHome,
 } from "../../automation/agents/lease.mjs";
 
 const temporaryDirectories: string[] = [];
 const origin = "https://github.com/git5285/obraxen.git";
+const leaseCli = fileURLToPath(new URL("../../automation/agents/lease.mjs", import.meta.url));
 
 function repository() {
   const directory = mkdtempSync(join(tmpdir(), "obraxen-agent-lease-"));
@@ -84,6 +87,30 @@ describe("shared autonomous writer lease", () => {
     expect(https).not.toContain("secret");
     expect(normalizeRepositoryIdentity("../obraxen.git", "/tmp/clone"))
       .toBe("file:/tmp/obraxen");
+  });
+
+  it("resolves governed absolute and home-relative state homes", () => {
+    const explicit = stateHome();
+
+    expect(resolveCoordinationStateHome(explicit)).toBe(explicit);
+    expect(resolveCoordinationStateHome("~/.local/state")).toBe(
+      join(homedir(), ".local", "state"),
+    );
+    expect(() => resolveCoordinationStateHome("relative/state"))
+      .toThrow("must be absolute or home-relative");
+    expect(() => resolveCoordinationStateHome("/tmp/state "))
+      .toThrow("must not contain surrounding whitespace");
+    expect(() => resolveCoordinationStateHome(""))
+      .toThrow("must not be empty");
+  });
+
+  it("forbids per-run state-home overrides in the lease CLI", () => {
+    expect(() => execFileSync(process.execPath, [
+      leaseCli,
+      "status",
+      "--state-home",
+      stateHome(),
+    ], { stdio: "pipe" })).toThrow();
   });
 
   it("allows one writer and never auto-reclaims an existing lease", () => {

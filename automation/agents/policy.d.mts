@@ -2,6 +2,9 @@ export interface AgentPolicy {
   schemaVersion: 1;
   mode: "shadow" | "active" | "disabled";
   project: "obraxen";
+  coordination: {
+    stateHome: string;
+  };
   limits: {
     maxConcurrentWriters: number;
     maxPendingLocalDiffs: number;
@@ -21,6 +24,26 @@ export interface AgentPolicy {
     contextRecentRuns: number;
     contextOpenFindings: number;
     maxContextBytes: number;
+  };
+  attentionBudget: {
+    schemaVersion: 1;
+    sequence: Array<"product" | "reliability" | "agent_maintenance">;
+    productDomains: string[];
+    reliabilityDomains: string[];
+    agentPathPatterns: string[];
+  };
+  reconciliation: {
+    defaultBranch: string;
+    requiredPullRequestChecks: string[];
+  };
+  groupedAuthorizations: {
+    enabled: boolean;
+    maxSteps: number;
+    maxLifetimeSeconds: number;
+    reservationTtlSeconds: number;
+    allowedActions: Array<
+      "commit_candidate" | "push_branch" | "create_draft_pull_request"
+    >;
   };
   authority: {
     allowScout: boolean;
