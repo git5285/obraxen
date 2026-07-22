@@ -1,18 +1,21 @@
 # Estado de coordinación
 
-Actualizado: 2026-07-22 13:10 Europe/Madrid.
+Actualizado: 2026-07-22 15:49 Europe/Madrid.
 
-Este tablero resume el estado actual. Las reservas exactas viven en
-`.coordination/claims/` y las entregas históricas en `.coordination/handoffs/`.
+Este tablero resume el estado actual. Las reservas exactas se materializan en
+`.coordination/claims/` dentro del worktree de control del director y se registran
+en el log operativo compartido; los handoffs que deben viajar con una candidata se
+versionan en `.coordination/handoffs/`.
 
 ## Fuente de verdad actual
 
 Las claims activas no se duplican en este tablero: `preflight.mjs` combina los
-marcadores de `.coordination/claims/` con el log operativo append-only compartido
-fuera del checkout. Esto evita que una frase estatica como "no hay claims
-activas" quede obsoleta y que un cierre post-merge necesite otra PR de metadatos.
-El ultimo `main` verificado antes de esta actualizacion es `ec89fee`, resultado
-de la PR `#29`; no desplego ni publico el sitio.
+marcadores de los worktrees registrados con el log operativo append-only compartido
+fuera del checkout. Un marcador registrado es inmutable; sus transiciones y el
+estado remoto posterior viven en ese log, sin reescribir el Markdown ni abrir otra
+PR solo para cerrar metadatos. El ultimo `main` verificado antes de esta
+actualizacion es `df755c1`, resultado de la PR `#33`; no desplego ni publico el
+sitio.
 
 ## Runtime obligatorio de agentes
 
@@ -202,6 +205,21 @@ cambios staged sin propietario.
   el Quality run `29600701899`.
 - La PR `#28` endureció Claude/agentes, protegió los presupuestos de calidad y
   fijó GitHub Actions a SHA; quedó en `36d0e42` tras el Quality run `29601590641`.
+- La PR `#29` actualizó la documentación operativa y quedó en `ec89fee` tras el
+  Quality run `29602517674`; la preview fue omitida.
+- La PR `#30` fijó el runtime compartido en Node `24.18.0` y npm `11.16.0`, con
+  verificación del lockfile, dependencias y binding nativo; quedó en `86dafbe`
+  tras el Quality run `29916045011`, con preview omitida.
+- La PR `#31` consolidó las fronteras del plano de control, claims y leases
+  compartidos, evidencia tipada, autorizaciones agrupadas y presupuestos de
+  atención; quedó en `d35c6ba` tras el Quality run `29917124860`, con preview
+  omitida.
+- La PR `#32` separó declaración, documento y revisión profesional para la
+  evidencia de los seis casos; quedó en `81092a3` tras el Quality run
+  `29918326038`, con preview omitida y activación todavía `NO-GO`.
+- La PR `#33` reconcilió la documentación de activación con esos niveles de
+  evidencia y quedó en `df755c1` tras el Quality run `29924673033`; la preview
+  fue omitida y no hubo despliegue ni publicación.
 
 Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
 
