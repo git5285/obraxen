@@ -14,6 +14,9 @@ import {
   validateBuilderOutput,
   validateScoutOutput,
 } from "../../automation/agents/contracts.mjs";
+import type { ScoutOutput } from "../../automation/agents/contracts.mjs";
+
+const runtimeFingerprint = "f".repeat(64);
 
 function activePolicy() {
   const policy = structuredClone(loadPolicy());
@@ -45,6 +48,7 @@ describe("autonomous-agent policy", () => {
   it("starts in active local-diff mode with one writer and no external authority", () => {
     const policy = loadPolicy();
     expect(policy.mode).toBe("active");
+    expect(policy.coordination).toEqual({ stateHome: "~/.local/state" });
     expect(policy.limits.maxConcurrentWriters).toBe(1);
     expect(policy.limits.maxPendingLocalDiffs).toBe(1);
     expect(policy.authority).toMatchObject({
@@ -64,6 +68,21 @@ describe("autonomous-agent policy", () => {
       maxEpisodicRuns: 120,
       contextRecentRuns: 8,
       maxContextBytes: 32768,
+    });
+    expect(policy.reconciliation).toEqual({
+      defaultBranch: "main",
+      requiredPullRequestChecks: ["Quality gate"],
+    });
+    expect(policy.groupedAuthorizations).toEqual({
+      enabled: true,
+      maxSteps: 3,
+      maxLifetimeSeconds: 86400,
+      reservationTtlSeconds: 600,
+      allowedActions: [
+        "commit_candidate",
+        "push_branch",
+        "create_draft_pull_request",
+      ],
     });
   });
 
@@ -93,6 +112,56 @@ describe("autonomous-agent policy", () => {
     policy.memory.contextRecentRuns = 1;
     policy.memory.maxContextBytes = 100;
     expect(() => validatePolicy(policy)).toThrow("at least 4096");
+  });
+
+  it("requires an exact 70/20/10 attention budget and complete domain coverage", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    policy.attentionBudget.sequence[0] = "agent_maintenance";
+    expect(() => validatePolicy(policy)).toThrow("70/20/10 allocation");
+
+    const missingDomain = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    missingDomain.attentionBudget.productDomains.pop();
+    expect(() => validatePolicy(missingDomain)).toThrow("every finding domain exactly once");
+  });
+
+  it("requires deterministic reconciliation configuration", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    policy.reconciliation.defaultBranch = " main";
+    expect(() => validatePolicy(policy)).toThrow("safe branch name");
+    policy.reconciliation.defaultBranch = "main";
+    policy.reconciliation.requiredPullRequestChecks = ["Quality gate", "Quality gate"];
+    expect(() => validatePolicy(policy)).toThrow("must be unique");
+    policy.reconciliation.requiredPullRequestChecks = [];
+    expect(() => validatePolicy(policy)).toThrow("must contain exact check names");
+  });
+
+  it("bounds grouped human authorizations without enabling standing authority", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    policy.groupedAuthorizations.allowedActions.push("merge");
+    expect(() => validatePolicy(policy)).toThrow("unsupported or duplicate actions");
+    policy.groupedAuthorizations.allowedActions.pop();
+    policy.groupedAuthorizations.maxLifetimeSeconds = 86401;
+    expect(() => validatePolicy(policy)).toThrow("exceeds 24 hours");
+    policy.groupedAuthorizations.maxLifetimeSeconds = 86400;
+    policy.groupedAuthorizations.reservationTtlSeconds = 901;
+    expect(() => validatePolicy(policy)).toThrow("exceeds 15 minutes");
+    policy.groupedAuthorizations.reservationTtlSeconds = 600;
+    policy.mode = "shadow";
+    expect(() => validatePolicy(policy)).toThrow("require active policy mode");
+    expect(policy.authority.allowCommit).toBe(false);
+    expect(policy.authority.allowPush).toBe(false);
+    expect(policy.authority.allowDraftPullRequest).toBe(false);
+  });
+
+  it("requires one governed state home that matches the sandbox namespace", () => {
+    const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    const codexConfig = readFileSync(".codex/config.toml", "utf8");
+    expect(codexConfig).toContain('writable_roots = ["~/.local/state/obraxen"]');
+
+    policy.coordination.stateHome = "relative/state";
+    expect(() => validatePolicy(policy)).toThrow("must be absolute or home-relative");
+    policy.coordination.stateHome = "~/.local/state ";
+    expect(() => validatePolicy(policy)).toThrow("must not contain surrounding whitespace");
   });
 
   it("treats a valid activation NO-GO exit 1 as expected", () => {
@@ -207,6 +276,25 @@ describe("custom-agent pre-tool hook", () => {
     expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 
+  it("validates move destinations before allowing a builder patch", () => {
+    for (const destination of [
+      "automation/agents/escaped.mjs",
+      "../outside-repository.txt",
+    ]) {
+      const result = evaluateToolUse({
+        agent_type: "builder",
+        tool_name: "apply_patch",
+        tool_input: {
+          patch: [
+            "*** Update File: src/components/project-card.tsx",
+            `*** Move to: ${destination}`,
+          ].join("\n"),
+        },
+      }, activePolicy());
+      expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
+    }
+  });
+
   it.each([
     "package.json",
     "package-lock.json",
@@ -227,13 +315,96 @@ describe("custom-agent pre-tool hook", () => {
     expect(evaluateToolUse({
       agent_type: "builder",
       tool_name: "Shell",
-      tool_input: { command: "npm run test -- tests/card.test.ts" },
+      tool_input: { command: "node automation/agents/runtime.mjs exec -- npm run test -- tests/card.test.ts" },
     }, activePolicy())).toBeNull();
     expect(evaluateToolUse({
       agent_type: "default",
       tool_name: "Shell",
       tool_input: { command: "git push origin reviewed-branch" },
     })).toBeNull();
+  });
+
+  it("blocks specialist runtime commands that bypass the pinned launcher", () => {
+    for (const role of ["scout", "auditor", "builder"]) {
+      expect(evaluateToolUse({
+        agent_type: role,
+        tool_name: "Shell",
+        tool_input: { command: "npm run test" },
+      }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+    }
+  });
+
+  it("blocks runtime wrapper composition that escapes the pinned launcher", () => {
+    for (const role of ["scout", "auditor", "builder"]) {
+      for (const command of [
+        "node automation/agents/runtime.mjs status && npm run test",
+        "node automation/agents/runtime.mjs assert; node scripts/read-project.mjs",
+        "node automation/agents/runtime.mjs exec -- npm run test | tee result.txt",
+        "node automation/agents/runtime.mjs exec -- npm run $(echo test)",
+      ]) {
+        expect(evaluateToolUse({
+          agent_type: role,
+          tool_name: "Shell",
+          tool_input: { command },
+        }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+      }
+    }
+  });
+
+  it("limits the builder runtime wrapper to preflight and versioned verification scripts", () => {
+    for (const command of [
+      "node automation/agents/runtime.mjs exec -- node scripts/mutate-worktree.mjs",
+      "node automation/agents/runtime.mjs exec -- python3 scripts/mutate-worktree.py",
+      "node automation/agents/runtime.mjs exec -- npm run dev",
+    ]) {
+      expect(evaluateToolUse({
+        agent_type: "builder",
+        tool_name: "Shell",
+        tool_input: { command },
+      }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+    }
+    expect(evaluateToolUse({
+      agent_type: "builder",
+      tool_name: "Shell",
+      tool_input: {
+        command: "node automation/agents/runtime.mjs exec -- node automation/agents/preflight.mjs --json",
+      },
+    }, activePolicy())).toBeNull();
+  });
+
+  it("limits read-only specialists to read operations and versioned verification scripts", () => {
+    const denied = [
+      "node automation/agents/runtime.mjs exec -- node automation/agents/operations.mjs transition --thread-id task --state liberado",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/memory.mjs record --file report.json",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/reconcile.mjs apply --candidate-id candidate",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/lease.mjs acquire --owner-json {}",
+      "node automation/agents/runtime.mjs exec -- node scripts/mutate-worktree.mjs",
+      "python3 scripts/mutate-worktree.py",
+    ];
+    const allowed = [
+      "node automation/agents/runtime.mjs exec -- node automation/agents/preflight.mjs --json",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/operations.mjs status",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/memory.mjs context --base-sha abc",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/reconcile.mjs list",
+      "node automation/agents/runtime.mjs exec -- npm run test -- tests/card.test.ts",
+    ];
+
+    for (const role of ["scout", "auditor"]) {
+      for (const command of denied) {
+        expect(evaluateToolUse({
+          agent_type: role,
+          tool_name: "Shell",
+          tool_input: { command },
+        }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+      }
+      for (const command of allowed) {
+        expect(evaluateToolUse({
+          agent_type: role,
+          tool_name: "Shell",
+          tool_input: { command },
+        }, activePolicy())).toBeNull();
+      }
+    }
   });
 
   it("blocks wrapped Git and network mutation commands", () => {
@@ -248,6 +419,10 @@ describe("custom-agent pre-tool hook", () => {
       "dd if=payload.txt of=src/components/project-card.tsx",
       "node scripts/mutate-worktree.mjs",
       "bash scripts/mutate-worktree.sh",
+      "mkdir src/generated-output",
+      "ln -s source.txt src/generated-link.txt",
+      "find src -delete",
+      "sort input.txt -o src/sorted.txt",
     ]) {
       expect(evaluateToolUse({
         agent_type: "builder",
@@ -255,6 +430,37 @@ describe("custom-agent pre-tool hook", () => {
         tool_input: { command },
       }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
     }
+  });
+
+  it("treats create and save tools as writes for every specialist", () => {
+    for (const role of ["scout", "auditor", "builder"]) {
+      for (const tool_name of ["create_file", "SaveFile", "upload_asset"]) {
+        expect(evaluateToolUse({
+          agent_type: role,
+          tool_name,
+          tool_input: { path: "src/generated-output.txt" },
+        }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+      }
+    }
+  });
+
+  it("prevents every specialist from creating or consuming human authorization", () => {
+    for (const role of ["scout", "auditor", "builder"]) {
+      for (const operation of ["register", "reserve", "complete", "revoke"]) {
+        expect(evaluateToolUse({
+          agent_type: role,
+          tool_name: "Shell",
+          tool_input: {
+            command: `node automation/agents/authorizations.mjs ${operation} --file evidence.json`,
+          },
+        }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+      }
+    }
+    expect(evaluateToolUse({
+      agent_type: "scout",
+      tool_name: "Shell",
+      tool_input: { command: "node automation/agents/runtime.mjs exec -- node automation/agents/authorizations.mjs status" },
+    }, activePolicy())).toBeNull();
   });
 
   it("allows only apply_patch for an active builder write", () => {
@@ -275,10 +481,13 @@ describe("specialist output contracts", () => {
   it("rejects simulated delegation and token-only builder output", () => {
     expect(() => parseRoleOutput("builder", "BUILDER_OK")).toThrow("non-JSON output");
     expect(() => validateBuilderOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       status: "implemented",
+      attentionClass: "product",
       runId: "run-1",
+      candidateId: "candidate-run-1",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       changedPaths: [],
       checksRun: [],
       residualRisks: [],
@@ -288,20 +497,26 @@ describe("specialist output contracts", () => {
 
   it("accepts explicit blocked and veto outputs", () => {
     expect(validateBuilderOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       status: "blocked",
+      attentionClass: "product",
       runId: "run-1",
+      candidateId: "candidate-run-1",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       changedPaths: [],
       checksRun: [],
       residualRisks: ["missing manifest"],
       reason: "manifest missing",
     }).status).toBe("blocked");
     expect(validateAuditorOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       verdict: "veto",
+      attentionClass: "product",
       runId: "run-1",
+      candidateId: "candidate-run-1",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       findings: [{ severity: "blocker", source: "manifest", finding: "missing" }],
       verifiedChecks: [],
       reason: "manifest missing",
@@ -322,9 +537,11 @@ describe("specialist output contracts", () => {
       conflicts: [],
     };
     expect(() => validateScoutOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       status: "proposal",
+      attentionClass: "reliability",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       activeClaims: [],
       findings: [finding, finding, finding, finding],
       recommendedId: "one",
@@ -332,11 +549,42 @@ describe("specialist output contracts", () => {
     })).toThrow("too many findings");
   });
 
+  it("rejects scout findings outside the assigned attention class", () => {
+    expect(() => validateScoutOutput({
+      schemaVersion: 4,
+      status: "proposal",
+      attentionClass: "product",
+      baseSha: "a".repeat(40),
+      runtimeFingerprint,
+      activeClaims: [],
+      findings: [{
+        id: "reliability-in-product-slot",
+        domain: "testing",
+        summary: "Strengthen a reliability test",
+        evidence: [{
+          kind: "repository_fact",
+          source: "tests/example.test.ts:1",
+          fact: "The test lacks the expected assertion",
+        }],
+        impact: "medium",
+        confidence: "high",
+        risk: "low",
+        candidatePaths: ["tests/example.test.ts"],
+        verification: ["npm test"],
+        conflicts: [],
+      }],
+      recommendedId: "reliability-in-product-slot",
+      reason: "attempted focus drift",
+    })).toThrow("belongs to reliability, not product");
+  });
+
   it("requires evidence, passed builder checks and an evidenced audit pass", () => {
     expect(() => validateScoutOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       status: "proposal",
+      attentionClass: "reliability",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       activeClaims: [],
       findings: [{
         id: "one",
@@ -355,10 +603,13 @@ describe("specialist output contracts", () => {
     })).toThrow("evidence must not be empty");
 
     expect(() => validateBuilderOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       status: "implemented",
+      attentionClass: "product",
       runId: "run-1",
+      candidateId: "candidate-run-1",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       changedPaths: ["src/example.ts"],
       checksRun: [{ command: "npm test", status: "failed", summary: "failed" }],
       residualRisks: [],
@@ -366,14 +617,59 @@ describe("specialist output contracts", () => {
     })).toThrow("cannot contain failed checks");
 
     expect(() => validateAuditorOutput({
-      schemaVersion: 1,
+      schemaVersion: 4,
       verdict: "pass",
+      attentionClass: "product",
       runId: "run-1",
+      candidateId: "candidate-run-1",
       baseSha: "a".repeat(40),
+      runtimeFingerprint,
       findings: [],
       verifiedChecks: [],
       reason: "claimed pass",
     })).toThrow("requires verifiedChecks");
+  });
+
+  it("preserves human declarations as declarations instead of documentary evidence", () => {
+    const scoutOutput = {
+      schemaVersion: 4,
+      status: "proposal",
+      attentionClass: "product",
+      baseSha: "a".repeat(40),
+      runtimeFingerprint,
+      activeClaims: [],
+      findings: [{
+        id: "typed-evidence",
+        domain: "evidence",
+        summary: "Keep the source evidence level explicit",
+        evidence: [{
+          kind: "human_declaration",
+          source: "conversation:turn-019f-example",
+          statement: "The responsible person states that authorization exists",
+        }],
+        impact: "high",
+        confidence: "high",
+        risk: "low",
+        candidatePaths: ["data/proyectos.json"],
+        verification: ["npm run test -- tests/data.test.ts"],
+        conflicts: [],
+      }],
+      recommendedId: "typed-evidence",
+      reason: "The declaration is useful but is not a document or professional review",
+    } satisfies ScoutOutput;
+
+    expect(validateScoutOutput(scoutOutput).status).toBe("proposal");
+    expect(() => validateScoutOutput({
+      ...scoutOutput,
+      findings: [{
+        ...scoutOutput.findings[0],
+        evidence: [{
+          kind: "document_reference",
+          source: "conversation:turn-019f-example",
+          statement: "The responsible person states that authorization exists",
+        }],
+      }],
+    })).toThrow("unexpected keys");
   });
 
   it("rejects non-canonical paths and invalid diff counts", () => {

@@ -43,6 +43,7 @@ export const COORDINATION_PROTOCOL_VERSION: 3;
 export function readCoordinationProtocolVersion(repo: string): number | null;
 export function normalizeRepositoryIdentity(remote: string, repo?: string): string;
 export function getRepositoryIdentity(repo: string): string;
+export function resolveCoordinationStateHome(stateHome?: string | null): string;
 export function getCoordinationPaths(repo: string, stateHome?: string | null): CoordinationPaths;
 export function getLeasePaths(repo: string, stateHome?: string | null): { directory: string; owner: string };
 export function registerClone(repo: string, options?: CloneRegistrationOptions): CloneRecord;

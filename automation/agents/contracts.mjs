@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { ATTENTION_CLASSES, classifyFindingAttention } from "./attention.mjs";
 import { loadPolicy } from "./policy.mjs";
 
 function object(value, label) {
@@ -44,6 +45,18 @@ function baseSha(value, label) {
   return value;
 }
 
+function sha256(value, label) {
+  if (!/^[0-9a-f]{64}$/.test(value ?? "")) throw new Error(`${label} must be a SHA-256 digest`);
+  return value;
+}
+
+function date(value, label) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value ?? "")) {
+    throw new Error(`${label} must be an ISO calendar date`);
+  }
+  return value;
+}
+
 function nullableNonNegativeNumber(value, label, { integer = false } = {}) {
   if (value === null) return value;
   if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
@@ -55,16 +68,94 @@ function nullableNonNegativeNumber(value, label, { integer = false } = {}) {
   return value;
 }
 
-function common(value, label) {
+function common(value, label, schemaVersion = 1) {
   const output = object(value, label);
-  if (output.schemaVersion !== 1) throw new Error(`${label}.schemaVersion must be 1`);
+  if (output.schemaVersion !== schemaVersion) {
+    throw new Error(`${label}.schemaVersion must be ${schemaVersion}`);
+  }
   return output;
 }
 
+function safeIdentifier(value, label) {
+  string(value, label);
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(value)) {
+    throw new Error(`${label} contains unsafe characters`);
+  }
+  return value;
+}
+
+function nullablePullRequest(value, label) {
+  if (value === null) return null;
+  const pullRequest = object(value, label);
+  exactKeys(pullRequest, label, ["number", "url"]);
+  if (!Number.isInteger(pullRequest.number) || pullRequest.number < 1) {
+    throw new Error(`${label}.number must be a positive integer`);
+  }
+  string(pullRequest.url, `${label}.url`);
+  let url;
+  try {
+    url = new URL(pullRequest.url);
+  } catch {
+    throw new Error(`${label}.url must be a valid URL`);
+  }
+  if (url.protocol !== "https:") throw new Error(`${label}.url must use https`);
+  const match = url.pathname.match(/\/pull\/(\d+)\/?$/);
+  if (!match || Number(match[1]) !== pullRequest.number) {
+    throw new Error(`${label}.url must identify pull request ${pullRequest.number}`);
+  }
+  return pullRequest;
+}
+
+function validateTypedEvidence(value, label) {
+  const evidence = object(value, label);
+  enumeration(evidence.kind, `${label}.kind`, [
+    "repository_fact",
+    "command_result",
+    "human_declaration",
+    "document_reference",
+    "professional_review",
+  ]);
+
+  if (new Set(["repository_fact", "command_result"]).has(evidence.kind)) {
+    exactKeys(evidence, label, ["kind", "source", "fact"]);
+    string(evidence.source, `${label}.source`);
+    string(evidence.fact, `${label}.fact`);
+  } else if (evidence.kind === "human_declaration") {
+    exactKeys(evidence, label, ["kind", "source", "statement"]);
+    string(evidence.source, `${label}.source`);
+    string(evidence.statement, `${label}.statement`);
+  } else if (evidence.kind === "document_reference") {
+    exactKeys(evidence, label, ["kind", "source", "documentId", "fact"]);
+    string(evidence.source, `${label}.source`);
+    safeIdentifier(evidence.documentId, `${label}.documentId`);
+    string(evidence.fact, `${label}.fact`);
+  } else {
+    exactKeys(evidence, label, [
+      "kind", "source", "reviewId", "reviewer", "reviewedAt", "decision", "fact",
+    ]);
+    string(evidence.source, `${label}.source`);
+    safeIdentifier(evidence.reviewId, `${label}.reviewId`);
+    string(evidence.reviewer, `${label}.reviewer`);
+    date(evidence.reviewedAt, `${label}.reviewedAt`);
+    enumeration(evidence.decision, `${label}.decision`, [
+      "approved", "changes_requested", "rejected",
+    ]);
+    string(evidence.fact, `${label}.fact`);
+  }
+
+  return evidence;
+}
+
 export function validateScoutOutput(value, policy = loadPolicy()) {
-  const output = common(value, "scout output");
+  const output = common(value, "scout output", 4);
+  exactKeys(output, "scout output", [
+    "schemaVersion", "status", "attentionClass", "baseSha", "runtimeFingerprint", "activeClaims",
+    "findings", "recommendedId", "reason",
+  ]);
   enumeration(output.status, "scout output.status", ["no_op", "proposal", "blocked"]);
+  enumeration(output.attentionClass, "scout output.attentionClass", ATTENTION_CLASSES);
   baseSha(output.baseSha, "scout output.baseSha");
+  sha256(output.runtimeFingerprint, "scout output.runtimeFingerprint");
   for (const [index, rawClaim] of array(output.activeClaims, "scout output.activeClaims").entries()) {
     const claim = object(rawClaim, `scout output.activeClaims[${index}]`);
     string(claim.threadId, `scout output.activeClaims[${index}].threadId`);
@@ -93,13 +184,20 @@ export function validateScoutOutput(value, policy = loadPolicy()) {
       throw new Error(`scout output.findings[${index}].evidence must not be empty`);
     }
     for (const [evidenceIndex, rawEvidence] of evidenceItems.entries()) {
-      const evidence = object(rawEvidence, `scout output.findings[${index}].evidence[${evidenceIndex}]`);
-      string(evidence.source, `scout output.findings[${index}].evidence[${evidenceIndex}].source`);
-      string(evidence.fact, `scout output.findings[${index}].evidence[${evidenceIndex}].fact`);
+      validateTypedEvidence(
+        rawEvidence,
+        `scout output.findings[${index}].evidence[${evidenceIndex}]`,
+      );
     }
     stringArray(finding.candidatePaths, `scout output.findings[${index}].candidatePaths`, { nonEmpty: true });
     stringArray(finding.verification, `scout output.findings[${index}].verification`, { nonEmpty: true });
     stringArray(finding.conflicts, `scout output.findings[${index}].conflicts`);
+    const classified = classifyFindingAttention(finding, policy);
+    if (classified !== output.attentionClass) {
+      throw new Error(
+        `scout output.findings[${index}] belongs to ${classified}, not ${output.attentionClass}`,
+      );
+    }
   }
   if (output.recommendedId !== null) string(output.recommendedId, "scout output.recommendedId");
   if (output.status === "proposal") {
@@ -115,10 +213,17 @@ export function validateScoutOutput(value, policy = loadPolicy()) {
 }
 
 export function validateBuilderOutput(value) {
-  const output = common(value, "builder output");
+  const output = common(value, "builder output", 4);
+  exactKeys(output, "builder output", [
+    "schemaVersion", "status", "attentionClass", "runId", "candidateId", "baseSha", "runtimeFingerprint",
+    "changedPaths", "checksRun", "residualRisks", "reason",
+  ]);
   enumeration(output.status, "builder output.status", ["implemented", "no_op", "blocked"]);
-  string(output.runId, "builder output.runId");
+  enumeration(output.attentionClass, "builder output.attentionClass", ATTENTION_CLASSES);
+  safeIdentifier(output.runId, "builder output.runId");
+  safeIdentifier(output.candidateId, "builder output.candidateId");
   baseSha(output.baseSha, "builder output.baseSha");
+  sha256(output.runtimeFingerprint, "builder output.runtimeFingerprint");
   const changedPaths = stringArray(output.changedPaths, "builder output.changedPaths");
   const checksRun = array(output.checksRun, "builder output.checksRun");
   for (const [index, rawCheck] of checksRun.entries()) {
@@ -145,10 +250,17 @@ export function validateBuilderOutput(value) {
 }
 
 export function validateAuditorOutput(value) {
-  const output = common(value, "auditor output");
+  const output = common(value, "auditor output", 4);
+  exactKeys(output, "auditor output", [
+    "schemaVersion", "verdict", "attentionClass", "runId", "candidateId", "baseSha", "runtimeFingerprint",
+    "findings", "verifiedChecks", "reason",
+  ]);
   enumeration(output.verdict, "auditor output.verdict", ["pass", "veto", "needs_human"]);
-  string(output.runId, "auditor output.runId");
+  enumeration(output.attentionClass, "auditor output.attentionClass", ATTENTION_CLASSES);
+  safeIdentifier(output.runId, "auditor output.runId");
+  safeIdentifier(output.candidateId, "auditor output.candidateId");
   baseSha(output.baseSha, "auditor output.baseSha");
+  sha256(output.runtimeFingerprint, "auditor output.runtimeFingerprint");
   const findings = array(output.findings, "auditor output.findings");
   for (const [index, rawFinding] of findings.entries()) {
     const finding = object(rawFinding, `auditor output.findings[${index}]`);
@@ -193,10 +305,7 @@ function validateSelectedFinding(value, label = "run report.selectedFinding") {
   const evidence = array(finding.evidence, `${label}.evidence`);
   if (evidence.length === 0) throw new Error(`${label}.evidence must not be empty`);
   for (const [index, rawEvidence] of evidence.entries()) {
-    const item = object(rawEvidence, `${label}.evidence[${index}]`);
-    exactKeys(item, `${label}.evidence[${index}]`, ["source", "fact"]);
-    string(item.source, `${label}.evidence[${index}].source`);
-    string(item.fact, `${label}.evidence[${index}].fact`);
+    validateTypedEvidence(rawEvidence, `${label}.evidence[${index}]`);
   }
   stringArray(finding.candidatePaths, `${label}.candidatePaths`, { nonEmpty: true });
   stringArray(finding.verification, `${label}.verification`, { nonEmpty: true });
@@ -204,10 +313,12 @@ function validateSelectedFinding(value, label = "run report.selectedFinding") {
   return finding;
 }
 
-export function validateRunReport(value) {
-  const output = common(value, "run report");
+export function validateRunReport(value, policy = loadPolicy()) {
+  const output = common(value, "run report", 6);
   exactKeys(output, "run report", [
-    "schemaVersion", "status", "mode", "runId", "baseSha", "selectedFinding",
+    "schemaVersion", "status", "mode", "runOrigin", "attentionClass", "runId", "baseSha", "runtimeFingerprint", "candidateId",
+    "parentRunId", "trigger", "phase", "finalCommit", "pullRequest",
+    "reviewDecision", "selectedFinding",
     "activeConflicts", "policyBlockers", "changedPaths", "checks",
     "auditorVerdict", "externalAction", "learned_rules", "usage", "traceId",
     "reason",
@@ -216,12 +327,50 @@ export function validateRunReport(value) {
     "no_op", "shadow_finding", "blocked", "local_diff", "draft_pr",
   ]);
   enumeration(output.mode, "run report.mode", ["shadow", "active", "disabled"]);
-  string(output.runId, "run report.runId");
-  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(output.runId)) {
-    throw new Error("run report.runId contains unsafe characters");
-  }
+  enumeration(output.runOrigin, "run report.runOrigin", [
+    "scheduled_autonomous", "human_directed", "control_plane_maintenance", "delivery",
+  ]);
+  enumeration(output.attentionClass, "run report.attentionClass", ATTENTION_CLASSES);
+  safeIdentifier(output.runId, "run report.runId");
   baseSha(output.baseSha, "run report.baseSha");
+  sha256(output.runtimeFingerprint, "run report.runtimeFingerprint");
+  if (output.candidateId !== null) safeIdentifier(output.candidateId, "run report.candidateId");
+  if (output.parentRunId !== null) safeIdentifier(output.parentRunId, "run report.parentRunId");
+  if (output.parentRunId === output.runId) {
+    throw new Error("run report.parentRunId cannot equal runId");
+  }
+  enumeration(output.trigger, "run report.trigger", [
+    "scheduled_cycle", "human_request", "candidate_follow_up", "delivery_event",
+  ]);
+  const triggerOrigins = {
+    scheduled_cycle: ["scheduled_autonomous"],
+    human_request: ["human_directed", "control_plane_maintenance"],
+    delivery_event: ["delivery"],
+  };
+  if (triggerOrigins[output.trigger] && !triggerOrigins[output.trigger].includes(output.runOrigin)) {
+    throw new Error(`run report.trigger ${output.trigger} is incompatible with runOrigin ${output.runOrigin}`);
+  }
+  if (output.phase !== null) {
+    enumeration(output.phase, "run report.phase", [
+      "discovery", "implementation", "review", "delivery", "closure",
+    ]);
+  }
+  if (output.finalCommit !== null) baseSha(output.finalCommit, "run report.finalCommit");
+  nullablePullRequest(output.pullRequest, "run report.pullRequest");
+  if (output.reviewDecision !== null) {
+    enumeration(output.reviewDecision, "run report.reviewDecision", [
+      "approved", "changes_requested", "rejected", "superseded",
+    ]);
+  }
   const finding = validateSelectedFinding(output.selectedFinding);
+  if (finding) {
+    const classified = classifyFindingAttention(finding, policy);
+    if (classified !== output.attentionClass) {
+      throw new Error(
+        `run report.selectedFinding belongs to ${classified}, not ${output.attentionClass}`,
+      );
+    }
+  }
   stringArray(output.activeConflicts, "run report.activeConflicts");
   stringArray(output.policyBlockers, "run report.policyBlockers");
   const changedPaths = stringArray(output.changedPaths, "run report.changedPaths");
@@ -280,8 +429,31 @@ export function validateRunReport(value) {
   if (output.status === "no_op" && finding) {
     throw new Error("no_op requires selectedFinding null");
   }
+  const lineageFields = [
+    output.candidateId,
+    output.parentRunId,
+    output.phase,
+    output.finalCommit,
+    output.pullRequest,
+    output.reviewDecision,
+  ];
+  if (!finding && lineageFields.some((item) => item !== null)) {
+    throw new Error("reports without selectedFinding require candidate lineage fields null");
+  }
+  if (finding && (output.candidateId === null || output.phase === null)) {
+    throw new Error("reports with selectedFinding require candidateId and phase");
+  }
+  if (
+    output.reviewDecision !== null
+    && !new Set(["review", "delivery", "closure"]).has(output.phase)
+  ) {
+    throw new Error("reviewDecision requires review, delivery or closure phase");
+  }
   if (output.status === "draft_pr" && output.externalAction !== "draft_pr") {
     throw new Error("draft_pr status requires draft_pr externalAction");
+  }
+  if (output.status === "draft_pr" && output.pullRequest === null) {
+    throw new Error("draft_pr status requires pullRequest");
   }
   if (output.status === "local_diff" && output.externalAction !== "local_diff") {
     throw new Error("local_diff status requires local_diff externalAction");
@@ -291,6 +463,12 @@ export function validateRunReport(value) {
   }
   if (output.mode === "shadow" && output.auditorVerdict !== null) {
     throw new Error("shadow reports cannot claim an auditor verdict");
+  }
+  if (
+    output.runOrigin === "control_plane_maintenance"
+    && output.attentionClass !== "agent_maintenance"
+  ) {
+    throw new Error("control_plane_maintenance requires agent_maintenance attention");
   }
   return output;
 }

@@ -11,10 +11,28 @@ const autonomousRoles = new Set([
 ]);
 
 const readOnlyRoles = new Set(["scout", "auditor"]);
-const writeToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|delete|move|rename)/i;
+const writeToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|create|save|upload|delete|remove|copy|move|rename|mkdir)/i;
 const applyPatchToolPattern = /apply_patch/i;
+const runtimeSensitiveCommandPattern = /(?:^|[\s;&|"'`/])(?:node|npm|npx|pnpm|yarn|eslint|next|tsc|vitest)\b/i;
+const runtimeWrapperPattern = /^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:(?:status|assert)\s*|exec\s+--\s+\S(?:[\s\S]*\S)?\s*)$/i;
+const shellCompositionPattern = /[\r\n;&|`<>]|\$\(/;
+const builderVerificationScripts = new Set([
+  "build",
+  "check",
+  "check:activation",
+  "check:agent-runtime",
+  "check:diff",
+  "check:quality",
+  "lighthouse:ci",
+  "lint",
+  "test",
+  "test:e2e",
+  "test:e2e:contact",
+  "typecheck",
+]);
 
 const dangerousCommandPatterns = [
+  /(?:^|[\s;&|"'`/])node\b[^\n;&|]*\bautomation\/agents\/authorizations\.mjs\b[^\n;&|]*\b(?:register|reserve|complete|revoke)\b/i,
   /(?:^|[\s;&|"'`/])git\b[^\n;&|]*\b(?:add|am|apply|bisect|branch|checkout|cherry-pick|clean|clone|commit|commit-tree|config|fast-import|fetch|filter-branch|gc|hash-object|init|maintenance|merge|mv|notes|pull|push|read-tree|rebase|remote|replace|reset|restore|revert|rm|stash|submodule|switch|tag|update-index|update-ref|worktree|write-tree)\b/i,
   /(?:^|[\s;&|"'`/])gh\b/i,
   /(?:^|[\s;&|"'`/])(?:vercel|netlify|firebase)\b/i,
@@ -22,7 +40,9 @@ const dangerousCommandPatterns = [
   /(?:^|[\s;&|"'`/])npx\b/i,
   /(?:^|[\s;&|"'`/])(?:curl|wget|scp|ssh|rsync)\b/i,
   /(?:^|[\s;&|"'`/])(?:rm|rmdir|mv|chmod|chown)\b/i,
-  /(?:^|[\s;&|"'`/])(?:tee|touch|truncate|cp|install)\b/i,
+  /(?:^|[\s;&|"'`/])(?:tee|touch|truncate|cp|install|mkdir|mkfifo|mknod|mktemp|ln|unlink|split|csplit)\b/i,
+  /(?:^|[\s;&|"'`/])find\b[^\n;&|]*\s-(?:delete|exec|execdir|ok|okdir)\b/i,
+  /(?:^|[\s;&|"'`/])sort\b[^\n;&|]*\s-o(?:\s|$)/i,
   /(?:^|[\s;&|"'`/])(?:sed|perl)\b[^\n;&|]*\s-i\b/i,
   /(?:^|[\s;&|"'`/])(?:node|python3?|ruby|perl)\b[^\n;&|]*\s-[ce]\b/i,
   /(^|[^<])>{1,2}\s*[^&]/,
@@ -66,7 +86,7 @@ function patchPaths(toolInput) {
   const patch = typeof toolInput?.patch === "string"
     ? toolInput.patch
     : typeof toolInput === "string" ? toolInput : "";
-  return [...patch.matchAll(/^\*\*\* (?:Add|Update|Delete) File:\s*(.+)$/gm)]
+  return [...patch.matchAll(/^\*\*\* (?:(?:Add|Update|Delete) File|Move to):\s*(.+)$/gm)]
     .map((match) => match[1].trim());
 }
 
@@ -76,8 +96,67 @@ function patternStem(pattern) {
   return pattern;
 }
 
-function commandMentionsProtectedPath(command, policy) {
-  return policy.protectedPaths.some((pattern) => command.includes(patternStem(pattern)));
+function commandMentionsProtectedPath(command, policy, usesRuntimeWrapper = false) {
+  const inspected = usesRuntimeWrapper
+    ? command
+        .replaceAll("automation/agents/runtime.mjs", "")
+        .replaceAll("automation/agents/preflight.mjs", "")
+    : command;
+  return policy.protectedPaths.some((pattern) => inspected.includes(patternStem(pattern)));
+}
+
+function usesExclusiveRuntimeWrapper(command) {
+  return runtimeWrapperPattern.test(command) && !shellCompositionPattern.test(command);
+}
+
+function builderUsesApprovedRuntimeCommand(command) {
+  if (/^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:status|assert)\s*$/i.test(command)) {
+    return true;
+  }
+  if (
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/preflight\.mjs(?:\s+--json)?\s*$/i
+      .test(command)
+  ) {
+    return true;
+  }
+  const npmRun = command.match(
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+([A-Za-z0-9:_-]+)\b/i,
+  );
+  return npmRun ? builderVerificationScripts.has(npmRun[1]) : false;
+}
+
+function readOnlyUsesApprovedRuntimeCommand(command) {
+  if (/^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:status|assert)\s*$/i.test(command)) {
+    return true;
+  }
+  if (
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/(?:policy|preflight)\.mjs(?:\s+--json)?\s*$/i
+      .test(command)
+  ) {
+    return true;
+  }
+  if (
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/operations\.mjs\s+status\s*$/i
+      .test(command)
+  ) {
+    return true;
+  }
+  if (
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/lease\.mjs\s+status\s*$/i
+      .test(command)
+  ) {
+    return true;
+  }
+  if (
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/(?:memory|authorizations|reconcile)\.mjs\s+(?:status|context|inspect|list)\b/i
+      .test(command)
+  ) {
+    return true;
+  }
+  const npmRun = command.match(
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+([A-Za-z0-9:_-]+)\b/i,
+  );
+  return npmRun ? builderVerificationScripts.has(npmRun[1]) : false;
 }
 
 export function evaluateToolUse(input, policy = loadPolicy()) {
@@ -86,13 +165,24 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
 
   const toolName = typeof input?.tool_name === "string" ? input.tool_name : "";
   const command = commandFromInput(input?.tool_input);
+  const usesRuntimeWrapper = usesExclusiveRuntimeWrapper(command);
+
+  if (command && runtimeSensitiveCommandPattern.test(command) && !usesRuntimeWrapper) {
+    return deny(`${role} debe ejecutar Node y las dependencias mediante automation/agents/runtime.mjs.`);
+  }
 
   if (readOnlyRoles.has(role)) {
+    if (command && usesRuntimeWrapper && !readOnlyUsesApprovedRuntimeCommand(command)) {
+      return deny(`${role} solo puede usar el runtime fijado para lecturas y verificaciones versionadas.`);
+    }
     if (writeToolPattern.test(toolName)) {
       return deny(`${role} es de solo lectura y no puede usar ${toolName}.`);
     }
     if (command && dangerousCommandPatterns.some((pattern) => pattern.test(command))) {
       return deny(`${role} es de solo lectura y el comando intenta mutar estado.`);
+    }
+    if (command && !usesRuntimeWrapper && builderInterpreterPatterns.some((pattern) => pattern.test(command))) {
+      return deny(`${role} no puede ejecutar interpretes o scripts arbitrarios.`);
     }
   }
 
@@ -100,13 +190,16 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (policy.mode !== "active" || !policy.authority.allowLocalDiff) {
       return deny("El implementador no puede ejecutarse mientras la política no autorice diffs locales en modo activo.");
     }
+    if (command && usesRuntimeWrapper && !builderUsesApprovedRuntimeCommand(command)) {
+      return deny("El implementador solo puede usar el entorno fijado para preflight y scripts de verificación versionados.");
+    }
     if (command && dangerousCommandPatterns.some((pattern) => pattern.test(command))) {
       return deny("El implementador no puede alterar Git, dependencias, red, publicación o archivos mediante comandos destructivos.");
     }
-    if (command && builderInterpreterPatterns.some((pattern) => pattern.test(command))) {
+    if (command && !usesRuntimeWrapper && builderInterpreterPatterns.some((pattern) => pattern.test(command))) {
       return deny("El implementador debe usar apply_patch para escribir y scripts npm versionados para verificar.");
     }
-    if (command && commandMentionsProtectedPath(command, policy)) {
+    if (command && commandMentionsProtectedPath(command, policy, usesRuntimeWrapper)) {
       return deny("El implementador intentó tocar una superficie protegida por la política de Obraxen.");
     }
     if (writeToolPattern.test(toolName)) {
