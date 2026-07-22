@@ -3,9 +3,11 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "24.x"
+    "node": "24.18.0"
   },
+  "packageManager": "npm@11.16.0",
   "scripts": {
+    "check:agent-runtime": "node automation/agents/runtime.mjs assert --json",
     "check:activation": "node --experimental-strip-types scripts/check-activation.mjs",
     "check:diff": "node scripts/check-branch-diff.mjs",
     "build": "next build",
