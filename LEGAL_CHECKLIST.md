@@ -30,12 +30,13 @@ dictamen profesional favorable y `nombreRevisionAprobada: true`.
 
 ## Autorizaciones de casos y fotografías
 
-Los seis casos registran una confirmación interna para identificar al cliente,
-pero ninguno dispone todavía de referencia documental ni revisión legal aprobada.
-La declaración expresa del responsable del 17 de julio de 2026 cubre nombre del
-cliente y fotografías web para los seis casos. Cada registro contiene fecha,
-fuente, referencia interna y revisión legal aprobada; los originales y la
-identidad del responsable se conservan fuera del repositorio.
+Los seis casos registran una declaración interna para identificar al cliente,
+pero ninguno dispone todavía de referencia documental verificable ni revisión
+legal aprobada. La declaración expresa del responsable del 17 de julio de 2026
+cubre nombre del cliente y fotografías web para los seis casos. Cada registro
+contiene fecha, fuente y referencia interna; no contiene el documento ni una
+revisión legal. Los originales y la identidad del responsable se conservan fuera
+del repositorio.
 
 Antes de publicar cada caso se debe registrar:
 
@@ -45,9 +46,10 @@ Antes de publicar cada caso se debe registrar:
 - titularidad o licencia suficiente sobre las fotografías;
 - revisión legal aprobada o anonimización del caso.
 
-`autorizacionPublicacion.estado` está ahora en `documentada` para los seis casos.
-Esta resolución no sustituye la revisión legal general del sitio ni autoriza una
-preview, un despliegue o la publicación.
+El modelo separa la declaración del responsable, la referencia documental y la
+revisión legal. Solo está registrada la primera capa. Esto no sustituye la
+revisión legal general del sitio ni autoriza una preview, un despliegue o la
+publicación.
 
 ## Decisiones técnicas pendientes
 
