@@ -47,6 +47,7 @@ const EVENT_COMMON_KEYS = [
   "stepId",
   "type",
 ];
+const NEXT_DYNAMIC_SEGMENT = /^(?:\[[A-Za-z_][A-Za-z0-9_]*\]|\[\.\.\.[A-Za-z_][A-Za-z0-9_]*\]|\[\[\.\.\.[A-Za-z_][A-Za-z0-9_]*\]\])(?:\.[A-Za-z0-9._-]+)?$/;
 
 function object(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -120,6 +121,14 @@ function sameArray(left, right) {
   return left.length === right.length && left.every((item, index) => item === right[index]);
 }
 
+function isExactAuthorizationPath(path) {
+  if (!isClaimPath(path) || /[*?{}]/.test(path)) return false;
+  return path.split("/").every((segment) => {
+    if (!/[\[\]]/.test(segment)) return true;
+    return NEXT_DYNAMIC_SEGMENT.test(segment);
+  });
+}
+
 function validateDecision(raw, label = "humanDecision") {
   const decision = object(raw, label);
   exactKeys(decision, label, ["decisionId", "source", "statement"]);
@@ -184,8 +193,7 @@ export function validateAuthorizationBundle(raw, policy = loadPolicy()) {
     !Array.isArray(candidate.allowedPaths)
     || candidate.allowedPaths.length === 0
     || candidate.allowedPaths.length > policy.limits.maxChangedFiles
-    || candidate.allowedPaths.some((path) => !isClaimPath(path))
-    || candidate.allowedPaths.some((path) => /[*?[\]{}]/.test(path))
+    || candidate.allowedPaths.some((path) => !isExactAuthorizationPath(path))
     || new Set(candidate.allowedPaths).size !== candidate.allowedPaths.length
   ) {
     throw new Error("candidate.allowedPaths must contain unique canonical repository paths");

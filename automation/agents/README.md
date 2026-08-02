@@ -23,6 +23,14 @@ roles use GPT-5.6 Sol with high reasoning. Model claims are not trusted: the
 canary is judged from tool events and returned child ids, never from prose saying
 that delegation succeeded.
 
+Preflight verifies the repository runtime, not provider- or account-level model
+availability. After a specialist model changes, or after a launch reports that
+its model is unsupported, the director must run one bounded read-only specialist
+canary with `fork_context=false`. Recovery requires both a real child id from the
+`spawn_agent` tool event and output that passes the role contract. A launch error
+is non-evidence and never authorizes a retry that would duplicate a scheduled
+cycle.
+
 Every role response also passes through `contracts.mjs`. A token, prose answer,
 malformed JSON or incomplete shape is a blocked run even when the model claims
 success.
@@ -170,9 +178,17 @@ chain remains the durable history.
 candidate-specific delivery sequence without granting standing authority. The
 only possible actions are `commit_candidate`, `push_branch` and
 `create_draft_pull_request`. A bundle binds the repository identity, candidate
-id, base SHA, one `codex/` branch, exact sorted non-glob paths, activation
-digest, required checks, order and expiry. It lasts at most 24 hours and contains no merge, deployment,
+id, base SHA, one `codex/` branch, exact sorted paths, activation digest,
+required checks, order and expiry. Paths are never expanded: bracketed Next.js
+segments remain literal, while `*`, `?` and brace patterns are rejected. The
+bundle lasts at most 24 hours and contains no merge, deployment,
 publication, deletion or destructive rollback action.
+
+The delivery controller must stage authorized paths with Git's literal pathspec
+mode, for example `git --literal-pathspecs add -- <exact paths>`. Quoting a path
+in the shell is insufficient because Git otherwise interprets bracketed route
+segments as character classes. The committed `changedPaths` must still match the
+bundle exactly before push authority can be reserved.
 
 The controller validates and reserves each next step immediately before the
 external action. A reservation lasts at most 10 minutes and its raw random token
@@ -251,6 +267,10 @@ node automation/agents/runtime.mjs exec -- npm run check:activation -- --json
 
 Then invoke `$obraxen-continuous-improvement` with a request to run one shadow
 cycle. Inspect its structured finding report and verify that it created no diff.
+For a model-availability canary, invoke the exact specialist role rather than a
+default agent, require the `spawn_agent` child id, and validate the returned JSON
+with `contracts.mjs --role <role>`. Static configuration and prose cannot prove
+that the configured account accepts the model.
 
 `preflight.mjs` is read-only with respect to the repository, but it updates the
 current clone's heartbeat in the private coordination registry outside the
