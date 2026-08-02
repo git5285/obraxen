@@ -108,6 +108,7 @@ export default async function HomePage({ params }: HomePageProps) {
         serviceAreaLabel={homepage.serviceAreaLabel}
         priorityMarketsLabel={homepage.priorityMarketsLabel}
         hasContactChannel={homepage.hasContactChannel}
+        contactFormEnabled={homepage.contactFormEnabled}
         contactHref={getPath(lang, "contact")}
         homeHref={homeHref}
         navigation={homepage.navigationItems}

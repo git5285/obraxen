@@ -9,6 +9,7 @@ type SiteFooterProps = {
   serviceAreaLabel: string;
   priorityMarketsLabel: string;
   hasContactChannel: boolean;
+  contactFormEnabled: boolean;
   contactHref: string;
   homeHref: string;
   navigation: readonly NavigationItem[];
@@ -38,6 +39,7 @@ export function SiteFooter({
   serviceAreaLabel,
   priorityMarketsLabel,
   hasContactChannel,
+  contactFormEnabled,
   contactHref,
   homeHref,
   navigation,
@@ -54,7 +56,7 @@ export function SiteFooter({
 
   return (
     <footer className="cierre" id="contact">
-      {hasContactChannel ? (
+      {contactFormEnabled ? (
         <div className="cta-fila">
           <div>
             <p className="kicker">{contactCopy.kicker}</p>
