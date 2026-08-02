@@ -235,11 +235,31 @@ describe("grouped human authorizations", () => {
     };
     expect(() => validateAuthorizationBundle(vague, policy)).toThrow("trimmed non-empty text");
 
-    const wildcard = {
+    const literalRoute = {
       ...original,
-      candidate: { ...original.candidate, allowedPaths: ["src/**"] },
+      candidate: { ...original.candidate, allowedPaths: ["src/app/[lang]/page.tsx"] },
     };
-    expect(() => validateAuthorizationBundle(wildcard, policy)).toThrow("canonical repository paths");
+    expect(validateAuthorizationBundle(literalRoute, policy).candidate.allowedPaths).toEqual([
+      "src/app/[lang]/page.tsx",
+    ]);
+
+    for (const path of [
+      "src/**",
+      "src/file?.ts",
+      "src/{one,two}.ts",
+      "src/app/[0-9]/page.tsx",
+      "src/app/[[]lang]/page.tsx",
+      "src/app/[lang/page.tsx",
+      "src/app/lang]/page.tsx",
+    ]) {
+      const wildcard = {
+        ...original,
+        candidate: { ...original.candidate, allowedPaths: [path] },
+      };
+      expect(() => validateAuthorizationBundle(wildcard, policy)).toThrow(
+        "canonical repository paths",
+      );
+    }
 
     const wrongRepository = { ...original, repositoryIdentity: "github.com/example/other" };
     expect(() => registerAuthorizationBundle(wrongRepository, {
