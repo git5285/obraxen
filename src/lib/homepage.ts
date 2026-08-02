@@ -134,6 +134,7 @@ export function getHomepage(locale: Locale) {
     priorityMarketsLabel: naturalList(brandCopy.mercadosPrioritarios, locale),
     hasOwnTeams: brand.equiposPropios,
     hasContactChannel,
+    contactFormEnabled,
     contact: {
       email: brand.email,
       phone: brand.telefono,
