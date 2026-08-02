@@ -61,7 +61,9 @@ describe("localized Next.js homepage", () => {
       href: getPath(locale, "projects"),
       text: dictionary.cta.projects,
     });
+    expect(getHomepage(locale).contactFormEnabled).toBe(false);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
+    expect(html).not.toContain('class="cta-fila"');
     expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
@@ -72,7 +74,9 @@ describe("localized Next.js homepage", () => {
       href: getPath(locale, "contact"),
       text: dictionary.cta.assessment,
     });
+    expect(getHomepage(locale).contactFormEnabled).toBe(true);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
+    expect(html).toContain('class="cta-fila"');
     expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
