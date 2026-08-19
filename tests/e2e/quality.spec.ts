@@ -401,6 +401,8 @@ test("redirects, closed routes, contact API and security policy fail closed", as
 
   const response = await page.goto("/en/", { waitUntil: "networkidle" });
   const headers = response?.headers() ?? {};
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["x-frame-options"]).toBe("DENY");
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["strict-transport-security"]).toBe("max-age=31536000");
   expect(headers["content-security-policy"]).toContain("form-action 'self'");
