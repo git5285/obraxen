@@ -10,6 +10,11 @@ base_ref="refs/remotes/${remote_name}/main"
 
 . "$repository_root/.githooks/git-env.sh"
 
+# Keep the isolated helper's command contract while selecting the pinned runtime.
+npm() {
+  node automation/agents/runtime.mjs exec -- npm "$@"
+}
+
 while read -r local_ref local_sha remote_ref remote_sha; do
   if [ -z "${local_ref:-}" ]; then
     continue
