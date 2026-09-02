@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { brand } from "@/lib/brand";
+import { internalProjects, internalProjectsBySlug } from "@/lib/internal-projects";
 import { offers } from "@/lib/offers";
-import { projects, projectsBySlug } from "@/lib/projects";
 import { locales } from "@/lib/i18n";
 import { projectSchema } from "@/lib/schemas";
 
 describe("structured data", () => {
   it("keeps project and offer slugs unique", () => {
-    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(projects.length);
+    expect(new Set(internalProjects.map(({ slug }) => slug)).size).toBe(internalProjects.length);
     expect(new Set(offers.map(({ slug }) => slug)).size).toBe(offers.length);
   });
 
   it("references only validated public projects from offers", () => {
     for (const offer of offers) {
       for (const evidence of offer.evidencia) {
-        expect(projectsBySlug.has(evidence.proyecto)).toBe(true);
+        expect(internalProjectsBySlug.has(evidence.proyecto)).toBe(true);
       }
     }
   });
@@ -25,7 +25,7 @@ describe("structured data", () => {
   });
 
   it("requires all four locale variants for public project and offer copy", () => {
-    for (const project of projects) {
+    for (const project of internalProjects) {
       expect(Object.keys(project.traducciones).sort()).toEqual([...locales].sort());
       for (const locale of locales) {
         expect(project.traducciones[locale].imagenes).toHaveLength(project.imagenes.length);
@@ -38,7 +38,7 @@ describe("structured data", () => {
   });
 
   it("keeps client publication evidence explicit and traceable", () => {
-    for (const project of projects) {
+    for (const project of internalProjects) {
       expect(project.autorizacionPublicacion).toMatchObject({
         evidencias: [{
           tipo: "declaracion_responsable",
@@ -59,7 +59,7 @@ describe("structured data", () => {
   });
 
   it("requires a professional review to reference a document in the same dossier", () => {
-    const project = structuredClone(projects[0]);
+    const project = structuredClone(internalProjects[0]);
     project.autorizacionPublicacion.evidencias.push({
       tipo: "revision_legal_verificada",
       documentoRevisado: "AUTH-DOC-NOT-PRESENT",
@@ -75,7 +75,7 @@ describe("structured data", () => {
   });
 
   it("represents unknown execution dates as null", () => {
-    const unknownDates = projects
+    const unknownDates = internalProjects
       .filter(({ slug }) => [
         "dadada-euskirchen",
         "loreal-gauchy",
@@ -84,7 +84,7 @@ describe("structured data", () => {
       .map(({ cierre }) => cierre.fechaEjecucion);
 
     expect(unknownDates).toEqual([null, null, null]);
-    expect(JSON.stringify(projects)).not.toContain("pendiente de confirmar");
+    expect(JSON.stringify(internalProjects)).not.toContain("pendiente de confirmar");
   });
 
   it("does not publish an unverified initial-response SLA", () => {
