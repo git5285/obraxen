@@ -347,11 +347,6 @@ section.intro h2{font-size:clamp(1.7rem,3.4vw,2.4rem)}
   [data-reveal].reveal-ready.is-visible,[data-stagger].reveal-ready.is-visible,[data-relato].reveal-ready.is-visible{
     opacity:1;transform:translate3d(0,0,0)
   }
-  .fisura .f-fija.motion-ready{
-    stroke-dasharray:var(--line-length);stroke-dashoffset:var(--line-length);
-    transition:stroke-dashoffset 900ms linear;
-  }
-  .fisura .f-fija.motion-ready.is-visible{stroke-dashoffset:0}
 }
 @media (max-width:860px){
   .menu-btn{display:block}
