@@ -8,7 +8,7 @@ import {
   isLocale,
 } from "@/lib/i18n";
 import { getProjectJsonLd, getProjectMetadata } from "@/lib/project-pages";
-import { projects, projectsBySlug } from "@/lib/projects";
+import { publicProjects, publicProjectsBySlug } from "@/lib/projects";
 
 type ProjectPageProps = {
   params: Promise<{ lang: string; section: string; slug: string }>;
@@ -17,20 +17,20 @@ type ProjectPageProps = {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getProjectParams(projects.map(({ slug }) => slug));
+  return getProjectParams(publicProjects.map(({ slug }) => slug));
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { lang, section, slug } = await params;
   if (!isLocale(lang) || getRouteForSection(lang, section) !== "projects") return {};
-  const project = projectsBySlug.get(slug);
+  const project = publicProjectsBySlug.get(slug);
   return project ? getProjectMetadata(project, lang) : {};
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { lang, section, slug } = await params;
   if (!isLocale(lang) || getRouteForSection(lang, section) !== "projects") notFound();
-  const project = projectsBySlug.get(slug);
+  const project = publicProjectsBySlug.get(slug);
   if (!project) notFound();
 
   return (

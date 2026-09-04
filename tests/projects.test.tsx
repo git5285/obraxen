@@ -13,29 +13,33 @@ import ProjectPage, {
 } from "@/app/[lang]/[section]/[slug]/page";
 import { brand } from "@/lib/brand";
 import { getDictionary, locales, routeSegments } from "@/lib/i18n";
-import { projects } from "@/lib/projects";
-import { getProjectMetadata, getProjectsMetadata } from "@/lib/project-pages";
+import { projects, publicProjects } from "@/lib/projects";
+import { getProjectJsonLd, getProjectMetadata, getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
 import { publicableOffers } from "@/lib/solutions";
 
 describe("localized project routes", () => {
-  it.each(locales)("renders the complete %s evidence hub", async (locale) => {
+  it.each(locales)("renders only authorized projects in the %s evidence hub", async (locale) => {
     const html = renderToStaticMarkup(await SectionPage({
       params: Promise.resolve({ lang: locale, section: routeSegments[locale].projects }),
     }));
-    expect(html.match(/<article class="project-dossier"/g)).toHaveLength(projects.length);
-    expect(html.match(/<img /g)).toHaveLength(projects.length * 3);
+    expect(html.match(/<article class="project-dossier"/g) ?? []).toHaveLength(publicProjects.length);
+    expect(html.match(/<img /g) ?? []).toHaveLength(publicProjects.length * 3);
+    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+      expect(html).not.toContain(project.cliente);
+      expect(html).not.toContain(project.slug);
+    }
     expect(html).toContain(getDictionary(locale).projectHub.title);
     expect(html).not.toContain("style=");
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
 
-  it("prerenders every locale, section and approved project slug", () => {
+  it("prerenders only authorized project slugs", () => {
     expect(generateSectionParams()).toHaveLength(locales.length * 5);
-    expect(generateProjectParams()).toHaveLength(locales.length * projects.length);
+    expect(generateProjectParams()).toHaveLength(locales.length * publicProjects.length);
   });
 
-  it.each(locales)("renders all project dossiers in %s", async (locale) => {
-    for (const project of projects) {
+  it.each(locales)("renders only authorized project dossiers in %s", async (locale) => {
+    for (const project of publicProjects) {
       const page = await ProjectPage({ params: Promise.resolve({
         lang: locale,
         section: routeSegments[locale].projects,
@@ -46,6 +50,26 @@ describe("localized project routes", () => {
       expect(html).toContain(project.referencia);
       expect(html.match(/<img /g)).toHaveLength(project.imagenes.length);
       expect(html).not.toContain("style=");
+    }
+  });
+
+  it.each(locales)("keeps unlicensed projects out of %s routes, metadata and JSON-LD", async (locale) => {
+    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+      const params = Promise.resolve({
+        lang: locale,
+        section: routeSegments[locale].projects,
+        slug: project.slug,
+      });
+      await expect(ProjectPage({ params })).rejects.toThrow();
+      await expect(generateProjectMetadata({ params })).resolves.toEqual({});
+      expect(getProjectMetadata(project, locale, "example.com")).toEqual({});
+      expect(getProjectJsonLd(project, locale)).toBeNull();
+    }
+    const hubJsonLd = getProjectsJsonLd(locale);
+    expect(hubJsonLd).toContain(`"numberOfItems":${publicProjects.length}`);
+    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+      expect(hubJsonLd).not.toContain(project.slug);
+      expect(hubJsonLd).not.toContain(project.cliente);
     }
   });
 
@@ -60,7 +84,7 @@ describe("localized project routes", () => {
       languages: { "x-default": "https://obraxen.com/en/projects/" },
     });
 
-    const titles = await Promise.all(projects.map(async ({ slug }) => {
+    const titles = await Promise.all(publicProjects.map(async ({ slug }) => {
       const metadata = await generateProjectMetadata({ params: Promise.resolve({
         lang: locale,
         section: routeSegments[locale].projects,
@@ -73,7 +97,7 @@ describe("localized project routes", () => {
       });
       return metadata.title;
     }));
-    expect(new Set(titles).size).toBe(projects.length);
+    expect(new Set(titles).size).toBe(publicProjects.length);
   });
 
   it.each(locales)("provides absolute %s project metadata for a candidate domain", (locale) => {
@@ -83,13 +107,9 @@ describe("localized project routes", () => {
       languages: { "x-default": "https://example.com/en/projects/" },
     });
 
-    const projectMetadata = getProjectMetadata(projects[0], locale, "example.com");
-    expect(projectMetadata.alternates).toMatchObject({
-      canonical: `https://example.com/${locale}/${routeSegments[locale].projects}/${projects[0].slug}/`,
-      languages: {
-        "x-default": `https://example.com/en/projects/${projects[0].slug}/`,
-      },
-    });
+    const project = projects.find((item) => !publicProjects.includes(item));
+    expect(project).toBeDefined();
+    expect(getProjectMetadata(project!, locale, "example.com")).toEqual({});
   });
 
   it.each(locales)("provides absolute %s legal and contact metadata for a candidate domain", (locale) => {
