@@ -101,16 +101,34 @@ describe("contact route", () => {
     expect(await response.json()).toEqual({ ok: false, code: "unsupported_media_type" });
   });
 
-  it("rejects declared and measured oversized payloads with 413", async () => {
+  it("rejects declared and streamed oversized payloads with 413", async () => {
     const declared = await POST(contactRequest({ contentLength: "15001" }));
     expect(declared.status).toBe(413);
     expect(await declared.json()).toEqual({ ok: false, code: "payload_too_large" });
 
-    const measured = await POST(contactRequest({
-      payload: { ...validSubmission(), message: "x".repeat(15_001) },
-    }));
-    expect(measured.status).toBe(413);
-    expect(await measured.json()).toEqual({ ok: false, code: "payload_too_large" });
+    const encoder = new TextEncoder();
+    const streamedBody = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoder.encode(JSON.stringify({
+          ...validSubmission(),
+          message: "x".repeat(15_001),
+        })));
+        controller.close();
+      },
+    });
+    const streamed = await POST(new Request("https://example.com/api/contact/", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://example.com",
+        "x-forwarded-for": crypto.randomUUID(),
+      },
+      body: streamedBody,
+      // Node requires duplex for a streamed Request body.
+      duplex: "half",
+    } as RequestInit));
+    expect(streamed.status).toBe(413);
+    expect(await streamed.json()).toEqual({ ok: false, code: "payload_too_large" });
   });
 
   it.each([null, "https://attacker.example"])(

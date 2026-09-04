@@ -51,6 +51,36 @@ function exceedsRateLimit(key: string, now = Date.now()): boolean {
   return false;
 }
 
+async function readBoundedBody(request: Request): Promise<string | null> {
+  if (!request.body) return "";
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > bodyLimit) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const body = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(body);
+}
+
 export async function POST(request: Request): Promise<Response> {
   const config = resolveContactConfig(process.env);
   if (!config.enabled || !config.apiKey || !config.toEmail || !config.fromEmail) {
@@ -72,14 +102,14 @@ export async function POST(request: Request): Promise<Response> {
     return response({ ok: false, code: "rate_limited" }, 429);
   }
 
+  const body = await readBoundedBody(request);
+  if (body === null) return response({ ok: false, code: "payload_too_large" }, 413);
+
   let raw: unknown;
   try {
-    raw = await request.json();
+    raw = JSON.parse(body);
   } catch {
     return response({ ok: false, code: "invalid_json" }, 400);
-  }
-  if (JSON.stringify(raw).length > bodyLimit) {
-    return response({ ok: false, code: "payload_too_large" }, 413);
   }
 
   const parsed = contactSubmissionSchema.safeParse(raw);
