@@ -3,30 +3,13 @@ import diagnosticoImage from "../../img/diagnostico.jpg";
 import fisurasImage from "../../img/fisuras.jpg";
 import heroImage from "../../img/hero-nave.jpg";
 import juntasImage from "../../img/juntas.jpg";
-import blitzInitial from "../../img/proyectos/blitz/estado-inicial-junta.webp";
-import blitzRepair from "../../img/proyectos/blitz/reparacion.webp";
-import blitzResult from "../../img/proyectos/blitz/resultado-pasillo.webp";
-import dadadaDetail from "../../img/proyectos/dadada/detalle-refuerzo.webp";
-import dadadaInitial from "../../img/proyectos/dadada/estado-inicial.webp";
-import dadadaRepair from "../../img/proyectos/dadada/refuerzo-junta.webp";
-import delticomInitial from "../../img/proyectos/delticom/estado-inicial.webp";
-import delticomResult from "../../img/proyectos/delticom/resultado.webp";
-import delticomTreatment from "../../img/proyectos/delticom/tratamiento.webp";
-import hologramInitial from "../../img/proyectos/hologram/estado-inicial-huecos.webp";
-import hologramTreatment from "../../img/proyectos/hologram/maquinaria-tratamiento.webp";
-import hologramResult from "../../img/proyectos/hologram/resultado.webp";
-import lorealInitial from "../../img/proyectos/loreal/estado-inicial.webp";
-import lorealResult from "../../img/proyectos/loreal/resultado.webp";
-import lorealTreatment from "../../img/proyectos/loreal/tratamiento.webp";
-import tpLinkDetail from "../../img/proyectos/tp-link/detalle-retiradas.webp";
-import tpLinkGeneral from "../../img/proyectos/tp-link/resultado-general.webp";
-import tpLinkZone from "../../img/proyectos/tp-link/resultado-zona.webp";
 import pulidoImage from "../../img/pulido.jpg";
 import recrecidosImage from "../../img/recrecidos.jpg";
 import { brand, getBrandTranslation } from "./brand";
 import { resolveContactConfig } from "./contact";
 import { getDictionary, getPath, type Locale } from "./i18n";
-import { projects } from "./projects";
+import { getPublicProjectImage } from "./public-project-assets";
+import { publicProjects } from "./projects";
 
 export type ServiceIcon = "joint" | "crack" | "level" | "surface";
 
@@ -39,32 +22,7 @@ export type NavigationItem = {
 const serviceImages = [juntasImage, fisurasImage, recrecidosImage, pulidoImage] as const;
 const serviceIcons: readonly ServiceIcon[] = ["joint", "crack", "level", "surface"];
 
-const projectImages: Record<string, StaticImageData> = {
-  "img/proyectos/blitz/estado-inicial-junta.webp": blitzInitial,
-  "img/proyectos/blitz/reparacion.webp": blitzRepair,
-  "img/proyectos/blitz/resultado-pasillo.webp": blitzResult,
-  "img/proyectos/dadada/detalle-refuerzo.webp": dadadaDetail,
-  "img/proyectos/dadada/estado-inicial.webp": dadadaInitial,
-  "img/proyectos/dadada/refuerzo-junta.webp": dadadaRepair,
-  "img/proyectos/delticom/estado-inicial.webp": delticomInitial,
-  "img/proyectos/delticom/resultado.webp": delticomResult,
-  "img/proyectos/delticom/tratamiento.webp": delticomTreatment,
-  "img/proyectos/hologram/estado-inicial-huecos.webp": hologramInitial,
-  "img/proyectos/hologram/maquinaria-tratamiento.webp": hologramTreatment,
-  "img/proyectos/hologram/resultado.webp": hologramResult,
-  "img/proyectos/loreal/estado-inicial.webp": lorealInitial,
-  "img/proyectos/loreal/resultado.webp": lorealResult,
-  "img/proyectos/loreal/tratamiento.webp": lorealTreatment,
-  "img/proyectos/tp-link/detalle-retiradas.webp": tpLinkDetail,
-  "img/proyectos/tp-link/resultado-general.webp": tpLinkGeneral,
-  "img/proyectos/tp-link/resultado-zona.webp": tpLinkZone,
-};
-
-export function getProjectImage(path: string): StaticImageData {
-  const image = projectImages[path];
-  if (!image) throw new Error(`No existe un import de imagen para ${path}`);
-  return image;
-}
+export const getProjectImage = getPublicProjectImage;
 
 export function getImageDimensions(
   image: StaticImageData | string,
@@ -92,12 +50,12 @@ export function getHomepage(locale: Locale) {
   const cta = {
     href: contactFormEnabled
       ? getPath(locale, "contact")
-      : projects.length
+      : publicProjects.length
         ? getPath(locale, "projects")
         : "#services",
     text: contactFormEnabled
       ? dictionary.cta.assessment
-      : projects.length
+      : publicProjects.length
         ? dictionary.cta.projects
         : dictionary.cta.services,
   };
@@ -109,7 +67,7 @@ export function getHomepage(locale: Locale) {
     claim: brandCopy.claim,
     heroImage,
     diagnosticoImage,
-    projects,
+    projects: publicProjects,
     navigationItems,
     cta,
     stats: [

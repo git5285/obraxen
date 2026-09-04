@@ -24,7 +24,7 @@ import {
 } from "@/lib/i18n";
 import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
 import { getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
-import { projects } from "@/lib/projects";
+import { publicProjects } from "@/lib/projects";
 import { CONSENT_MAX_AGE_MS, CONSENT_STORAGE_KEY } from "@/lib/consent";
 
 type SectionPageProps = { params: Promise<{ lang: string; section: string }> };
@@ -102,14 +102,14 @@ export default async function SectionPage({ params }: SectionPageProps) {
                 </div>
                 <div className="projects-hero-copy">
                   <p>{dictionary.projectHub.intro}</p>
-                  <p className="archive-note"><strong>{dictionary.projectHub.archiveNote.replace("{count}", String(projects.length))}</strong></p>
+                  <p className="archive-note"><strong>{dictionary.projectHub.archiveNote.replace("{count}", String(publicProjects.length))}</strong></p>
                 </div>
               </div>
             </div>
           </section>
           <section className="projects-archive" aria-label={dictionary.projectHub.archiveAria}>
             <div className="projects-wrap">
-              {projects.map((project) => <ProjectCard key={project.slug} project={project} locale={lang} />)}
+              {publicProjects.map((project) => <ProjectCard key={project.slug} project={project} locale={lang} />)}
             </div>
           </section>
         </main>

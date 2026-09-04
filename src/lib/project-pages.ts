@@ -8,7 +8,7 @@ import {
   type Locale,
 } from "./i18n";
 import { absoluteSiteUrl, getLocalizedAlternates } from "./metadata";
-import { projects } from "./projects";
+import { publicProjects, publicProjectsBySlug } from "./projects";
 import type { Project } from "./schemas";
 
 function siteOrigin(): string | null {
@@ -42,7 +42,7 @@ export function getProjectsMetadata(locale: Locale, domain = brand.dominio): Met
   const claim = getBrandTranslation(locale).claim;
   const title = `${dictionary.meta.projectsTitle} — ${claim}`;
   const description = dictionary.meta.projectsDescription;
-  const images = projects.length ? metadataImage(projects[0], locale, domain) : [];
+  const images = publicProjects.length ? metadataImage(publicProjects[0], locale, domain) : [];
 
   return {
     title,
@@ -71,6 +71,7 @@ export function getProjectMetadata(
   locale: Locale,
   domain = brand.dominio,
 ): Metadata {
+  if (!publicProjectsBySlug.has(project.slug)) return {};
   const dictionary = getDictionary(locale);
   const translation = project.traducciones[locale];
   const title = `${translation.titulo} — ${dictionary.meta.projectTitleSuffix}`;
@@ -105,10 +106,10 @@ export function getProjectLocation(project: Project, locale: Locale): string {
 }
 
 export function getProjectNeighbors(project: Project) {
-  const index = projects.findIndex(({ slug }) => slug === project.slug);
+  const index = publicProjects.findIndex(({ slug }) => slug === project.slug);
   return {
-    previous: index > 0 ? projects[index - 1] : null,
-    next: index >= 0 && index < projects.length - 1 ? projects[index + 1] : null,
+    previous: index > 0 ? publicProjects[index - 1] : null,
+    next: index >= 0 && index < publicProjects.length - 1 ? publicProjects[index + 1] : null,
   };
 }
 
@@ -153,8 +154,8 @@ export function getProjectsJsonLd(locale: Locale): string {
       },
       {
         "@type": "ItemList",
-        numberOfItems: projects.length,
-        itemListElement: projects.map((project, index) => ({
+        numberOfItems: publicProjects.length,
+        itemListElement: publicProjects.map((project, index) => ({
           "@type": "ListItem",
           position: index + 1,
           name: project.traducciones[locale].titulo,
@@ -166,7 +167,7 @@ export function getProjectsJsonLd(locale: Locale): string {
 }
 
 export function getProjectJsonLd(project: Project, locale: Locale): string | null {
-  if (!brand.dominio) return null;
+  if (!brand.dominio || !publicProjectsBySlug.has(project.slug)) return null;
   const dictionary = getDictionary(locale);
   return JSON.stringify({
     "@context": "https://schema.org",
