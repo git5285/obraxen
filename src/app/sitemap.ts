@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { brand } from "@/lib/brand";
-import { projects } from "@/lib/projects";
+import { projects, publicProjects } from "@/lib/projects";
 import { getPublicationState } from "@/lib/publication";
 import { getLocalizedPaths, getPath, locales, type RouteKey } from "@/lib/i18n";
 
@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return locales.flatMap((locale) => [
     entry(locale, "home", 1),
     entry(locale, "projects", 0.9),
-    ...projects.map(({ slug }) => entry(locale, "projects", 0.8, slug)),
+    ...publicProjects.map(({ slug }) => entry(locale, "projects", 0.8, slug)),
     entry(locale, "contact", 0.8),
     entry(locale, "legalNotice", 0.2),
     entry(locale, "privacy", 0.2),
