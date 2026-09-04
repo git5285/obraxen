@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { chromium } from "@playwright/test";
+import { publicProjectImages } from "../src/lib/public-project-assets.ts";
 import { getLighthouseBudgets } from "./lighthouse-budgets.ts";
 import { resolveQaPort } from "./qa-port.mjs";
 
@@ -13,10 +14,27 @@ const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
 const requestedPort = await resolveQaPort();
 const baseUrl = `http://127.0.0.1:${requestedPort}`;
 let serverExitResult = null;
+const projectsSource = JSON.parse(
+  await fs.readFile(path.join(root, "data", "proyectos.json"), "utf8"),
+);
+const publicationScopes = ["nombre_cliente", "fotografias_web"];
+const isPublicProject = (project) => {
+  const documents = project.autorizacionPublicacion.evidencias.filter(
+    (evidence) => evidence.tipo === "documento_referenciado"
+      && publicationScopes.every((scope) => evidence.alcance.includes(scope)),
+  );
+  const hasVerifiedReview = documents.some((document) => project.autorizacionPublicacion.evidencias.some(
+    (evidence) => evidence.tipo === "revision_legal_verificada"
+      && evidence.documentoRevisado === document.referenciaDocumento
+      && evidence.resultado === "aprobada",
+  ));
+  return hasVerifiedReview && project.imagenes.every((image) => Boolean(publicProjectImages[image.src]));
+};
+const publicProject = projectsSource.find(isPublicProject);
 const routes = [
   { name: "home-en", path: "/en/" },
   { name: "projects-de", path: "/de/projekte/" },
-  { name: "case-blitz-fr", path: "/fr/projets/blitz-bremen/" },
+  ...(publicProject ? [{ name: `case-${publicProject.slug}-fr`, path: `/fr/projets/${publicProject.slug}/` }] : []),
 ];
 
 const brandSource = JSON.parse(
@@ -216,7 +234,7 @@ server.stderr.on("data", (chunk) => { serverOutput += chunk; });
 try {
   await waitForServer();
   for (const route of routes) await auditRoute(route);
-  console.log("Lighthouse OK → 3 rutas localizadas dentro de presupuesto");
+  console.log(`Lighthouse OK → ${routes.length} rutas localizadas dentro de presupuesto`);
 } catch (error) {
   if (serverOutput) console.error(serverOutput.trim());
   throw error;
