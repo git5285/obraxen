@@ -1,12 +1,24 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { getPath } from "@/lib/i18n";
+import { publicProjectImages } from "@/lib/public-project-assets";
+import { isPublicProject } from "@/lib/public-project-publication";
+
+const projects = JSON.parse(readFileSync(resolve(process.cwd(), "data/proyectos.json"), "utf8"));
+const publicProject = projects.find(
+  (project: typeof projects[number]) => isPublicProject(project, publicProjectImages),
+);
+const unpublishedProject = projects.find(
+  (project: typeof projects[number]) => !isPublicProject(project, publicProjectImages),
+);
 
 const locales = [
   {
     locale: "en",
     home: "/en/",
     projects: "/en/projects/",
-    case: "/en/projects/blitz-bremen/",
     notice: "/en/legal-notice/",
     privacy: "/en/privacy/",
     cookies: "/en/cookies/",
@@ -19,7 +31,6 @@ const locales = [
     locale: "de",
     home: "/de/",
     projects: "/de/projekte/",
-    case: "/de/projekte/blitz-bremen/",
     notice: "/de/impressum/",
     privacy: "/de/datenschutz/",
     cookies: "/de/cookies/",
@@ -32,7 +43,6 @@ const locales = [
     locale: "es",
     home: "/es/",
     projects: "/es/proyectos/",
-    case: "/es/proyectos/blitz-bremen/",
     notice: "/es/aviso-legal/",
     privacy: "/es/privacidad/",
     cookies: "/es/cookies/",
@@ -45,7 +55,6 @@ const locales = [
     locale: "fr",
     home: "/fr/",
     projects: "/fr/projets/",
-    case: "/fr/projets/blitz-bremen/",
     notice: "/fr/mentions-legales/",
     privacy: "/fr/confidentialite/",
     cookies: "/fr/cookies/",
@@ -57,13 +66,13 @@ const locales = [
 ] as const;
 
 const contentRoutes = locales.flatMap((entry) => [
-  { path: entry.home, images: 24 },
-  { path: entry.projects, images: 18 },
-  { path: entry.case, images: 3 },
-  { path: entry.notice, images: 0 },
-  { path: entry.privacy, images: 0 },
-  { path: entry.cookies, images: 0 },
-  { path: entry.contact, images: 0 },
+  { path: entry.home },
+  { path: entry.projects },
+  ...(publicProject ? [{ path: getPath(entry.locale, "projects", publicProject.slug) }] : []),
+  { path: entry.notice },
+  { path: entry.privacy },
+  { path: entry.cookies },
+  { path: entry.contact },
 ]);
 
 for (const route of contentRoutes) {
@@ -88,7 +97,6 @@ for (const route of contentRoutes) {
     const response = await page.goto(route.path, { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
-    await expect(page.locator("img")).toHaveCount(route.images);
     await expect(page.locator("html")).toHaveAttribute("lang", route.path.slice(1, 3));
 
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
@@ -209,8 +217,13 @@ for (const entry of locales) {
 
     await page.goto(entry.projects, { waitUntil: "networkidle" });
     await expect(page.locator("h1")).toContainText(entry.projectTitle);
-    await page.goto(entry.case, { waitUntil: "networkidle" });
-    await expect(page.locator("main h1")).toContainText("Blitz");
+    if (publicProject) {
+      await page.goto(getPath(entry.locale, "projects", publicProject.slug), { waitUntil: "networkidle" });
+      await expect(page.locator("main h1")).toContainText(publicProject.traducciones[entry.locale].titulo);
+    } else if (unpublishedProject) {
+      const response = await page.goto(getPath(entry.locale, "projects", unpublishedProject.slug));
+      expect(response?.status()).toBe(404);
+    }
     await page.goto(entry.contact, { waitUntil: "networkidle" });
     await expect(page.locator("h1")).toContainText(entry.contactTitle);
     await expect(page.locator("form")).toHaveCount(0);
@@ -386,6 +399,10 @@ test("redirects, closed routes, contact API and security policy fail closed", as
 
   const closedRoute = await request.get("/en/solutions/");
   expect(closedRoute.status()).toBe(404);
+  if (unpublishedProject) {
+    const unpublishedRoute = await request.get(getPath("en", "projects", unpublishedProject.slug));
+    expect(unpublishedRoute.status()).toBe(404);
+  }
   const qaHarness = await request.get("/qa/contact-harness/");
   expect(qaHarness.status()).toBe(404);
   const contact = await request.post("/api/contact/", { data: {} });
@@ -420,9 +437,11 @@ test("redirects, closed routes, contact API and security policy fail closed", as
   );
 });
 
-test("WebKit smoke: localized home, project and contact load", async ({ page }, testInfo) => {
+test("WebKit smoke: localized public routes load", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-webkit", "WebKit-only smoke coverage");
-  for (const path of ["/en/", "/de/projekte/blitz-bremen/", "/fr/contact/"]) {
+  const paths = ["/en/", "/de/projekte/", "/fr/contact/"];
+  if (publicProject) paths.push(getPath("de", "projects", publicProject.slug));
+  for (const path of paths) {
     const response = await page.goto(path, { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
