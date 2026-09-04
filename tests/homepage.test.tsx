@@ -29,37 +29,41 @@ vi.mock("@/lib/contact", async (importOriginal) => {
 
 import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
-import { getHomepage } from "@/lib/homepage";
+import { getHomepage, getProjectImage } from "@/lib/homepage";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
-import { projects } from "@/lib/projects";
+import { projects, publicProjects } from "@/lib/projects";
 
 afterEach(() => {
   contactMock.enabled = false;
 });
 
 describe("localized Next.js homepage", () => {
-  it.each(locales)("renders the complete %s homepage without mixed project content", async (locale) => {
+  it.each(locales)("renders only authorized project content on the %s homepage", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(
       await HomePage({ params: Promise.resolve({ lang: locale }) }),
     ).replaceAll("&#x27;", "'");
     expect(html).toContain(dictionary.hero.title);
     expect(html).toContain(dictionary.intro.methodWords[0]);
-    expect(html).toContain(dictionary.projectsSection.title);
+    expect(html).not.toContain(dictionary.projectsSection.title);
     expect(html).toContain(dictionary.faq.title);
-    expect(html.match(/<article class="proy">/g)).toHaveLength(projects.length);
-    for (const project of projects) expect(html).toContain(project.traducciones[locale].titulo);
+    expect(html.match(/<article class="proy">/g) ?? []).toHaveLength(publicProjects.length);
+    for (const project of publicProjects) expect(html).toContain(project.traducciones[locale].titulo);
+    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+      expect(html).not.toContain(project.cliente);
+      expect(html).not.toContain(project.slug);
+    }
     expect(html).toContain(`href="${getPath(locale, "cookies")}"`);
     expect(html).not.toContain("style=");
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
 
-  it.each(locales)("uses projects while the contact form is unavailable on the %s homepage", async (locale) => {
+  it.each(locales)("falls back to services while no project is authorized on the %s homepage", async (locale) => {
     contactMock.enabled = false;
     const dictionary = getDictionary(locale);
     expect(getHomepage(locale).cta).toEqual({
-      href: getPath(locale, "projects"),
-      text: dictionary.cta.projects,
+      href: "#services",
+      text: dictionary.cta.services,
     });
     expect(getHomepage(locale).contactFormEnabled).toBe(false);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
@@ -83,11 +87,17 @@ describe("localized Next.js homepage", () => {
   it.each(locales)("keeps visible project text inside accessible names in %s", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
-    expect(html.match(new RegExp(`>${dictionary.projectsSection.openCase} <span aria-hidden="true">`, "g")))
-      .toHaveLength(projects.length);
-    for (const project of projects) {
+    expect((html.match(new RegExp(`>${dictionary.projectsSection.openCase} <span aria-hidden="true">`, "g")) ?? []))
+      .toHaveLength(publicProjects.length);
+    for (const project of publicProjects) {
       expect(html).toContain(`aria-label="${dictionary.projectsSection.openCaseAria} ${project.cliente}"`);
     }
+  });
+
+  it("does not retain an image import for an unauthorized project", () => {
+    const project = projects.find((item) => !publicProjects.includes(item));
+    expect(project).toBeDefined();
+    expect(() => getProjectImage(project!.imagenes[0].src)).toThrow("publico aprobado");
   });
 
   it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {

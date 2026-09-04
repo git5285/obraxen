@@ -1,9 +1,10 @@
 import { getImageDimensions, getProjectImage } from "@/lib/homepage";
 import { getDictionary, getPath, type Locale } from "@/lib/i18n";
-import { projects } from "@/lib/projects";
+import { publicProjects } from "@/lib/projects";
 import { ResponsiveImage } from "./responsive-image";
 
 export function ProjectsSection({ locale }: { locale: Locale }) {
+  if (!publicProjects.length) return null;
   const copy = getDictionary(locale).projectsSection;
   return (
     <section className="proyectos" id="proyectos">
@@ -14,7 +15,7 @@ export function ProjectsSection({ locale }: { locale: Locale }) {
           <p className="proy-intro">{copy.intro}</p>
         </div>
         <div className="proy-grid">
-          {projects.map((project) => {
+          {publicProjects.map((project) => {
             const translation = project.traducciones[locale];
             return (
               <article className="proy" key={project.slug}>
