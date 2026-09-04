@@ -1,9 +1,11 @@
 # Web corporativa — reparación de pavimentos industriales
 
 Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. El build genera 52 páginas en inglés, alemán, español y francés:
-cuatro portadas, hubs, 24 fichas de proyecto, rutas legales y contacto. Navegación,
-consentimiento y formulario son las únicas interacciones cliente propias.
+Components. El build cerrado actual genera 28 páginas estáticas en inglés,
+alemán, español y francés: cuatro portadas, cuatro hubs, rutas legales y
+contacto. Los casos no generan fichas públicas mientras no superen su puerta de
+evidencia. Navegación, consentimiento y formulario son las únicas interacciones
+cliente propias.
 
 La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` y el correo
 configurados pero sin DNS web, formulario ni despliegues Git de Vercel. El
@@ -13,11 +15,12 @@ sitio.
 > **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
 > `data/brand.json`. El identificador temporal anterior está retirado de la
 > configuración operativa. `obraxen.com`, `info@obraxen.com` y
-> `privacy@obraxen.com` están
-> verificados e integrados. La empresa todavía no está constituida; razón social,
-> CIF, domicilio y teléfono permanecen en `null`. La selección no sustituye
-> comprobaciones registrales o marcarias y la comprobación preliminar actual
-> mantiene el nombre en NO-GO para publicación. Véase `NAMING_CLEARANCE.md`.
+> `privacy@obraxen.com` están verificados e integrados. La fuente publicable
+> conserva razón social, CIF, domicilio y teléfono como `null` mientras no haya
+> referencias documentales internas registradas para su publicación. La selección
+> no sustituye comprobaciones registrales o marcarias y la comprobación preliminar
+> actual mantiene el nombre en NO-GO para publicación. Véase
+> `NAMING_CLEARANCE.md`.
 
 ## Arquitectura
 
@@ -48,8 +51,8 @@ Next.js.
 |---|---|
 | `/` | Redirección permanente a `/en/` |
 | `/en/`, `/de/`, `/es/`, `/fr/` | Cuatro portadas prerenderizadas |
-| `/{lang}/{projects}/` | Cuatro hubs de seis expedientes |
-| `/{lang}/{projects}/{slug}/` | 24 fichas SSG mediante `generateStaticParams` |
+| `/{lang}/{projects}/` | Cuatro hubs sin expedientes públicos mientras la puerta siga cerrada |
+| `/{lang}/{projects}/{slug}/` | No se generan fichas; las rutas devuelven 404 hasta que cada caso sea publicable |
 | Rutas legales localizadas | 12 borradores incompletos, no aptos para publicación |
 | Rutas de contacto localizadas | UI preparada; formulario cerrado hasta aprobación |
 | `/api/analytics-config/` | Configuración del entorno, consultada solo tras aceptar |
