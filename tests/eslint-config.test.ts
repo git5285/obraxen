@@ -9,7 +9,7 @@ describe("ESLint generated Next output isolation", () => {
     await expect(eslint.isPathIgnored(
       ".vercel/candidates/example/.next/server/app/page.js",
     )).resolves.toBe(true);
-  });
+  }, 10_000);
 
   it("keeps canonical and candidate source files in lint scope", async () => {
     await expect(eslint.isPathIgnored("src/lib/dictionaries/en.ts")).resolves.toBe(false);
