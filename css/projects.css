@@ -12,8 +12,13 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.03em;line-height:1.08}
 
 .projects-header{position:sticky;top:0;z-index:var(--z-sticky);background:rgb(from var(--brand-on-dark) r g b / .92);border-bottom:1px solid var(--brand-line);backdrop-filter:blur(16px)}
 .projects-nav{width:min(calc(100% - 48px),var(--maxw));height:72px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.logo{display:inline-flex;align-items:center;color:var(--brand-ink);font-weight:800;text-decoration:none}
-.logo span{color:var(--brand-primary)}
+.logo{display:inline-flex;align-items:center;gap:.5rem;color:var(--brand-ink);font-weight:800;text-decoration:none}
+.logo-word{display:inline-flex;align-items:baseline;font-weight:850;letter-spacing:-.035em;line-height:1;text-transform:uppercase}
+.logo-name{color:currentColor}
+.logo-emphasis{color:var(--brand-primary)}
+.logo-symbol{display:block;flex:none;width:1.55em;height:1.55em;overflow:visible}
+.logo-symbol-slab{fill:currentColor}
+.logo-symbol-seam{fill:var(--brand-primary)}
 .logo-provisional{display:block;width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .back-link{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;font-weight:800;text-decoration:none}
 .back-link span{color:var(--brand-primary);transition:transform var(--dur-fast) var(--ease-standard)}
