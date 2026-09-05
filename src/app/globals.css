@@ -46,8 +46,12 @@
   color: var(--brand-ink);
 }
 
-.foot .logo-footer span {
+.foot .logo-footer .logo-emphasis {
   color: var(--brand-primary-dark);
+}
+
+.foot .logo-footer .logo-symbol-seam {
+  fill: var(--brand-primary-dark);
 }
 
 .legal-details {
