@@ -1,14 +1,16 @@
 # Auditoría técnica
 
-Última verificación: 22 de julio de 2026. Stack: Next.js 16.2.10, React 19,
-TypeScript 6, Node objetivo 24.x, Vitest, Playwright y Lighthouse 13.4.0.
+Última verificación: 4 de septiembre de 2026. Stack: Next.js 16.3.4, React 19,
+TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
 
 ## Estado
 
 - Implementación única: Next.js App Router.
-- 52 páginas en/de/es/fr prerenderizadas: portadas, cuatro hubs, 24 casos,
-  legales y contacto; no queda builder o plantilla HTML legacy.
-- Preview cerrada: `noindex,nofollow`, sitemap vacío, sin dominio y sin
+- 28 páginas estáticas en/de/es/fr: portadas, cuatro hubs sin expedientes
+  públicos, legales y contacto. Los slugs de casos no se generan ni se exponen
+  mientras no exista autorización, revisión legal y activo publicable por caso;
+  no queda builder o plantilla HTML legacy.
+- Preview cerrada: `noindex,nofollow`, sitemap vacío, dominio configurado y sin
   despliegues Git automáticos.
 - Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
   hook versionado bloquea pushes directos a `main`. No se detectan secretos o
@@ -38,10 +40,11 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 260 pruebas Vitest y build de producción.
-- Build: 52 páginas generadas; todas las rutas de contenido son estáticas o SSG.
+- `npm run check`: ESLint, TypeScript, 286 pruebas Vitest y build de producción.
+- Build: 28 páginas estáticas generadas; todas las rutas de contenido públicas
+  son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
-- Playwright estándar: 97 ejecuciones configuradas; 89 correctas y 8 omisiones
+- Playwright estándar: 89 ejecuciones configuradas; 81 correctas y 8 omisiones
   intencionales en Chromium móvil/escritorio y smoke WebKit. El formulario
   habilitado añade 2 pruebas Chromium en un arnés local fail-closed.
 - 28 rutas de contenido representativas verificadas a 390 × 844 y 1.440 × 1.000,
@@ -67,8 +70,9 @@ a 2,5 s.
   identidad, aprobación y configuración reales.
 - La ruta de contacto prueba 415, 403, 413, las tres causas de 400, 429, 502 y
   202, incluida la forma acotada del envío a Resend y las cabeceras no-cache.
-- Canonical y `hreflang` permanecen ausentes sin dominio; pruebas con un dominio
-  inyectado exigen URLs absolutas y `x-default` para portada, hub y casos.
+- Canonical y `hreflang` se resuelven contra el dominio configurado; las pruebas
+  exigen URLs absolutas y `x-default` para portada, hub y casos cuando estos
+  últimos superen su puerta pública.
 
 ## Seguridad y privacidad
 
