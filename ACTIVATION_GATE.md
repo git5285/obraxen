@@ -21,11 +21,11 @@ Resultado actual:
 
 | Bloque | Incidencias | Estado |
 |---|---:|---|
-| Nombre, identidad, sociedad y contacto | 6 | Pendiente |
+| Nombre, identidad, sociedad y contacto | 1 | Pendiente |
 | Revisión legal y proveedor | 2 | Pendiente |
 | Revisión profesional en/de/es/fr | 4 | Pendiente |
 | Permisos de seis casos y fotografías | 12 | Pendiente |
-| **Total** | **24** | **NO-GO** |
+| **Total** | **19** | **NO-GO** |
 
 `publicar` continúa en `false`. No se ha creado ninguna candidata ni aceptado
 ningún contrato en nombre de la futura sociedad.
@@ -46,7 +46,10 @@ confirma DKIM activo para `obraxen.com`; `info@obraxen.com` existe como cuenta y
 `privacy@obraxen.com` y `dmarc@obraxen.com` como alias sin licencia adicional.
 No se ha conectado ningún registro A, AAAA o CNAME a la web, ni se ha probado en
 esta fase una entrega externa de extremo a extremo. La sociedad aún no está
-constituida; razón social, CIF y domicilio continúan `null`.
+constituida; razón social `OBRAXEN SURFACE S.L.`, CIF/NIF `B93963841`, domicilio
+Calle Federico García Lorca 22 y teléfono temporal `+34 653 916 970` quedan
+declarados. Estos datos no sustituyen las revisiones de naming, legales,
+lingüísticas ni los permisos de casos que mantienen la puerta en `NO-GO`.
 
 ## Expediente mínimo que debe recibirse
 
@@ -56,11 +59,12 @@ constituida; razón social, CIF y domicilio continúan `null`.
 - búsqueda profesional registral y marcaria: **pendiente**; la comprobación
   preliminar de `NAMING_CLEARANCE.md` encontró usos exactos en construcción e
   ingeniería y no permite tratar el nombre como despejado;
-- sociedad constituida, razón social, CIF/NIF y domicilio validado;
+- sociedad constituida, razón social `OBRAXEN SURFACE S.L.`, CIF/NIF `B93963841`
+  y domicilio Calle Federico García Lorca 22 declarados;
 - dominio definitivo: **resuelto con `obraxen.com`**;
 - email público y buzón separado para derechos de privacidad: **resueltos con
   `info@obraxen.com` y `privacy@obraxen.com`**;
-- teléfono o WhatsApp publicable;
+- teléfono temporal `+34 653 916 970` declarado;
 - persona con capacidad para aprobar la publicación de los seis casos:
   **declaración recibida, acreditación documental pendiente**; la aprobación de
   proveedor y del resto de superficies públicas continúa pendiente donde

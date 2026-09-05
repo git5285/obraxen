@@ -20,7 +20,16 @@ describe("localized legal draft routes", () => {
       const html = renderToStaticMarkup(page);
       expect(html).toContain(`<h1>${title}</h1>`);
       expect(html).toContain(dictionary.legal.draftStatus);
-      expect(html).toContain(dictionary.common.noData);
+      expect(html).toContain("OBRAXEN SURFACE S.L.");
+      if (route === "legalNotice") {
+        expect(html).toContain(dictionary.common.noData);
+      } else {
+        expect(html).not.toContain(dictionary.common.noData);
+      }
+      if (route === "privacy") {
+        expect(html).toContain("B93963841");
+        expect(html).toContain("Calle Federico García Lorca 22");
+      }
       expect(html).not.toContain(">null<");
       expect(html).not.toContain("RemainOn");
     });
