@@ -32,9 +32,9 @@ export const de: Dictionary = {
   },
   languageSwitcher: { label: "Sprache", changeTo: "Sprache wechseln zu" },
   hero: {
-    kicker: "Reparatur von Industrieböden",
+    kicker: "Industrieböden für Logistik und Produktion",
     title: "Geplante Reparaturen zur Verringerung betrieblicher Beeinträchtigungen.",
-    body: "Wir bewerten Untergrund, Schadensbild und Verkehrsbelastung, um eine auf den Boden und den Anlagenbetrieb abgestimmte Reparatur festzulegen.",
+    body: "Für Böden in Logistik und Produktion bewerten wir Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung. Die festgelegte Maßnahme kann Betonsanierung oder Betonschleifen und -polieren umfassen, wenn die Diagnose dies erfordert.",
     crackBefore: "Riss",
     crackAfter: "Repariert",
   },
@@ -47,7 +47,7 @@ export const de: Dictionary = {
     phasesLabel: "Phasen von der Bewertung bis zur Nachverfolgung",
     methodAria: "Unsere Methode in drei Worten",
     methodWords: ["Diagnostizieren.", "Reparieren.", "Leisten."],
-    methodBody: "Drei Worte, eine Methode: Ursache erkennen, Maßnahme festlegen und den Boden wieder nutzbar machen.",
+    methodBody: "Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung bestimmen die Maßnahme – von lokaler Betonsanierung bis zum Betonschleifen und -polieren, wenn der Befund dies erfordert.",
   },
   process: {
     kicker: "Unsere Arbeitsweise",
@@ -63,13 +63,13 @@ export const de: Dictionary = {
   },
   services: {
     kicker: "Unsere Leistungen",
-    title: "Lösungen nach Schadensbild und Betriebsanforderung",
-    intro: "Eine Maßnahme kann Vorbereitung, lokale Reparaturen, Ausgleich und Oberflächenbehandlung kombinieren. Die Diagnose bestimmt die erforderlichen Arbeitsschritte.",
+    title: "Betonsanierung nach Schadensbild, Verkehr und Nutzung",
+    intro: "Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung bestimmen die Maßnahme. Je nach Befund umfasst sie lokale Betonsanierung, Vorbereitung, Ausgleich oder Betonschleifen und -polieren.",
     items: [
       { title: "Fugenreparatur", description: "Entfernung geschädigter Bereiche, Wiederherstellung und Abdichtung entsprechend Schadensbild und Verkehrsbeanspruchung." },
       { title: "Rissbehandlung", description: "Oberflächenbehandlung oder mechanische Verstärkung je nach Ursache und Entwicklung des Risses." },
       { title: "Estriche und Ausgleich", description: "Korrektur von Unebenheiten und Wiederherstellung von Höhen mit technischen Mörteln." },
-      { title: "Oberflächenbehandlungen", description: "Schleifen, Härten und Schutz von Beton, wenn Untergrund und Nutzung dies nahelegen." },
+      { title: "Betonschleifen und -polieren", description: "Mechanische Bearbeitung der Betonoberfläche, wenn Untergrundzustand und vorgesehene Nutzung dies erfordern." },
     ],
     otherTitle: "Weitere mögliche Arbeiten:",
     otherWorks: [
