@@ -12,11 +12,11 @@ identificadores internos; los originales se conservan fuera del repositorio.
 
 - [ ] Dictamen profesional favorable sobre disponibilidad registral y marcaria
   de `Obraxen`, con alcance territorial y clases revisadas.
-- [ ] Razon social constituida y nombre legal exacto.
-- [ ] CIF/NIF de la sociedad.
-- [ ] Domicilio que pueda publicarse.
-- [ ] Confirmacion documental de que la sociedad esta constituida.
-- [ ] Telefono o WhatsApp autorizado para publicacion.
+- [x] Razon social constituida y nombre legal exacto: `OBRAXEN SURFACE S.L.`.
+- [x] CIF/NIF de la sociedad: `B93963841`.
+- [x] Domicilio que pueda publicarse: Calle Federico García Lorca 22.
+- [x] Confirmacion del responsable de que la sociedad esta constituida.
+- [x] Telefono temporal para contacto: `+34 653 916 970`.
 
 Responsable con capacidad para aprobar proveedor y publicacion: **sin dato**.
 

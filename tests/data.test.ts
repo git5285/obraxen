@@ -95,15 +95,15 @@ describe("structured data", () => {
     expect(brand).toMatchObject({
       nombre: "Obraxen",
       nombreRevisionAprobada: false,
-      nombreLegal: null,
-      cif: null,
-      empresaConstituida: false,
+      nombreLegal: "OBRAXEN SURFACE S.L.",
+      cif: "B93963841",
+      empresaConstituida: true,
       dominio: "obraxen.com",
       email: "info@obraxen.com",
       emailPrivacidad: "privacy@obraxen.com",
-      telefono: null,
+      telefono: "+34 653 916 970",
       whatsapp: null,
-      direccion: null,
+      direccion: "Calle Federico García Lorca 22",
       publicar: false,
     });
   });
