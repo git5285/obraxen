@@ -77,8 +77,10 @@ tests/
 
 - Las paginas se prerenderizan en build. No se necesita SSR para contenido que
   cambia mediante commits.
-- Las 52 páginas se generan bajo `/en/`, `/de/`, `/es/` y `/fr/`; todos los
-  idiomas llevan prefijo y `/` redirige a inglés.
+- El enrutado admite 52 páginas localizadas potenciales bajo `/en/`, `/de/`,
+  `/es/` y `/fr/`; el build cerrado actual genera 28 mientras los expedientes
+  de casos siguen excluidos por su puerta de evidencia. Todos los idiomas llevan
+  prefijo y `/` redirige a inglés.
 - `data/brand.json` sigue siendo la puerta de identidad y publicacion.
 - Los proyectos conservan una unica fuente de datos y generan tanto el hub como
   las rutas dinamicas mediante `generateStaticParams`.
