@@ -84,6 +84,22 @@ describe("localized Next.js homepage", () => {
     expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
+  it("renders EN and DE operational copy with conditional interventions", async () => {
+    const english = getDictionary("en");
+    const german = getDictionary("de");
+    const englishHtml = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: "en" }) }));
+    const germanHtml = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: "de" }) }));
+
+    expect(english.hero.kicker).toBe("Industrial floors for logistics and production");
+    expect(english.hero.body).toContain("intended use");
+    expect(english.hero.body).toContain("concrete rehabilitation or grinding and polishing");
+    expect(englishHtml).toContain(english.hero.body);
+    expect(german.hero.kicker).toBe("Industrieböden für Logistik und Produktion");
+    expect(german.hero.body).toContain("wenn die Diagnose dies erfordert");
+    expect(german.services.items.map(({ title }) => title)).toContain("Betonschleifen und -polieren");
+    expect(germanHtml).toContain(german.hero.body);
+  });
+
   it.each(locales)("keeps visible project text inside accessible names in %s", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));

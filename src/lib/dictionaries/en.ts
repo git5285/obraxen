@@ -32,9 +32,9 @@ export const en: Dictionary = {
   },
   languageSwitcher: { label: "Language", changeTo: "Change language to" },
   hero: {
-    kicker: "Industrial floor repair",
+    kicker: "Industrial floors for logistics and production",
     title: "Repairs planned to reduce operational disruption.",
-    body: "We assess the substrate, the damage and traffic requirements to define a repair suited to both the floor and the facility's operation.",
+    body: "For existing industrial floors in logistics and production, we assess the substrate condition, damage, traffic demands and intended use. The diagnosis determines whether the intervention should include concrete rehabilitation or grinding and polishing.",
     crackBefore: "Crack",
     crackAfter: "Repaired",
   },
