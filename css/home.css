@@ -82,8 +82,13 @@ section[id],.cierre{scroll-margin-top:76px}
 .sticky-nav ul a:hover{color:var(--brand-ink)}
 .sticky-nav ul a.activo{background:var(--brand-ink);color:var(--brand-surface)}
 .sticky-nav .btn{padding:9px 20px;font-size:.85rem}
-.logo{font-weight:800;font-size:1.2rem;text-decoration:none;letter-spacing:-.01em}
-.logo span{color:var(--brand-primary)}
+.logo{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;font-size:1.2rem;text-decoration:none}
+.logo-word{display:inline-flex;align-items:baseline;font-weight:850;letter-spacing:-.035em;line-height:1;text-transform:uppercase}
+.logo-name{color:currentColor}
+.logo-emphasis{color:var(--brand-primary)}
+.logo-symbol{display:block;flex:none;width:1.55em;height:1.55em;overflow:visible}
+.logo-symbol-slab{fill:currentColor}
+.logo-symbol-seam{fill:var(--brand-primary)}
 .logo-provisional{display:block;width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
 .hero{
@@ -106,7 +111,7 @@ section[id],.cierre{scroll-margin-top:76px}
 }
 .hero-nav,.hero-body,.fisura-wrap{position:relative;z-index:var(--z-content);max-width:calc(var(--maxw) + 112px);margin-left:auto;margin-right:auto}
 .hero-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 36px}
-.hero-nav .logo{font-size:1.25rem}
+.hero-nav .logo{color:var(--brand-surface);font-size:1.25rem}
 .hero-nav ul{display:flex;gap:6px;list-style:none;background:rgb(from var(--brand-on-dark) r g b / .07);border-radius:var(--radius-pill);padding:6px}
 .hero-nav ul a{
   text-decoration:none;font-size:.88rem;font-weight:600;
