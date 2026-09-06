@@ -59,6 +59,30 @@ describe("localized Next.js homepage", () => {
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
 
+  it.each([
+    {
+      locale: "de" as const,
+      title: "Betonsanierung nach Schadensbild, Verkehr und Nutzung",
+      condition: "Je nach Befund kann sie lokale Betonsanierung, Vorbereitung, Ausgleich oder Betonschleifen und -polieren umfassen.",
+      service: "Betonschleifen und -polieren",
+    },
+    {
+      locale: "en" as const,
+      title: "Concrete refurbishment shaped by damage, traffic and use",
+      condition: "Depending on the diagnosis, it may combine local concrete repair, preparation, levelling, or concrete grinding and polishing.",
+      service: "Concrete grinding and polishing",
+    },
+  ])("keeps conditional concrete refurbishment clear in $locale services", async ({ locale, title, condition, service }) => {
+    const dictionary = getDictionary(locale);
+    const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
+
+    expect(dictionary.services.title).toBe(title);
+    expect(dictionary.services.intro).toContain(condition);
+    expect(dictionary.services.items.map(({ title: itemTitle }) => itemTitle)).toContain(service);
+    expect(html).toContain(title);
+    expect(html).toContain(condition);
+  });
+
   it.each(locales)("falls back to services while no project is authorized on the %s homepage", async (locale) => {
     contactMock.enabled = false;
     const dictionary = getDictionary(locale);
