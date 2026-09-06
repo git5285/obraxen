@@ -63,13 +63,13 @@ export const en: Dictionary = {
   },
   services: {
     kicker: "What we do",
-    title: "Solutions defined around the damage and the operation",
-    intro: "An intervention may combine preparation, local repairs, levelling and surface treatment. Diagnosis determines which operations are necessary.",
+    title: "Concrete refurbishment shaped by damage, traffic and use",
+    intro: "The damage, traffic demands and intended use shape the intervention. Depending on the diagnosis, it may combine local concrete repair, preparation, levelling, or concrete grinding and polishing.",
     items: [
       { title: "Joint repair", description: "Removal of unsound material, reconstruction and sealing according to the damage and traffic demands." },
       { title: "Crack treatment", description: "Surface treatment or mechanical reinforcement according to the crack's origin and development." },
       { title: "Screeds and levelling", description: "Correction of uneven areas and restoration of levels with technical mortars." },
-      { title: "Surface treatments", description: "Polishing, hardening and protection of concrete where the substrate and use make it appropriate." },
+      { title: "Concrete grinding and polishing", description: "Mechanical treatment of the concrete surface when the substrate condition and intended use call for it." },
     ],
     otherTitle: "Other work we can undertake:",
     otherWorks: [
