@@ -10,6 +10,7 @@ import {
 import { absoluteSiteUrl, getLocalizedAlternates } from "./metadata";
 import { publicProjects, publicProjectsBySlug } from "./projects";
 import type { Project } from "./schemas";
+import { emptyProjectsDescription, getRouteSeo } from "./seo-indexability";
 
 function siteOrigin(): string | null {
   return brand.dominio ? `https://${brand.dominio}` : null;
@@ -40,14 +41,14 @@ function metadataImage(project: Project, locale: Locale, domain: string | null) 
 export function getProjectsMetadata(locale: Locale, domain = brand.dominio): Metadata {
   const dictionary = getDictionary(locale);
   const claim = getBrandTranslation(locale).claim;
-  const title = `${dictionary.meta.projectsTitle} — ${claim}`;
-  const description = dictionary.meta.projectsDescription;
+  const title = `${publicProjects.length ? dictionary.meta.projectsTitle : dictionary.common.projects} — ${claim}`;
+  const description = publicProjects.length ? dictionary.meta.projectsDescription : emptyProjectsDescription[locale];
   const images = publicProjects.length ? metadataImage(publicProjects[0], locale, domain) : [];
 
   return {
     title,
     description,
-    alternates: getLocalizedAlternates(domain, locale, "projects"),
+    ...getRouteSeo(domain, locale, "projects"),
     openGraph: {
       title,
       description,
@@ -140,8 +141,8 @@ export function getProjectsJsonLd(locale: Locale): string {
     "@graph": [
       {
         "@type": "CollectionPage",
-        name: dictionary.meta.projectsTitle,
-        description: dictionary.meta.projectsDescription,
+        name: publicProjects.length ? dictionary.meta.projectsTitle : dictionary.common.projects,
+        description: publicProjects.length ? dictionary.meta.projectsDescription : emptyProjectsDescription[locale],
         inLanguage: locale,
         ...(brand.dominio ? { url: absolutePath(projectsPath) } : {}),
       },

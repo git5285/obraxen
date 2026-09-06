@@ -17,6 +17,7 @@ import { internalProjects } from "@/lib/internal-projects";
 import { publicProjects } from "@/lib/projects";
 import { getProjectJsonLd, getProjectMetadata, getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
 import { publicableOffers } from "@/lib/solutions";
+import { isRouteReadyForIndexing } from "@/lib/seo-indexability";
 
 describe("localized project routes", () => {
   it.each(locales)("renders only authorized projects in the %s evidence hub", async (locale) => {
@@ -29,7 +30,7 @@ describe("localized project routes", () => {
       expect(html).not.toContain(project.cliente);
       expect(html).not.toContain(project.slug);
     }
-    expect(html).toContain(getDictionary(locale).projectHub.title);
+    expect(html).toContain(publicProjects.length ? getDictionary(locale).projectHub.title : getDictionary(locale).common.projects);
     expect(html).not.toContain("style=");
     if (brand.nombreTemporalNoPublicable) expect(html).not.toContain(brand.nombreTemporalNoPublicable);
   });
@@ -82,7 +83,7 @@ describe("localized project routes", () => {
     expect(hubMetadata.openGraph).toMatchObject({ type: "website" });
     expect(hubMetadata.alternates).toMatchObject({
       canonical: `https://obraxen.com/${locale}/${routeSegments[locale].projects}/`,
-      languages: { "x-default": "https://obraxen.com/en/projects/" },
+      ...(publicProjects.length ? { languages: { "x-default": "https://obraxen.com/en/projects/" } } : {}),
     });
 
     const titles = await Promise.all(publicProjects.map(async ({ slug }) => {
@@ -105,7 +106,7 @@ describe("localized project routes", () => {
     const hubMetadata = getProjectsMetadata(locale, "example.com");
     expect(hubMetadata.alternates).toMatchObject({
       canonical: `https://example.com/${locale}/${routeSegments[locale].projects}/`,
-      languages: { "x-default": "https://example.com/en/projects/" },
+      ...(publicProjects.length ? { languages: { "x-default": "https://example.com/en/projects/" } } : {}),
     });
 
     expect(getProjectMetadata(internalProjects[0], locale, "example.com")).toEqual({});
@@ -116,9 +117,9 @@ describe("localized project routes", () => {
       const metadata = getSectionMetadata(locale, route, "example.com");
       expect(metadata.alternates).toMatchObject({
         canonical: `https://example.com/${locale}/${routeSegments[locale][route]}/`,
-        languages: {
+        ...(isRouteReadyForIndexing(route) ? { languages: {
           "x-default": `https://example.com/en/${routeSegments.en[route]}/`,
-        },
+        } } : {}),
       });
     }
   });
