@@ -165,8 +165,10 @@ async function auditRoute(route) {
   }
 
   const samples = [];
-  for (let sample = 1; sample <= 3; sample += 1) {
-    const reportName = sample === 1 ? `${route.name}.json` : `${route.name}-retry-${sample}.json`;
+  for (let sample = 0; sample <= 3; sample += 1) {
+    const reportName = sample === 0
+      ? `${route.name}-warmup.json`
+      : sample === 1 ? `${route.name}.json` : `${route.name}-retry-${sample}.json`;
     const reportPath = path.join(outputDirectory, reportName);
     const lighthouseArguments = [
       ...commandArguments,
@@ -206,12 +208,17 @@ async function auditRoute(route) {
       cls: auditValue(report, "cumulative-layout-shift"),
       consoleErrors: report.audits["errors-in-console"]?.score ?? 1,
     };
+    if (sample === 0) {
+      logResult(route, result, " [calentamiento]");
+      continue;
+    }
+
     samples.push(result);
     logResult(route, result, sample === 1 ? "" : ` [muestra ${sample}/3]`);
 
     if (sample === 1 && failuresFor(result).length === 0) return;
     if (sample === 1) {
-      console.warn(`${route.path} → primera muestra fuera de presupuesto; se decidirá por mediana de 3`);
+      console.warn(`${route.path} → primera medición fuera de presupuesto; se decidirá por mediana de 3`);
     }
   }
 
