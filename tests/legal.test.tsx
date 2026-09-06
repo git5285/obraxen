@@ -4,6 +4,13 @@ import SectionPage from "@/app/[lang]/[section]/page";
 import { getDictionary, locales, routeSegments } from "@/lib/i18n";
 
 describe("localized legal draft routes", () => {
+  const obsoleteIdentityClaims = [
+    "once the company exists",
+    "nach Gründung der Gesellschaft",
+    "cuando exista la sociedad",
+    "après la constitution de la société",
+  ];
+
   for (const locale of locales) {
     const dictionary = getDictionary(locale);
     const routes = [
@@ -23,6 +30,9 @@ describe("localized legal draft routes", () => {
       expect(html).toContain("OBRAXEN SURFACE S.L.");
       if (route === "legalNotice") {
         expect(html).toContain(dictionary.common.noData);
+        for (const obsoleteClaim of obsoleteIdentityClaims) {
+          expect(html).not.toContain(obsoleteClaim);
+        }
       } else {
         expect(html).not.toContain(dictionary.common.noData);
       }
