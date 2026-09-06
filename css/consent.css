@@ -11,11 +11,13 @@
   bottom: 20px;
   left: 20px;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
-  gap: 28px;
-  width: min(920px, calc(100% - 40px));
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.7fr);
+  gap: 16px;
+  width: min(780px, calc(100% - 40px));
+  max-height: calc(100vh - 40px);
+  overflow: auto;
   margin: 0 auto;
-  padding: 24px;
+  padding: 18px;
   color: var(--brand-ink);
   background: var(--brand-surface);
   border: 1px solid var(--brand-line-strong);
@@ -28,15 +30,15 @@
   margin: 0;
   color: var(--brand-ink);
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  font-size: 1.2rem;
   line-height: 1.12;
 }
 
 .consent-copy > p:not(.consent-kicker),
 .consent-settings > p:not(.consent-kicker, .consent-links) {
-  margin: 10px 0;
+  margin: 8px 0;
   color: var(--brand-muted);
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   line-height: 1.55;
 }
 
@@ -224,19 +226,19 @@
     bottom: 12px;
     left: 12px;
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 14px;
     width: auto;
-    padding: 20px;
+    max-height: calc(100vh - 24px);
+    padding: 18px;
   }
 
-  .consent-actions,
   .consent-settings-actions {
     grid-template-columns: 1fr;
   }
 
-  .consent-actions .consent-secondary {
-    grid-column: auto;
-    grid-row: auto;
+  .consent-actions .consent-button {
+    padding-inline: 8px;
+    font-size: 0.78rem;
   }
 
   .consent-settings {
