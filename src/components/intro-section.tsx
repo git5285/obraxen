@@ -6,7 +6,6 @@ type IntroSectionProps = {
 
 export function IntroSection({ kicker, stats, copy }: IntroSectionProps) {
   return (
-    <>
       <section className="intro">
         <div className="wrap fila">
           <div>
@@ -28,16 +27,10 @@ export function IntroSection({ kicker, stats, copy }: IntroSectionProps) {
             })}
           </div>
         </div>
-      </section>
-
-      <section className="relato" aria-label={copy.methodAria}>
-        <div className="wrap">
-          <p className="linea">{copy.methodWords[0]}</p>
-          <p className="linea">{copy.methodWords[1]}</p>
-          <p className="linea acento">{copy.methodWords[2]}</p>
-          <p className="pie">{copy.methodBody}</p>
+        <div className="wrap method-summary" aria-label={copy.methodAria}>
+          <p>{copy.methodWords.join(" ")}</p>
+          <p>{copy.methodBody}</p>
         </div>
       </section>
-    </>
   );
 }
