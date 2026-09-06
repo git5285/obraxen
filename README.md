@@ -12,7 +12,7 @@ configurados pero sin DNS web, formulario ni despliegues Git de Vercel. El
 repositorio es privado y esa privacidad tampoco autoriza publicar o desplegar el
 sitio.
 
-> **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
+> **Identidad declarada:** `Obraxen` es el nombre comercial seleccionado y vive en
 > `data/brand.json`. El identificador temporal anterior está retirado de la
 > configuración operativa. `obraxen.com`, `info@obraxen.com` y
 > `privacy@obraxen.com` están verificados e integrados. La fuente estructurada
@@ -197,8 +197,7 @@ nuevas consultas, pero no revoca copias realizadas durante ese periodo.
 
 | Tema | Documento |
 |---|---|
-| Empresa, mercado y oferta | `STRATEGY.md` |
-| Copy y evidencia | `CONTENT_AUDIT.md` |
+| Empresa, mercado, oferta, copy y evidencia | `STRATEGY.md` |
 | Rutas | `SITE_ARCHITECTURE.md` |
 | Sistema visual | `DESIGN.md` |
 | Decisiones técnicas | `DECISIONS.md` |
@@ -213,8 +212,9 @@ tareas; no son contenido público del sitio.
 
 ## Próximo hito
 
-Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: revisión profesional
-de en/de/es/fr, identidad y sociedad, teléfono, documentos y revisión legal de
-los casos, legal general y DPA/proveedor; después se audita una URL candidata y
-se decide expresamente si publicar.
+Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: dictamen registral y
+marcario, revisión profesional de en/de/es/fr, documentos y revisión legal de los
+casos, legal general y DPA/proveedor. Razón social, NIF, domicilio y teléfono
+temporal ya están declarados; después se audita una URL candidata y se decide
+expresamente si publicar.
 Indexación, analítica real, formulario y despliegue continúan bloqueados.

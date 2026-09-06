@@ -1,9 +1,10 @@
 # Arquitectura del sitio
 
-Estado documentado: 16 de julio de 2026. La web continúa en preview
+Estado documentado: 6 de septiembre de 2026. La web continúa en preview
 `noindex,nofollow`; `Obraxen`, `obraxen.com` y los correos público/privacidad
-están integrados, mientras sociedad, teléfono, formulario y publicación siguen
-bloqueados. La integración no modifica rutas ni autoriza una salida pública.
+están integrados. Razón social, NIF, domicilio y teléfono temporal están
+declarados; formulario y publicación siguen bloqueados. La integración no
+modifica rutas ni autoriza una salida pública.
 
 Next.js App Router es la única implementación desde la Fase 4.5. Todas las rutas
 actuales se prerenderizan en inglés, alemán, español y francés; los borradores
@@ -21,41 +22,43 @@ La web debe acompañar la decisión del comprador mediante este recorrido:
 > problema → riesgo operativo → inspección → intervención → control → evidencia
 
 La estructura será plana: las páginas principales estarán a un clic del inicio y
-los detalles a un segundo nivel. Las seis rutas de proyecto actuales se conservan.
+los detalles a un segundo nivel. Los slugs internos de proyecto se conservan,
+pero no generan rutas públicas hasta superar su puerta de evidencia.
 
 ## 2. Estructura actual multilingüe
 
 ```text
 Raíz (/) → 308 /en/
 ├── English (/en/)
-│   ├── Projects (/en/projects/) → 6 casos
+│   ├── Projects (/en/projects/) → hub sin casos públicos
 │   ├── Legal notice (/en/legal-notice/)
 │   ├── Privacy (/en/privacy/)
 │   ├── Cookies (/en/cookies/)
 │   └── Contact (/en/contact/) [cerrado]
 ├── Deutsch (/de/)
-│   ├── Projekte (/de/projekte/) → 6 casos
+│   ├── Projekte (/de/projekte/) → hub sin casos públicos
 │   ├── Impressum (/de/impressum/)
 │   ├── Datenschutz (/de/datenschutz/)
 │   ├── Cookies (/de/cookies/)
 │   └── Kontakt (/de/kontakt/) [cerrado]
 ├── Español (/es/)
-│   ├── Proyectos (/es/proyectos/) → 6 casos
+│   ├── Proyectos (/es/proyectos/) → hub sin casos públicos
 │   ├── Aviso legal (/es/aviso-legal/)
 │   ├── Privacidad (/es/privacidad/)
 │   ├── Cookies (/es/cookies/)
 │   └── Contacto (/es/contacto/) [cerrado]
 └── Français (/fr/)
-    ├── Projets (/fr/projets/) → 6 casos
+    ├── Projets (/fr/projets/) → hub sin casos públicos
     ├── Mentions légales (/fr/mentions-legales/)
     ├── Confidentialité (/fr/confidentialite/)
     ├── Cookies (/fr/cookies/)
     └── Contact (/fr/contact/) [cerrado]
 ```
 
-Los seis casos reciben enlace desde cada portada y hub con el mismo slug estable.
-Cada ficha vuelve al archivo, mantiene navegación anterior/siguiente y ofrece el
-equivalente exacto en los otros tres idiomas; no existen páginas huérfanas.
+Los seis casos permanecen en el registro interno. No reciben enlaces públicos,
+no se prerenderizan y cualquier URL de ficha devuelve 404. Cuando un caso supere
+su puerta, conservará el mismo slug en los cuatro idiomas y se incorporará a la
+portada, al hub y a la navegación contextual en una sola entrega.
 
 ## 3. Arquitectura objetivo
 
@@ -137,8 +140,8 @@ graph TD
 | Página | URL | Acceso objetivo | Prioridad | Estado |
 |---|---|---|---|---|
 | Inicio | `/{lang}/` | Cabecera | Alta | Cuatro rutas; `/` redirige a `/en/` |
-| Hub de proyectos | `/{lang}/{projects}/` | Cabecera y CTA de preview | Alta | Cuatro hubs; seis expedientes cada uno |
-| Caso | `/{lang}/{projects}/{slug}/` | Portada, hub y anterior/siguiente | Alta | 24 rutas SSG con slug estable |
+| Hub de proyectos | `/{lang}/{projects}/` | Cabecera y CTA de preview | Alta | Cuatro hubs sin expedientes públicos |
+| Caso | `/{lang}/{projects}/{slug}/` | Portada, hub y anterior/siguiente | Alta | No generado; 404 hasta superar la puerta por expediente |
 | Hub de soluciones | `/soluciones/` | Cabecera | Alta | Puerta preparada; ruta cerrada sin ofertas publicables |
 | Solución | `/soluciones/{slug}/` | Hub y enlaces de problema | Alta | Borrador interno |
 | Hub de problemas | `/problemas/` | Cabecera | Alta | Planificada |
@@ -239,8 +242,8 @@ Una página sectorial requiere:
 - lenguaje del decisor;
 - problemas, restricciones, normativa y mantenimiento propios del contexto.
 
-Contacto, indexación y publicación siguen sujetos a identidad, sociedad, canales,
-revisión legal y autorización expresa.
+Contacto, indexación y publicación siguen sujetos a revisión registral/marcaria,
+revisión legal, proveedor, traducciones, permisos y autorización expresa.
 
 ## 9. Orden de implementación
 
@@ -264,8 +267,8 @@ revisión legal y autorización expresa.
 10. Crear `/problemas/` y las primeras páginas respaldadas por casos.
 11. Separar Método y Empresa cuando sus contenidos estén cerrados.
 12. Añadir Logística como primer sector si supera la revisión específica.
-13. Activar Contacto, legal, SEO e indexación al completar identidad, revisión
-   profesional de los cuatro idiomas, proveedor y permisos.
+13. Activar Contacto, legal, SEO e indexación al completar las revisiones de
+   naming y legal, los cuatro idiomas, proveedor y permisos.
 
 ## 10. Reglas de crecimiento
 
