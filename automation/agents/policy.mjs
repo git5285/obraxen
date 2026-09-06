@@ -157,6 +157,12 @@ export function validatePolicy(policy) {
   }
 
   requireBoolean(policy.groupedAuthorizations, "enabled");
+  if (policy.groupedAuthorizations.maxChangedFiles !== undefined) {
+    requirePositiveInteger(policy.groupedAuthorizations, "maxChangedFiles");
+    if (policy.groupedAuthorizations.maxChangedFiles > 20) {
+      throw new Error("policy.groupedAuthorizations.maxChangedFiles exceeds twenty exact human-approved paths");
+    }
+  }
   for (const key of ["maxSteps", "maxLifetimeSeconds", "reservationTtlSeconds"]) {
     requirePositiveInteger(policy.groupedAuthorizations, key);
   }

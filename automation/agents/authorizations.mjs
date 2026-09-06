@@ -192,7 +192,7 @@ export function validateAuthorizationBundle(raw, policy = loadPolicy()) {
   if (
     !Array.isArray(candidate.allowedPaths)
     || candidate.allowedPaths.length === 0
-    || candidate.allowedPaths.length > policy.limits.maxChangedFiles
+    || candidate.allowedPaths.length > (config.maxChangedFiles ?? policy.limits.maxChangedFiles)
     || candidate.allowedPaths.some((path) => !isExactAuthorizationPath(path))
     || new Set(candidate.allowedPaths).size !== candidate.allowedPaths.length
   ) {
