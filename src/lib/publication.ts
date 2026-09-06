@@ -126,6 +126,20 @@ export function getPublicationState(
   };
 }
 
+export function getPublicPublicationState(
+  brand: Brand,
+  approval: { readonly approved: boolean },
+): PublicationState {
+  const state = getPublicationState(brand, []);
+  if (!state.isPublic || approval.approved) return state;
+  return {
+    mode: "preview",
+    isPublic: false,
+    robots: "noindex,nofollow",
+    issues: [...state.issues, "la activacion publica requiere una decision externa verificada"],
+  };
+}
+
 export function buildRobotsPolicy(
   brand: Brand,
   projects: readonly Project[],
@@ -142,4 +156,14 @@ export function buildRobotsPolicy(
     rules: { userAgent: "*", allow: "/" },
     sitemap: `https://${brand.dominio}/sitemap.xml`,
   };
+}
+
+export function buildPublicRobotsPolicy(
+  brand: Brand,
+  approval: { readonly approved: boolean },
+): MetadataRoute.Robots {
+  const publication = getPublicPublicationState(brand, approval);
+  return publication.isPublic
+    ? { rules: { userAgent: "*", allow: "/" }, sitemap: `https://${brand.dominio}/sitemap.xml` }
+    : { rules: { userAgent: "*", disallow: "/" } };
 }
