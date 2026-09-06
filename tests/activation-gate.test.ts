@@ -36,4 +36,19 @@ describe("phase 6.7 executable activation gate", () => {
       blockers: expectedIssues,
     });
   });
+
+  it("blocks only on legal, Resend and professional locale reviews", () => {
+    const brand = brandSchema.parse(JSON.parse(readFileSync("data/brand.json", "utf8")));
+    const projects = projectsSchema.parse(JSON.parse(readFileSync("data/proyectos.json", "utf8")));
+    const issues = getPublicationIssues(brand, projects);
+
+    expect(issues).toEqual([
+      "la revisión legal debe estar aprobada antes de publicar",
+      "el proveedor de captación y su tratamiento deben estar aprobados antes de publicar",
+      "la traducción en necesita revisión profesional aprobada",
+      "la traducción de necesita revisión profesional aprobada",
+      "la traducción es necesita revisión profesional aprobada",
+      "la traducción fr necesita revisión profesional aprobada",
+    ]);
+  });
 });

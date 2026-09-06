@@ -122,7 +122,10 @@ reviewer, date, decision and review identifier. Missing levels remain missing.
 
 Choose zero or one finding. Prefer `no_op` when confidence is not high, risk is
 not low, evidence is incomplete, a base is stale, required input is external,
-or the change would alter activation/publication state.
+or the change would alter activation/publication state. The exception is a
+dedicated governance migration explicitly requested by the repository owner.
+It may reclassify named business requirements as warnings, but it may not invent
+evidence, alter unmentioned controls, enable publication or deploy.
 
 After selecting a new finding, assign one safe `candidateId` that remains
 unchanged through every later phase. A new candidate starts with
@@ -170,8 +173,10 @@ Invoke `builder` with the complete manifest and validate its returned text with
 manifest and scout exactly. It may edit only exact allowed paths and one
 improvement. It gets one correction iteration at most.
 Its `candidateId` and `attentionClass` must exactly match the manifest.
-Any attempt to expand scope, weaken a gate, install a dependency or use the
-network ends the run as `blocked`.
+Any attempt to expand scope, silently weaken a gate, install a dependency or use
+the network ends the run as `blocked`. An owner-directed policy migration is
+valid only as one bounded candidate with the exact removed and retained rules,
+before/after activation reports and independent review.
 
 ### 7. Validate deterministically
 
@@ -186,7 +191,9 @@ Before review:
    isolated ports and refuse to reuse an existing server. This includes both the
    locally enabled contact form and the normal fail-closed build.
 5. Capture activation JSON again and require an exact match through
-   `automation/agents/activation-policy.mjs`.
+   `automation/agents/activation-policy.mjs`. For an owner-directed activation
+   migration, retain both valid reports and audit every difference; the publish
+   switch and all external authority must remain unchanged.
 
 If an exact grouped human authorization is registered, the director may consume
 its contiguous commit, push and draft-PR steps through `authorizations.mjs`.
@@ -198,6 +205,9 @@ builder itself still cannot use Git.
 Do not weaken assertions or budgets to turn a failure green. The quality gate
 and activation gate have different semantics: activation exit 1 is expected
 while the report is a valid NO-GO.
+
+An owner decision changes policy, not evidence. Reclassified requirements stay
+visible as unresolved warnings until their own evidence exists.
 
 ### 8. Audit
 
