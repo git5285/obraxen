@@ -22,6 +22,11 @@ cannot enable writing, network access, commit, push, merge, deployment,
 publication, identity, legal claims or evidence without the independent project
 gate that already governs that action.
 
+An explicit repository-owner request may be evaluated as an activation policy
+migration when it names both the requirements to reclassify and those that stay
+blocking. It requires a dedicated candidate and review, does not manufacture
+evidence and grants no deployment or publication authority.
+
 ## Promotion path
 
 1. Convert the item into one or more realistic eval prompts and assertions.
@@ -29,8 +34,9 @@ gate that already governs that action.
    candidate.
 3. Compare policy compliance, evidence quality, no-op judgment, conflicts,
    tool events, time and token use.
-4. Reject improvements that only work for the supplied example, weaken a gate,
-   increase hallucination or create unnecessary work.
+4. Reject improvements that only work for the supplied example, silently weaken
+   a gate, increase hallucination or create unnecessary work. A deliberate owner
+   migration must retain unresolved requirements as warnings.
 5. Promote the smallest generalizable revision in a reviewed change.
 
 Do not consolidate a model-generated hypothesis into durable knowledge. Store

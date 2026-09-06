@@ -18,35 +18,37 @@ misma función que bloquea la publicación. Un resultado sin bloqueos significa
 SHA exacto, auditoría completa y decisión humana `GO/NO-GO`.
 
 `ACTIVATION_INPUTS.md` conserva el inventario humano vigente de declaraciones,
-documentos y revisiones. Los valores de identidad, contacto, proveedor o casos no
-se duplican aquí: el gate los deriva de las fuentes estructuradas y mantiene
-separadas una declaración, un documento y una revisión profesional.
+documentos y revisiones. El gate bloquea exclusivamente por revisión legal de la
+web y del tratamiento con Resend, y por revisión profesional de ES, EN, DE y FR.
+Los demás faltantes permanecen como advertencias de negocio y no se convierten
+en aprobaciones por dejar de bloquear.
 
 El resultado actual no se copia en este documento. Debe consultarse con el
 comando anterior: cualquier bloqueo produce `NO-GO`, y un resultado sin bloqueos
 solo permite preparar una candidata protegida.
 
-## Expediente mínimo que debe recibirse
+## Requisitos bloqueantes
 
-### 1. Nombre, identidad y contacto
+### 1. Revisión legal y Resend
 
-- identidad legal y comercial completa en la fuente estructurada;
-- disponibilidad registral y marcaria respaldada por dictamen profesional;
-- dominio, buzones y teléfono controlados por la entidad responsable;
-- persona con capacidad acreditada para aprobar proveedor, casos y publicación.
+- aprobación de aviso legal, privacidad, cookies y consentimiento;
+- aprobación del tratamiento de captación con Resend, incluido DPA,
+  transferencias, subencargados, tracking, conservación, accesos y borrado.
 
-El estado y los valores recibidos para estas entradas se consultan únicamente en
-`ACTIVATION_INPUTS.md` y en la salida ejecutable.
+### 2. Revisión lingüística
 
-### 2. Revisión legal y lingüística
-
-- aprobación profesional de aviso legal, privacidad, cookies y consentimiento,
-  con revisor, fecha y referencia del entregable;
 - revisor y fecha independientes para inglés, alemán, español y francés;
 - correcciones entregadas por ruta o confirmación inequívoca de que la versión
   concreta revisada es la del SHA candidato.
 
-### 3. Casos y fotografías
+## Advertencias no bloqueantes
+
+Identidad, contacto, naming y evidencias de autorización de casos continúan en
+las fuentes estructuradas y en `ACTIVATION_INPUTS.md`. Son responsabilidad del
+propietario y deben mantenerse correctas, pero no forman parte del resultado
+`NO-GO` por decisión expresa de gobernanza del 6 de septiembre de 2026.
+
+### Casos y fotografías
 
 Para cada uno de `delticom-hannover`, `tp-link-dusseldorf`,
 `dadada-euskirchen`, `loreal-gauchy`, `blitz-bremen` y `hologram-paris` debe
@@ -57,11 +59,12 @@ elegirse una vía:
 2. anonimización/retirada completa del nombre, imágenes y cualquier elemento
    identificable que no disponga de cobertura.
 
-Para completar la vía `autorizar`, cada caso debe aportar un
+Para completar la vía `autorizar`, cada caso puede aportar un
 `documento_referenciado` que cubra el alcance publicado y una
 `revision_legal_verificada` enlazada al mismo documento. Una declaración del
-responsable no se convierte en ninguna de esas dos evidencias. El inventario
-vigente por caso se mantiene en `ACTIVATION_INPUTS.md`.
+responsable no se convierte en ninguna de esas dos evidencias. Su ausencia se
+informa como advertencia, no como bloqueo. El inventario vigente por caso se
+mantiene en `ACTIVATION_INPUTS.md`.
 
 ## Diligencia pública sobre Resend
 

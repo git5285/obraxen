@@ -18,12 +18,14 @@ export type PublicationState =
       isPublic: false;
       robots: "noindex,nofollow";
       issues: readonly string[];
+      warnings: readonly string[];
     }
   | {
       mode: "public";
       isPublic: true;
       robots: "index,follow";
       issues: readonly [];
+      warnings: readonly string[];
     };
 
 export class PublicationConfigurationError extends Error {
@@ -71,23 +73,13 @@ export function getPublicationIssues(
   brand: Brand,
   projects: readonly Project[],
 ): string[] {
-  const issues = requiredPublicTextFields.flatMap((field) =>
-    brand[field] ? [] : [`brand.${field} es obligatorio para publicar`],
-  );
+  void projects; // Project evidence is reported separately as advisory warnings.
+  const issues: string[] = [];
 
-  if (!brand.nombreRevisionAprobada) {
-    issues.push("el nombre comercial necesita revisión registral y marcaria aprobada antes de publicar");
-  }
-  if (!brand.empresaConstituida) {
-    issues.push("la sociedad debe estar constituida antes de publicar");
-  }
-  if (!brand.telefono && !brand.whatsapp) {
-    issues.push("hace falta teléfono o WhatsApp para publicar");
-  }
   if (!brand.legalRevisionAprobada) {
     issues.push("la revisión legal debe estar aprobada antes de publicar");
   }
-  if (!brand.formularioRevisionAprobada) {
+  if (brand.formularioProveedor !== "Resend" || !brand.formularioRevisionAprobada) {
     issues.push("el proveedor de captación y su tratamiento deben estar aprobados antes de publicar");
   }
   for (const locale of publicationLocales) {
@@ -96,9 +88,30 @@ export function getPublicationIssues(
     }
   }
 
-  issues.push(...getProjectPublicationIssues(projects));
-
   return issues;
+}
+
+export function getPublicationWarnings(
+  brand: Brand,
+  projects: readonly Project[],
+): string[] {
+  const warnings = requiredPublicTextFields.flatMap((field) =>
+    brand[field] ? [] : [`brand.${field} no está informado`],
+  );
+
+  if (!brand.nombreRevisionAprobada) {
+    warnings.push("el nombre comercial no tiene revisión registral y marcaria acreditada");
+  }
+  if (!brand.empresaConstituida) {
+    warnings.push("la constitución de la sociedad no está acreditada");
+  }
+  if (!brand.telefono && !brand.whatsapp) {
+    warnings.push("no hay teléfono o WhatsApp informado");
+  }
+
+  warnings.push(...getProjectPublicationIssues(projects));
+
+  return warnings;
 }
 
 export function getPublicationState(
@@ -106,6 +119,7 @@ export function getPublicationState(
   projects: readonly Project[],
 ): PublicationState {
   const issues = getPublicationIssues(brand, projects);
+  const warnings = getPublicationWarnings(brand, projects);
 
   if (!brand.publicar) {
     return {
@@ -113,6 +127,7 @@ export function getPublicationState(
       isPublic: false,
       robots: "noindex,nofollow",
       issues,
+      warnings,
     };
   }
 
@@ -123,6 +138,7 @@ export function getPublicationState(
     isPublic: true,
     robots: "index,follow",
     issues: [],
+    warnings,
   };
 }
 
@@ -137,6 +153,7 @@ export function getPublicPublicationState(
     isPublic: false,
     robots: "noindex,nofollow",
     issues: [...state.issues, "la activacion publica requiere una decision externa verificada"],
+    warnings: state.warnings,
   };
 }
 
