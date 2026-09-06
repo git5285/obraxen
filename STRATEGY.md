@@ -2,7 +2,7 @@
 
 Estado: documento interno de trabajo
 
-Actualizado: 15 de julio de 2026
+Actualizado: 6 de septiembre de 2026
 
 Ámbito: empresa, oferta, evidencia, ventas, alianzas y evolución de la web
 
@@ -93,7 +93,7 @@ empresa ni se presentarán como propios.
 | Interpretación estratégica | “Recuperación técnica de pavimentos industriales en uso” ocupa un territorio más defendible que “aplicador de pavimentos”. | Orientar empresa, mensajes, casos y arquitectura futura. |
 | Hipótesis comercial | Reparación rápida y rehabilitación diagnóstica serán las dos mejores ofertas de entrada. | Validar con presupuestos, pilotos y entrevistas. |
 | Hipótesis de capacidad | Planimetría y automatización pueden ser una segunda especialidad atractiva. | Empezar mediante medición competente y alianzas; no prometer capacidad completa todavía. |
-| Decisión pendiente | Nombre de empresa y nombres de sistemas. | Investigar candidatos sin seleccionar, integrar ni publicar hasta una decisión expresa. |
+| Decisión pendiente | Revisión profesional del nombre comercial y nombres de sistemas. | No presentar el nombre como aprobado ni publicar hasta registrar el dictamen favorable. |
 
 ### Perfil operativo confirmado
 
