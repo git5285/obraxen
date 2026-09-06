@@ -15,11 +15,12 @@ TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
 - Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
   hook versionado bloquea pushes directos a `main`. No se detectan secretos o
   credenciales en los archivos versionados.
-- La puerta pública falla por identidad, sociedad, contacto, revisión
-  registral/marcaria, revisión legal, revisión profesional de los cuatro idiomas,
-  proveedor de captación y soporte documental/revisión legal de los seis casos,
-  como está previsto. Los casos conservan declaraciones del responsable, no
-  documentos o revisiones profesionales.
+- La puerta pública falla por revisión registral/marcaria, revisión legal,
+  revisión profesional de los cuatro idiomas, proveedor de captación y soporte
+  documental/revisión legal de los seis casos, como está previsto. La identidad,
+  sociedad, domicilio y teléfono temporal ya están declarados en `data/brand.json`;
+  los casos conservan declaraciones del responsable, no documentos o revisiones
+  profesionales.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
   permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
 
@@ -40,7 +41,7 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 286 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 288 pruebas Vitest y build de producción.
 - Build: 28 páginas estáticas generadas; todas las rutas de contenido públicas
   son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
@@ -87,8 +88,8 @@ a 2,5 s.
 - Sin consentimiento no se cargan fuentes, analítica, publicidad o scripts de
   terceros. Los defaults de Consent Mode v2 mantienen siempre denegada la
   publicidad; Clarity usa ConsentV2 y el formulario queda enmascarado.
-- La dirección provisional se retiró de `brand.json` y permanece `null` hasta
-  disponer de un domicilio empresarial validado.
+- La fuente estructurada declara Calle Federico García Lorca 22 como domicilio
+  fiscal; esta declaración no equivale a revisión legal aprobada.
 - El plazo de respuesta inicial permanece `null`; no se muestra un SLA hasta que
   exista responsable, buzón y compromiso operativo verificable.
 - Los informes locales y auditorías externas están ignorados.
@@ -116,8 +117,8 @@ Los seis casos conservan únicamente la declaración expresa del responsable del
 17 de julio de 2026, con alcance para nombre del cliente y fotografías web y una
 referencia interna. No se ha registrado el documento ni una revisión legal
 profesional. Los originales se conservan fuera del repositorio. `publicar: true`
-sigue fallando cerrado por 24 entradas: 12 de identidad, legal/proveedor e
-idiomas y 12 de documento/revisión de los casos.
+sigue fallando cerrado por 19 entradas: 7 de naming, legal/proveedor e idiomas
+y 12 de documento/revisión de los casos.
 
 Las fechas de ejecución cuyo año no estaba confirmado se almacenan como `null`;
 ya no hay textos del tipo “año pendiente de confirmar” en los datos públicos.
