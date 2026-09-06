@@ -1,6 +1,6 @@
 # Sistema de diseño
 
-Estado verificado: 15 de julio de 2026. Este documento describe el sistema que
+Estado verificado: 6 de septiembre de 2026. Este documento describe el sistema que
 existe hoy; no convierte aspiraciones antiguas en reglas. Los valores canónicos
 viven en [`css/tokens.css`](css/tokens.css) y los estilos se separan por ruta.
 
@@ -13,9 +13,11 @@ viven en [`css/tokens.css`](css/tokens.css) y los estilos se separan por ruta.
 | Hub de proyectos | `css/projects.css` |
 | Casos | `css/case.css` |
 | Legales | `css/legal.css` |
+| Consentimiento | `css/consent.css` |
 
-La identidad visual definitiva sigue pendiente. Recolorear o cambiar las
-familias tipográficas debe empezar en los tokens, no con sustituciones dispersas.
+La marca actual está implementada, pero su aprobación visual definitiva sigue
+pendiente. Recolorear o cambiar las familias tipográficas debe empezar en los
+tokens, no con sustituciones dispersas.
 El naranja codificado dentro del favicon SVG es la única excepción conocida:
 un `data:` URI no puede leer custom properties.
 

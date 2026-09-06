@@ -259,19 +259,31 @@ Los documentos EN 16165, EN 13813, EN 1504-2 y otros marcos identificados por la
 investigación son referencias que deben ser revisadas por personal competente
 antes de definir un ensayo, tolerancia o declaración comercial.
 
+### Copy y evidencia publicable
+
+La web puede comunicar más de diez años de experiencia acumulada, equipos
+propios, trabajo en la Unión Europea y valoración inicial a partir de fotografías
+o vídeo. Los datos de una obra solo se publican con su alcance real y después de
+superar la autorización documental y la revisión legal del expediente.
+
+Las fases, zonas acotadas, horarios alternativos, inspección presencial, plazos de
+reapertura y combinaciones de técnicas se expresan como posibilidades sujetas al
+diagnóstico, al sistema y a la operativa. La voz es directa y profesional: usa
+evidencia y límites, no superlativos ni garantías universales.
+
 ## 8. Traducción a la web
 
 ### Situación actual
 
-La portada, el proceso, los servicios resumidos y los seis casos siguen siendo la
-arquitectura inmediata. Los seis casos ya cuentan con un indicador de cierre
+La portada, el proceso, los servicios resumidos y los hubs de proyectos forman la
+arquitectura inmediata. Los seis casos internos ya cuentan con un indicador de cierre
 común —entrega conforme sin correcciones posteriores registradas por el equipo—,
 y ahora registran duración, equipo y medios principales; cinco distinguen además
 su situación operativa durante la intervención. Continúan pendientes algunos años
 exactos, la continuidad de TP-Link, los tiempos de reapertura y los valores de las
-mediciones. `Obraxen`, `obraxen.com` y los correos público/privacidad están
-integrados, pero sociedad, teléfono, formulario y publicación permanecen
-pendientes. La web ya dispone de
+mediciones. `Obraxen`, `obraxen.com`, los correos público/privacidad, la razón
+social, el NIF, el domicilio y el teléfono temporal están declarados. El
+formulario y la publicación permanecen cerrados. La web ya dispone de
 estructura completa en/de/es/fr y captación fail-closed, pero las traducciones
 requieren revisión profesional y el proveedor requiere aprobación documental.
 Esta preparación técnica no modifica la decisión de mantener la publicación
@@ -420,8 +432,7 @@ Toda información nueva seguirá este recorrido:
 
 | Tema | Fuente de verdad |
 |---|---|
-| Dirección de empresa, perfil operativo, oferta, mercado y prioridades | `STRATEGY.md` |
-| Copy permitido, bloqueado y evidencia pendiente | `CONTENT_AUDIT.md` |
+| Dirección de empresa, perfil operativo, oferta, mercado, copy y evidencia | `STRATEGY.md` |
 | Rutas y crecimiento de la web | `SITE_ARCHITECTURE.md` |
 | Decisiones técnicas del sitio | `DECISIONS.md` |
 | Identidad y estado de publicación | `data/brand.json` |
