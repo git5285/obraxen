@@ -184,6 +184,15 @@ segments remain literal, while `*`, `?` and brace patterns are rejected. The
 bundle lasts at most 24 hours and contains no merge, deployment,
 publication, deletion or destructive rollback action.
 
+Human delivery has a separate ceiling of twenty exact paths, configured by
+`groupedAuthorizations.maxChangedFiles`. It does not widen the autonomous
+writer's `limits.maxChangedFiles` (eight), protected paths, tool permissions or
+standing authority flags. Every delivery still needs an explicit candidate-bound
+human decision and all existing checks and single-use reservations. Older
+policies without the optional human ceiling retain their original writer limit;
+older bundles and event digests are unchanged. A legacy runner must be updated
+before it reads larger bundles; never relax validation or reclaim failed runs.
+
 The delivery controller must stage authorized paths with Git's literal pathspec
 mode, for example `git --literal-pathspecs add -- <exact paths>`. Quoting a path
 in the shell is insufficient because Git otherwise interprets bracketed route

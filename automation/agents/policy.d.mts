@@ -38,6 +38,7 @@ export interface AgentPolicy {
   };
   groupedAuthorizations: {
     enabled: boolean;
+    maxChangedFiles?: number;
     maxSteps: number;
     maxLifetimeSeconds: number;
     reservationTtlSeconds: number;

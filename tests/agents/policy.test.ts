@@ -75,6 +75,7 @@ describe("autonomous-agent policy", () => {
     });
     expect(policy.groupedAuthorizations).toEqual({
       enabled: true,
+      maxChangedFiles: 20,
       maxSteps: 3,
       maxLifetimeSeconds: 86400,
       reservationTtlSeconds: 600,
@@ -90,6 +91,25 @@ describe("autonomous-agent policy", () => {
     const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
     policy.authority.allowPublish = true;
     expect(() => validatePolicy(policy)).toThrow("permanently human-gated");
+  });
+
+  it("rejects unbounded or invalid human-delivery file limits", () => {
+    for (const limit of [0, -1, 1.5, 21, Infinity, "20", null]) {
+      const policy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+      policy.groupedAuthorizations.maxChangedFiles = limit;
+      expect(() => validatePolicy(policy)).toThrow();
+    }
+    const legacy = JSON.parse(readFileSync("automation/agents/policy.json", "utf8"));
+    delete legacy.groupedAuthorizations.maxChangedFiles;
+    expect(() => validatePolicy(legacy)).not.toThrow();
+  });
+
+  it("still rejects a nine-file autonomous diff with human delivery enabled", () => {
+    const policy = loadPolicy();
+    const paths = Array.from({ length: 9 }, (_, i) => `src/example-${i}.ts`);
+    const result = validateDiff({ changedPaths: paths, allowedPaths: paths, addedLines: 9, deletedLines: 0 }, policy);
+    expect(result.ok).toBe(false);
+    expect(result.violations).toContain("changed file count exceeds 8");
   });
 
   it("rejects more than one pending autonomous local diff", () => {
