@@ -1,8 +1,13 @@
 # Entradas pendientes para activar Obraxen
 
-Estado: **NO-GO**. Esta hoja organiza las entradas externas; la fuente canónica
-del estado y del recuento es `npm run check:activation`. `ACTIVATION_GATE.md`
-describe el contrato, pero no sustituye la salida ejecutable.
+Actualizado: 6 de septiembre de 2026. Estado: **NO-GO**.
+
+Esta es la única hoja documental que mantiene los valores y entradas externas
+vigentes. La fuente canónica del resultado y del recuento es
+`npm run check:activation`; `ACTIVATION_GATE.md` define el contrato que aplica el
+comando, `LEGAL_CHECKLIST.md` enumera los requisitos jurídicos y
+`DEPLOYMENT_RUNBOOK.md` describe el proceso técnico de publicación. Esos
+documentos no deben copiar este inventario.
 
 No deben incluirse contrasenas, cookies, tokens, codigos MFA ni documentos con
 mas datos personales de los necesarios. Las referencias documentales pueden ser
@@ -18,7 +23,7 @@ identificadores internos; los originales se conservan fuera del repositorio.
 - [x] Confirmacion del responsable de que la sociedad esta constituida.
 - [x] Telefono temporal para contacto: `+34 653 916 970`.
 
-Responsable con capacidad para aprobar proveedor y publicacion: **sin dato**.
+Responsable con capacidad para aprobar proveedor y publicación: **sin dato**.
 
 ## Legal y proveedor
 
@@ -64,12 +69,13 @@ Para cerrar cada caso aún faltan una referencia verificable al documento que
 cubre nombre y fotografías y la revisión legal de ese documento. La declaración
 registrada no activa por sí sola ninguna superficie pública.
 
-## Criterio de cierre
+## Actualización y cierre
 
 1. Verificar cada entrada contra su documento original.
-2. Actualizar datos y textos en una PR con manifiesto exacto.
+2. Actualizar esta hoja y las fuentes estructuradas en una PR con manifiesto
+   exacto, sin replicar el estado en los documentos de requisitos o proceso.
 3. Ejecutar `npm run check:quality` y `npm run check:activation`.
-4. Solo con cero incidencias solicitar autorizacion para una preview protegida.
+4. Solo con cero incidencias solicitar autorización para una preview protegida.
 
 Esta hoja no autoriza preview, contrato, despliegue, DNS web, formulario,
 analitica, indexacion ni publicacion.

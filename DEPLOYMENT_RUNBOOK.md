@@ -1,25 +1,23 @@
 # Runbook de cutover y publicación
 
-Estado: **bloqueado** · actualizado: 22 de julio de 2026.
+Este documento describe exclusivamente el proceso técnico para construir,
+auditar, publicar y revertir una candidata. No mantiene el estado de identidad,
+legal, proveedor, idiomas o casos: ese inventario vive en
+`ACTIVATION_INPUTS.md` y la decisión ejecutable procede de
+`npm run check:activation`.
 
-Este documento prepara una activación futura; no autoriza preview, despliegue,
-dominio, indexación, analítica ni formulario. Next.js ya es la única
-implementación y no existe un segundo cutover técnico pendiente.
+El runbook no autoriza preview, despliegue, dominio, indexación, analítica ni
+formulario. Next.js es la única implementación y no existe un segundo cutover
+técnico pendiente.
 
 ## 1. Condiciones de entrada
 
 No se crea una URL candidata hasta que una PR demuestre simultáneamente:
 
-- identidad comercial y sociedad constituidas; dominio y buzones reales ya
-  acreditados en la fase 6.7.2;
-- textos legales revisados y `legalRevisionAprobada: true`;
-- en/de/es/fr con estado `aprobada`, revisor y fecha;
-- Resend aprobado documentalmente, DPA archivado, subencargados, transferencias,
-  conservación y buzón responsable revisados;
+- `npm run check:activation` devuelve `READY_FOR_PROTECTED_CANDIDATE`;
+- las evidencias de `ACTIVATION_INPUTS.md` corresponden al SHA candidato;
 - regla externa de limitación de solicitudes para `/api/contact/` configurada y
   probada; el límite en memoria no sustituye este control distribuido;
-- seis casos con documento verificable para nombre y fotografías y revisión
-  legal aprobada, o anonimizados;
 - `npm run check:quality`, auditoría de dependencias y revisión de exposición en
   verde;
 - autorización expresa del usuario para crear una preview protegida.
@@ -108,11 +106,16 @@ regresión grave de seguridad/accesibilidad.
 4. verificar HTTP, aliases y DNS después del rollback;
 5. abrir incidente y no reactivar hasta un nuevo `GO`.
 
-## 6. Estado actual
+## 6. Comprobación antes de cada intento
 
-**NO-GO.** Fases técnicas 6.1–6.6 y puerta ejecutable 6.7.0 completas. Los seis
-casos tienen una declaración interna, pero aún necesitan documento verificable y
-revisión legal. También siguen pendientes identidad y sociedad, teléfono,
-revisión registral/marcaria, revisión legal general, revisión profesional
-en/de/es/fr y aceptación del proveedor. Vercel permanece sin deployments ni
-dominios y `git.deploymentEnabled` continúa desactivado.
+Antes de ejecutar este runbook:
+
+1. consultar `ACTIVATION_INPUTS.md` sin copiar sus valores aquí;
+2. guardar la salida JSON de `npm run check:activation`;
+3. confirmar que el SHA, las variables y las evidencias pertenecen a la misma
+   candidata;
+4. comprobar que Vercel no conserva un deployment o dominio inesperado;
+5. registrar la autorización exacta para la acción externa que corresponda.
+
+Si cualquiera de estas comprobaciones falla, no se crea ni reutiliza una URL y
+el proceso vuelve a la fase de preparación.
