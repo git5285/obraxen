@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { brand } from "@/lib/brand";
-import { projects, publicProjects } from "@/lib/projects";
-import { getPublicationState } from "@/lib/publication";
+import { publicProjects } from "@/lib/projects";
+import { publicActivation } from "@/lib/public-activation";
+import { getPublicPublicationState } from "@/lib/publication";
 import { getLocalizedPaths, getPath, locales, type RouteKey } from "@/lib/i18n";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const publication = getPublicationState(brand, projects);
+  const publication = getPublicPublicationState(brand, publicActivation);
   if (!publication.isPublic || !brand.dominio) return [];
 
   const origin = `https://${brand.dominio}`;

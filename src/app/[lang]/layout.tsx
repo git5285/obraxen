@@ -5,15 +5,15 @@ import { ConsentManager } from "@/components/consent-manager";
 import { resolveAnalyticsConfig } from "@/lib/analytics-config";
 import { brand } from "@/lib/brand";
 import { getDictionary, getPath, isLocale, locales } from "@/lib/i18n";
-import { projects } from "@/lib/projects";
-import { getPublicationState } from "@/lib/publication";
+import { publicActivation } from "@/lib/public-activation";
+import { getPublicPublicationState } from "@/lib/publication";
 import "../globals.css";
 import "../../../css/consent.css";
 import "../../../css/projects.css";
 import "../../../css/case.css";
 import "../../../css/legal.css";
 
-const publication = getPublicationState(brand, projects);
+const publication = getPublicPublicationState(brand, publicActivation);
 
 export const dynamicParams = false;
 
