@@ -107,6 +107,14 @@ reintento automático. Merge, despliegue, publicación, borrado y rollback
 destructivo no pueden formar parte del bundle y siempre exigen otra decisión
 humana.
 
+## Migraciones de criterios de activacion
+
+El propietario puede solicitar que requisitos empresariales concretos pasen de
+bloqueos a advertencias. La candidata debe enumerar reglas retiradas y
+conservadas, mantener visibles los hechos no acreditados y comparar la
+activacion antes y despues. No activa `publicar`, no inventa aprobaciones y no
+concede merge, despliegue o publicación.
+
 ## Un ciclo completo
 
 1. Fija el SHA y lee todos los worktrees, claims y leases.
@@ -117,8 +125,9 @@ humana.
 5. En sombra, termina y registra el informe. En activo, crea un único entorno
    aislado y reserva rutas exactas.
 6. El builder realiza una sola mejora y una corrección como máximo.
-7. Los scripts verifican rutas, tamaño, diff completo, tests, calidad y que el
-   estado de activación no haya cambiado.
+7. Los scripts verifican rutas, tamaño, diff completo, tests y calidad. La
+   activación debe permanecer igual salvo en una migración solicitada por el
+   propietario, donde se revisa la diferencia completa.
 8. El auditor aprueba, veta o pide revisión humana.
 9. El director persiste un informe validado e idempotente, avanza el presupuesto
    si era un ciclo programado, libera recursos y termina. La siguiente ejecución
