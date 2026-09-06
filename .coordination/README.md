@@ -3,6 +3,13 @@
 Objetivo: que varias tareas puedan avanzar sin escribir sobre los mismos
 archivos ni repetir decisiones.
 
+## Lectura minima
+
+Lee primero `AGENTS.md` y `COORDINATION.md`; consulta despues el estado vivo
+con `operations.mjs status`. Este documento define la mecanica de claims. Los
+handoffs y claims cerrados son historial de consulta, no contexto obligatorio
+de arranque.
+
 ## Ciclo obligatorio por tarea
 
 1. **Sincronizar:** lee `COORDINATION.md`, las reservas activas y los ultimos
