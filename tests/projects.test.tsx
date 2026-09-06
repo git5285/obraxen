@@ -13,7 +13,8 @@ import ProjectPage, {
 } from "@/app/[lang]/[section]/[slug]/page";
 import { brand } from "@/lib/brand";
 import { getDictionary, locales, routeSegments } from "@/lib/i18n";
-import { projects, publicProjects } from "@/lib/projects";
+import { internalProjects } from "@/lib/internal-projects";
+import { publicProjects } from "@/lib/projects";
 import { getProjectJsonLd, getProjectMetadata, getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
 import { publicableOffers } from "@/lib/solutions";
 
@@ -24,7 +25,7 @@ describe("localized project routes", () => {
     }));
     expect(html.match(/<article class="project-dossier"/g) ?? []).toHaveLength(publicProjects.length);
     expect(html.match(/<img /g) ?? []).toHaveLength(publicProjects.length * 3);
-    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+    for (const project of internalProjects.filter((item) => !publicProjects.includes(item))) {
       expect(html).not.toContain(project.cliente);
       expect(html).not.toContain(project.slug);
     }
@@ -54,7 +55,7 @@ describe("localized project routes", () => {
   });
 
   it.each(locales)("keeps unlicensed projects out of %s routes, metadata and JSON-LD", async (locale) => {
-    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+    for (const project of internalProjects.filter((item) => !publicProjects.includes(item))) {
       const params = Promise.resolve({
         lang: locale,
         section: routeSegments[locale].projects,
@@ -67,7 +68,7 @@ describe("localized project routes", () => {
     }
     const hubJsonLd = getProjectsJsonLd(locale);
     expect(hubJsonLd).toContain(`"numberOfItems":${publicProjects.length}`);
-    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+    for (const project of internalProjects.filter((item) => !publicProjects.includes(item))) {
       expect(hubJsonLd).not.toContain(project.slug);
       expect(hubJsonLd).not.toContain(project.cliente);
     }
@@ -107,9 +108,7 @@ describe("localized project routes", () => {
       languages: { "x-default": "https://example.com/en/projects/" },
     });
 
-    const project = projects.find((item) => !publicProjects.includes(item));
-    expect(project).toBeDefined();
-    expect(getProjectMetadata(project!, locale, "example.com")).toEqual({});
+    expect(getProjectMetadata(internalProjects[0], locale, "example.com")).toEqual({});
   });
 
   it.each(locales)("provides absolute %s legal and contact metadata for a candidate domain", (locale) => {

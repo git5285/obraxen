@@ -31,7 +31,8 @@ import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
 import { getHomepage, getProjectImage } from "@/lib/homepage";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
-import { projects, publicProjects } from "@/lib/projects";
+import { internalProjects } from "@/lib/internal-projects";
+import { publicProjects } from "@/lib/projects";
 
 afterEach(() => {
   contactMock.enabled = false;
@@ -49,7 +50,7 @@ describe("localized Next.js homepage", () => {
     expect(html).toContain(dictionary.faq.title);
     expect(html.match(/<article class="proy">/g) ?? []).toHaveLength(publicProjects.length);
     for (const project of publicProjects) expect(html).toContain(project.traducciones[locale].titulo);
-    for (const project of projects.filter((item) => !publicProjects.includes(item))) {
+    for (const project of internalProjects.filter((item) => !publicProjects.includes(item))) {
       expect(html).not.toContain(project.cliente);
       expect(html).not.toContain(project.slug);
     }
@@ -111,9 +112,7 @@ describe("localized Next.js homepage", () => {
   });
 
   it("does not retain an image import for an unauthorized project", () => {
-    const project = projects.find((item) => !publicProjects.includes(item));
-    expect(project).toBeDefined();
-    expect(() => getProjectImage(project!.imagenes[0].src)).toThrow("publico aprobado");
+    expect(() => getProjectImage(internalProjects[0].imagenes[0].src)).toThrow("No existe un import de imagen");
   });
 
   it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {
