@@ -4,7 +4,9 @@ import { internalProjects } from "@/lib/internal-projects";
 import {
   PublicationConfigurationError,
   buildRobotsPolicy,
+  getPublicationIssues,
   getPublicationState,
+  getPublicationWarnings,
 } from "@/lib/publication";
 import type { Brand, Project } from "@/lib/schemas";
 
@@ -69,30 +71,32 @@ describe("publication gate", () => {
     });
   });
 
-  it("allows publication only with complete validated identity", () => {
-    expect(getPublicationState(publicBrand, publishableProjects)).toMatchObject({
+  it("allows publication when legal, Resend and every locale are approved", () => {
+    expect(getPublicationState(publicBrand, internalProjects)).toMatchObject({
       mode: "public",
       isPublic: true,
       issues: [],
+      warnings: expect.arrayContaining([
+        `${internalProjects[0].slug}: falta un documento de autorización que cubra nombre y fotografías`,
+      ]),
     });
   });
 
-  it("fails closed if publicar is enabled with missing business data", () => {
-    expect(() => getPublicationState({ ...brand, publicar: true }, internalProjects)).toThrow(
-      PublicationConfigurationError,
+  it("keeps business-readiness gaps visible without blocking activation", () => {
+    expect(getPublicationIssues(publicBrand, internalProjects)).toEqual([]);
+    const warnings = getPublicationWarnings({
+      ...publicBrand,
+      nombreRevisionAprobada: false,
+      nombreLegal: null,
+    }, internalProjects);
+    expect(warnings).toContain("brand.nombreLegal no está informado");
+    expect(warnings).toContain(
+      "el nombre comercial no tiene revisión registral y marcaria acreditada",
     );
-  });
-
-  it("does not promote a responsible declaration into a document or legal review", () => {
-    expect(() => getPublicationState(publicBrand, internalProjects)).toThrow(
-      PublicationConfigurationError,
-    );
-    const issues = getPublicationState({ ...publicBrand, publicar: false }, internalProjects).issues;
-    expect(issues).toHaveLength(internalProjects.length * 2);
-    expect(issues).toContain(
+    expect(warnings).toContain(
       `${internalProjects[0].slug}: falta un documento de autorización que cubra nombre y fotografías`,
     );
-    expect(issues).toContain(
+    expect(warnings).toContain(
       `${internalProjects[0].slug}: falta una revisión legal verificada del documento de autorización`,
     );
   });
@@ -108,17 +112,21 @@ describe("publication gate", () => {
     }, publishableProjects)).toThrow(PublicationConfigurationError);
   });
 
-  it("blocks publication until the commercial name has professional clearance", () => {
-    expect(() => getPublicationState({
+  it("does not make naming clearance an activation blocker", () => {
+    expect(getPublicationState({
       ...publicBrand,
       nombreRevisionAprobada: false,
-    }, publishableProjects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toMatchObject({ mode: "public", issues: [] });
   });
 
-  it("requires a dedicated privacy address before publication", () => {
-    expect(() => getPublicationState({
+  it("reports missing public identity fields as warnings", () => {
+    expect(getPublicationState({
       ...publicBrand,
       emailPrivacidad: null,
-    }, publishableProjects)).toThrow(PublicationConfigurationError);
+    }, publishableProjects)).toMatchObject({ mode: "public", issues: [] });
+    expect(getPublicationWarnings({
+      ...publicBrand,
+      emailPrivacidad: null,
+    }, publishableProjects)).toContain("brand.emailPrivacidad no está informado");
   });
 });
