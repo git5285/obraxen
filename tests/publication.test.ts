@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { brand } from "@/lib/brand";
-import { internalProjects } from "@/lib/internal-projects";
+import { projects } from "@/lib/projects";
 import {
   PublicationConfigurationError,
   buildRobotsPolicy,
@@ -31,7 +31,7 @@ const publicBrand: Brand = {
   publicar: true,
 };
 
-const publishableProjects: readonly Project[] = internalProjects.map((project) => {
+const publishableProjects: readonly Project[] = projects.map((project) => {
   const documentReference = `AUTH-DOC-TEST-${project.referencia}`;
 
   return {
@@ -61,10 +61,10 @@ const publishableProjects: readonly Project[] = internalProjects.map((project) =
 
 describe("publication gate", () => {
   it("keeps the current project in closed preview", () => {
-    const state = getPublicationState(brand, internalProjects);
+    const state = getPublicationState(brand, projects);
     expect(state.mode).toBe("preview");
     expect(state.robots).toBe("noindex,nofollow");
-    expect(buildRobotsPolicy(brand, internalProjects)).toEqual({
+    expect(buildRobotsPolicy(brand, projects)).toEqual({
       rules: { userAgent: "*", disallow: "/" },
     });
   });
@@ -78,22 +78,22 @@ describe("publication gate", () => {
   });
 
   it("fails closed if publicar is enabled with missing business data", () => {
-    expect(() => getPublicationState({ ...brand, publicar: true }, internalProjects)).toThrow(
+    expect(() => getPublicationState({ ...brand, publicar: true }, projects)).toThrow(
       PublicationConfigurationError,
     );
   });
 
   it("does not promote a responsible declaration into a document or legal review", () => {
-    expect(() => getPublicationState(publicBrand, internalProjects)).toThrow(
+    expect(() => getPublicationState(publicBrand, projects)).toThrow(
       PublicationConfigurationError,
     );
-    const issues = getPublicationState({ ...publicBrand, publicar: false }, internalProjects).issues;
-    expect(issues).toHaveLength(internalProjects.length * 2);
+    const issues = getPublicationState({ ...publicBrand, publicar: false }, projects).issues;
+    expect(issues).toHaveLength(projects.length * 2);
     expect(issues).toContain(
-      `${internalProjects[0].slug}: falta un documento de autorización que cubra nombre y fotografías`,
+      `${projects[0].slug}: falta un documento de autorización que cubra nombre y fotografías`,
     );
     expect(issues).toContain(
-      `${internalProjects[0].slug}: falta una revisión legal verificada del documento de autorización`,
+      `${projects[0].slug}: falta una revisión legal verificada del documento de autorización`,
     );
   });
 
