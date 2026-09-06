@@ -91,6 +91,13 @@ async function waitForServer() {
   throw new Error("Next.js no estuvo disponible en 60 segundos");
 }
 
+async function assertRouteAvailable(route) {
+  const response = await fetch(`${baseUrl}${route.path}`);
+  if (!response.ok) {
+    throw new Error(`${route.path} respondió ${response.status} antes de Lighthouse`);
+  }
+}
+
 function score(report, category) {
   return report.categories[category]?.score ?? 0;
 }
@@ -233,7 +240,10 @@ server.stderr.on("data", (chunk) => { serverOutput += chunk; });
 
 try {
   await waitForServer();
-  for (const route of routes) await auditRoute(route);
+  for (const route of routes) {
+    await assertRouteAvailable(route);
+    await auditRoute(route);
+  }
   console.log(`Lighthouse OK → ${routes.length} rutas localizadas dentro de presupuesto`);
 } catch (error) {
   if (serverOutput) console.error(serverOutput.trim());
