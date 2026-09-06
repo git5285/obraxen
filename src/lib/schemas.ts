@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const text = z.string().trim().min(1);
 const nullableText = text.nullable();
+const calendarDate = z.iso.date();
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const uniqueTextList = z.array(text).min(1).refine(
   (items) => new Set(items).size === items.length,
@@ -27,7 +28,7 @@ const contactNumber = nullableText.refine(
 const editorialReview = z.object({
   estado: z.enum(["pendiente", "aprobada"]),
   revisor: nullableText,
-  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  fecha: calendarDate.nullable(),
 }).strict().superRefine((review, context) => {
   if (review.estado === "aprobada" && (!review.revisor || !review.fecha)) {
     context.addIssue({
@@ -114,29 +115,27 @@ const publicationScopes = z.array(publicationScope).min(1).refine(
   "El alcance de publicación no puede contener duplicados",
 );
 
-const evidenceDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-
 const projectPublicationEvidenceSchema = z.discriminatedUnion("tipo", [
   z.object({
     tipo: z.literal("declaracion_responsable"),
     alcance: publicationScopes,
     fuente: text,
     declaracion: text,
-    declaradoEl: evidenceDate,
+    declaradoEl: calendarDate,
     referenciaInterna: text,
   }).strict(),
   z.object({
     tipo: z.literal("documento_referenciado"),
     alcance: publicationScopes,
     entidadAutorizante: text,
-    emitidoEl: evidenceDate,
+    emitidoEl: calendarDate,
     referenciaDocumento: text,
   }).strict(),
   z.object({
     tipo: z.literal("revision_legal_verificada"),
     documentoRevisado: text,
     revisor: text,
-    revisadoEl: evidenceDate,
+    revisadoEl: calendarDate,
     referenciaRevision: text,
     resultado: z.enum(["aprobada", "cambios_requeridos", "denegada"]),
   }).strict(),
@@ -184,7 +183,7 @@ export const projectSchema = z.object({
     entregaConforme: z.boolean(),
     correccionesPosteriores: z.boolean(),
     fuente: text,
-    confirmadoEl: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    confirmadoEl: calendarDate,
     fechaEjecucion: nullableText,
     duracionReal: nullableText,
     continuidadOperativa: z.enum([

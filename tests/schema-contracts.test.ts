@@ -1,5 +1,6 @@
 import Ajv2020, { type AnySchema, type ValidateFunction } from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import offersSource from "../data/ofertas.json";
 import offersJsonSchema from "../data/ofertas.schema.json";
 import projectsSource from "../data/proyectos.json";
@@ -7,7 +8,8 @@ import projectsJsonSchema from "../data/proyectos.schema.json";
 import { offersSchema, projectsSchema } from "@/lib/schemas";
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
-ajv.addFormat("date", /^\d{4}-\d{2}-\d{2}$/);
+const calendarDate = z.iso.date();
+ajv.addFormat("date", (value: string) => calendarDate.safeParse(value).success);
 
 const validateProjects = ajv.compile(projectsJsonSchema as AnySchema);
 const validateOffers = ajv.compile(offersJsonSchema as AnySchema);
@@ -17,6 +19,45 @@ function errorsFor(validate: ValidateFunction) {
 }
 
 describe("portable JSON Schema contracts", () => {
+  describe.each(["declaradoEl", "emitidoEl", "revisadoEl", "confirmadoEl"])("calendar field %s", (field) => {
+    it.each([
+      ["2026-02-28", true], ["2024-02-29", true], ["2000-02-29", true],
+      ["2400-02-29", true], ["2026-04-30", true],
+      ["2026-02-29", false], ["1900-02-29", false], ["2100-02-29", false],
+      ["2026-04-31", false], ["2026-13-01", false], ["2026-00-10", false],
+      ["2026-01-00", false], ["2026-01-32", false], ["2026-2-03", false],
+      ["2026-02-28T00:00:00Z", false], [" 2026-02-28 ", false], ["", false], [null, false],
+    ])("validates %s with expected acceptance %s", (date, accepted) => {
+      const project = structuredClone(projectsSource[0]);
+      const declaration = {
+        tipo: "declaracion_responsable", alcance: ["fotografias_web"],
+        fuente: "Test source", declaracion: "Fixture only", declaradoEl: "2026-02-28",
+        referenciaInterna: "TEST-DECLARATION",
+      };
+      const document = {
+        tipo: "documento_referenciado", alcance: ["fotografias_web"],
+        entidadAutorizante: "Test entity", emitidoEl: "2026-02-28",
+        referenciaDocumento: "TEST-DOCUMENT",
+      };
+      const review = {
+        tipo: "revision_legal_verificada", documentoRevisado: "TEST-DOCUMENT",
+        revisor: "Test reviewer", revisadoEl: "2026-02-28",
+        referenciaRevision: "TEST-REVIEW", resultado: "aprobada",
+      };
+      const candidate = [{
+        ...project,
+        autorizacionPublicacion: { evidencias: [
+          { ...declaration, ...(field === "declaradoEl" ? { declaradoEl: date } : {}) },
+          { ...document, ...(field === "emitidoEl" ? { emitidoEl: date } : {}) },
+          { ...review, ...(field === "revisadoEl" ? { revisadoEl: date } : {}) },
+        ] },
+        cierre: { ...project.cierre, ...(field === "confirmadoEl" ? { confirmadoEl: date } : {}) },
+      }];
+      expect(validateProjects(candidate), errorsFor(validateProjects)).toBe(accepted);
+      expect(projectsSchema.safeParse(candidate).success).toBe(accepted);
+    });
+  });
+
   it("accepts the same current project and offer datasets as Zod", () => {
     expect(validateProjects(projectsSource), errorsFor(validateProjects)).toBe(true);
     expect(projectsSchema.safeParse(projectsSource).success).toBe(true);
