@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { internalProjects } from "@/lib/internal-projects";
 import { publicProjectImages, type PublicProjectImageMap } from "@/lib/public-project-assets";
 import { hasPublicProjectAuthorization, isPublicProject } from "@/lib/public-project-publication";
-import { projects, publicProjects } from "@/lib/projects";
+import { publicProjects } from "@/lib/projects";
 import type { Project } from "@/lib/schemas";
 
 describe("public project selector", () => {
@@ -10,7 +11,7 @@ describe("public project selector", () => {
   });
 
   it("requires both linked legal evidence and every approved asset", () => {
-    const project = projects[0];
+    const project = internalProjects[0];
     const authorizedProject: Project = {
       ...project,
       autorizacionPublicacion: {
