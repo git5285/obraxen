@@ -236,6 +236,7 @@ img{max-width:100%}
 @media(max-width:620px) and (max-height:740px){
   .hero-scene{min-height:260px}
   .hero-summary{gap:12px;padding-block:16px}
+  section.intro{padding-top:16px}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}

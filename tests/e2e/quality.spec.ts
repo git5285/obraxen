@@ -214,6 +214,37 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
   }
 });
 
+test("short mobile hero keeps the next section visible with wider fallback fonts", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile fallback font regression");
+  await page.setViewportSize({ width: 320, height: 667 });
+
+  // Exercise platform font metrics without relaxing the production CSP.
+  await page.route("**/*.css", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      body: `${await response.text()}\n:root { --font-sans: Verdana, sans-serif; --font-display: Verdana, sans-serif; }`,
+    });
+  });
+
+  for (const entry of locales) {
+    await page.goto(entry.home, { waitUntil: "networkidle" });
+    const state = await page.evaluate(() => {
+      const label = document.querySelector<HTMLElement>(".intro .kicker");
+      return {
+        labelBottom: label?.getBoundingClientRect().bottom,
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        font: getComputedStyle(document.body).fontFamily,
+      };
+    });
+    expect(state.font).toContain("Verdana");
+    expect(state.scrollWidth, entry.locale).toBeLessThanOrEqual(state.clientWidth);
+    expect(state.labelBottom, `${entry.locale}: next section exists`).toBeDefined();
+    expect(state.labelBottom, `${entry.locale}: next section visible`).toBeLessThanOrEqual(667);
+  }
+});
+
 for (const entry of locales) {
   test(`${entry.locale} locale has coherent routes and language counterparts`, async ({ page }) => {
     await page.goto(entry.home, { waitUntil: "networkidle" });
