@@ -32,6 +32,9 @@ jobs:
       - name: Verify pinned agent runtime
         run: npm run check:agent-runtime
 
+      - name: Audit production and development dependencies
+        run: npm run check:security
+
       - name: Install Chromium and WebKit
         run: npx playwright install --with-deps chromium webkit
 
