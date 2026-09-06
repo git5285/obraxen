@@ -90,11 +90,11 @@ export default async function HomePage({ params }: HomePageProps) {
       />
       <main id="content">
         <IntroSection kicker={homepage.brandKicker} stats={homepage.stats} copy={dictionary.intro} />
+        <ServicesSection cta={{ href: "#contact", text: dictionary.footer.contact }} copy={dictionary.services} services={homepage.services} />
         <ProcessSection copy={dictionary.process} />
-        <ServicesSection cta={homepage.cta} copy={dictionary.services} services={homepage.services} />
         <ProjectsSection locale={lang} />
         <CompanySection
-          cta={homepage.cta}
+          cta={{ href: "#contact", text: dictionary.footer.contact }}
           image={homepage.diagnosticoImage}
           kicker={homepage.whyKicker}
           hasOwnTeams={homepage.hasOwnTeams}

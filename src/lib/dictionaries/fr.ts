@@ -33,7 +33,7 @@ export const fr: Dictionary = {
   languageSwitcher: { label: "Langue", changeTo: "Changer la langue vers" },
   hero: {
     kicker: "Réparation de sols industriels",
-    title: "Des réparations planifiées pour réduire l'impact opérationnel.",
+    title: "Réparation de sols industriels.",
     body: "Nous évaluons le support, les désordres et les contraintes de circulation afin de définir une réparation adaptée au sol et à l'exploitation du site.",
     crackBefore: "Fissure",
     crackAfter: "Réparée",
