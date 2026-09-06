@@ -64,7 +64,7 @@ export const de: Dictionary = {
   services: {
     kicker: "Unsere Leistungen",
     title: "Betonsanierung nach Schadensbild, Verkehr und Nutzung",
-    intro: "Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung bestimmen die Maßnahme. Je nach Befund umfasst sie lokale Betonsanierung, Vorbereitung, Ausgleich oder Betonschleifen und -polieren.",
+    intro: "Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung bestimmen die Maßnahme. Je nach Befund kann sie lokale Betonsanierung, Vorbereitung, Ausgleich oder Betonschleifen und -polieren umfassen.",
     items: [
       { title: "Fugenreparatur", description: "Entfernung geschädigter Bereiche, Wiederherstellung und Abdichtung entsprechend Schadensbild und Verkehrsbeanspruchung." },
       { title: "Rissbehandlung", description: "Oberflächenbehandlung oder mechanische Verstärkung je nach Ursache und Entwicklung des Risses." },
