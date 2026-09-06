@@ -42,11 +42,14 @@ export function getHomepage(locale: Locale) {
   const brandCopy = getBrandTranslation(locale);
   const hasContactChannel = Boolean(brand.email || brand.telefono || brand.whatsapp);
   const contactFormEnabled = resolveContactConfig(process.env).enabled;
-  const navigationItems: readonly NavigationItem[] = dictionary.navigation.items.map((item) =>
+  const navigationItems: readonly NavigationItem[] = dictionary.navigation.items
+    .filter((item) => item.route !== "projects" || publicProjects.length > 0)
+    .sort((left, right) => Number(right.section === "services") - Number(left.section === "services"))
+    .map((item) =>
     item.section
       ? { label: item.label, href: `#${item.section}`, section: item.section }
       : { label: item.label, href: getPath(locale, item.route) },
-  );
+  ).concat({ label: dictionary.footer.contact, href: "#contact" });
   const cta = {
     href: contactFormEnabled
       ? getPath(locale, "contact")

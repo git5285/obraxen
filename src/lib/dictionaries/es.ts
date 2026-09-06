@@ -36,7 +36,7 @@ export const es: Dictionary = {
   },
   hero: {
     kicker: "Reparación de pavimentos industriales",
-    title: "Reparaciones planificadas para reducir el impacto operativo.",
+    title: "Reparación de pavimentos industriales.",
     body: "Evaluamos el soporte, el daño y las exigencias de tráfico para definir una reparación adaptada al pavimento y a la operativa de la instalación.",
     crackBefore: "Fisura",
     crackAfter: "Reparada",
@@ -44,7 +44,7 @@ export const es: Dictionary = {
   intro: {
     fallbackKicker: "Experiencia técnica",
     whyFallbackKicker: "Por qué este enfoque",
-    title: "Soluciones para suelos que no pueden permitirse parar",
+    title: "Cada superficie exige una intervención distinta",
     experienceLabel: "Años de experiencia acumulada del equipo",
     responseLabel: "Primera respuesta",
     phasesLabel: "Fases desde la valoración hasta el seguimiento",

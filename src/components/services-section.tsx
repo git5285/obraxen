@@ -29,13 +29,13 @@ export function ServicesSection({
         </div>
         <div className="serv-grid">
           {services.map((service) => (
-            <article className="serv foto" key={service.title}>
+            <article className="serv" key={service.title}>
               <ResponsiveImage
                 className="tex"
                 src={service.image}
                 alt=""
                 {...getImageDimensions(service.image, { width: 1280, height: 720 })}
-                sizes="(max-width: 860px) calc(100vw - 48px), 50vw"
+                sizes="(max-width: 620px) calc(100vw - 40px), (max-width: 860px) 40vw, 380px"
               />
               <div className="capa">
                 <ServiceIcon name={service.icon} />

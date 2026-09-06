@@ -23,7 +23,7 @@ const locales = [
     privacy: "/en/privacy/",
     cookies: "/en/cookies/",
     contact: "/en/contact/",
-    hero: "Repairs planned to reduce operational disruption.",
+    hero: "Industrial floor repair.",
     projectTitle: "Completed works, explained through evidence.",
     emptyProjectTitle: "Projects",
     contactTitle: "Tell us what is happening to the floor",
@@ -36,7 +36,7 @@ const locales = [
     privacy: "/de/datenschutz/",
     cookies: "/de/cookies/",
     contact: "/de/kontakt/",
-    hero: "Geplante Reparaturen zur Verringerung betrieblicher Beeinträchtigungen.",
+    hero: "Instandsetzung von Industrieböden.",
     projectTitle: "Ausgeführte Arbeiten, anhand von Nachweisen erklärt.",
     emptyProjectTitle: "Projekte",
     contactTitle: "Beschreiben Sie uns den Zustand des Bodens",
@@ -49,7 +49,7 @@ const locales = [
     privacy: "/es/privacidad/",
     cookies: "/es/cookies/",
     contact: "/es/contacto/",
-    hero: "Reparaciones planificadas para reducir el impacto operativo.",
+    hero: "Reparación de pavimentos industriales.",
     projectTitle: "Obras ejecutadas, explicadas desde la evidencia.",
     emptyProjectTitle: "Proyectos",
     contactTitle: "Cuéntanos qué ocurre en el pavimento",
@@ -62,7 +62,7 @@ const locales = [
     privacy: "/fr/confidentialite/",
     cookies: "/fr/cookies/",
     contact: "/fr/contact/",
-    hero: "Des réparations planifiées pour réduire l'impact opérationnel.",
+    hero: "Réparation de sols industriels.",
     projectTitle: "Des travaux réalisés, expliqués par les preuves.",
     emptyProjectTitle: "Projets",
     contactTitle: "Décrivez-nous l'état du sol",
@@ -166,7 +166,7 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile reflow matrix");
 
   for (const width of [320, 360, 375, 390]) {
-    await page.setViewportSize({ width, height: 900 });
+    await page.setViewportSize({ width, height: 667 });
     for (const entry of locales) {
       await page.goto(entry.home, { waitUntil: "networkidle" });
       const state = await page.evaluate(() => ({
@@ -206,7 +206,42 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
         .toBeLessThanOrEqual(state.clientWidth);
       expect(state.rectOverflows, `${entry.locale} at ${width}px`).toEqual([]);
       expect(state.textOverflows, `${entry.locale} at ${width}px`).toEqual([]);
+      const nextSectionLabel = await page.locator(".intro .kicker").boundingBox();
+      expect(nextSectionLabel, `${entry.locale} at ${width}px: next section exists`).not.toBeNull();
+      expect(nextSectionLabel!.y + nextSectionLabel!.height, `${entry.locale} at ${width}px: next section visible`)
+        .toBeLessThanOrEqual(667);
     }
+  }
+});
+
+test("short mobile hero keeps the next section visible with wider fallback fonts", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile fallback font regression");
+  await page.setViewportSize({ width: 320, height: 667 });
+
+  // Exercise platform font metrics without relaxing the production CSP.
+  await page.route("**/*.css", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      body: `${await response.text()}\n:root { --font-sans: Verdana, sans-serif; --font-display: Verdana, sans-serif; }`,
+    });
+  });
+
+  for (const entry of locales) {
+    await page.goto(entry.home, { waitUntil: "networkidle" });
+    const state = await page.evaluate(() => {
+      const label = document.querySelector<HTMLElement>(".intro .kicker");
+      return {
+        labelBottom: label?.getBoundingClientRect().bottom,
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        font: getComputedStyle(document.body).fontFamily,
+      };
+    });
+    expect(state.font).toContain("Verdana");
+    expect(state.scrollWidth, entry.locale).toBeLessThanOrEqual(state.clientWidth);
+    expect(state.labelBottom, `${entry.locale}: next section exists`).toBeDefined();
+    expect(state.labelBottom, `${entry.locale}: next section visible`).toBeLessThanOrEqual(667);
   }
 });
 

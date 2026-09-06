@@ -8,8 +8,8 @@
 .legal-shell .legal-nav .volver{font-size:.9rem;color:var(--brand-muted)}
 .legal-shell main{max-width:860px;margin:auto;padding:64px 24px 90px}
 .legal-shell .estado{display:inline-block;margin:0 0 22px;padding:8px 12px;border:1px solid var(--brand-primary-tint-border);border-radius:999px;background:var(--brand-primary-tint);color:var(--brand-primary-dark);font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.legal-shell h1,.legal-shell h2{overflow-wrap:anywhere;font-family:var(--font-display);line-height:1.15;letter-spacing:-.025em}
-.legal-shell h1{font-size:clamp(2.3rem,7vw,4rem);margin:0 0 18px}
+.legal-shell h1,.legal-shell h2{overflow-wrap:anywhere;font-family:var(--font-display);line-height:1.15;letter-spacing:0}
+.legal-shell h1{font-size:3rem;margin:0 0 24px}
 .legal-shell h2{font-size:1.35rem;margin:42px 0 12px}
 .legal-shell p,.legal-shell li{color:var(--brand-ink-2)}
 .legal-shell .intro{font-size:1.08rem;max-width:68ch}
@@ -22,22 +22,27 @@
 .legal-shell .alerta strong{display:block;margin-bottom:6px}
 .legal-shell ul{padding-left:22px}
 .legal-shell main>footer{border-top:1px solid var(--brand-line);margin-top:56px;padding-top:24px;color:var(--brand-muted);font-size:.86rem}
-.legal-shell .contact-page{max-width:760px}
+.legal-shell .contact-page{max-width:860px}
 .legal-shell .contact-intro{max-width:68ch;font-size:1.08rem}
 .legal-shell .contact-form{margin-top:34px;border:1px solid var(--brand-line)}
-.legal-shell .contact-unavailable{margin-top:34px;border:1px solid var(--brand-line)}
+.legal-shell .contact-unavailable{margin-top:40px;border:0;border-top:3px solid var(--brand-primary);border-radius:0;padding:28px 0;background:var(--brand-concrete)}
+.legal-shell:has(.contact-page){background:var(--brand-concrete)}
+.contact-unavailable .contact-channels{display:flex;flex-wrap:wrap;gap:16px 36px;margin-top:24px}
+.contact-unavailable .contact-channels a{margin:0;font-size:1.125rem;font-weight:650;padding-block:12px}
 .contact-consent{display:grid!important;grid-template-columns:22px 1fr;gap:10px;align-items:start}
 .contact-consent input{width:18px!important;height:18px;margin-top:2px}
 .form-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 .contact-status{min-height:24px;margin-top:14px;color:var(--brand-ink-2);font-size:.86rem}
 .language-switcher ul{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
-.language-switcher a{display:block;padding:5px 8px;border-radius:999px;font-size:.7rem;font-weight:750;text-decoration:none;white-space:nowrap}
+.language-switcher a{display:block;padding:10px 8px;border-radius:var(--radius-sm);font-size:.7rem;font-weight:750;text-decoration:none;white-space:nowrap}
 .language-switcher a[aria-current="page"]{background:var(--brand-primary-dark);color:var(--brand-surface)}
-.hero-nav .language-switcher a,.movil-menu .language-switcher a{color:var(--brand-on-dark)}
+.hero-nav .language-switcher a{color:var(--brand-ink)}
+.hero-nav .language-switcher a[aria-current="page"],.movil-menu .language-switcher a{color:var(--brand-on-dark)}
 .hero-nav .language-switcher a[aria-current="page"],.movil-menu .language-switcher a[aria-current="page"]{background:var(--brand-primary-dark)}
 .movil-menu .language-switcher ul{justify-content:center;margin:14px 0}
 .movil-menu .language-switcher a{font-size:.9rem;padding:7px 10px}
 .cierre>.language-switcher{max-width:var(--maxw);margin:24px auto 0}
-.cierre>.language-switcher a{color:var(--brand-on-dark)}
+.cierre>.language-switcher a{color:var(--brand-ink)}
+.cierre>.language-switcher a[aria-current="page"]{color:var(--brand-on-dark)}
 @media(max-width:900px){.hero-nav>.language-switcher,.sticky-nav .language-switcher{display:none}}
-@media(max-width:620px){.legal-shell main{padding-top:42px}.legal-shell .ficha dl{display:block}.legal-shell .ficha dd{margin-bottom:12px}.legal-shell .legal-nav>div{flex-wrap:wrap}.legal-shell .legal-nav .language-switcher{order:3;width:100%}}
+@media(max-width:620px){.legal-shell h1{font-size:2.125rem}.legal-shell main{padding-top:42px}.legal-shell .ficha dl{display:block}.legal-shell .ficha dd{margin-bottom:12px}.legal-shell .legal-nav>div{flex-wrap:wrap}.legal-shell .legal-nav .language-switcher{order:3;width:100%}}
