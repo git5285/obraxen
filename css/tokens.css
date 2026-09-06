@@ -10,7 +10,8 @@
   --brand-ink:     oklch(20.924% 0.006 271.116);  /* #17181B texto principal */
   --brand-bg:      oklch(100% 0 0);                /* #FFFFFF fondo */
   --brand-surface: oklch(100% 0 0);               /* #FFFFFF tarjetas/paneles claros */
-  --brand-muted:   oklch(54.543% 0.01 271.239);   /* #6E7076 texto atenuado */
+  --brand-muted:   #595d60;
+  --brand-concrete: #f2f4f3;
 
   /* ---- Color · escala del primario ---- */
   --brand-primary-dark:        oklch(55.343% 0.174 38.402);  /* #C2410C */
@@ -45,13 +46,13 @@
   --font-display: 'Avenir Next', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
 
   /* ---- Radios ---- */
-  --radius-sm:   12px;
-  --radius-md:   18px;
-  --radius-lg:   28px;
-  --radius-pill: 999px;
+  --radius-sm:   3px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-pill: 4px;
 
   /* ---- Layout ---- */
-  --maxw: 1180px;
+  --maxw: 1248px;
 
   /* ---- z-index · capas utilizadas ---- */
   --z-content:         1;

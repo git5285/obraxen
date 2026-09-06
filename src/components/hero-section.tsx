@@ -34,16 +34,6 @@ export function HeroSection({
   const dimensions = getImageDimensions(image, { width: 1280, height: 720 });
   return (
     <section className="hero" id="inicio">
-      <ResponsiveImage
-        className="hero-bg"
-        src={image}
-        alt=""
-        width={dimensions.width}
-        height={dimensions.height}
-        priority
-        unoptimized
-        sizes="100vw"
-      />
       <nav className="hero-nav" aria-label={labels.mainNavigation}>
         <LogoMark brandName={brandName} href={homeHref} homeLabel={labels.home} />
         <ul>
@@ -57,28 +47,27 @@ export function HeroSection({
         <MenuButton label={labels.menuOpen} />
         <CtaLink href={cta.href} eventLocation="hero-navigation">{cta.text}</CtaLink>
       </nav>
-      <div className="hero-body">
+      <div className="hero-scene">
+        <ResponsiveImage
+          className="hero-bg"
+          src={image}
+          alt=""
+          width={dimensions.width}
+          height={dimensions.height}
+          priority
+          unoptimized
+          sizes="100vw"
+        />
+        <div className="hero-body">
         <div>
-          <p className="kicker kicker-hero">{copy.kicker}</p>
+          <p className="kicker kicker-hero">{brandName}</p>
           <h1>{copy.title}</h1>
-          <p className="hero-sub">{copy.body}</p>
-          <span className="inline-block">
-            <CtaLink href={cta.href} eventLocation="hero">{cta.text}</CtaLink>
-          </span>
+        </div>
         </div>
       </div>
-      <div className="fisura-wrap" aria-hidden="true">
-        <svg className="fisura" viewBox="0 0 1200 56" preserveAspectRatio="none">
-          <path
-            className="f-rota"
-            d="M0,28 L70,22 L130,34 L200,18 L260,36 L330,24 L400,32 L470,20 L540,34 L610,26 L680,33 L750,21 L820,31 L890,24 L960,32 L1030,25 L1100,30 L1200,28"
-          />
-          <path className="f-fija" d="M0,28 L1200,28" />
-        </svg>
-        <div className="fisura-label">
-          <span>{copy.crackBefore}</span>
-          <span>{copy.crackAfter}</span>
-        </div>
+      <div className="hero-summary wrap">
+        <p className="hero-sub">{copy.body}</p>
+        <CtaLink href={cta.href} eventLocation="hero">{cta.text}</CtaLink>
       </div>
     </section>
   );

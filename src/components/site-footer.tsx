@@ -75,6 +75,19 @@ export function SiteFooter({
         </div>
       ) : null}
 
+      {!contactFormEnabled && contact.email ? (
+        <div className="contact-direct">
+          <div>
+            <p className="kicker">{contactCopy.kicker}</p>
+            <h2>{contactCopy.title}</h2>
+          </div>
+          <a
+            href={`mailto:${contact.email}`}
+            data-analytics-event="contact_channel_select"
+            data-analytics-channel="email"
+          >{contact.email}</a>
+        </div>
+      ) : null}
       <div className="foot">
         <div className="marca">
           <LogoMark brandName={brandName} href={homeHref} homeLabel={common.home} className="logo logo-footer" />

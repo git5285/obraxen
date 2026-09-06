@@ -33,7 +33,7 @@ export const de: Dictionary = {
   languageSwitcher: { label: "Sprache", changeTo: "Sprache wechseln zu" },
   hero: {
     kicker: "Industrieböden für Logistik und Produktion",
-    title: "Geplante Reparaturen zur Verringerung betrieblicher Beeinträchtigungen.",
+    title: "Instandsetzung von Industrieböden.",
     body: "Für Böden in Logistik und Produktion bewerten wir Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung. Die festgelegte Maßnahme kann Betonsanierung oder Betonschleifen und -polieren umfassen, wenn die Diagnose dies erfordert.",
     crackBefore: "Riss",
     crackAfter: "Repariert",
