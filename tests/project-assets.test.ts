@@ -5,7 +5,7 @@ import {
   hasPublicProjectAssets,
   type PublicProjectImageMap,
 } from "@/lib/public-project-assets";
-import { projects } from "@/lib/projects";
+import { internalProjects } from "@/lib/internal-projects";
 
 const approvedImage = {
   src: "/approved-project-image.webp",
@@ -16,7 +16,7 @@ const approvedImage = {
 
 describe("public project assets", () => {
   it("requires an explicitly approved asset for every public project image", () => {
-    const project = projects[0];
+    const project = internalProjects[0];
     const imageMap: PublicProjectImageMap = Object.fromEntries(
       project.imagenes.map(({ src }) => [src, approvedImage]),
     );

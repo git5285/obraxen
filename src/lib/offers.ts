@@ -1,5 +1,5 @@
 import offersSource from "../../data/ofertas.json";
-import { projectsBySlug } from "./projects";
+import { internalProjectsBySlug } from "./internal-projects";
 import { offersSchema } from "./schemas";
 
 export const offers = offersSchema.parse(offersSource);
@@ -12,7 +12,7 @@ if (new Set(offerSlugs).size !== offerSlugs.length) {
 
 for (const offer of offers) {
   for (const evidence of offer.evidencia) {
-    if (!projectsBySlug.has(evidence.proyecto)) {
+    if (!internalProjectsBySlug.has(evidence.proyecto)) {
       throw new Error(
         `La oferta ${offer.slug} referencia un proyecto inexistente: ${evidence.proyecto}`,
       );
