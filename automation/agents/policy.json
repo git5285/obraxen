@@ -72,6 +72,7 @@
   },
   "groupedAuthorizations": {
     "enabled": true,
+    "maxChangedFiles": 20,
     "maxSteps": 3,
     "maxLifetimeSeconds": 86400,
     "reservationTtlSeconds": 600,

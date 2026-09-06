@@ -144,6 +144,49 @@ afterEach(() => {
 });
 
 describe("grouped human authorizations", () => {
+  it("bounds exact human delivery at twenty paths without widening autonomous diffs", () => {
+    const policy = loadPolicy();
+    expect(policy.limits.maxChangedFiles).toBe(8);
+    const large = bundle();
+    large.candidate.allowedPaths = Array.from({ length: 20 }, (_, i) => `src/file-${String(i).padStart(2, "0")}.ts`);
+    expect(validateAuthorizationBundle(large, policy).candidate.allowedPaths).toHaveLength(20);
+    large.candidate.allowedPaths.push("src/file-20.ts");
+    expect(() => validateAuthorizationBundle(large, policy)).toThrow("allowedPaths");
+  });
+
+  it("keeps the legacy eight-path limit when the human limit is absent", () => {
+    const policy = loadPolicy();
+    delete policy.groupedAuthorizations.maxChangedFiles;
+    const legacy = bundle();
+    legacy.candidate.allowedPaths = Array.from({ length: 8 }, (_, i) => `src/file-${i}.ts`);
+    expect(validateAuthorizationBundle(legacy, policy).candidate.allowedPaths).toHaveLength(8);
+    legacy.candidate.allowedPaths.push("src/file-8.ts");
+    expect(() => validateAuthorizationBundle(legacy, policy)).toThrow("allowedPaths");
+  });
+
+  it("persists a larger human scope but rejects any changed reservation scope", () => {
+    const repo = repository();
+    const state = stateHome();
+    const large = bundle();
+    large.candidate.allowedPaths = Array.from({ length: 20 }, (_, i) => `src/file-${String(i).padStart(2, "0")}.ts`);
+    registerAuthorizationBundle(large, { repo, stateHome: state, now: new Date("2026-07-18T12:01:00Z") });
+    const exactContext = { ...context("commit"), changedPaths: large.candidate.allowedPaths };
+    const options = { repo, stateHome: state, now: new Date("2026-07-18T12:02:00Z") };
+    expect(readAuthorizationStatus(large.authorizationId, options).status).toBe("pending");
+    expect(() => inspectAuthorizationStep(large.authorizationId, {
+      ...exactContext, changedPaths: large.candidate.allowedPaths.slice(1),
+    }, options)).toThrow("changedPaths");
+    const reserved = reserveAuthorizationStep({
+      ...options, authorizationId: large.authorizationId, context: exactContext,
+      eventId: "large-scope-reserve-001", occurredAt: "2026-07-18T12:02:00Z",
+    });
+    expect(reserved.reservationToken).toBeTruthy();
+    expect(() => reserveAuthorizationStep({
+      ...options, authorizationId: large.authorizationId, context: exactContext,
+      eventId: "large-scope-reserve-002", occurredAt: "2026-07-18T12:02:00Z",
+    })).toThrow("reserved");
+  });
+
   it("completes one exact commit, push and draft PR sequence with single-use reservations", () => {
     const repo = repository();
     const state = stateHome();
