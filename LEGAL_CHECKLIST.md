@@ -1,104 +1,101 @@
-# Checklist legal antes de producción
+# Requisitos legales antes de producción
 
-Estado: **bloqueado**. Los textos de `aviso-legal` y `privacidad` son borradores
-de trabajo y no sustituyen la revisión de un profesional.
+Este documento define requisitos y evidencias de aprobación. No mantiene el
+estado cambiante de identidad, contacto o expedientes: consúltese
+`ACTIVATION_INPUTS.md`. El resultado ejecutable procede de
+`npm run check:activation` y su contrato está en `ACTIVATION_GATE.md`.
 
-Situación societaria confirmada: la empresa **todavía no está constituida**. La
-forma jurídica prevista es una **sociedad limitada**. `Obraxen` está seleccionado
-por el usuario como nombre comercial y `obraxen.com`, `info@obraxen.com` y
-`privacy@obraxen.com` están acreditados operativamente. Esto no equivale a razón
-social ni a disponibilidad registral o marcaria. El identificador temporal
-anterior queda únicamente en el historial. La constitución sigue pendiente y no deben
-rellenarse datos legales provisionales.
+Los textos de aviso legal, privacidad, cookies y consentimiento son borradores
+de trabajo hasta que una revisión profesional identifique el entregable, el
+revisor, la fecha y el resultado. Este checklist no constituye asesoramiento
+jurídico ni autoriza preview, despliegue, indexación o publicación.
 
-La comprobación preliminar documentada en `NAMING_CLEARANCE.md` encontró usos
-exactos de `OBRAZEN` en construcción e ingeniería. La publicación exige un
-dictamen profesional favorable y `nombreRevisionAprobada: true`.
+## Identificación del prestador
 
-## Datos pendientes
+Antes de publicar, el aviso legal debe obtener desde `data/brand.json` y mostrar
+solo los datos aplicables y acreditados:
 
-- Constitución de la sociedad limitada.
-- Razón social, CIF/NIF y datos registrales resultantes de la constitución.
-- Teléfono o WhatsApp publicable.
-- Datos del Registro Mercantil, si resultan aplicables.
-- Proveedor definitivo del formulario y contrato de encargo de tratamiento.
-- Proveedores definitivos de alojamiento, correo y recursos técnicos.
-- IDs y propiedades definitivas de GA4 y Microsoft Clarity por entorno.
-- Revisión de conservación, transferencias y configuración de ambos proveedores.
-- Revisión profesional y aprobación registrada de las versiones en inglés,
-  alemán, español y francés, incluidos textos legales y consentimiento.
+- denominación social y NIF;
+- domicilio y medios de contacto publicables;
+- datos del Registro Mercantil cuando resulten legalmente exigibles;
+- actividad y demás información exigible al prestador;
+- responsable con capacidad para aprobar la publicación.
 
-## Autorizaciones de casos y fotografías
+La revisión debe comprobar la correspondencia entre la fuente estructurada, los
+textos renderizados y la documentación societaria. La existencia de un valor en
+el repositorio no sustituye esa revisión.
 
-Los seis casos registran una declaración interna para identificar al cliente,
-pero ninguno dispone todavía de referencia documental verificable ni revisión
-legal aprobada. La declaración expresa del responsable del 17 de julio de 2026
-cubre nombre del cliente y fotografías web para los seis casos. Cada registro
-contiene fecha, fuente y referencia interna; no contiene el documento ni una
-revisión legal. Los originales y la identidad del responsable se conservan fuera
-del repositorio.
+## Privacidad, cookies y consentimiento
 
-Antes de publicar cada caso se debe registrar:
+La revisión profesional debe cubrir conjuntamente:
 
-- entidad que autoriza y relación con la obra ejecutada;
-- alcance exacto: nombre del cliente, fotografías y, si aparece, logotipo;
-- fecha, fuente y referencia verificable del documento o contrato;
-- titularidad o licencia suficiente sobre las fotografías;
-- revisión legal aprobada o anonimización del caso.
+- responsable, finalidades, bases jurídicas, destinatarios y derechos;
+- plazos de conservación y procedimiento de supresión;
+- transferencias internacionales y garantías aplicables;
+- cookies, almacenamiento local, retirada del consentimiento y caducidad;
+- coherencia entre aviso legal, privacidad, cookies, formulario y panel de
+  consentimiento en los cuatro idiomas;
+- ausencia de analítica, publicidad o captación antes de la condición aprobada.
 
-El modelo separa la declaración del responsable, la referencia documental y la
-revisión legal. Solo está registrada la primera capa. Esto no sustituye la
-revisión legal general del sitio ni autoriza una preview, un despliegue o la
-publicación.
+Cada versión aprobada debe quedar vinculada al SHA o a un conjunto inequívoco de
+rutas y textos.
 
-## Decisiones técnicas pendientes
+## Proveedores y formulario
 
-- Resend es el adaptador técnico seleccionado, pero no debe activarse hasta
-  aceptar y archivar el DPA, revisar subencargados, ubicación, conservación y
-  transferencias, y registrar `formularioRevisionAprobada: true`.
-- Antes de activar `/api/contact/` debe existir y probarse una regla externa de
-  limitación de solicitudes para esa ruta. Solo entonces puede configurarse
-  `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el límite en memoria de la aplicación es
-  una defensa secundaria y no garantiza control distribuido entre instancias.
-- El formulario no almacena leads en una base propia ni admite adjuntos. El buzón
-  receptor será el sistema de conservación y necesita plazos, accesos, borrado y
-  medidas de seguridad definidos.
-- La preview no solicita fuentes ni scripts a terceros: utiliza tipografías del
-  sistema y animación CSS/JavaScript nativo.
-- El panel, la ruta `/cookies/` y las pruebas de consentimiento están
-  implementados. La preferencia se conserva 180 días en almacenamiento local;
-  aceptar y rechazar tienen igual visibilidad y la retirada permanece accesible.
-- GA4 y Microsoft Clarity no se cargan antes de aceptar. Los IDs reales siguen
-  ausentes, la publicidad permanece denegada y las pruebas demuestran cero
-  solicitudes de analítica cuando se rechaza.
-- La CSP permite únicamente los orígenes técnicos necesarios para una futura
-  activación; permitir un origen no activa el proveedor. Search Console se
-  configurará únicamente tras conectar la web al dominio y autorizar la
-  indexación, no por la mera existencia de `obraxen.com`.
-- Antes de activar Clarity debe confirmarse en su panel el modo de consentimiento,
-  el enmascarado y la configuración separada de producción. Antes de activar GA4
-  debe revisarse la propiedad, retención, señales de Google y ausencia de
-  funciones publicitarias.
+Antes de activar Resend o cualquier sustituto deben quedar archivados y
+aprobados:
 
-## Comprobación final
+- entidad contratante y responsable que acepta el proveedor;
+- DPA y versión de los términos aplicables;
+- subencargados, localización, transferencias y mecanismo de garantía;
+- datos transmitidos, tracking, accesos, conservación y borrado;
+- procedimiento para derechos, incidentes y terminación del servicio;
+- buzón receptor, responsables de acceso y plazo de conservación;
+- regla distribuida de limitación de solicitudes para `/api/contact/` probada en
+  el proveedor de borde.
 
-1. Completar `data/brand.json`.
-2. Revisar aviso legal, privacidad y cookies con asesoría legal.
-3. Documentar o anonimizar cada caso y sus fotografías.
-4. Cambiar `legalRevisionAprobada` a `true` solo después de esa revisión.
-5. Registrar revisor y fecha para en/de/es/fr solo después de revisión profesional.
-6. Aprobar el proveedor de captación, verificar dominio, buzones y DPA, y probar
-   el límite externo de solicitudes de `/api/contact/`.
-7. Activar `publicar` únicamente cuando el build no detecte ningún dato pendiente.
+El límite en memoria de la aplicación es una defensa secundaria y no acredita
+control distribuido entre instancias.
 
-## Fuentes oficiales consultadas
+## Nombre comercial
 
-Enlaces comprobados el 15 de julio de 2026:
+La comprobación preliminar de `NAMING_CLEARANCE.md` no acredita disponibilidad.
+La publicación exige un dictamen profesional favorable que identifique revisor,
+fecha, territorio, clases, búsquedas realizadas, resultado y referencia del
+entregable.
+
+## Casos y fotografías
+
+Antes de publicar cada caso debe existir una de estas dos vías:
+
+1. Documento verificable que cubra nombre, fotografías y logotipo cuando
+   corresponda, junto con revisión legal aprobada del mismo documento.
+2. Anonimización o retirada completa de los elementos sin cobertura.
+
+La evidencia debe identificar entidad autorizante, relación con la obra,
+alcance, fecha, fuente, referencia documental y derechos suficientes sobre las
+fotografías. Una declaración interna no sustituye el documento ni su revisión.
+Los originales y datos personales se conservan fuera del repositorio.
+
+## Registro de aprobación
+
+Una aprobación válida debe registrar:
+
+- profesional o despacho revisor;
+- fecha y territorio o ámbito cubierto;
+- documento y versión revisados mediante referencia estable;
+- decisión favorable, desfavorable o condicionada;
+- condiciones pendientes y responsable de resolverlas.
+
+Solo después se actualizan las fuentes estructuradas mediante PR y se ejecutan
+`npm run check:quality` y `npm run check:activation`. Un resultado sin bloqueos
+permite solicitar una preview protegida; no equivale a autorizar publicación.
+
+## Referencias oficiales
 
 - [Ley 34/2002, especialmente el artículo 10](https://www.boe.es/buscar/act.php?id=BOE-A-2002-13758).
 - [Reglamento (UE) 2016/679, especialmente los artículos 6 y 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/spa).
 - [Ley Orgánica 3/2018](https://www.boe.es/eli/es/lo/2018/12/05/3/con).
-- [Agencia Española de Protección de Datos](https://www.aepd.es/), para deber de
-  información y bases de legitimación.
-- [DPA de Resend](https://resend.com/legal/dpa), sujeto a revisión profesional y
-  archivo de la versión aceptada antes de activar.
+- [Agencia Española de Protección de Datos](https://www.aepd.es/).
+- [DPA de Resend](https://resend.com/legal/dpa), sujeto a revisión profesional
+  y archivo de la versión aceptada antes de activar.
