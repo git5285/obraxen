@@ -1,306 +1,55 @@
-# Estado de coordinación
+# Coordinacion de Obraxen
 
-Actualizado: 2026-07-22 16:12 Europe/Madrid.
+Actualizado: 2026-09-06 Europe/Madrid.
 
-Este tablero resume el estado actual. Las reservas exactas se materializan en
-`.coordination/claims/` dentro del worktree de control del director y se registran
-en el log operativo compartido; los handoffs que deben viajar con una candidata se
-versionan en `.coordination/handoffs/`.
+Este documento contiene las reglas vigentes. El estado de una claim procede del
+registro operativo; los handoffs, las claims cerradas y Git conservan el
+historial sin convertirlo en instrucciones de arranque.
 
-## Fuente de verdad actual
+## Antes de editar
 
-Las claims activas no se duplican en este tablero: `preflight.mjs` combina los
-marcadores de los worktrees registrados con el log operativo append-only compartido
-fuera del checkout. Un marcador registrado es inmutable; sus transiciones y el
-estado remoto posterior viven en ese log, sin reescribir el Markdown ni abrir otra
-PR solo para cerrar metadatos. El ultimo `main` verificado antes de esta
-actualizacion es `3fe4b29`, resultado de la PR `#34`; no desplego ni publico el
-sitio.
+1. Lee `AGENTS.md`, este archivo y `.coordination/README.md`.
+2. Ejecuta `git status --short` y consulta el estado efectivo con:
 
-## Runtime obligatorio de agentes
+   ```sh
+   node automation/agents/runtime.mjs exec -- \
+     node automation/agents/operations.mjs status
+   ```
 
-Director, scout, builder y auditor ejecutan Node, npm y los checks del proyecto
-mediante `automation/agents/runtime.mjs`. El preflight exige Node `24.18.0`, npm
-`11.16.0`, el lockfile y el arbol instalado exactos, y una carga nativa valida.
-Cada fase conserva la misma huella SHA-256; una version, dependencia o binding
-distinto bloquea tanto el scouting como la escritura.
+3. Revisa los handoffs relacionados y crea una claim con rutas exactas en el
+   worktree de control.
+4. Registra la claim con `operations.mjs register` antes del primer cambio.
 
-## Contexto de consolidación
+## Reglas vigentes
 
-El usuario autorizó transferir `PRODUCT.md`, `CONTENT_AUDIT.md`, `STRATEGY.md`,
-`AGENTS.md`, `COORDINATION.md` y `.coordination/**` a la consolidación documental.
-Los cinco archivos funcionales de evidencia se transfirieron secuencialmente a
-la tarea de cierre de Fase 0 por orden expresa del usuario; el handoff funcional
-ya estaba terminado y se preservó el checksum del índice antes de intervenir.
+- Una sola tarea editora por archivo. Se preservan los cambios ajenos y no se
+  usan `git add .`, `git add -A` ni comandos destructivos para resolverlos.
+- Los marcadores registrados son inmutables. Cada hito se registra mediante
+  `operations.mjs transition` con evidencia verificable.
+- Si una decision debe acompañar a la candidata, se deja un handoff. La claim
+  se libera cuando no queda trabajo dentro de su alcance.
+- Los datos desconocidos se mantienen como tales. No se inventan identidad,
+  datos legales, permisos de casos, contratos ni evidencia profesional.
 
-El índice heredado se resolvió mediante manifiestos exactos: los cinco archivos
-funcionales de evidencia se integraron solos, los tres Markdown conservaron su
-contenido final y las demás entregas se separaron por procedencia. No quedan
-cambios staged sin propietario.
+## Git y calidad
 
-## Entregas cerradas
+Configura `git config core.hooksPath .githooks` en cada clon antes del primer
+push. Cada candidata ejecuta `npm run check:quality`, se entrega mediante pull
+request y solo se fusiona con el `Quality gate` remoto verde para el SHA
+revisado. Nunca se hace push directo a `main` ni se omiten hooks con
+`--no-verify`.
 
-- Modelo de ofertas y evidencia: commit `834f5df`.
-- Hub técnico `/proyectos/`: commit `b020886`.
-- Optimización inicial de imágenes: 18 WebP validados.
-- Auditoría, simplificación de portada y corrección WCAG 2.5.3: handoff
-  `019f6119-3a7f-7122-88a4-75b6a5a41b45`.
-- Consolidación documental: 26 Markdown auditados, `PRODUCT.md` absorbido por
-  estrategia y contenido, referencias y fuentes verificadas; mismo handoff.
-- Auditoría estructural y por formatos: carpetas, HTML, JSON, CSV, Python y CSS
-  revisados; artefactos y código de un solo uso eliminados, CSS sin tokens muertos
-  y material interno excluido de Vercel; handoff `60c275cc...`.
-- Auditoría TXT/MJS/imágenes: robots de preview correcto, MJS válidos y 24
-  imágenes sin metadatos sensibles, duplicados o ahorro lossless pendiente; no se
-  recomprimieron derivados de evidencia; handoff `fe5fb839...`.
-- Estrategia sectorial y mapa de 108 organizaciones: disponibles en
-  `STRATEGY.md` y `research/sector-map.csv`.
-- Fase 0 cerrada en la rama `codex/phase-0-baseline`: evidencia integrada en
-  `ae28903`, portada y accesibilidad en `fdcde7d`, y limpieza estructural en
-  `78e7d9c`; documentación y estrategia en `57c4268`; foco del menú móvil
-  estabilizado en `0120a46` y verificado dos veces de extremo a extremo.
-- Fase 0 integrada en GitHub mediante la PR `#1`; `main` queda en el merge
-  `2ec10f3`.
-- Fase 1 completada en `codex/next-foundation`: App Router, TypeScript estricto,
-  ESLint, Node 24, validacion Zod, 10 tests y puerta de publicacion tipada; la
-  salida estatica y el bloqueo de despliegue permanecen vigentes.
-- Fase 1 integrada en GitHub mediante la PR `#2`; `main` queda en el merge
-  `216e4b8`.
-- Fase 2 completada en `codex/phase-2-homepage`: portada dividida en Server
-  Components, navegacion como unica isla cliente, 17 tests, 24 imagenes
-  responsive y paridad geometrica/visual verificada.
-- Fase 2 integrada en GitHub mediante la PR `#3`; `main` queda en el merge
-  `2fba606`.
-- Fase 3 completada en `codex/phase-3-evidence`: hub y seis fichas Next
-  prerenderizadas desde datos, metadata por ruta, 18 imagenes responsive,
-  puerta de soluciones cerrada, 31 tests y paridad geometrica exacta.
-- Fase 3 integrada en GitHub mediante la PR `#4`; `main` queda en el merge
-  `117ad9a`.
-- Fase 4 integrada mediante la PR `#5`; `main` queda en el merge `d010e82` con
-  workflow reproducible,
-  31 tests unitarios, 24 pruebas Playwright, presupuestos Lighthouse en tres
-  rutas y preview Vercel preparada tras un interruptor apagado por defecto.
-  `main` exige ese contexto en modo estricto incluso a administradores.
-- Fase 4.5 integrada mediante la PR `#6`; `main` queda en el merge `8bbd68c`.
-  WCAG 2.5.3 queda corregido y probado,
-  permisos trazables, datos desconocidos normalizados, exposición revisada,
-  rutas legales y sitemap migrados, y builder/HTML legacy retirados. Next.js es
-  la única implementación; el preset remoto de Vercel también reconoce Next con
-  salida autodetectada y `vercel build` pasa sin desplegar. El gate posterior al
-  merge, run `29361794598`, está verde y la preview Vercel fue omitida; las claims
-  `042123c8...` y `b376296c...` están liberadas.
-- Fase 5 entregada mediante la PR `#8`: consentimiento básico con rechazo y
-  aceptación equivalentes, preferencia revocable a 180 días, configuración de
-  GA4/Clarity por entorno, política `/cookies/`, CSP acotada y carga posterior a
-  aceptación. El gate local completo pasa con 50 unitarias, 46 ejecuciones
-  Playwright y Lighthouse 97/97/98; no hay IDs reales, despliegue ni indexación.
-  La claim `19c89a6e...` está liberada.
-- Preparación de Fase 6 integrada mediante la PR `#10`; `main` queda en el merge
-  `4fb3a18`. Los siete deployments legacy de Vercel se retiraron, GitHub es
-  privado en el plan gratuito y ADR-009 sustituye la protección remota de pago
-  por CI en PR, hook local y gobernanza obligatoria. El run posterior de `main`
-  `29421963694` está verde, la preview fue omitida y la claim `5fd4304a...` queda
-  liberada.
-- Fases 6.1–6.6 integradas mediante la PR `#12`; `main` queda en el merge
-  `b79c695`. La implementación nació en `codex/phase-6-eu-i18n`, commit `21f525f`:
-  52 páginas en/de/es/fr, rutas equivalentes, datos localizados, contacto Resend
-  fail-closed, revisión profesional como gate, ADR-010/011 y runbook NO-GO. El
-  gate local pasa con 75 unitarias, 87 Playwright correctas, 6 omisiones
-  intencionales, WebKit y Lighthouse 98/99/100; la claim `3531129d...` queda
-  liberada sin despliegue. El run posterior de `main` `29431531128` está verde.
-- Consolidación técnica inmediata entregada mediante la PR `#13`, commit
-  inicial `a635299` y cabeza validada `1317129`: reflow en/de/es/fr probado desde 320 px, contacto y legales sin
-  colisión CSS, navegación tipada, metadata absoluta verificable, SLA no
-  acreditado retirado y presupuestos SEO diferenciados entre preview y público.
-  El gate local pasa con 100 unitarias, 88 Playwright correctas, 7 omisiones
-  intencionales y Lighthouse dentro de presupuesto; la claim `f31e2072...` queda
-  liberada sin despliegue. El run Linux de la PR `29439664817` está verde.
-- Preparación técnica 6.7.0 entregada mediante la PR `#14`, commit de
-  implementación `09b6ab2`: `npm run check:activation` deriva
-  38 incidencias reales de identidad/contacto (8), legal/proveedor (2), revisión
-  lingüística (4) y permisos de seis casos (24). `ACTIVATION_GATE.md` define el
-  expediente exacto, la diligencia pública de Resend y el rollback; el resultado
-  permanece `NO-GO` y no autoriza candidata, contrato ni publicación. El gate
-  local completo y el run Linux de PR `29441551157` están verdes, incluido
-  WebKit y Lighthouse; la preview fue omitida y la claim `f3ad2075...` queda
-  liberada.
-- Ingesta controlada de identidad 6.7.1 preparada en la PR `#15`: `Obraxen`
-  queda integrado únicamente como nombre comercial. Sociedad, CIF, domicilio
-  publicable, dominio operativo, buzones y teléfono siguen sin acreditarse; la
-  declaración general sobre los seis casos se conserva como confirmación interna
-  y no sustituye permisos documentales de terceros. El gate baja de 38 a 37
-  incidencias y permanece `NO-GO`. El SHA `322e1fe` corrige además contraste del
-  logo de pie y reflow Linux a 320 px; el run `29454371281` está verde y la claim
-  `c484b245...` queda liberada sin despliegue.
-- Dominio y correo 6.7.2 entregados mediante la PR `#16`, con implementación en
-  `db77afa` y corrección de reflow Linux en `103266c`: `obraxen.com`,
-  `info@obraxen.com` y `privacy@obraxen.com` quedan acreditados; MX, SPF, DKIM
-  y DMARC están operativos. El gate baja de 37 a 35 incidencias y permanece
-  `NO-GO`. El run `29457427094` está verde, la preview fue omitida y la claim
-  `4b65f9d3...` queda liberada sin despliegue.
-- Sistema de mejora continua con agentes creado en la rama
-  `codex/autonomous-agents` (commits `8eca8bf` y `9616cf8`): director, scout,
-  builder único y auditor con veto, en modo sombra y sin autoridad de
-  publicación; handoff `6751b2a1...`.
-- Intake de conocimiento 2026-07-16 evaluado con evals emparejadas: ítem 01
-  aceptado, 02 rechazado, 03/05 pendientes de canarios, 04/06 `no_op`; regresión
-  `DISCOVERED-20260716-01` descubierta y reproducida; artefactos en
-  `.agents/skills/obraxen-continuous-improvement/evals/intake-20260716/`;
-  handoff `71dfbceb...`.
-- Seguimiento del intake entregado: preflight con fail-closed ante worktrees o
-  claims ilegibles (cuatro regresiones unitarias, fixture de eval-10), contrato
-  `learned_rules` promovido al informe de la skill, y `core.bare=true`
-  accidental del repositorio principal restaurado a `false`; handoff
-  `d1018539...`.
-- Auditoría y endurecimiento del sistema autónomo cerrados localmente en
-  `a160a16`: el builder queda bloqueado de forma determinista en modo sombra,
-  las superficies críticas están protegidas, el lease limpia fallos parciales,
-  `check:diff` valida toda la candidata desde la base revisada y QA usa puertos
-  aislados. El formulario habilitado tiene prueba navegador propia y exige
-  limitación externa acreditada antes de activarse. El gate final pasa con 144
-  unitarias, 2 pruebas del formulario, 88 Playwright correctas, 7 omisiones
-  previstas, WebKit y Lighthouse; handoff `9548505b...`.
-- Automatización local `obraxen-continuous-improvement` creada y activa con cadencia
-  de seis horas sobre el worktree dedicado. Tras la promoción autorizada ejecuta
-  el ciclo completo y puede dejar un único diff local aislado; no tiene autoridad
-  de commit, Git remoto, PR, despliegue o publicación.
-- Memoria autónoma v1 preparada en `codex/autonomous-agents`: episodios
-  inmutables fuera del worktree, índice acotado, deduplicación por dominio/rutas,
-  revalidación por SHA, reglas en cuarentena y telemetría solo medida. Tres
-  scouts reales sobre `218655f` produjeron un `no_op` y dos confirmaciones del
-  mismo hueco de accesibilidad; memoria conserva un hallazgo con dos
-  ocurrencias. El workflow alojado Codex compila estricto en sombra/manual.
-- El hook `pre-push` ya elimina en un subshell las variables Git locales antes
-  de sus gates. La regresión sacrificial y el gate completo pasan sin alterar
-  refs, HEADs o `core.bare`; handoff `82c80eb6...`.
-- El sistema autónomo v2 se integró mediante la PR `#17` en el merge
-  `c081e5e`, sobre la cabeza exacta `ecb585c`. El Quality gate de PR
-  `29511590757` estaba verde; el workflow alojado continúa manual y en sombra,
-  y la automatización local conserva como máximo un único diff sin autoridad
-  para commit, push, PR, merge, despliegue o publicación.
-- El primer diff activo aceptado se trasladó sin cambios a la PR `#18`:
-  enlace de salto localizado en contacto y regresión de teclado, dos rutas y 16
-  inserciones. La activación antes/después coincide exactamente en `NO-GO`,
-  con 35 bloqueos y ambos interruptores públicos apagados; handoff
-  `019f67e9...`.
-- La PR `#18` se fusionó por decisión humana en `7c73b49` después de confirmar
-  el Quality run `29518104881`; el worktree candidato duplicado coincidía byte
-  por byte con los dos archivos funcionales y fue retirado.
-- La migración operativa a Obraxen renombra skill, roles, workflow alojado,
-  política y espacio de memoria sin ampliar autoridad. La comprobación pública
-  de naming encontró usos exactos de `OBRAZEN` en construcción e ingeniería;
-  por ello la puerta ejecutable incorpora una revisión profesional adicional y
-  pasa de 35 a 36 incidencias, todavía `NO-GO`.
-- La PR `#24` registró la declaración expresa del responsable del 17 de julio de
-  2026 para los seis casos mediante referencias internas y el modelo de entonces
-  la trató como autorización documentada y revisión legal aprobada. La prioridad
-  de evidencia tipada posterior corrige esa promoción: conserva la declaración,
-  pero vuelve a exigir documento y revisión profesional por separado. No hubo
-  preview, despliegue o publicación.
-- La PR `#25` alineó la CTA con la disponibilidad real del formulario y quedó en
-  `0c9d559` tras el Quality run `29598825792`.
-- La PR `#26` retiró el borrador de proyectos del árbol actual sin reescribir el
-  historial y quedó en `5b54612` tras el Quality run `29599860133`.
-- La PR `#27` integró los cierres locales por checksum y quedó en `3f5104b` tras
-  el Quality run `29600701899`.
-- La PR `#28` endureció Claude/agentes, protegió los presupuestos de calidad y
-  fijó GitHub Actions a SHA; quedó en `36d0e42` tras el Quality run `29601590641`.
-- La PR `#29` actualizó la documentación operativa y quedó en `ec89fee` tras el
-  Quality run `29602517674`; la preview fue omitida.
-- La PR `#30` fijó el runtime compartido en Node `24.18.0` y npm `11.16.0`, con
-  verificación del lockfile, dependencias y binding nativo; quedó en `86dafbe`
-  tras el Quality run `29916045011`, con preview omitida.
-- La PR `#31` consolidó las fronteras del plano de control, claims y leases
-  compartidos, evidencia tipada, autorizaciones agrupadas y presupuestos de
-  atención; quedó en `d35c6ba` tras el Quality run `29917124860`, con preview
-  omitida.
-- La PR `#32` separó declaración, documento y revisión profesional para la
-  evidencia de los seis casos; quedó en `81092a3` tras el Quality run
-  `29918326038`, con preview omitida y activación todavía `NO-GO`.
-- La PR `#33` reconcilió la documentación de activación con esos niveles de
-  evidencia y quedó en `df755c1` tras el Quality run `29924673033`; la preview
-  fue omitida y no hubo despliegue ni publicación.
-- La PR `#34` protegió configuración crítica de Git, runtime, lint, TypeScript,
-  Vitest, esquemas y documentos de gobernanza frente a diffs autónomos; quedó en
-  `3fe4b29` tras el Quality run `29926358448`, con preview omitida y sin
-  despliegue ni publicación.
+## Limites de activacion
 
-Los detalles de cada entrega permanecen en sus handoffs; no se duplican aquí.
+No hay despliegue, publicacion, seleccion de naming, compra ni cambio legal sin
+autorizacion humana expresa y evidencia suficiente. La activacion publica se
+consulta con `npm run check:activation -- --json`; un resultado `NO-GO` bloquea
+la publicacion aunque el resto de checks tecnicos pasen.
 
-## Decisiones vigentes
+## Referencias
 
-- `STRATEGY.md` centraliza empresa, perfil operativo, oferta y mercado.
-- `CONTENT_AUDIT.md` controla copy y evidencia publicable.
-- `SITE_ARCHITECTURE.md` controla rutas.
-- `ROADMAP.md` controla la migración a Next.js y la entrega.
-- `data/brand.json`, `data/proyectos.json` y `data/ofertas.json` siguen siendo las
-  fuentes estructuradas de identidad, casos y ofertas.
-- Los seis casos conservan declaraciones del responsable mediante referencias
-  internas `AUTH-RESP-20260717-*`, con alcance declarado para nombres y
-  fotografías web. Esas referencias no son documentos ni revisiones legales;
-  ambos niveles siguen pendientes y los originales permanecen fuera del
-  repositorio.
-- ADR-007 fija Next.js con prerenderizado y cabeceras como implementación única;
-  no se usa `output: export` ni se mantiene la base legacy.
-- `REPOSITORY_EXPOSURE.md` controla los riesgos derivados de la visibilidad
-  pública del código y datos.
-- ADR-008 fija consentimiento básico: no se consulta configuración ni se carga
-  GA4 o Clarity antes de aceptar; publicidad permanece siempre denegada.
-- ADR-009 fija GitHub privado en el plan gratuito: cada rama pasa el gate local,
-  los pushes directos a `main` están bloqueados y solo se fusiona una PR con el
-  `Quality gate` remoto del SHA actual verde.
-- ADR-010 fija inglés como entrada y prefijos `/en/`, `/de/`, `/es/`, `/fr/`,
-  con segmentos localizados y revisión profesional obligatoria por idioma.
-- ADR-011 fija Resend como adaptador técnico sin base propia; formulario y API
-  permanecen fail-closed hasta aprobación documental, identidad legal y entorno.
-- La activación de `/api/contact/` exige además una regla distribuida de límite
-  de solicitudes acreditada mediante `CONTACT_RATE_LIMIT_MODE=vercel-waf`; el
-  límite en memoria es solo defensa secundaria.
-- Tras tres canarios sombra y autorización expresa del usuario, el sistema
-  autónomo se promueve solo a `active + allowLocalDiff`: un builder, un worktree,
-  un lease, rutas exactas y auditor con veto. Commit, push, PR, merge, despliegue
-  y publicación continúan deshabilitados.
-- Una autorización humana puede agrupar commit de candidata, push de una rama
-  `codex/` y creación de PR borrador sin activar autoridad permanente. El bundle
-  fija candidata, SHA, rutas, activación, checks, orden y caducidad; cada paso se
-  reserva y consume una sola vez en el log compartido. Merge, despliegue,
-  publicación, borrado y rollback destructivo quedan excluidos y requieren una
-  decisión separada.
-- La aceptación humana del primer diff permitió trasladarlo manualmente a la PR
-  `#18`; no amplía la autoridad del ciclo autónomo ni constituye autorización
-  para fusionar esa PR.
-- La ejecución alojada permanece manual y en sombra hasta disponer de una
-  credencial de inferencia y un presupuesto explícito; el horario local de seis
-  horas no equivale a disponibilidad 24/7 si el Mac o Codex están apagados.
-- Cada informe de agente declara si su origen es ciclo programado, petición
-  humana, mantenimiento del plano de control o entrega. Toda la actividad se
-  conserva para operación, pero solo los ciclos `scheduled_autonomous` miden la
-  eficacia autónoma. La memoria anterior a este contrato queda como `unknown` y
-  no se reclasifica por inferencia.
-- Los ciclos autónomos programados aplican un presupuesto de atención
-  determinista 70/20/10: siete turnos de producto, dos de fiabilidad y uno de
-  mantenimiento de agentes por cada diez. La memoria valida la categoría antes
-  de escribir y un `no_op` consume igualmente su turno. Las peticiones humanas y
-  la entrega se contabilizan, pero no mueven el cursor autónomo.
-- La preview permanece cerrada; no hay autorización de publicación o despliegue.
-- El proyecto Vercel se conserva sin deployments; el alias automático
-  `obraxen.vercel.app` está reservado y no sirve contenido. Los alias históricos
-  retirados continúan sin exponer la web.
-- `Obraxen` está seleccionado e integrado como nombre comercial por instrucción
-  expresa del usuario. `obraxen.com`, `info@obraxen.com` y el alias de privacidad
-  están verificados; esto no acredita disponibilidad registral o marcaria y la
-  sociedad, el teléfono y la identidad legal siguen pendientes.
-
-## Orden siguiente
-
-1. Resolver las 24 incidencias de la puerta 6.7: identidad, sociedad, contacto,
-   legal, DPA/proveedor, revisión profesional de nombre e idiomas y, para cada
-   caso, documento de autorización más revisión legal verificada según
-   `ACTIVATION_GATE.md`.
-2. Solo después y con autorización expresa, crear una preview protegida, auditar
-   el SHA candidato y registrar la decisión formal `GO/NO-GO` del cutover público.
-3. Mantener previews, indexación, formulario, analítica real y publicación
-   apagados hasta completar esas condiciones.
-
-No se inicia `/soluciones/`, analítica, contacto, indexación ni despliegue como
-efecto lateral de esta coordinación.
+- Sintaxis y ciclo de claims: `.coordination/README.md`.
+- Estado vivo y evidencia: `automation/agents/operations.mjs status`.
+- Politica, runtime y gates: `automation/agents/`.
+- Historial de entregas: `.coordination/claims/`, `.coordination/handoffs/` y
+  `git log`.
