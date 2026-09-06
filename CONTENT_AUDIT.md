@@ -1,9 +1,10 @@
 # Auditoría de contenidos
 
-Estado: 16 de julio de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
-`Obraxen`, `obraxen.com`, el correo público y el alias de privacidad se integran
-tras verificación; constitución, identidad legal, teléfono y publicación siguen
-fuera hasta poder acreditarlos.
+Estado: 6 de septiembre de 2026. Alcance: portada, casos, cuatro idiomas y reglas de publicación.
+`Obraxen`, `obraxen.com`, el correo público y el alias de privacidad están
+integrados. La fuente estructurada declara constitución, identidad legal,
+domicilio y teléfono temporal; la publicación sigue bloqueada hasta completar
+las revisiones profesionales, legales, de proveedor y de casos.
 
 ## Objetivo de la página
 

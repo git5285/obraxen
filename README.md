@@ -15,11 +15,11 @@ sitio.
 > **Identidad parcial:** `Obraxen` es el nombre comercial seleccionado y vive en
 > `data/brand.json`. El identificador temporal anterior está retirado de la
 > configuración operativa. `obraxen.com`, `info@obraxen.com` y
-> `privacy@obraxen.com` están verificados e integrados. La fuente publicable
-> conserva razón social, CIF, domicilio y teléfono como `null` mientras no haya
-> referencias documentales internas registradas para su publicación. La selección
-> no sustituye comprobaciones registrales o marcarias y la comprobación preliminar
-> actual mantiene el nombre en NO-GO para publicación. Véase
+> `privacy@obraxen.com` están verificados e integrados. La fuente estructurada
+> declara `OBRAXEN SURFACE S.L.`, NIF `B93963841`, Calle Federico García Lorca 22
+> y el teléfono temporal `+34 653 916 970`. Estas declaraciones no sustituyen
+> comprobaciones registrales, marcarias o legales; la activación pública continúa
+> en NO-GO. Véase
 > `NAMING_CLEARANCE.md`.
 
 ## Arquitectura

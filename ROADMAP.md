@@ -1,6 +1,6 @@
 # Roadmap para una web ejemplar
 
-Fecha de referencia: 15 de julio de 2026.
+Fecha de referencia: 6 de septiembre de 2026.
 
 Este plan parte de la evidencia real y del cutover ya completado a Next.js. Los
 siguientes hitos deben conservar contenido, datos, rutas, dirección industrial,
@@ -274,15 +274,18 @@ precipitada.
   revisión, proveedor y permisos mediante `npm run check:activation`; documentar
   el expediente exacto de entrada y el rollback sin activar superficies públicas.
 - [x] **6.7.1 · Nombre comercial:** integrar `Obraxen` desde `data/brand.json`
-  por selección expresa del usuario, sin atribuir existencia a la sociedad,
-  dominio, buzón o permisos documentales aún pendientes.
+  por selección expresa del usuario, sin presentar como aprobada la revisión
+  profesional registral y marcaria aún pendiente.
 - [x] **6.7.2 · Dominio y correo:** verificar `obraxen.com`, Google Workspace,
   MX/SPF/DKIM/DMARC y los alias de privacidad/informes; integrarlos en
   `data/brand.json` sin conectar DNS web, Vercel ni publicación.
+- [x] **6.7.3 · Identidad y contacto declarados:** registrar la constitución,
+  razón social `OBRAXEN SURFACE S.L.`, NIF `B93963841`, domicilio y teléfono
+  temporal, sin sustituir las revisiones legales, de naming o de permisos.
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
-  textos legales; completar identidad, teléfono y permisos; ejecutar
-  auditoría candidata y decisión expresa de publicación.
-- [ ] Completar identidad, sociedad, contacto y textos legales.
+  textos legales; completar las referencias profesionales de naming y los
+  permisos de casos; ejecutar auditoría candidata y decisión expresa de
+  publicación.
 - [ ] Documentar o anonimizar los seis casos y revisar profesionalmente privacidad
   y cookies.
 - [ ] Auditar la URL candidata, aprobar expresamente y activar manualmente el
@@ -306,13 +309,13 @@ precipitada.
 
 ## Siguiente hito recomendado
 
-Resolver todas las incidencias que informe `npm run check:activation` mediante
-el expediente definido en `ACTIVATION_GATE.md`: revisión lingüística profesional
-en/de/es/fr, identidad y sociedad, revisión legal general, aceptación documentada
-del proveedor, teléfono o WhatsApp y, para cada caso, documento verificable y
-revisión legal. Con cero bloqueos y autorización expresa se construirá una URL
-candidata protegida, se auditará y se pedirá la decisión de publicación. Hasta
-entonces, formulario, despliegues, indexación y analítica real permanecen apagados.
+Resolver las 19 incidencias que informe `npm run check:activation` mediante el
+expediente definido en `ACTIVATION_GATE.md`: revisión profesional de naming,
+revisión legal general, aceptación documentada del proveedor, revisión
+lingüística en/de/es/fr y, para cada caso, documento verificable y revisión
+legal. Con cero bloqueos y autorización expresa se construirá una URL candidata
+protegida, se auditará y se pedirá la decisión de publicación. Hasta entonces,
+formulario, despliegues, indexación y analítica real permanecen apagados.
 
 ## Referencias oficiales de implementacion
 
