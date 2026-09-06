@@ -1,6 +1,6 @@
 # Auditoría técnica
 
-Última verificación: 4 de septiembre de 2026. Stack: Next.js 16.3.4, React 19,
+Última verificación: 6 de septiembre de 2026. Stack: Next.js 16.3.4, React 19,
 TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
 
 ## Estado
@@ -28,11 +28,10 @@ TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/en/` | 97 | 100 | 100 | 69 | 2.513 ms | 26 ms | 0 |
-| `/de/projekte/` | 99 | 100 | 100 | 69 | 2.109 ms | 25 ms | 0 |
-| `/fr/projets/blitz-bremen/` | 100 | 100 | 100 | 69 | 1.807 ms | 24 ms | 0 |
+| `/en/` | 98 | 100 | 100 | 69 | 2.360 ms | 26 ms | 0 |
+| `/de/projekte/` | 99 | 100 | 100 | 66 | 2.210 ms | 51 ms | 0 |
 
-El SEO 69 es deliberado mientras la preview siga noindex. Los tres perfiles
+El SEO reducido es deliberado mientras la preview siga noindex. Los dos perfiles
 superan el presupuesto de rendimiento compuesto 90, accesibilidad y buenas
 prácticas 100, LCP de laboratorio 3 s local/3,25 s en CI, TBT 200 ms y CLS 0,1.
 El SEO exige 65 mientras el sitio permanezca en preview noindex y sube a 95 en
@@ -41,7 +40,7 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 288 pruebas Vitest y build de producción.
+- `npm run check`: ESLint, TypeScript, 294 pruebas Vitest y build de producción.
 - Build: 28 páginas estáticas generadas; todas las rutas de contenido públicas
   son estáticas o SSG.
   `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
@@ -161,11 +160,11 @@ debe revisarse antes de conceder nuevos permisos de escritura.
 | IDs de GA4 y Clarity | Sin dato | Proveedores, textos y entornos aprobados |
 | CSP sin `unsafe-inline` de script | Aplazado | SRI estable o cambio justificado a render dinámico |
 | Permisos de clientes y fotografías | Declaración recibida | Recibir documento y revisión legal por caso |
-| Identidad, sociedad y contacto | Bloqueo público | Datos reales en `brand.json` |
+| Identidad declarada | Completa en datos | Validar registral, marcaria y legalmente |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
 | Traducciones en/de/es/fr | Borradores completos | Revisor profesional y fecha por idioma |
 | Captación Resend | Implementada y cerrada | DPA/subencargados, legal, dominio, buzones y aprobación explícita |
-| Dominio, canonical y Search Console | Sin dato | Dominio definitivo |
+| Dominio y canonical | Configurados con `obraxen.com` | DNS, Search Console y activación autorizada |
 | Producción | Sin deployments ni dominios | Auditoría final y autorización expresa |
 
 ## Comandos de cierre
