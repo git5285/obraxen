@@ -22,7 +22,8 @@ import {
   type Locale,
   type RouteKey,
 } from "@/lib/i18n";
-import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
+import { absoluteSiteUrl } from "@/lib/metadata";
+import { emptyProjectsDescription, getRouteSeo } from "@/lib/seo-indexability";
 import { getProjectsJsonLd, getProjectsMetadata } from "@/lib/project-pages";
 import { publicProjects } from "@/lib/projects";
 import { CONSENT_MAX_AGE_MS, CONSENT_STORAGE_KEY } from "@/lib/consent";
@@ -54,7 +55,7 @@ export function getSectionMetadata(
   return {
     title: `${title} — ${claim}`,
     description,
-    alternates: getLocalizedAlternates(domain, locale, route),
+    ...getRouteSeo(domain, locale, route),
     openGraph: {
       title: `${title} — ${claim}`,
       description,
@@ -98,11 +99,13 @@ export default async function SectionPage({ params }: SectionPageProps) {
               <div className="projects-hero-grid">
                 <div>
                   <p className="projects-kicker">{dictionary.projectHub.kicker}</p>
-                  <h1 id="projects-title">{dictionary.projectHub.title}</h1>
+                  <h1 id="projects-title">{publicProjects.length ? dictionary.projectHub.title : dictionary.common.projects}</h1>
                 </div>
                 <div className="projects-hero-copy">
-                  <p>{dictionary.projectHub.intro}</p>
-                  <p className="archive-note"><strong>{dictionary.projectHub.archiveNote.replace("{count}", String(publicProjects.length))}</strong></p>
+                  {publicProjects.length ? <>
+                    <p>{dictionary.projectHub.intro}</p>
+                    <p className="archive-note"><strong>{dictionary.projectHub.archiveNote.replace("{count}", String(publicProjects.length))}</strong></p>
+                  </> : <p>{emptyProjectsDescription[lang]}</p>}
                 </div>
               </div>
             </div>

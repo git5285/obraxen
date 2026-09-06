@@ -25,6 +25,7 @@ const locales = [
     contact: "/en/contact/",
     hero: "Repairs planned to reduce operational disruption.",
     projectTitle: "Completed works, explained through evidence.",
+    emptyProjectTitle: "Projects",
     contactTitle: "Tell us what is happening to the floor",
   },
   {
@@ -37,6 +38,7 @@ const locales = [
     contact: "/de/kontakt/",
     hero: "Geplante Reparaturen zur Verringerung betrieblicher Beeinträchtigungen.",
     projectTitle: "Ausgeführte Arbeiten, anhand von Nachweisen erklärt.",
+    emptyProjectTitle: "Projekte",
     contactTitle: "Beschreiben Sie uns den Zustand des Bodens",
   },
   {
@@ -49,6 +51,7 @@ const locales = [
     contact: "/es/contacto/",
     hero: "Reparaciones planificadas para reducir el impacto operativo.",
     projectTitle: "Obras ejecutadas, explicadas desde la evidencia.",
+    emptyProjectTitle: "Proyectos",
     contactTitle: "Cuéntanos qué ocurre en el pavimento",
   },
   {
@@ -61,6 +64,7 @@ const locales = [
     contact: "/fr/contact/",
     hero: "Des réparations planifiées pour réduire l'impact opérationnel.",
     projectTitle: "Des travaux réalisés, expliqués par les preuves.",
+    emptyProjectTitle: "Projets",
     contactTitle: "Décrivez-nous l'état du sol",
   },
 ] as const;
@@ -213,10 +217,18 @@ for (const entry of locales) {
     for (const counterpart of locales) {
       await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
         .toBeAttached();
+      await expect(page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`))
+        .toHaveAttribute("href", `https://obraxen.com${counterpart.home}`);
     }
 
     await page.goto(entry.projects, { waitUntil: "networkidle" });
-    await expect(page.locator("h1")).toContainText(entry.projectTitle);
+    await expect(page.locator("h1")).toContainText(publicProject ? entry.projectTitle : entry.emptyProjectTitle);
+    if (!publicProject) {
+      await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+      await expect(page.locator('head link[rel="alternate"][hreflang]')).toHaveCount(0);
+      await expect(page.locator('head link[rel="canonical"]'))
+        .toHaveAttribute("href", `https://obraxen.com${entry.projects}`);
+    }
     if (publicProject) {
       await page.goto(getPath(entry.locale, "projects", publicProject.slug), { waitUntil: "networkidle" });
       await expect(page.locator("main h1")).toContainText(publicProject.traducciones[entry.locale].titulo);
@@ -227,6 +239,10 @@ for (const entry of locales) {
     await page.goto(entry.contact, { waitUntil: "networkidle" });
     await expect(page.locator("h1")).toContainText(entry.contactTitle);
     await expect(page.locator("form")).toHaveCount(0);
+    await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    await expect(page.locator('head link[rel="alternate"][hreflang]')).toHaveCount(0);
+    await expect(page.locator('head link[rel="canonical"]'))
+      .toHaveAttribute("href", `https://obraxen.com${entry.contact}`);
   });
 }
 
