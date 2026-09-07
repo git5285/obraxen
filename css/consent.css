@@ -135,6 +135,16 @@
   background: rgb(from var(--brand-ink-deep) r g b / 0.72);
 }
 
+@media (max-width: 767px) {
+  .consent-reopen {
+    position: static;
+    display: block;
+    max-width: calc(100% - 28px);
+    margin: 14px;
+    overflow-wrap: anywhere;
+  }
+}
+
 .consent-settings {
   position: relative;
   width: min(640px, 100%);
