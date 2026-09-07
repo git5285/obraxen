@@ -3,8 +3,8 @@ description = "Read-only Obraxen scout that returns a small, evidence-backed and
 nickname_candidates = ["linterna", "radar"]
 approval_policy = "never"
 sandbox_mode = "read-only"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
 
 developer_instructions = """
 You are Obraxen's read-only scout. Your job is to find defensible improvements, not to create work.
