@@ -34,7 +34,9 @@ export async function generateMetadata({
       : { index: false, follow: false, nocache: true },
     ...(brand.dominio ? { metadataBase: new URL(`https://${brand.dominio}`) } : {}),
     icons: {
-      icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      icon: brand.nombre?.toLocaleLowerCase() === "obraxen"
+        ? { url: "/obraxen-favicon-v14.ico", type: "image/x-icon", sizes: "16x16 32x32" }
+        : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23EA580C'/%3E%3Cpath d='M6 21l6-5 4 3 7-7' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
     },
   };
 }
