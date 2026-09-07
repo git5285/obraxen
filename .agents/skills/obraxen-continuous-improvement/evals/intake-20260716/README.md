@@ -8,6 +8,11 @@ as verified knowledge or authority.
 
 - Baseline: committed skill at `9616cf8c3148bcabb43cd61e852a9ae12e43fe4c`.
 - Candidate instructions live only below `candidates/`.
+- Each candidate is stored as `candidates/item-XX/OVERLAY.md`, not a
+  discoverable skill entrypoint. Load it explicitly only for an evaluation.
+- Historical transcripts retain their original `SKILL.md` paths as evidence;
+  resolve those candidate paths to `OVERLAY.md` when reproducing a run.
+  The relative link inside each overlay still points to the production skill.
 - Production skill, roles, contracts and policy remain unchanged.
 - Runs are read-only except for their output folders below `iteration-1/`.
 - No network, commit, push, PR mutation, deployment or publication is allowed.
