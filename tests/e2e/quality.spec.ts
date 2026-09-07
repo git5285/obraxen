@@ -1,7 +1,12 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { request as requestHttp } from "node:http";
+import { createServer } from "node:https";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { getPath } from "@/lib/i18n";
 import { publicProjectImages } from "@/lib/public-project-assets";
 import { isPublicProject } from "@/lib/public-project-publication";
@@ -78,6 +83,65 @@ const contentRoutes = locales.flatMap((entry) => [
   { path: entry.cookies },
   { path: entry.contact },
 ]);
+
+for (const locale of locales) {
+  test(`${locale.locale} approved logo across responsive navigation and interior pages`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "One explicit viewport matrix avoids duplicate browser projects");
+    test.setTimeout(120_000);
+    for (const width of [320, 390, 620, 621, 768, 1024, 1280]) {
+      await page.setViewportSize({ width, height: width === 320 ? 667 : width === 390 ? 844 : 900 });
+      for (const route of [locale.home, locale.projects, locale.notice, locale.contact]) {
+        await page.goto(route, { waitUntil: "networkidle" });
+        const marks = page.locator(".logo:visible .logo-wordmark");
+        await expect(marks).toHaveCount(route === locale.home ? 2 : route === locale.notice ? 0 : 1);
+        for (const mark of await marks.all()) {
+          await expect(mark).toHaveAttribute("aria-hidden", "true");
+          await expect(mark).toHaveAttribute("viewBox", "-24 -33 876 166");
+          await expect(mark.locator("use")).toHaveCount(7);
+          await expect.poll(() => mark.evaluate((svg: SVGSVGElement) => svg.getBBox().width)).toBe(828);
+          expect(await mark.evaluate((svg: SVGSVGElement) => svg.getBBox().height)).toBe(118);
+          const bounds = await mark.boundingBox();
+          expect(bounds?.width).toBeCloseTo(180, 1);
+          expect(bounds?.height).toBeCloseTo(180 * 166 / 876, 1);
+          await expect(mark.locator("..")).toHaveAttribute("href", locale.home);
+          await expect(mark.locator("..")).toHaveAttribute("aria-label", /^Obraxen, .+/);
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+        if (route === locale.home) {
+          const nav = page.locator(".hero-nav");
+          const overlap = await nav.evaluate((element) => {
+            const bounds = [...element.children].map(child => child.getBoundingClientRect()).filter(rect => rect.width > 0 && rect.height > 0);
+            return bounds.some((a, index) => bounds.slice(index + 1).some(b => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom));
+          });
+          expect(overlap).toBe(false);
+          if (width <= 620) await expect(nav.locator(":scope > .btn")).toBeHidden();
+          await expect(page.locator(".hero-summary > .btn")).toBeVisible();
+          const menu = nav.locator(".menu-btn");
+          if (await menu.isVisible()) {
+            await menu.focus();
+            await page.keyboard.press("Enter");
+            await expect(menu).toHaveAttribute("aria-expanded", "true");
+            await page.keyboard.press("Escape");
+            await expect(menu).toBeFocused();
+            await expect(menu).toHaveAttribute("aria-expanded", "false");
+          }
+          await page.screenshot({ path: testInfo.outputPath(`logo-${locale.locale}-${width}.png`) });
+          await page.locator("#services").scrollIntoViewIfNeeded();
+          await expect(page.locator(".sticky-nav")).toBeVisible();
+          await expect(page.locator(".sticky-nav .logo-wordmark")).toBeVisible();
+          const stickyBounds = await page.locator(".sticky-nav .logo-wordmark").boundingBox();
+          expect(stickyBounds?.width).toBeCloseTo(180, 1);
+          if (width <= 620) await expect(page.locator(".sticky-nav .inner > .btn")).toBeHidden();
+        }
+      }
+    }
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/obraxen-favicon-v14.ico");
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute("sizes", "16x16 32x32");
+    const response = await page.request.get("/obraxen-favicon-v14.ico");
+    expect(response.status()).toBe(200);
+    expect(createHash("sha256").update(await response.body()).digest("hex")).toBe("b2d4b7bee37bcc6e588164b431dc29fee80f1085f13b5d4d28dea9d859dc5418");
+  });
+}
 
 for (const route of contentRoutes) {
   test(`${route.path} renders without browser or network errors`, async ({ page }) => {
@@ -488,13 +552,83 @@ test("redirects, closed routes, contact API and security policy fail closed", as
   );
 });
 
-test("WebKit smoke: localized public routes load", async ({ page }, testInfo) => {
+async function secureLocalOrigin(baseURL: string) {
+  const upstream = new URL(baseURL);
+  if (upstream.hostname !== "127.0.0.1") throw new Error("HTTPS fixture must target loopback");
+  const directory = mkdtempSync(join(tmpdir(), "obraxen-webkit-tls-"));
+  try {
+    execFileSync("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1",
+      "-subj", "/CN=localhost", "-keyout", join(directory, "key.pem"), "-out", join(directory, "cert.pem")], { stdio: "ignore" });
+    const server = createServer({ key: readFileSync(join(directory, "key.pem")), cert: readFileSync(join(directory, "cert.pem")) }, (request, response) => {
+      const forwarded = requestHttp({ hostname: upstream.hostname, port: upstream.port, path: request.url,
+        method: request.method, headers: { ...request.headers, host: upstream.host } }, (result) => {
+        response.writeHead(result.statusCode ?? 502, result.headers);
+        result.pipe(response);
+      });
+      forwarded.on("error", () => { response.writeHead(502); response.end(); });
+      request.pipe(forwarded);
+    });
+    await new Promise<void>((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", resolve);
+    });
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("Missing HTTPS fixture port");
+    return {
+      origin: `https://127.0.0.1:${address.port}`,
+      async close() {
+        server.closeAllConnections();
+        await new Promise<void>(resolve => server.close(() => resolve()));
+        rmSync(directory, { recursive: true, force: true });
+      },
+    };
+  } catch (error) {
+    rmSync(directory, { recursive: true, force: true });
+    throw error;
+  }
+}
+
+test("WebKit smoke: localized public routes load", async ({ browser, baseURL }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-webkit", "WebKit-only smoke coverage");
-  const paths = ["/en/", "/de/projekte/", "/fr/contact/"];
-  if (publicProject) paths.push(getPath("de", "projects", publicProject.slug));
-  for (const path of paths) {
-    const response = await page.goto(path, { waitUntil: "networkidle" });
-    expect(response?.status()).toBe(200);
-    await expect(page.locator("h1")).toHaveCount(1);
+  // WebKit upgrades HTTP subresources under the production CSP, including on loopback.
+  const secure = await secureLocalOrigin(baseURL!);
+  let context: Awaited<ReturnType<typeof browser.newContext>> | undefined;
+  try {
+    context = await browser.newContext({ baseURL: secure.origin, ignoreHTTPSErrors: true,
+      viewport: { width: 1440, height: 1000 }, colorScheme: "light", reducedMotion: "reduce" });
+    const page = await context.newPage();
+    const errors: string[] = [];
+    page.on("requestfailed", request => errors.push(request.url()));
+    page.on("pageerror", error => errors.push(error.message));
+    page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
+    const paths = ["/en/", "/de/projekte/", "/fr/contact/"];
+    if (publicProject) paths.push(getPath("de", "projects", publicProject.slug));
+    for (const path of paths) {
+      const response = await page.goto(path, { waitUntil: "networkidle" });
+      expect(response?.status()).toBe(200);
+      expect(response?.headers()["content-security-policy"]).toContain("upgrade-insecure-requests");
+      await expect(page.locator("h1")).toHaveCount(1);
+      const mark = page.locator(".hero-nav .logo-wordmark, .projects-nav .logo-wordmark, .case-nav .logo-wordmark, .contact-nav .logo-wordmark");
+      await expect(mark).toHaveCount(1);
+      await expect(mark).toBeVisible();
+      await expect.poll(() => mark.evaluate((svg: SVGSVGElement) => svg.getBBox().width)).toBe(828);
+      expect(await mark.evaluate((svg: SVGSVGElement) => svg.getBBox().height)).toBe(118);
+      expect((await mark.boundingBox())?.width).toBeCloseTo(180, 1);
+      if (path === "/en/") {
+        await expect(page.locator(".sticky-nav")).toBeHidden();
+        await page.locator("#services").scrollIntoViewIfNeeded();
+        const sticky = page.locator(".sticky-nav .logo-wordmark");
+        await expect(sticky).toBeVisible();
+        expect((await sticky.boundingBox())?.width).toBeCloseTo(180, 1);
+        expect(await sticky.evaluate((svg: SVGSVGElement) => svg.getBBox().width)).toBe(828);
+      }
+    }
+    expect(errors).toEqual([]);
+  } finally {
+    try {
+      await context?.close();
+    } finally {
+      await secure.close();
+    }
   }
 });
