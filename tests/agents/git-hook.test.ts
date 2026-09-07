@@ -85,8 +85,8 @@ describe("pre-push Git environment isolation", () => {
     const hook = readFileSync(prePushPath, "utf8");
 
     expect(hook).toContain('. "$repository_root/.githooks/git-env.sh"');
-    expect(hook).toContain("run_without_local_git_env npm run check:diff");
-    expect(hook).toContain("run_without_local_git_env npm run check:quality");
+    expect(hook).toContain("run_without_local_git_env node automation/agents/runtime.mjs exec -- npm run check:diff");
+    expect(hook).toContain("run_without_local_git_env node automation/agents/runtime.mjs exec -- npm run check:quality");
     expect(hook).not.toMatch(/^\s*npm run check:/mu);
   });
 });
