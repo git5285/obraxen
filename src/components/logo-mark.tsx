@@ -11,6 +11,24 @@ export function LogoMark({
   className = "logo",
   homeLabel = "Home",
 }: LogoMarkProps) {
+  if (brandName?.toLocaleLowerCase() === "obraxen") {
+    return (
+      <a className={className} href={href} aria-label={`${brandName}, ${homeLabel}`}>
+        <svg
+          className="logo-wordmark"
+          viewBox="-24 -33 876 166"
+          width={876}
+          height={166}
+          aria-hidden="true"
+        >
+          {["O", "B", "R", "A", "X", "E", "N"].map((letter) => (
+            <use key={letter} href={`/obraxen-wordmark-v14.svg#letra-${letter}`} />
+          ))}
+        </svg>
+      </a>
+    );
+  }
+
   if (brandName) {
     const accent = brandName.toLocaleLowerCase().indexOf("x");
     const accentAt = accent >= 0 ? accent : Math.max(0, brandName.length - 1);
