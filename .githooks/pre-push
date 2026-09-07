@@ -28,7 +28,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
           exit 1
         fi
         cd "$repository_root"
-        run_without_local_git_env npm run check:diff -- --base-ref "$base_ref" --head "$local_sha"
+        run_without_local_git_env node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-ref "$base_ref" --head "$local_sha"
         run_quality=true
       fi
       ;;
@@ -38,5 +38,5 @@ done
 if [ "$run_quality" = true ]; then
   cd "$repository_root"
   echo "Ejecutando el gate local antes del push..."
-  run_without_local_git_env npm run check:quality
+  run_without_local_git_env node automation/agents/runtime.mjs exec -- npm run check:quality
 fi
