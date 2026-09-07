@@ -84,6 +84,78 @@ const contentRoutes = locales.flatMap((entry) => [
   { path: entry.contact },
 ]);
 
+test("mobile usability: short menus keep all links reachable", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Explicit mobile viewport matrix");
+  for (const locale of locales) {
+    for (const viewport of [{ width: 667, height: 375 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto(locale.home, { waitUntil: "networkidle" });
+      const reject = page.locator(".consent-actions .consent-choice").first();
+      if (await reject.isVisible()) await reject.click();
+      const trigger = page.locator(".hero-nav .menu-btn");
+      await trigger.click();
+      const menu = page.locator(".movil-menu");
+      await expect(menu).toBeVisible();
+      const first = menu.locator(":scope > a").first();
+      const firstBox = await first.boundingBox();
+      expect(firstBox).not.toBeNull();
+      expect(firstBox!.y).toBeGreaterThanOrEqual(72);
+      for (const link of await menu.locator("a").all()) {
+        await link.scrollIntoViewIfNeeded();
+        const box = await link.boundingBox();
+        expect(box).not.toBeNull();
+        expect(box!.y).toBeGreaterThanOrEqual(0);
+        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+      }
+      await page.keyboard.press("Escape");
+      await expect(menu).toBeHidden();
+      await expect(trigger).toBeFocused();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+    }
+  }
+});
+
+test("mobile usability: privacy control does not cover contact content", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Explicit mobile viewport matrix");
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/es/contacto/", { waitUntil: "networkidle" });
+    const reject = page.locator(".consent-actions .consent-choice").first();
+    const reopen = page.locator(".consent-reopen");
+    const expectVisibleFocus = async () => {
+      await expect(reopen).toBeFocused();
+      await expect.poll(() => reopen.evaluate((button) => {
+        const bounds = button.getBoundingClientRect();
+        return bounds.top >= 0 && bounds.bottom <= innerHeight
+          && bounds.left >= 0 && bounds.right <= innerWidth;
+      })).toBe(true);
+    };
+    if (await reject.isVisible()) {
+      await reject.focus();
+      await page.keyboard.press("Enter");
+      await expectVisibleFocus();
+    }
+    await expect(reopen).toBeVisible();
+    const overlapsContent = () => reopen.evaluate((button) => {
+      const a = button.getBoundingClientRect();
+      return [...document.querySelectorAll("main p, main h1, main h2, main a")].some((element) => {
+        const b = element.getBoundingClientRect();
+        return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+      });
+    });
+    expect(await overlapsContent()).toBe(false);
+    await reopen.scrollIntoViewIfNeeded();
+    expect(await overlapsContent()).toBe(false);
+    await reopen.click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expectVisibleFocus();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+    await page.screenshot({ path: testInfo.outputPath(`privacy-contact-${viewport.width}.png`), fullPage: true });
+  }
+});
+
 for (const locale of locales) {
   test(`${locale.locale} approved logo across responsive navigation and interior pages`, async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "One explicit viewport matrix avoids duplicate browser projects");

@@ -271,7 +271,8 @@ function ActiveConsentManager({ copy, cookieUrl, privacyUrl }: ConsentManagerPro
   useEffect(() => {
     if (!settingsOpen && focusReopenAfterSaveRef.current && record) {
       focusReopenAfterSaveRef.current = false;
-      reopenButtonRef.current?.focus({ preventScroll: true });
+      // The mobile trigger is in document flow and may need to scroll into view.
+      reopenButtonRef.current?.focus();
     }
   }, [record, settingsOpen]);
 
@@ -284,7 +285,7 @@ function ActiveConsentManager({ copy, cookieUrl, privacyUrl }: ConsentManagerPro
     setSettingsOpen(false);
     window.requestAnimationFrame(() => {
       const trigger = record ? reopenButtonRef.current : bannerConfigButtonRef.current;
-      trigger?.focus({ preventScroll: true });
+      trigger?.focus();
     });
   }
 
