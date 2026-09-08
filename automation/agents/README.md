@@ -509,6 +509,17 @@ confianza. El resultado bloqueado incluye las rutas y digest medidos; sus
 informes viven solo en la memoria privada de la fixture. `blocked` con diff
 retenido no significa `implemented` ni concede entrega remota.
 
+El informe se prepara en `memory-pending-*`, que es evidencia provisional,
+no memoria publicada. El éxito solo se publica en `memory` tras cerrar y releer la claim;
+un fallo de cierre publica `blocked`, nunca el éxito provisional. Los almacenes
+parciales se conservan sin reescribir informes inmutables. Un fallo al publicar
+después de liberar la claim queda explícito en `outcome.json`, junto con su
+estado operativo observado; no se inventa una reapertura. La finalización exige
+tanto el resultado como la memoria publicada: `outcome.json` aislado no basta.
+Esto se limita a la memoria nueva y privada de una fixture, no sustituye ningún
+almacén compartido. Los tests de ciclo usan escrituras fixture deterministas,
+sin depender de un ejecutable `apply_patch`; no representan llamadas de modelo.
+
 Estado de entrega: implementación candidata para pruebas fixture. La
 habilitación del ejecutor para Obraxen y la activación autónoma requieren una
 revisión posterior de la evidencia real y autorización separada.
