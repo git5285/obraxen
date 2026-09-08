@@ -17,11 +17,11 @@ The scheduled task is the **director**. It can delegate to three project agents:
 This gives four logical roles including the director, but only one possible
 writer. A no-op cycle is a successful result.
 
-The director uses GPT-5.5 with high reasoning because the local role-discovery
-canary produced a real `spawn_agent` event with that model. The three specialist
-roles use GPT-5.6 Sol with high reasoning. Model claims are not trusted: the
-canary is judged from tool events and returned child ids, never from prose saying
-that delegation succeeded.
+The director and specialist model settings come from the active Codex
+configuration and role profiles. Model claims are not trusted: availability is
+judged from tool events, returned child ids and the role contract, never from
+prose saying that delegation succeeded. A model change requires one bounded
+read-only canary before recovery or retry.
 
 Preflight verifies the repository runtime, not provider- or account-level model
 availability. After a specialist model changes, or after a launch reports that

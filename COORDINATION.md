@@ -2,28 +2,20 @@
 
 Actualizado: 2026-09-06 Europe/Madrid.
 
-Este documento contiene las reglas vigentes. El estado de una claim procede del
-registro operativo; los handoffs, las claims cerradas y Git conservan el
-historial sin convertirlo en instrucciones de arranque.
-
-## Antes de editar
-
-1. Lee `AGENTS.md`, este archivo y `.coordination/README.md`.
-2. Ejecuta `git status --short` y consulta el estado efectivo con:
-
-   ```sh
-   node automation/agents/runtime.mjs exec -- \
-     node automation/agents/operations.mjs status
-   ```
-
-3. Revisa los handoffs relacionados y crea una claim con rutas exactas en el
-   worktree de control.
-4. Registra la claim con `operations.mjs register` antes del primer cambio.
+`AGENTS.md` es la entrada de instrucciones del repositorio. Este documento la
+complementa con el modelo de coordinación y la fuente de verdad del estado de
+las claims; no repite el checklist de arranque. El estado efectivo procede del
+registro operativo. Claims cerradas, handoffs y Git conservan historial, pero no
+se convierten por sí solos en instrucciones nuevas.
 
 ## Reglas vigentes
 
 - Una sola tarea editora por archivo. Se preservan los cambios ajenos y no se
   usan `git add .`, `git add -A` ni comandos destructivos para resolverlos.
+- Antes de editar, la tarea debe comprobar el estado Git y las claims activas,
+  revisar solo los handoffs relacionados, reservar rutas exactas y registrar
+  la claim antes del primer cambio. Una tarea de solo lectura no necesita crear
+  una claim.
 - Los marcadores registrados son inmutables. Cada hito se registra mediante
   `operations.mjs transition` con evidencia verificable.
 - Si una decision debe acompañar a la candidata, se deja un handoff. La claim

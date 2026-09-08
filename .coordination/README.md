@@ -3,18 +3,19 @@
 Objetivo: que varias tareas puedan avanzar sin escribir sobre los mismos
 archivos ni repetir decisiones.
 
-## Lectura minima
+## Alcance y lectura
 
-Lee primero `AGENTS.md` y `COORDINATION.md`; consulta despues el estado vivo
-con `operations.mjs status`. Este documento define la mecanica de claims. Los
-handoffs y claims cerrados son historial de consulta, no contexto obligatorio
-de arranque.
+`AGENTS.md` es la entrada del repositorio y `COORDINATION.md` resume las reglas
+vigentes. Este documento define solo la mecánica de claims, handoffs y
+transiciones. Consulta `operations.mjs status` para el estado vivo; los
+handoffs y claims cerrados son historial, no lectura obligatoria de arranque.
 
 ## Ciclo obligatorio por tarea
 
-1. **Sincronizar:** lee `COORDINATION.md`, las reservas activas y los ultimos
-   mensajes de los chats relacionados; `preflight.mjs` combina marcadores y
-   eventos compartidos para obtener el estado efectivo.
+1. **Sincronizar:** comprueba `git status --short`, las reservas activas y los
+   últimos handoffs relacionados. Usa `operations.mjs status` como fuente de
+   estado; ejecuta `preflight.mjs` cuando la tarea vaya a editar dentro de un
+   sistema con worktrees, leases o concurrencia que deba reconciliarse.
 2. **Reservar:** crea `.coordination/claims/<thread-id>.md` antes de editar y
    registralo una vez con `operations.mjs register`.
 3. **Negociar:** si hay solape, envia un mensaje al propietario. Hasta que haya
