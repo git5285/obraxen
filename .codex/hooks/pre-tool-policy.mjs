@@ -11,8 +11,23 @@ const autonomousRoles = new Set([
 ]);
 
 const readOnlyRoles = new Set(["scout", "auditor"]);
-const writeToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|create|save|upload|delete|remove|copy|move|rename|mkdir)/i;
-const applyPatchToolPattern = /apply_patch/i;
+const mutatingToolNames = new Set([
+  "apply_patch",
+  "copy_file",
+  "create_file",
+  "delete_file",
+  "edit_file",
+  "mkdir",
+  "move_file",
+  "remove_file",
+  "rename_file",
+  "savefile",
+  "save_file",
+  "upload_asset",
+  "write",
+  "write_file",
+]);
+const builderWriteToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|write_file|create|save|upload|delete|remove|copy|move|rename|mkdir)/i;
 const runtimeSensitiveCommandPattern = /(?:^|[\s;&|"'`/])(?:node|npm|npx|pnpm|yarn|eslint|next|tsc|vitest)\b/i;
 const runtimeWrapperPattern = /^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:(?:status|assert)\s*|exec\s+--\s+\S(?:[\s\S]*\S)?\s*)$/i;
 const shellCompositionPattern = /[\r\n;&|`<>]|\$\(/;
@@ -70,6 +85,14 @@ function commandFromInput(toolInput) {
     if (typeof toolInput[key] === "string") return toolInput[key];
   }
   return "";
+}
+
+function isMutatingTool(toolName) {
+  return typeof toolName === "string" && mutatingToolNames.has(toolName.toLowerCase());
+}
+
+function isApplyPatchTool(toolName) {
+  return typeof toolName === "string" && toolName.toLowerCase() === "apply_patch";
 }
 
 function canonicalRepositoryPath(path) {
@@ -175,7 +198,7 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (command && usesRuntimeWrapper && !readOnlyUsesApprovedRuntimeCommand(command)) {
       return deny(`${role} solo puede usar el runtime fijado para lecturas y verificaciones versionadas.`);
     }
-    if (writeToolPattern.test(toolName)) {
+    if (isMutatingTool(toolName)) {
       return deny(`${role} es de solo lectura y no puede usar ${toolName}.`);
     }
     if (command && dangerousCommandPatterns.some((pattern) => pattern.test(command))) {
@@ -202,8 +225,8 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (command && commandMentionsProtectedPath(command, policy, usesRuntimeWrapper)) {
       return deny("El implementador intentó tocar una superficie protegida por la política de Obraxen.");
     }
-    if (writeToolPattern.test(toolName)) {
-      if (!applyPatchToolPattern.test(toolName)) {
+    if (builderWriteToolPattern.test(toolName)) {
+      if (!isApplyPatchTool(toolName)) {
         return deny("El implementador solo puede editar mediante apply_patch.");
       }
       const paths = patchPaths(input?.tool_input);

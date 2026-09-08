@@ -1,5 +1,9 @@
 # Sistema de mejora autónoma de Obraxen
 
+> Este documento describe arquitectura y decisiones de diseño. No es una
+> autorización de ejecución. Para saber qué puede hacer una tarea, prevalecen
+> `AGENTS.md`, `COORDINATION.md`, la política/runtime y el registro operativo.
+
 ## Objetivo y límite
 
 El sistema puede observar la web, recordar resultados, proponer una mejora,
@@ -124,7 +128,9 @@ concede merge, despliegue o publicación.
 4. El director selecciona cero o un hallazgo.
 5. En sombra, termina y registra el informe. En activo, crea un único entorno
    aislado y reserva rutas exactas.
-6. El builder realiza una sola mejora y una corrección como máximo.
+6. El builder realiza una sola mejora y una corrección como máximo. Si la
+   corrección falla, no continúa en bucle ni declara éxito: registra el comando
+   fallido, el riesgo residual y un estado `blocked` para revisión humana.
 7. Los scripts verifican rutas, tamaño, diff completo, tests y calidad. La
    activación debe permanecer igual salvo en una migración solicitada por el
    propietario, donde se revisa la diferencia completa.
@@ -246,7 +252,7 @@ contenido es un reintento idempotente; con contenido diferente se bloquea. Un
 puede retroceder de fase ni cambiar el alcance del hallazgo. El estado legado de
 memoria v1 a v4 se lee sin fabricar linaje, reconciliación, origen o huella de
 runtime históricos. Sus valores desconocidos se conservan como `unknown` o
-`null`, fuera de la eficacia autónoma, y se convierte a v5 al registrar el
+`null`, fuera de la eficacia autónoma, y se convierte a v6 al registrar el
 siguiente informe válido. Un lock o lease viejo
 nunca se elimina
 automáticamente: se inspeccionan proceso, host, worktree, claim y Git antes de
