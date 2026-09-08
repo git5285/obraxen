@@ -469,13 +469,23 @@ describe("custom-agent pre-tool hook", () => {
 
   it("treats create and save tools as writes for every specialist", () => {
     for (const role of ["scout", "auditor", "builder"]) {
-      for (const tool_name of ["create_file", "SaveFile", "upload_asset"]) {
+      for (const tool_name of ["create_file", "SaveFile", "upload_asset", "write_file", "delete_file"]) {
         expect(evaluateToolUse({
           agent_type: role,
           tool_name,
           tool_input: { path: "src/generated-output.txt" },
         }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
       }
+    }
+  });
+
+  it("does not classify read-only tool names by incidental verbs", () => {
+    for (const tool_name of ["create_report", "save_query", "copy_search_results", "move_cursor"]) {
+      expect(evaluateToolUse({
+        agent_type: "scout",
+        tool_name,
+        tool_input: { path: "src/example.ts" },
+      }, activePolicy())).toBeNull();
     }
   });
 

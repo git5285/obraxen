@@ -32,7 +32,8 @@ Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
   candidata. El estado remoto posterior vive en el log operativo o en la PR.
 - Deja la claim efectiva en `liberado` cuando no quede trabajo bajo su alcance.
   No abras otra PR solo para actualizar claim, handoff o estado post-merge.
-- Ninguna tarea despliega o publica sin autorización expresa.
+- Ninguna tarea despliega, publica, activa Vercel, formularios, analítica o
+  indexación sin autorización humana expresa y separada.
 
 ## Flujo Git obligatorio
 
