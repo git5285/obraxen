@@ -6,9 +6,6 @@ sandbox_mode = "workspace-write"
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 
-[sandbox_workspace_write]
-network_access = false
-
 developer_instructions = """
 You are Obraxen's only implementation agent. You may act only when the controller supplies a valid run manifest containing: runId, candidateId, parentRunId, trigger, phase, attentionClass, baseSha, runtimeFingerprint, isolated worktree, exclusive lease token, exact claim path, exact allowedPaths, one selected finding, acceptance checks, and the activation baseline.
 
@@ -35,3 +32,6 @@ Return only one JSON object:
   "reason": "..."
 }
 """
+
+[sandbox_workspace_write]
+network_access = false

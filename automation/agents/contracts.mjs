@@ -243,8 +243,11 @@ export function validateBuilderOutput(value) {
   if (output.status === "implemented" && checksRun.some((check) => check.status !== "passed")) {
     throw new Error("implemented builder output cannot contain failed checks");
   }
-  if (output.status !== "implemented" && changedPaths.length !== 0) {
-    throw new Error("non-implemented builder output cannot claim changedPaths");
+  if (output.status === "no_op" && changedPaths.length !== 0) {
+    throw new Error("no_op builder output cannot claim changedPaths");
+  }
+  if (output.status === "blocked" && changedPaths.length !== 0 && output.residualRisks.length === 0) {
+    throw new Error("blocked builder output with retained changes requires residualRisks");
   }
   return output;
 }
@@ -413,7 +416,15 @@ export function validateRunReport(value, policy = loadPolicy()) {
   if (output.traceId !== null) string(output.traceId, "run report.traceId");
   string(output.reason, "run report.reason");
 
+  const retainedBlockedDiff = output.status === "blocked" && changedPaths.length > 0;
   const mutationStatuses = new Set(["local_diff", "draft_pr"]);
+  if (retainedBlockedDiff) {
+    if (output.mode !== "active" || !finding || output.externalAction !== "local_diff"
+      || output.policyBlockers.length === 0 || output.auditorVerdict === "pass") {
+      throw new Error("blocked retained diff requires active mode, finding, local_diff, blockers and no pass verdict");
+    }
+    mutationStatuses.add("blocked");
+  }
   if (output.mode !== "active" && mutationStatuses.has(output.status)) {
     throw new Error("only active mode can report a repository mutation");
   }

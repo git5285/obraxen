@@ -246,6 +246,18 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
 }
 
 function main() {
+  // Bound by the controller's process environment, not model/tool arguments.
+  // This is the diagnostic hook: every isolated tool remains blocked. Fail
+  // closed on partial/unknown bindings instead of falling back to root policy.
+  const boundRole = process.env.OBRAXEN_ISOLATED_ROLE;
+  const boundMode = process.env.OBRAXEN_ISOLATED_MODE;
+  if (boundRole !== undefined || boundMode !== undefined) {
+    const reason = autonomousRoles.has(boundRole) && boundMode === "diagnostic"
+      ? `Obraxen ${boundRole}: diagnóstico aislado; ninguna herramienta autorizada.`
+      : "Obraxen: vinculación aislada ausente o inválida; herramientas bloqueadas.";
+    process.stdout.write(`${JSON.stringify(deny(reason))}\n`);
+    return;
+  }
   const raw = readFileSync(0, "utf8");
   const result = evaluateToolUse(JSON.parse(raw));
   if (result) process.stdout.write(`${JSON.stringify(result)}\n`);
