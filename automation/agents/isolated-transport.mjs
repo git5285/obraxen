@@ -11,6 +11,29 @@ import { REPOSITORY_EXECUTION_ENABLED, assertRepositoryOwnership } from "./repos
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const git = (root, args) => execFileSync("git", ["-c", "core.fsmonitor=false", ...args], {cwd:root,env:cleanGitEnvironment(),encoding:"utf8",timeout:10000}).trim();
 const save = (path, content) => { mkdirSync(dirname(path), { recursive:true }); writeFileSync(path,content,{mode:0o600}); };
+const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isId = (value) => typeof value === "string" && value.length > 0;
+
+function validateHostEvent(message) {
+  const { method, params } = message;
+  if (!["hook/completed", "item/started", "item/completed", "turn/completed"].includes(method)) return;
+  assert(isRecord(params), "invalid_host_event");
+  if (method === "hook/completed") {
+    assert(isRecord(params.run) && Array.isArray(params.run.entries)
+      && params.run.entries.every((entry) => isRecord(entry)
+        && (entry.kind !== "context" || typeof entry.text === "string")), "invalid_host_event");
+    return;
+  }
+  assert(isId(params.threadId), "invalid_host_event");
+  if (method === "turn/completed") {
+    assert(isRecord(params.turn) && isId(params.turn.id) && isId(params.turn.status), "invalid_host_event");
+    return;
+  }
+  assert(isId(params.turnId) && isRecord(params.item) && isId(params.item.id)
+    && isId(params.item.type), "invalid_host_event");
+  if (method === "item/completed" && params.item.type === "agentMessage")
+    assert(typeof params.item.text === "string", "invalid_host_event");
+}
 
 // Work transport stays separate from the diagnostic API. It cannot register
 // hook trust or answer approval requests. A fresh host is closed for each role.
@@ -49,41 +72,47 @@ export async function runBoundRole(prepared, role, prompt, binding, { codex = "c
   child.stdin.on("error", () => fail("host_input_failed"));
   child.stdout.setEncoding("utf8");
   child.stdout.on("data", (chunk) => {
-    if (failure) return;
-    total += Buffer.byteLength(chunk);
-    if (total > 2 * 1024 * 1024) return fail("host_output_limit");
-    buffer += chunk;
-    let index;
-    while ((index = buffer.indexOf("\n")) >= 0) {
-      const line = buffer.slice(0, index); buffer = buffer.slice(index + 1);
-      let message;
-      try { message = JSON.parse(line); } catch { fail("invalid_host_json"); return; }
-      if (!message || typeof message !== "object") { fail("invalid_host_message"); return; }
-      eventOrder++;
-      if (message.method && message.id !== undefined) { fail("unexpected_host_request"); return; }
-      const request = pending.get(message.id);
-      if (request) { pending.delete(message.id); if (message.error) request.reject(new Error("host_rpc_failed")); else request.resolve(message.result); }
-      if (message.method === "hook/completed") hooks.push(message.params.run);
-      if (message.method === "item/started") {
-        const item = message.params.item;
-        if (item.type === "commandExecution" || item.type === "fileChange") {
-          const key = JSON.stringify([message.params.threadId,message.params.turnId,item.id]);
-          if (starts.has(key)) { fail("duplicate_item_start"); return; }
-          starts.set(key,eventOrder);
+    // EventEmitter callbacks run outside the awaited RPC stack. Convert all
+    // malformed notifications to rejection so the host-cleanup finally runs.
+    try {
+      if (failure) return;
+      total += Buffer.byteLength(chunk);
+      if (total > 2 * 1024 * 1024) return fail("host_output_limit");
+      buffer += chunk;
+      let index;
+      while ((index = buffer.indexOf("\n")) >= 0) {
+        const line = buffer.slice(0, index); buffer = buffer.slice(index + 1);
+        let message;
+        try { message = JSON.parse(line); } catch { fail("invalid_host_json"); return; }
+        if (!isRecord(message)) { fail("invalid_host_message"); return; }
+        validateHostEvent(message);
+        eventOrder++;
+        if (message.method && message.id !== undefined) { fail("unexpected_host_request"); return; }
+        const request = pending.get(message.id);
+        if (request) { pending.delete(message.id); if (message.error) request.reject(new Error("host_rpc_failed")); else request.resolve(message.result); }
+        if (message.method === "hook/completed") hooks.push(message.params.run);
+        if (message.method === "item/started") {
+          const item = message.params.item;
+          if (item.type === "commandExecution" || item.type === "fileChange") {
+            const key = JSON.stringify([message.params.threadId,message.params.turnId,item.id]);
+            if (starts.has(key)) { fail("duplicate_item_start"); return; }
+            starts.set(key,eventOrder);
+          }
         }
+        if (message.method === "item/completed") {
+          const item = message.params.item;
+          if (item.type === "agentMessage") output.push(item.text);
+          if (item.type === "commandExecution" || item.type === "fileChange")
+            calls.push({ ...item, observedThreadId: message.params.threadId, observedTurnId: message.params.turnId,
+              observedStartOrder: starts.get(JSON.stringify([message.params.threadId,message.params.turnId,item.id])),
+              observedEndOrder: eventOrder });
+        }
+        if (message.method === "turn/completed") {
+          if (message.params.turn.status !== "completed") fail("model_turn_failed"); else resolveTurn();
+        }
+        if (failure) return;
       }
-      if (message.method === "item/completed") {
-        const item = message.params.item;
-        if (item.type === "agentMessage") output.push(item.text);
-        if (item.type === "commandExecution" || item.type === "fileChange")
-          calls.push({ ...item, observedThreadId: message.params.threadId, observedTurnId: message.params.turnId,
-            observedStartOrder: starts.get(JSON.stringify([message.params.threadId,message.params.turnId,item.id])),
-            observedEndOrder: eventOrder });
-      }
-      if (message.method === "turn/completed") {
-        if (message.params.turn.status !== "completed") fail("model_turn_failed"); else resolveTurn();
-      }
-    }
+    } catch { fail("invalid_host_event"); }
   });
   const rpc = (method, params) => new Promise((yes, no) => {
     if (failure) return no(failure);
@@ -111,6 +140,7 @@ export async function runBoundRole(prepared, role, prompt, binding, { codex = "c
     if (role === "builder") assert(sandbox.writableRoots.every((path) => path === m.worktree)
       && sandbox.excludeSlashTmp && sandbox.excludeTmpdirEnvVar, "writable_roots_mismatch");
     const listed = await rpc("hooks/list", { cwds: [m.worktree] });
+    if (failure) throw failure;
     const entry = listed.data?.find((item) => item.cwd === m.worktree);
     const hook = entry?.hooks?.find((item) => item.sourcePath === hookSource
       && item.command === hookCommand && item.eventName === "preToolUse" && item.matcher === ".*");

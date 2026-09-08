@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, writeFileSync } from "node:fs";
 import { hostname, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runBoundRole } from "./isolated-transport.mjs";
 import { assertWorkOwnership, cleanGitEnvironment, digest, validateWorkManifest } from "./isolated-work.mjs";
 import { acquireLease, releaseLease } from "./lease.mjs";
-import { registerOperationalClaim, transitionOperationalClaim } from "./operations.mjs";
+import { readOperationalClaims, registerOperationalClaim, transitionOperationalClaim } from "./operations.mjs";
 import { buildPreflight } from "./preflight.mjs";
 import { inspectRuntime } from "./runtime.mjs";
 import { validateDiff } from "./diff-policy.mjs";
@@ -90,6 +90,7 @@ export async function runFixture(prepared, roleRunner = runFixtureRole) {
   const { manifest: m, root, claimText, runtime } = prepared;
   validateWorkManifest(m);
   assert(root === dirname(m.worktree) && m.phase === "discovery", "fresh_fixture_required");
+  assert(!existsSync(join(root, "memory")), "fresh_fixture_memory_required");
   const measuredRuntime = inspectRuntime(sourceRoot);
   assert(measuredRuntime.ok && measuredRuntime.fingerprint === runtime.fingerprint
     && runtime.fingerprint === m.runtimeFingerprint, "runtime_changed");
@@ -183,35 +184,72 @@ export async function runFixture(prepared, roleRunner = runFixtureRole) {
     const safeSave = (path, content, failureCode) => {
       try { save(path, content); } catch { closureErrors.push(failureCode); }
     };
-    safeSave(join(root, "outcome.json"), JSON.stringify(outcome, null, 2), "outcome_write_failed");
-    try {
-      recordRun({ schemaVersion: 6, status: outcome.status === "fixture_passed" ? "local_diff" : "blocked",
-        mode: "active", runOrigin: "human_directed", attentionClass: "reliability", runId: m.runId,
-        baseSha: m.baseSha, runtimeFingerprint: m.runtimeFingerprint,
-        candidateId: selectedFinding ? m.candidateId : null, parentRunId: null, trigger: "human_request",
-        phase: selectedFinding ? "closure" : null, finalCommit: null, pullRequest: null, reviewDecision: null,
-        selectedFinding, activeConflicts: [], policyBlockers: outcome.status === "fixture_passed" ? [] : [outcome.reason],
-        changedPaths: outcome.retainedPaths ?? [], checks: outcome.status === "fixture_passed"
-          ? [{ command: "controller fixture check", status: "passed", summary: "Executed, not website Quality gate" }] : [],
-        auditorVerdict: outcome.status === "fixture_passed" ? "pass" : null,
-        externalAction: outcome.retainedDiff ? "local_diff" : "none", learned_rules: [],
-        usage: { inputTokens: null, outputTokens: null, totalTokens: null, costUsd: null, durationMs: null },
-        traceId: null, reason: "Disposable fixture only; role evidence is stored separately. Not production or autonomous effectiveness.",
-      }, { root: join(root, "memory"), policy });
-    } catch { closureErrors.push("fixture_report_failed"); }
+    safeSave(join(root, "outcome.json"), JSON.stringify({ ...outcome, status: "blocked",
+      reason: "fixture_closure_pending" }, null, 2), "outcome_write_failed");
     if (acquired && prepared.hostTerminationConfirmed) {
       try { releaseLease(m.controlRoot, m.leaseToken, m.stateHome); }
       catch { closureErrors.push("lease_release_failed"); }
     }
     if (!prepared.hostTerminationConfirmed) closureErrors.push("host_termination_unconfirmed");
+    const path = `.coordination/handoffs/${m.threadId}.md`;
+    const handoff = `# Disposable fixture closure\n${JSON.stringify({ ...outcome,
+      executionStatus: outcome.status, status: "closure_pending", closureErrors })}\nCandidate retained at ${m.worktree}. Final closure requires the published memory report and operational claim state. No production action or autonomous activation.\n`;
+    if (registered) safeSave(join(m.controlRoot, path), handoff, "handoff_write_failed");
+
+    // recordRun is immutable and can fail after a partial write. Prepare a
+    // fresh private store; never expose a success report before claim closure.
+    // Partial stores remain diagnostic artifacts, not published run memory.
+    const stageReport = (successful) => {
+      const staging = mkdtempSync(join(root, "memory-pending-"));
+      recordRun({ schemaVersion: 6, status: successful ? "local_diff" : "blocked",
+        mode: "active", runOrigin: "human_directed", attentionClass: "reliability", runId: m.runId,
+        baseSha: m.baseSha, runtimeFingerprint: m.runtimeFingerprint,
+        candidateId: selectedFinding ? m.candidateId : null, parentRunId: null, trigger: "human_request",
+        phase: selectedFinding ? "closure" : null, finalCommit: null, pullRequest: null, reviewDecision: null,
+        selectedFinding, activeConflicts: [], policyBlockers: successful ? [] : [outcome.reason ?? "fixture_closure_incomplete", ...closureErrors],
+        changedPaths: outcome.retainedPaths ?? [], checks: successful
+          ? [{ command: "controller fixture check", status: "passed", summary: "Executed, not website Quality gate" }] : [],
+        auditorVerdict: successful ? "pass" : null,
+        externalAction: outcome.retainedDiff ? "local_diff" : "none", learned_rules: [],
+        usage: { inputTokens: null, outputTokens: null, totalTokens: null, costUsd: null, durationMs: null },
+        traceId: null, reason: "Disposable fixture only; role evidence is stored separately. Not production or autonomous effectiveness.",
+      }, { root: staging, policy });
+      return staging;
+    };
+    let staging;
+    const stagedSuccess = outcome.status === "fixture_passed" && closureErrors.length === 0;
+    try { staging = stageReport(stagedSuccess); }
+    catch { closureErrors.push("fixture_report_failed"); }
     if (registered) {
-      const path = `.coordination/handoffs/${m.threadId}.md`;
-      const handoff = `# Disposable fixture closure\n${JSON.stringify({ ...outcome, closureErrors })}\nCandidate retained at ${m.worktree}. No production action or autonomous activation.\n`;
-      safeSave(join(m.controlRoot, path), handoff, "handoff_write_failed");
       try {
         // Keep the existing valid state and ownership if any closure step failed.
         if (closureErrors.length === 0) transition("liberado", [{ kind: "handoff", path, contentDigest: digest(handoff) }]);
       } catch { closureErrors.push("claim_closure_failed"); }
+      // An append may persist before its lock cleanup fails. Do not infer
+      // retained ownership from an exception or manufacture a reopening.
+      try {
+        outcome.claimState = readOperationalClaims(m.controlRoot, m.stateHome)
+          .find((claim) => claim.threadId === m.threadId)?.state ?? "unknown";
+        if (closureErrors.length === 0 && outcome.claimState !== "liberado") closureErrors.push("claim_closure_unconfirmed");
+      } catch { outcome.claimState = "unknown"; closureErrors.push("claim_state_unreadable"); }
+    }
+    if (closureErrors.length && stagedSuccess && staging) {
+      // Discard the unpublished success logically, never rewrite its runId.
+      staging = undefined;
+      try { staging = stageReport(false); }
+      catch { closureErrors.push("blocked_report_failed"); }
+    }
+    const finalOutcome = { ...outcome, ...(closureErrors.length ? { status: "blocked", closureErrors } : {}),
+      memoryPath: join(root, "memory"), completionRequiresPublishedMemory: true };
+    safeSave(join(root, "outcome.json"), JSON.stringify(finalOutcome, null, 2), "final_outcome_write_failed");
+    // Same-filesystem publication, only into this fresh fixture's absent store.
+    // Publication can fail after claim release: report that partial state; no
+    // automatic ownership recovery and no success in published memory.
+    if (staging && !closureErrors.includes("final_outcome_write_failed")) {
+      try {
+        assert(!existsSync(join(root, "memory")), "fixture_memory_already_exists");
+        renameSync(staging, join(root, "memory"));
+      } catch { closureErrors.push("fixture_report_publication_failed"); }
     }
     if (closureErrors.length) {
       safeSave(join(root, "outcome.json"), JSON.stringify({ ...outcome, status: "blocked", closureErrors }, null, 2), "final_outcome_write_failed");
