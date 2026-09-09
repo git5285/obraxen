@@ -7,7 +7,7 @@ import type { Dictionary } from "./dictionaries/types";
 export const locales = ["en", "de", "es", "fr"] as const;
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "es";
 
 export const localeNames: Record<Locale, string> = {
   en: "English",
