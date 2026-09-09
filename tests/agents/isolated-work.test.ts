@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
-import { assertWorkOwnership, cleanGitEnvironment, digest, evaluateWorkTool, inspectPatch, matchesObservedCommand, safeFile, validateWorkManifest } from "../../automation/agents/isolated-work.mjs";
+import { assertWorkOwnership, cleanGitEnvironment, digest, evaluateWorkTool, inspectPatch, inspectWorkOwnership, matchesObservedCommand, safeFile, validateWorkManifest } from "../../automation/agents/isolated-work.mjs";
 import type { WorkManifest } from "../../automation/agents/isolated-work.mjs";
 import { validateBuilderOutput } from "../../automation/agents/contracts.mjs";
 import type { BuilderOutput } from "../../automation/agents/contracts.mjs";
@@ -18,6 +18,19 @@ const patch = "*** Begin Patch\n*** Update File: fixture.txt\n@@\n-Status: pendi
 const asRole = (role: string) => ({ ...manifest, phase: ({ scout: "discovery", builder: "implementation", auditor: "review" } as const)[role as "scout"] });
 
 describe("isolated fixture authority", () => {
+  it("returns a freshly verified runtime without accepting caller-supplied evidence", () => {
+    expect(inspectWorkOwnership(manifest)).toMatchObject({ok: true, fingerprint: manifest.runtimeFingerprint});
+    expect(() => inspectWorkOwnership({...manifest, runtimeFingerprint: "0".repeat(64)})).toThrow("runtime_changed");
+  });
+  it("rechecks immutable scripts after a previous successful ownership inspection", () => {
+    const script = manifest.commands[0].script;
+    const original = readFileSync(script, "utf8");
+    expect(inspectWorkOwnership(manifest).ok).toBe(true);
+    try {
+      writeFileSync(script, original + "\n// changed after inspection\n");
+      expect(() => inspectWorkOwnership(manifest)).toThrow("check_changed");
+    } finally { writeFileSync(script, original); }
+  });
   it("correlates the host shell envelope exactly, never by a commandActions hint", () => {
     const command = "'/absolute/node' '/absolute/read.mjs'";
     const observed = { command: `/bin/zsh -lc "${command}"`, cwd: "/candidate" };

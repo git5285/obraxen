@@ -6,7 +6,7 @@ import { hostname, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runBoundRole } from "./isolated-transport.mjs";
-import { assertWorkOwnership, cleanGitEnvironment, digest, validateWorkManifest } from "./isolated-work.mjs";
+import { assertWorkOwnership, cleanGitEnvironment, digest, inspectWorkOwnership, validateWorkManifest } from "./isolated-work.mjs";
 import { acquireLease, releaseLease } from "./lease.mjs";
 import { readOperationalClaims, registerOperationalClaim, transitionOperationalClaim } from "./operations.mjs";
 import { buildPreflight } from "./preflight.mjs";
@@ -91,13 +91,9 @@ export async function runFixture(prepared, roleRunner = runFixtureRole) {
   validateWorkManifest(m);
   assert(root === dirname(m.worktree) && m.phase === "discovery", "fresh_fixture_required");
   assert(!existsSync(join(root, "memory")), "fresh_fixture_memory_required");
-  const measuredRuntime = inspectRuntime(sourceRoot);
-  assert(measuredRuntime.ok && measuredRuntime.fingerprint === runtime.fingerprint
-    && runtime.fingerprint === m.runtimeFingerprint, "runtime_changed");
+  assert(runtime.fingerprint === m.runtimeFingerprint, "runtime_changed");
   const policy = loadPolicy();
   prepared.hostTerminationConfirmed = true;
-  const initial = buildPreflight(m.controlRoot, policy, { stateHome: m.stateHome, runtime });
-  assert(initial.eligibility.writer, "fixture_initial_preflight_blocked");
   let acquired = false, registered = false;
   const transition = (state, evidence = []) => transitionOperationalClaim({ repo: m.controlRoot, stateHome: m.stateHome,
     threadId: m.threadId, eventId: `${m.threadId}-${state}`, occurredAt: new Date().toISOString(), state,
@@ -107,8 +103,11 @@ export async function runFixture(prepared, roleRunner = runFixtureRole) {
     acceptanceChecks: m.commands.filter((entry) => entry.kind === "check"),
     activationBaseline: { publicationAuthorized: false, publishSwitch: false } });
   const context = () => {
-    assertWorkOwnership(m);
-    const snapshot = buildPreflight(m.controlRoot, policy, { stateHome: m.stateHome, runtime: inspectRuntime(sourceRoot) });
+    // Use the just-measured observation only for this contiguous synchronous
+    // snapshot. Every phase and every tool guard still performs a fresh probe.
+    const currentRuntime = inspectWorkOwnership(m);
+    const snapshot = buildPreflight(m.controlRoot, policy, { stateHome: m.stateHome, runtime: currentRuntime });
+    if (!registered && !acquired) assert(snapshot.eligibility.writer, "fixture_initial_preflight_blocked");
     assert(snapshot.baseSha === m.baseSha && snapshot.runtime.fingerprint === m.runtimeFingerprint, "fixture_snapshot_changed");
     const expectedBlockers = registered && acquired ? ["writer_lease_exists", "active_writer_claim_limit"] : [];
     assert(snapshot.runtime.ok && snapshot.blockers.every((blocker) => expectedBlockers.includes(blocker))
@@ -127,8 +126,11 @@ export async function runFixture(prepared, roleRunner = runFixtureRole) {
     sourceProductionPolicyUnchanged: true }, commands: m.commands, runtimeScope: prepared.runtimeScope });
   };
   let outcome, selectedFinding = null;
+  // The first current ownership/runtime/preflight snapshot is also the scout's
+  // input. No role, tool or asynchronous boundary occurs before consumption.
+  const discoveryContext = context();
   try {
-    const scout = await roleRunner(prepared, "scout", `Read the fixture with your exact read script. Propose only changing fixture.txt from Status: pending to Status: verified. This is an explicitly requested test, with reliability attention. ${context()}`);
+    const scout = await roleRunner(prepared, "scout", `Read the fixture with your exact read script. Propose only changing fixture.txt from Status: pending to Status: verified. This is an explicitly requested test, with reliability attention. ${discoveryContext}`);
     assert(scout.result.status === "proposal" && scout.result.baseSha === m.baseSha
       && scout.result.runtimeFingerprint === m.runtimeFingerprint && scout.result.attentionClass === m.attentionClass, "scout_identity_or_proposal");
     const finding = scout.result.findings.find((item) => item.id === scout.result.recommendedId);
