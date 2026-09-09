@@ -1,0 +1,6 @@
+# Estado privado y efímero; conservar configuración compartida y briefs.
+config.local.json
+hook.cache.json
+hook.pending.json
+live/
+*.log
