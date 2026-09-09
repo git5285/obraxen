@@ -1,7 +1,7 @@
 export interface ToolUseInput {
   agent_type?: string;
   tool_name?: string;
-  tool_input?: Record<string, unknown>;
+  tool_input?: Record<string, unknown> | string;
 }
 
 export interface HookDenial {
