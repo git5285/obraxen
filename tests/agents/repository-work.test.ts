@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, realpathSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -76,8 +76,14 @@ describe("disabled repository adapter",()=>{
     expect(result).toMatchObject({enabled:false,changesTrust:false,acquiresLease:false,productionValidated:false});
   });
   it("run API refuses before touching a supplied candidate or host",()=>{
+    // Fixture setup has already finished. Neither disabled API may add any
+    // worktree, claim, lease or other file during the attempted execution.
+    const beforeFiles=readdirSync(root,{recursive:true}).sort();
+    const beforeWorktrees=git(join(root,"control"),["worktree","list","--porcelain"]);
     const code=`import assert from 'node:assert/strict';import {runRepositoryRole,runRepositoryCandidate} from './automation/agents/repository-cycle.mjs';import {runBoundRole} from './automation/agents/isolated-transport.mjs';const trap=new Proxy({},{get(){throw Error('touched candidate')}});await assert.rejects(runRepositoryRole(trap,'builder','', {codex:'/never-run'}),/repository_execution_disabled/);await assert.rejects(runRepositoryCandidate(trap),/repository_execution_disabled/);await assert.rejects(runBoundRole(trap,'builder','',{mode:'repository'}),/repository_execution_disabled/);console.log('disabled-before-access');`;
     expect(execFileSync(process.execPath,["--input-type=module","-e",code],{encoding:"utf8"})).toContain("disabled-before-access");
+    expect(readdirSync(root,{recursive:true}).sort()).toEqual(beforeFiles);
+    expect(git(join(root,"control"),["worktree","list","--porcelain"])).toBe(beforeWorktrees);
   });
   it("hook denies despite attempted environment activation and does not echo input",()=>{
     const result=execFileSync(process.execPath,["automation/agents/repository-work.mjs"],{encoding:"utf8",input:"private-canary",
