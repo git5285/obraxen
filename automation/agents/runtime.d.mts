@@ -20,6 +20,12 @@ export interface RuntimeInspection {
 
 export function readRuntimeContract(repo?: string): RuntimeContract;
 export function canonicalDependencyTree(value: unknown): Record<string, unknown>;
+export function inspectDependencyTree(result: { status: number | null; stdout: string; stderr: string }): {
+  valid: boolean;
+  digest: string | null;
+  problems: string[];
+  error: string | null;
+};
 export function createRuntimeFingerprint(value: {
   nodeVersion: string;
   npmVersion: string;

@@ -104,7 +104,7 @@ export function validateWorkManifest(manifest, policy = loadPolicy()) {
   return manifest;
 }
 
-export function assertWorkOwnership(manifest, { now = Date.now(), policy = loadPolicy() } = {}) {
+export function inspectWorkOwnership(manifest, { now = Date.now(), policy = loadPolicy() } = {}) {
   validateWorkManifest(manifest, policy);
   assert(Date.parse(manifest.expiresAt) > now, "expired_manifest");
   assert(digest(readFileSync(manifest.hookPath)) === manifest.hookDigest, "hook_changed");
@@ -122,7 +122,7 @@ export function assertWorkOwnership(manifest, { now = Date.now(), policy = loadP
     assert(readLease(manifest.controlRoot, manifest.stateHome) === null, "discovery_lease_conflict");
     for (const command of manifest.commands)
       assert(digest(readFileSync(command.script)) === command.digest, "check_changed");
-    return true;
+    return runtime;
   }
   const own = claims.find((claim) => claim.threadId === manifest.threadId);
   assert(own && own.state === "en_curso" && own.claim.source === manifest.claimPath
@@ -137,6 +137,11 @@ export function assertWorkOwnership(manifest, { now = Date.now(), policy = loadP
   for (const path of manifest.readPaths) safeFile(manifest.worktree, path);
   for (const command of manifest.commands)
     assert(digest(readFileSync(command.script)) === command.digest, "check_changed");
+  return runtime;
+}
+
+export function assertWorkOwnership(manifest, options) {
+  inspectWorkOwnership(manifest, options);
   return true;
 }
 
