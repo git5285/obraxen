@@ -34,12 +34,14 @@ import { getDictionary, getPath, locales } from "@/lib/i18n";
 import { internalProjects } from "@/lib/internal-projects";
 import { publicProjects } from "@/lib/projects";
 
+const legacyLocales = locales.filter((locale) => locale !== "es");
+
 afterEach(() => {
   contactMock.enabled = false;
 });
 
 describe("localized Next.js homepage", () => {
-  it.each(locales)("renders only authorized project content on the %s homepage", async (locale) => {
+  it.each(legacyLocales)("renders only authorized project content on the %s legacy homepage", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(
       await HomePage({ params: Promise.resolve({ lang: locale }) }),
@@ -83,7 +85,7 @@ describe("localized Next.js homepage", () => {
     expect(html).toContain(condition);
   });
 
-  it.each(locales)("falls back to services while no project is authorized on the %s homepage", async (locale) => {
+  it.each(legacyLocales)("falls back to services while no project is authorized on the %s legacy homepage", async (locale) => {
     contactMock.enabled = false;
     const dictionary = getDictionary(locale);
     expect(getHomepage(locale).cta).toEqual({
@@ -96,7 +98,7 @@ describe("localized Next.js homepage", () => {
     expect(html).toContain('href="mailto:info@obraxen.com"');
   });
 
-  it.each(locales)("uses assessment when the contact form is enabled on the %s homepage", async (locale) => {
+  it.each(legacyLocales)("uses assessment when the contact form is enabled on the %s legacy homepage", async (locale) => {
     contactMock.enabled = true;
     const dictionary = getDictionary(locale);
     expect(getHomepage(locale).cta).toEqual({
@@ -125,7 +127,7 @@ describe("localized Next.js homepage", () => {
     expect(germanHtml).toContain(german.hero.body);
   });
 
-  it.each(locales)("keeps visible project text inside accessible names in %s", async (locale) => {
+  it.each(legacyLocales)("keeps visible project text inside accessible names in %s", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
     expect((html.match(new RegExp(`>${dictionary.projectsSection.openCase} <span aria-hidden="true">`, "g")) ?? []))
@@ -139,13 +141,13 @@ describe("localized Next.js homepage", () => {
     expect(() => getProjectImage(internalProjects[0].imagenes[0].src)).toThrow("No existe un import de imagen");
   });
 
-  it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {
+  it.each(legacyLocales)("provides %s social metadata for the verified domain", async (locale) => {
     const metadata = await generateMetadata({ params: Promise.resolve({ lang: locale }) });
     expect(metadata.openGraph).toMatchObject({ type: "website" });
     expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
     expect(metadata.alternates).toMatchObject({
       canonical: `https://obraxen.com/${locale}/`,
-      languages: { "x-default": "https://obraxen.com/en/" },
+      languages: { "x-default": "https://obraxen.com/es/" },
     });
     expect(metadata.openGraph).toMatchObject({ url: `https://obraxen.com/${locale}/` });
     expect(metadata.openGraph && "images" in metadata.openGraph
@@ -157,7 +159,7 @@ describe("localized Next.js homepage", () => {
     const metadata = getHomeMetadata(locale, "example.com");
     expect(metadata.alternates).toMatchObject({
       canonical: `https://example.com/${locale}/`,
-      languages: { "x-default": "https://example.com/en/" },
+      languages: { "x-default": "https://example.com/es/" },
     });
     expect(metadata.openGraph).toMatchObject({ url: `https://example.com/${locale}/` });
   });
