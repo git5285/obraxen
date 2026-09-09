@@ -1,4 +1,5 @@
 import type { AgentPolicy } from "./policy.mjs";
+import type { AuditorOutput } from "./contracts.mjs";
 
 export type GroupedAuthorizationAction =
   | "commit_candidate"
@@ -39,7 +40,7 @@ export interface GroupedAuthorizationBundle {
   }>;
 }
 
-export interface AuthorizationContext {
+export interface LegacyAuthorizationContext {
   schemaVersion: 1;
   candidateId: string;
   baseSha: string;
@@ -52,6 +53,20 @@ export interface AuthorizationContext {
     status: "passed";
     evidenceDigest: string;
   }>;
+}
+
+/** Required for all new reservations. Legacy context is read-only history. */
+export interface AuthorizationContext extends Omit<LegacyAuthorizationContext, "schemaVersion"> {
+  schemaVersion: 2;
+  candidateDigest: string;
+  runtimeFingerprint: string;
+  audit: {
+    builderId: string;
+    reviewerId: string;
+    completedAt: string;
+    candidateDigest: string;
+    output: AuditorOutput;
+  };
 }
 
 export type AuthorizationResult =

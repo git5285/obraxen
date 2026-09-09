@@ -12,9 +12,10 @@ handoffs y claims cerrados son historial, no lectura obligatoria de arranque.
 
 ## Ciclo obligatorio por tarea
 
-1. **Sincronizar:** comprueba `git status --short`, las reservas activas y los
-   últimos handoffs relacionados. Usa `operations.mjs status` como fuente de
-   estado; ejecuta `preflight.mjs` cuando la tarea vaya a editar dentro de un
+1. **Sincronizar:** comprueba `git status --short` y las reservas activas.
+   Usa `operations.mjs status` como fuente de estado. Consulta handoffs solo
+   cuando debas resolver propiedad, decisiones vigentes o dependencias del cambio.
+   Ejecuta `preflight.mjs` cuando la tarea vaya a editar dentro de un
    sistema con worktrees, leases o concurrencia que deba reconciliarse.
 2. **Reservar:** crea `.coordination/claims/<thread-id>.md` antes de editar y
    registralo una vez con `operations.mjs register`.

@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   existsSync,
   mkdtempSync,
@@ -101,7 +102,7 @@ function context(action: "commit" | "push" | "pr"): AuthorizationContext {
       ? ["committed_diff_policy", "local_quality", "activation_unchanged"]
       : ["remote_branch_matches_commit"];
   return {
-    schemaVersion: 1 as const,
+    schemaVersion: 2 as const,
     candidateId: "candidate-001",
     baseSha,
     branch: "codex/candidate-001",
@@ -109,6 +110,16 @@ function context(action: "commit" | "push" | "pr"): AuthorizationContext {
     changedPaths: ["src/example.ts", "tests/example.test.ts"],
     activationDigest,
     checks: checks.map((checkId) => ({ checkId, status: "passed" as const, evidenceDigest })),
+    candidateDigest: "e".repeat(64),
+    runtimeFingerprint: "f".repeat(64),
+    audit: {
+      builderId: "fixture-builder-001", reviewerId: "fixture-auditor-002",
+      completedAt: "2026-07-18T12:01:00Z", candidateDigest: "e".repeat(64),
+      output: {schemaVersion: 4, verdict: "pass", attentionClass: "product",
+        runId: "fixture-review-001", candidateId: "candidate-001", baseSha,
+        runtimeFingerprint: "f".repeat(64), findings: [], verifiedChecks: ["fixture local check"],
+        reason: "Independent deterministic fixture evidence; not a model review"},
+    },
   };
 }
 
@@ -137,6 +148,21 @@ function reserve(
   });
 }
 
+// Build legacy fixture bytes without asking the new API to grant legacy authority.
+function legacyReservation(repo: string, state: string, action: "commit" | "push" | "pr") {
+  const file = join(getAuthorizationPaths(repo, state).events, bundle().authorizationId, `reserve-${action}-001.json`);
+  const event = JSON.parse(readFileSync(file, "utf8"));
+  event.context.schemaVersion = 1;
+  for (const key of ["audit", "candidateDigest", "runtimeFingerprint"]) delete event.context[key];
+  const canonical = (v: unknown): unknown => Array.isArray(v) ? v.map(canonical)
+    : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => a.localeCompare(b)).map(([k, x]) => [k, canonical(x)])) : v;
+  const hash = (v: unknown) => createHash("sha256").update(JSON.stringify(canonical(v))).digest("hex");
+  event.contextDigest = hash(event.context);
+  event.eventDigest = hash(Object.fromEntries(Object.entries(event).filter(([k]) => !["recordedAt", "eventDigest"].includes(k))));
+  writeFileSync(file, JSON.stringify(event));
+  return file;
+}
+
 afterEach(() => {
   for (const directory of temporaryDirectories.splice(0)) {
     rmSync(directory, { recursive: true, force: true });
@@ -144,6 +170,82 @@ afterEach(() => {
 });
 
 describe("grouped human authorizations", () => {
+  it.each(["commit", "push", "pr"] as const)("creates zero %s reservations without a prior matching independent pass", (action) => {
+    const repo = repository(), state = stateHome();
+    const original = bundle(), index = {commit: 0, push: 1, pr: 2}[action];
+    const selected = {...original, candidate: {...original.candidate, commitSha: action === "commit" ? null : commitSha},
+      steps: original.steps.slice(index)};
+    const options = {repo, stateHome: state, now: new Date("2026-07-18T12:02:00Z")};
+    registerAuthorizationBundle(selected, options);
+    const valid = context(action);
+    const invalid: unknown[] = [
+      {...valid, schemaVersion: 1},
+      {...valid, audit: undefined},
+      {...valid, audit: {...valid.audit, reviewerId: valid.audit.builderId}},
+      {...valid, audit: {...valid.audit, completedAt: "2026-07-18T12:03:00Z"}},
+      {...valid, audit: {...valid.audit, candidateDigest: "0".repeat(64)}},
+      ...["veto", "needs_human"].map(verdict => ({...valid, audit: {...valid.audit,
+        output: {...valid.audit.output, verdict, findings: [{severity: "high", source: "fixture:1", finding: "not approved"}]}}})),
+      ...[{candidateId: "another-candidate"}, {baseSha: "0".repeat(40)}, {runtimeFingerprint: "0".repeat(64)}, {verifiedChecks: []}]
+        .map(change => ({...valid, audit: {...valid.audit, output: {...valid.audit.output, ...change}}})),
+    ];
+    for (const value of invalid) {
+      expect(() => inspectAuthorizationStep(selected.authorizationId, value, options)).toThrow();
+      expect(() => reserveAuthorizationStep({...options, authorizationId: selected.authorizationId,
+        context: value, eventId: "must-not-reserve", occurredAt: "2026-07-18T12:02:00Z"})).toThrow();
+      expect(readAuthorizationStatus(selected.authorizationId, options)).toMatchObject({status: "pending", eventCount: 0});
+    }
+    expect(inspectAuthorizationStep(selected.authorizationId, valid, options)).toMatchObject({canReserve: true});
+  });
+
+  it("rejects content drift after commit even if a different diff has a passing audit", () => {
+    const repo = repository(), state = stateHome(); register(repo, state);
+    const first = reserve(repo, state, "commit", 2);
+    completeAuthorizationStep({authorizationId: bundle().authorizationId, reservationToken: first.reservationToken,
+      result: {commitSha}, eventId: "commit-drift-fixture", occurredAt: "2026-07-18T12:03:00Z",
+      repo, stateHome: state, now: new Date("2026-07-18T12:03:00Z")});
+    const next = context("push"); next.candidateDigest = "0".repeat(64); next.audit.candidateDigest = next.candidateDigest;
+    expect(() => reserveAuthorizationStep({authorizationId: bundle().authorizationId, context: next,
+      eventId: "drift-must-not-reserve", occurredAt: "2026-07-18T12:04:00Z", repo, stateHome: state,
+      now: new Date("2026-07-18T12:04:00Z")})).toThrow("content drifted");
+    expect(readAuthorizationStatus(bundle().authorizationId, {repo, stateHome: state,
+      now: new Date("2026-07-18T12:04:00Z")})).toMatchObject({eventCount: 2, status: "pending"});
+  });
+
+  it("reads legacy reservation history unchanged but rejects new completion without audit", () => {
+    const repo = repository(), state = stateHome(); register(repo, state);
+    const first = reserve(repo, state, "commit", 2);
+    const file = legacyReservation(repo, state, "commit");
+    const before = readFileSync(file, "utf8"), options = {repo, stateHome: state, now: new Date("2026-07-18T12:03:00Z")};
+    expect(readAuthorizationStatus(bundle().authorizationId, options)).toMatchObject({status: "reserved", eventCount: 1});
+    expect(() => completeAuthorizationStep({...options, authorizationId: bundle().authorizationId,
+      reservationToken: first.reservationToken, result: {commitSha}, eventId: "legacy-must-not-complete",
+      occurredAt: "2026-07-18T12:03:00Z"})).toThrow("independent audit evidence");
+    expect(readFileSync(file, "utf8")).toBe(before);
+    expect(readAuthorizationStatus(bundle().authorizationId, options)).toMatchObject({eventCount: 1});
+  });
+
+  it("preserves completed legacy chains and permits a reviewed v2 continuation of completed legacy steps", () => {
+    const repo = repository(), state = stateHome(); register(repo, state);
+    const retained: Array<[string, string]> = [];
+    for (const [index, action] of (["commit", "push", "pr"] as const).entries()) {
+      const minute = 2 + index * 2, reservation = reserve(repo, state, action, minute);
+      const result = action === "commit" ? {commitSha} : action === "push"
+        ? {remote: "origin" as const, branch: "codex/candidate-001", commitSha}
+        : {number: 42, url: `${origin.slice(0, -4)}/pull/42`, headSha: commitSha};
+      completeAuthorizationStep({authorizationId: bundle().authorizationId, reservationToken: reservation.reservationToken,
+        result, eventId: `complete-${action}-legacy-fixture`, occurredAt: `2026-07-18T12:0${minute + 1}:00Z`,
+        repo, stateHome: state, now: new Date(`2026-07-18T12:0${minute + 1}:00Z`)});
+      for (const [file, bytes] of retained) expect(readFileSync(file, "utf8")).toBe(bytes);
+      const file = legacyReservation(repo, state, action); retained.push([file, readFileSync(file, "utf8")]);
+      expect(readAuthorizationStatus(bundle().authorizationId, {repo, stateHome: state,
+        now: new Date(`2026-07-18T12:0${minute + 1}:00Z`)})).toMatchObject({
+        status: action === "pr" ? "completed" : "pending", eventCount: (index + 1) * 2,
+      });
+    }
+    for (const [file, bytes] of retained) expect(readFileSync(file, "utf8")).toBe(bytes);
+  });
+
   it("bounds exact human delivery at twenty paths without widening autonomous diffs", () => {
     const policy = loadPolicy();
     expect(policy.limits.maxChangedFiles).toBe(8);
