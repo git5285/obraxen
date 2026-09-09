@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-09T16:24:01.105Z",
+  "title": "Sistema de diseño: Obraxen",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Naranja de marca" },
+      "primary-dark": { "role": "primary", "displayName": "Naranja para texto y acción" },
+      "primary-light": { "role": "primary", "displayName": "Naranja claro de foco sobre oscuro" },
+      "ink": { "role": "neutral", "displayName": "Tinta" },
+      "background": { "role": "neutral", "displayName": "Blanco" },
+      "muted": { "role": "neutral", "displayName": "Texto secundario" },
+      "concrete": { "role": "neutral", "displayName": "Hormigón claro" },
+      "line": { "role": "neutral", "displayName": "Separador" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Titulares", "purpose": "Jerarquía de secciones; los tamaños dependen de la composición y viewport." },
+      "body": { "displayName": "Lectura", "purpose": "Cuerpo compartido; los legales usan line-height 1.65." },
+      "label": { "displayName": "Acciones", "purpose": "Texto del CTA principal." }
+    },
+    "shadows": [
+      { "name": "consent-banner", "value": "0 24px 70px rgb(from var(--brand-shadow) r g b / 0.28)", "purpose": "Banner de consentimiento." },
+      { "name": "privacy-control", "value": "0 8px 24px rgb(from var(--brand-shadow) r g b / 0.16)", "purpose": "Control persistente de privacidad." },
+      { "name": "consent-dialog", "value": "0 28px 90px rgb(from var(--brand-shadow) r g b / 0.35)", "purpose": "Panel de preferencias." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Transiciones de interfaz." },
+      { "name": "dur-fast", "value": "150ms", "purpose": "Hover y menú." },
+      { "name": "dur-base", "value": "250ms", "purpose": "Barra sticky." },
+      { "name": "dur-slow", "value": "400ms", "purpose": "Token disponible; no impone animaciones nuevas." }
+    ],
+    "breakpoints": [
+      { "name": "home-language-upper", "value": "1200px" },
+      { "name": "legal-language", "value": "900px" },
+      { "name": "home-and-projects", "value": "860px" },
+      { "name": "consent-banner", "value": "767px" },
+      { "name": "case", "value": "760px" },
+      { "name": "consent-dialog", "value": "720px" },
+      { "name": "home-and-legal", "value": "620px" },
+      { "name": "projects-mosaic", "value": "520px" },
+      { "name": "home-title", "value": "360px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "CTA principal", "kind": "button", "refersTo": "button-primary",
+      "description": "Acción principal; muestra visual sin destino de envío.",
+      "html": "<button type=\"button\" class=\"ds-primary\">Consultar <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:48px;padding:12px 22px;border:1px solid transparent;border-radius:var(--radius-sm);font:700 .875rem var(--font-sans);background:var(--brand-primary-dark);color:var(--brand-on-dark);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard)}.ds-primary:hover{background:var(--brand-ink)}.ds-primary:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Campo de contacto", "kind": "input", "refersTo": "input",
+      "description": "Campo etiquetado; el formulario real solo aparece si su puerta está abierta.",
+      "html": "<label class=\"ds-label\" for=\"ds-name\">Nombre</label><input class=\"ds-input\" id=\"ds-name\" type=\"text\" autocomplete=\"off\">",
+      "css": ".ds-label{display:block;font:650 .875rem var(--font-sans);color:var(--brand-ink);margin:0 0 8px}.ds-input{box-sizing:border-box;width:100%;border:1px solid var(--brand-muted);border-radius:var(--radius-sm);padding:12px;font:inherit;background:var(--brand-bg);color:var(--brand-ink)}.ds-input:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}"
+    },
+    {
+      "name": "Enlace de navegación", "kind": "nav", "refersTo": "navigation-link",
+      "description": "Tratamiento del enlace en la cabecera de portada.",
+      "html": "<nav aria-label=\"Muestra de navegación\"><a class=\"ds-nav\" href=\"#ds-services\">Servicios</a></nav>",
+      "css": ".ds-nav{display:inline-block;padding:12px 10px;font:650 .8125rem var(--font-sans);color:var(--brand-ink);text-decoration:none;white-space:nowrap}.ds-nav:hover{color:var(--brand-primary-dark)}.ds-nav:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}"
+    },
+    {
+      "name": "Idioma actual", "kind": "nav", "refersTo": "language-current",
+      "description": "Estado seleccionado del selector de idioma.",
+      "html": "<a class=\"ds-language\" href=\"#ds-current\" aria-current=\"page\" lang=\"es\">ES</a>",
+      "css": ".ds-language{display:inline-block;padding:10px 8px;border-radius:var(--radius-sm);font:750 .7rem var(--font-sans);text-decoration:none;white-space:nowrap;background:var(--brand-primary-dark);color:var(--brand-surface)}.ds-language:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}"
+    },
+    {
+      "name": "Tarjeta de proyecto", "kind": "card", "refersTo": "project-card",
+      "description": "Estructura de cuerpo sin fotografías ni datos de un cliente inventado. En la web la tarjeta depende de evidencia publicable.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-body\"><h3>Muestra de estructura</h3><p>Contenido de un expediente autorizado.</p><a href=\"#ds-case\">Ver expediente</a></div></article>",
+      "css": ".ds-card{border:1px solid var(--brand-line);border-radius:var(--radius-md);overflow:hidden;font-family:var(--font-sans);color:var(--brand-ink)}.ds-card-body{padding:24px}.ds-card h3{margin:0 0 16px;font-weight:700;line-height:1.12}.ds-card p{color:var(--brand-muted)}.ds-card a{display:inline-block;margin-top:24px;font-weight:650;color:inherit}.ds-card a:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}"
+    },
+    {
+      "name": "Pregunta frecuente", "kind": "custom",
+      "description": "Acordeón nativo de la portada.",
+      "html": "<details class=\"ds-faq\"><summary>Pregunta de muestra</summary><p>Respuesta ilustrativa del patrón, sin afirmaciones comerciales.</p></details>",
+      "css": ".ds-faq{border-top:1px solid var(--brand-line-strong);font-family:var(--font-sans);color:var(--brand-ink)}.ds-faq summary{cursor:pointer;list-style:none;padding:24px 0;font-weight:650;font-size:.9375rem;display:flex;justify-content:space-between;gap:24px}.ds-faq summary::-webkit-details-marker{display:none}.ds-faq summary::after{content:'+';color:var(--brand-primary-dark);font-size:1.25rem}.ds-faq[open] summary::after{content:'−'}.ds-faq p{padding:0 32px 24px 0;font-size:.9375rem;color:var(--brand-muted)}.ds-faq summary:focus-visible{outline:3px solid var(--brand-primary-dark);outline-offset:5px}"
+    }
+  ],
+  "narrative": {
+    "overview": "Industrial, clara y basada en evidencia real.",
+    "keyCharacteristics": ["Fondo mayoritariamente blanco, texto oscuro y un único acento naranja.", "Fotografía de obra como prueba, no como decoración ni material generado.", "Rejillas y bandas editoriales antes que tarjetas genéricas de producto SaaS."],
+    "rules": [],
+    "dos": [],
+    "donts": []
+  }
+}
