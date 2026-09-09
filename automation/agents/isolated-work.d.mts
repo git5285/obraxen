@@ -14,5 +14,6 @@ export function cleanGitEnvironment(environment?: NodeJS.ProcessEnv): NodeJS.Pro
 export function safeFile(root: string, path: string, options?: { missing?: boolean }): string;
 export function validateWorkManifest(manifest: WorkManifest, policy?: unknown): WorkManifest;
 export function assertWorkOwnership(manifest: WorkManifest, options?: { now?: number; policy?: unknown }): true;
+export function inspectWorkOwnership(manifest: WorkManifest, options?: { now?: number; policy?: unknown }): import("./runtime.mjs").RuntimeInspection;
 export function inspectPatch(patch: string, manifest: WorkManifest): string[];
 export function evaluateWorkTool(input: unknown, role: string, manifest: WorkManifest, verify?: (manifest: WorkManifest) => unknown): true;

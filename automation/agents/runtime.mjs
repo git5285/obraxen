@@ -4,6 +4,7 @@ import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { decodeRuntimeProbes, PROBE_TRANSPORT_BYTES } from "./runtime-probe.mjs";
 
 const SHA256 = /^[0-9a-f]{64}$/;
 
@@ -90,42 +91,76 @@ function run(binary, args, options = {}) {
     cwd: options.cwd,
     encoding: "utf8",
     env: { ...process.env, PATH: runtimePath(options.nodeBinary) },
-    maxBuffer: 16 * 1024 * 1024,
+    maxBuffer: options.maxBuffer ?? 16 * 1024 * 1024,
     stdio: options.stdio ?? ["ignore", "pipe", "pipe"],
   });
 }
 
-function dependencyInspection(repo, nodeBinary) {
-  const result = run(npmBinary(nodeBinary), ["ls", "--all", "--json"], {
-    cwd: repo,
-    nodeBinary,
-  });
-  let tree = null;
+export function inspectDependencyTree(result) {
+  const problems = [];
+  let digest = null;
   try {
-    tree = JSON.parse(result.stdout || "null");
+    const tree = JSON.parse(result.stdout || "null");
+    const record = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+    const pending = [tree];
+    while (pending.length > 0) {
+      const node = pending.pop();
+      if (!record(node)) throw new Error("invalid dependency node");
+      if (Object.hasOwn(node, "version") && (typeof node.version !== "string" || !node.version.trim()))
+        throw new Error("invalid dependency version");
+      if (Object.hasOwn(node, "problems")) {
+        if (!Array.isArray(node.problems) || node.problems.some((problem) => typeof problem !== "string"))
+          throw new Error("invalid dependency problems");
+        for (const problem of node.problems) problems.push(problem);
+      }
+      if (Object.hasOwn(node, "error") || ["missing", "invalid", "extraneous"]
+        .some((flag) => Object.hasOwn(node, flag) && node[flag] !== false))
+        throw new Error("dependency error marker");
+      if (Object.hasOwn(node, "dependencies")) {
+        if (!record(node.dependencies)) throw new Error("invalid dependency map");
+        for (const [name, dependency] of Object.entries(node.dependencies)) {
+          if (!name.trim()) throw new Error("invalid dependency name");
+          pending.push(dependency);
+        }
+      }
+    }
+    // Empty nodes are valid for unavailable optional dependencies. Unknown npm
+    // metadata is ignored, preserving the existing canonical digest for valid trees.
+    if (result.status === 0 && problems.length === 0)
+      digest = sha256(JSON.stringify(canonicalDependencyTree(tree)));
   } catch {
-    // The exit status and parse blocker below retain the failure without trusting prose.
+    // Parsing, shape validation and canonicalization all fail closed, including
+    // excessively deep input that cannot be canonicalized safely.
   }
-  const problems = Array.isArray(tree?.problems) ? tree.problems : [];
-  const valid = result.status === 0 && tree && problems.length === 0;
+  const valid = digest !== null;
   return {
     valid,
     problems,
-    digest: tree ? sha256(JSON.stringify(canonicalDependencyTree(tree))) : null,
+    digest,
     error: valid ? null : (result.stderr || "npm dependency tree is invalid").trim(),
   };
 }
 
-function nativeInspection(repo, nodeBinary) {
-  const result = run(nodeBinary, [
-    "--input-type=module",
-    "--eval",
-    "await import('rolldown')",
-  ], { cwd: repo, nodeBinary });
+function nativeInspection(result) {
   return {
     valid: result.status === 0,
     error: result.status === 0 ? null : (result.stderr || "rolldown native binding failed").trim(),
   };
+}
+
+function runtimeProbes(repo, nodeBinary, request) {
+  if (!Object.values(request).some(Boolean)) return {};
+  const failed = { status: null, stdout: "", stderr: "runtime probe failed" };
+  const result = run(nodeBinary, [fileURLToPath(new URL("./runtime-probe.mjs", import.meta.url)),
+    JSON.stringify(request)], { cwd: repo, nodeBinary, maxBuffer: PROBE_TRANSPORT_BYTES });
+  let parsed;
+  try { parsed = result.status === 0 ? decodeRuntimeProbes(result.stdout) : null; } catch { parsed = null; }
+  return Object.fromEntries(Object.keys(request).filter((key) => request[key]).map((key) => {
+    const value = parsed?.[key];
+    const valid = value && (value.status === null || Number.isInteger(value.status))
+      && typeof value.stdout === "string" && typeof value.stderr === "string";
+    return [key, valid ? value : failed];
+  }));
 }
 
 export function inspectRuntime(repo = process.cwd(), options = {}) {
@@ -146,18 +181,21 @@ export function inspectRuntime(repo = process.cwd(), options = {}) {
 
   const nodeBinary = options.nodeBinary ?? process.execPath;
   const nodeVersion = options.nodeVersion ?? process.version.replace(/^v/, "");
+  const probes = runtimeProbes(root, nodeBinary, {
+    npm: !options.npmVersion, dependencies: options.dependencies == null, native: options.native == null,
+  });
   const npmResult = options.npmVersion
     ? { status: 0, stdout: `${options.npmVersion}\n`, stderr: "" }
-    : run(npmBinary(nodeBinary), ["--version"], { cwd: root, nodeBinary });
+    : probes.npm;
   const npmVersion = String(npmResult.stdout ?? "").trim() || null;
   if (nodeVersion !== contract.nodeVersion) blockers.push("node_version_mismatch");
   if (npmResult.status !== 0 || npmVersion !== contract.npmVersion) blockers.push("npm_version_mismatch");
 
-  const dependencies = options.dependencies ?? dependencyInspection(root, nodeBinary);
+  const dependencies = options.dependencies ?? inspectDependencyTree(probes.dependencies);
   if (!dependencies.valid || !SHA256.test(dependencies.digest ?? "")) {
     blockers.push("dependency_tree_invalid");
   }
-  const native = options.native ?? nativeInspection(root, nodeBinary);
+  const native = options.native ?? nativeInspection(probes.native);
   if (!native.valid) blockers.push("native_binding_invalid");
 
   let fingerprint = null;
