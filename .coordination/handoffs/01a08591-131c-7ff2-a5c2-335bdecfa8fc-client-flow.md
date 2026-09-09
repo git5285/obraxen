@@ -1,0 +1,15 @@
+# Handoff: cinco correcciones del recorrido para clientes
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-client-flow
+- terminado: 2026-09-09 Europe/Madrid
+- resultado: cinco requisitos implementados y comprobados en architecture-local-20260907.
+- archivos_cambiados: css/architecture.css; src/components/architecture-home.tsx; src/components/architecture-controls.tsx; src/app/[lang]/architecture-preview/page.tsx; tests/architecture-preview.test.tsx.
+- contacto: aviso antes del primer campo, formulario identificado como demostración, botón secundario Revisar ejemplo y Resumen de demostración; correo real conserva CTA naranja. Sin envío ni persistencia.
+- fichas: ArchitectureSheetLink abre la ficha elegida, cierra las demás, actualiza el fragmento y enfoca su summary. Probadas cinco fichas con Enter y cambio con ratón.
+- franja: prioridad comercial Europa occidental, localidad/uso/daño y respuesta 24 horas laborables; fuentes architecture-content.ts y campos existentes, sin ampliar cobertura o promesas.
+- casos: problema completo y primera frase del resultado documentado visibles; descripción técnica y magnitudes en Ver caso. Se conserva el resultado íntegro al desplegar, fotos y advertencia sobre encuadres.
+- blog: ausente de sección y navegación por defecto; conservado en ?review=editorial#blog, con retorno a ?review=client#architecture. Continúan los mismos guards development/local-only/no VERCEL/es; no acceso público nuevo.
+- verificaciones: 25 tests focales pasan; ESLint de archivos afectados y tsc --noEmit pasan; detector Impeccable sin hallazgos; git diff --check pasa. Navegador: /tmp/obraxen-client-flow-report.json; cinco fichas con teclado, ratón, foco, aviso anterior a campos, resumen de demo, cero POST de aplicación, vistas cliente/editorial y retorno, datos visibles/ocultos por caso, 320/390/768/1024/1440 con fuente medida 16/32px sin overflow, Axe 0, pageerror 0.
+- evidencia_visual: /tmp/obraxen-client-flow-1440.png y /tmp/obraxen-client-flow-390.png; contacto /tmp/obraxen-client-contact-390.png. Capturas inspeccionadas.
+- preservacion: baseline anterior en /tmp/obraxen-client-fixes.5x9cKE; next-env.d.ts mantiene 0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc; architecture-content.ts mantiene 872451bfb7fc957299fb4794b593f050a70f9582a2d4fcb50406ca03336ee8d0. Claims ajenas del control sobre agentes/dependencias no se tocaron.
+- pendiente: no se ejecutó Quality gate completo ni build de producción en esta pasada de preview; Safari/Firefox y zoom nativo no comprobados. No commit/push/PR/merge/despliegue. Servidor local existente 127.0.0.1:3011 conservado.
+- mensaje_enviado_a: usuario de esta tarea.

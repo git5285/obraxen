@@ -46,7 +46,7 @@ describe("localized foundation routes", () => {
       de: "/de/projekte/blitz-bremen/",
       es: "/es/proyectos/blitz-bremen/",
       fr: "/fr/projets/blitz-bremen/",
-      "x-default": "/en/projects/blitz-bremen/",
+      "x-default": "/es/proyectos/blitz-bremen/",
     });
     expect(localizePath("/de/projekte/blitz-bremen/", "fr"))
       .toBe("/fr/projets/blitz-bremen/");
@@ -61,7 +61,7 @@ describe("localized foundation routes", () => {
           de: "https://example.com/de/projekte/blitz-bremen/",
           es: "https://example.com/es/proyectos/blitz-bremen/",
           fr: "https://example.com/fr/projets/blitz-bremen/",
-          "x-default": "https://example.com/en/projects/blitz-bremen/",
+          "x-default": "https://example.com/es/proyectos/blitz-bremen/",
         },
       });
   });

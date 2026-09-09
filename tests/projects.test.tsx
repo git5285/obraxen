@@ -118,7 +118,7 @@ describe("localized project routes", () => {
       expect(metadata.alternates).toMatchObject({
         canonical: `https://example.com/${locale}/${routeSegments[locale][route]}/`,
         ...(isRouteReadyForIndexing(route) ? { languages: {
-          "x-default": `https://example.com/en/${routeSegments.en[route]}/`,
+          "x-default": `https://example.com/es/${routeSegments.es[route]}/`,
         } } : {}),
       });
     }

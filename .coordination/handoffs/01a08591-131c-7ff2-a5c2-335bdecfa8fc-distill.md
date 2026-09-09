@@ -1,0 +1,24 @@
+# Handoff: Menos ruido visual
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-distill
+- terminado: 2026-09-09 Europe/Madrid
+- resultado: Ajuste completado solo en css/architecture.css de architecture-local-20260907.
+- archivos_cambiados: css/architecture.css.
+- decisiones:
+  - Retirar separadores verticales de la franja informativa: columnas y alineación expresan la relación.
+  - Retirar línea duplicada bajo el título Fichas técnicas; conservar límites de acordeón.
+  - Retirar bordes dentro de listas de datos; mantener etiqueta/valor y separación de grupos.
+  - Retirar líneas encima de fotografías; pies e imágenes permanecen agrupados.
+  - Retirar marcos de aviso y resumen; conservar fondo, encabezado y texto.
+  - Estado vacío sin doble borde; texto completo y separación conservados.
+  - No se cambió ni ocultó texto, imagen, icono, acción o estructura DOM. No se añadió progressive disclosure.
+- verificaciones:
+  - Vitest 26/26; detector sin hallazgos; git diff --check sin errores.
+  - Componentes y next-env.d.ts mantienen checksum anterior.
+  - 20 pares etiqueta/valor visibles y ordenados comprobados en 390 y 1440px.
+  - Fichas y enlaces conservan subrayado, flecha y objetivos de 44/48px.
+  - Teclado, foco, fichas, demo y editorial aprobados; cero POST aplicación y cero pageerror.
+  - Responsive 320,390,768,1024,1440 con texto 16/32px sin overflow; Axe cero infracciones.
+  - Capturas inspeccionadas /tmp/obraxen-distill-sheet-390.png y /tmp/obraxen-distill-case-1440.png.
+  - Evidencia /tmp/obraxen-distill-report.json y /tmp/obraxen-client-flow-report.json.
+- pendiente: Validación con usuarios para medir facilidad percibida; no se afirma mejora de tiempo de tarea medida. Sin publicación.
+- mensaje_enviado_a: 01a08591-131c-7ff2-a5c2-335bdecfa8fc
