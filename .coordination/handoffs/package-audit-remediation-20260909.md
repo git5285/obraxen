@@ -1,0 +1,32 @@
+# Handoff: remediación de dependencias y calidad
+- thread_id: package-audit-remediation-20260909
+- terminado: 2026-09-09 22:35 Europe/Madrid
+- resultado: Se aplicaron los cinco cambios aprobados de seguridad, runtime, Lighthouse, simplificación y actualización compatible de dependencias.
+- archivos_cambiados:
+  - package.json
+  - package-lock.json
+  - .gitignore
+  - eslint.config.mjs
+  - README.md
+  - scripts/check-lighthouse.mjs
+  - .github/workflows/quality.yml
+  - tests/security-policy.test.ts
+- verificaciones:
+  - node automation/agents/runtime.mjs install: árbol reproducible y runtime válido con Node 24.18.0/npm 11.16.0.
+  - npm run check:security: 0 vulnerabilidades con umbral moderate.
+  - npm run lint y npm run typecheck: correctos.
+  - npm run test -- --reporter=dot: 40 archivos y 685 pruebas correctas con Vitest 5.0.0.
+  - npm run build: correcto; Next.js generó 28 rutas.
+  - npm run test:e2e:contact: 2 pruebas correctas.
+  - npm run test:e2e por proyecto: móvil 47 correctas/4 omitidas, escritorio Chromium 40 correctas/11 omitidas y smoke WebKit 1 correcta.
+  - Informes Lighthouse de /en/ y /de/projekte/: métricas dentro de los presupuestos configurados.
+  - git diff --check sobre el alcance: correcto.
+- decisiones:
+  - React, React DOM, tipos React, Zod, Playwright, Axe, Vitest y Lighthouse se actualizaron a versiones exactas compatibles; Lighthouse queda en 13.4.1 por el advisory moderado de 13.4.0.
+  - Lighthouse pasa a devDependency bloqueada. El script ya no descarga mediante npx y CI elimina el instalador efímero y su caché.
+  - ESLint permanece en 9.39.5: eslint-plugin-import, eslint-plugin-jsx-a11y y eslint-plugin-react incluidos por eslint-config-next 16.3.4 no aceptan ESLint 10.
+  - TypeScript permanece en 6.0.3: las dependencias de TypeScript ESLint bloqueadas no admiten TypeScript 7.
+  - La seguridad bloquea vulnerabilidades moderadas o superiores.
+- pendiente:
+  - Ninguno para este alcance. Actualizar ESLint o TypeScript exige que eslint-config-next y sus plugins publiquen pares compatibles.
+- mensaje_enviado_a: usuario
