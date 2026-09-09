@@ -1,0 +1,26 @@
+# Handoff: Color por función
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-color
+- terminado: 2026-09-09 Europe/Madrid
+- resultado: Armonización local completada en architecture-local-20260907; solo css/architecture.css.
+- archivos_cambiados: css/architecture.css.
+- decisiones:
+  - Superficie: conservar brand-bg/concrete e ink para contacto; demo-notice y review comparten ink-panel y borde muted.
+  - Texto: ink y muted para jerarquía clara; on-dark en paneles oscuros.
+  - Acción: primario sólido solo CTA; fichas secundarias neutras subrayadas, hover primary-dark igual que otros enlaces secundarios.
+  - Selección: brand-selection + ink sustituye naranja/blanco; fichas abiertas con concrete, subrayado, peso y flecha; menú abierto con concrete.
+  - Foco: variable contextual --ar-focus-color mapea ink/on-dark, conservando outline de 3px.
+  - Bordes: líneas decorativas existentes conservadas; borde del botón menú usa muted, contrastado.
+  - Estados: demostración y resumen identificados mediante encabezado y texto. No se introduce falso éxito de envío: no hay envío real; permanece No se ha enviado ninguna solicitud. Error nativo conserva mensaje específico y foco. Selección/open tiene flecha y subrayado además del fondo. Disabled conserva atributo nativo y tratamiento previo.
+  - Todos los hex literales de architecture.css reemplazados por tokens de marca equivalentes; no nueva paleta ni cambios globales de tokens.
+- verificaciones:
+  - /tmp/obraxen-color-report.json: 15 combinaciones computadas; CTA 3.56:1 (19px/700), enlace 17.75:1, hover 5.18:1, selección 15.49:1, abierto 16.07:1, panel oscuro 16.10:1, borde menú 6.02:1.
+  - Error real: Escribe tu nombre., valid=false, campo enfocado; revisión correcta muestra resumen y texto no enviado.
+  - Axe con formulario revisado y desplegables abiertos: cero infracciones.
+  - Flujo completo local: teclado, fichas, demo y editorial pasan; cero POST aplicación/pageerror.
+  - Responsive a 320,390,768,1024,1440 con fuentes16/32px sin overflow.
+  - Simulación deuteranopía inspeccionada; señales textuales y formas se conservan.
+  - Vitest 26/26; detector sin hallazgos; git diff --check sin errores; ningún literal hexadecimal permanece.
+  - Capturas: /tmp/obraxen-color-contact.png; /tmp/obraxen-color-deuteranopia.png; /tmp/obraxen-client-contact-1440.png.
+  - next-env.d.ts y ambos componentes preservados por checksum.
+- pendiente: Prueba manual de tecnologías de asistencia/plataformas distintas; validación nativa depende del navegador. No publicación ni despliegue.
+- mensaje_enviado_a: 01a08591-131c-7ff2-a5c2-335bdecfa8fc
