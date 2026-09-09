@@ -19,12 +19,14 @@ describe("repository security policy", () => {
     expect(result.stdout.split("\0").filter(Boolean).sort()).toEqual([...secrets].sort());
   });
 
-  it("checks the full lockfile for high severity advisories in local and remote gates", () => {
+  it("checks the full lockfile for moderate or higher advisories in local and remote gates", () => {
     const manifest = JSON.parse(readFileSync("package.json", "utf8"));
     expect(manifest.scripts["check:security"]).toBe(
-      "npm audit --audit-level=high --package-lock-only --ignore-scripts --include=dev --include=optional --include=peer",
+      "npm audit --audit-level=moderate --package-lock-only --ignore-scripts --include=dev --include=optional --include=peer",
     );
-    expect(manifest.scripts["check:quality"].split(" && ")).toContain("npm run check:security");
+    expect(manifest.scripts["check:quality"].split(" && ")).toContain(
+      "node automation/agents/runtime.mjs exec -- npm run check:security",
+    );
     const workflow = readFileSync(".github/workflows/quality.yml", "utf8");
     expect(workflow).toMatch(/name: Audit production and development dependencies\s+run: npm run check:security/);
   });

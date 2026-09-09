@@ -63,7 +63,9 @@ Next.js.
 
 ## Desarrollo y calidad
 
-Requiere Node `24.x`, fijado en `.nvmrc` y `package.json`.
+Requiere Node `24.18.0` y npm `11.16.0`, fijados en `.nvmrc` y
+`package.json`. Los scripts seleccionan ese runtime antes de ejecutar sus
+herramientas; instala el árbol bloqueado con `npm ci` antes de usarlos.
 
 ```sh
 npm ci
