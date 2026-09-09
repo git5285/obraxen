@@ -1,0 +1,28 @@
+# Handoff: Apple/Sika/BECOSAN/Stripe a la preview
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-references
+- terminado: 2026-09-09 Europe/Madrid
+- resultado: Tres cambios implementados en la portada privada architecture-local-20260907, con comparativa verificable.
+- archivos_cambiados: css/architecture.css; src/components/architecture-home.tsx; tests/architecture-preview.test.tsx.
+- decisiones:
+  - Apple: jerarquía editorial, separación texto/imagen y ritmo. Hero 56px escritorio/40px móvil, texto oscuro sobre blanco y caption explícito de imagen generada. No se copian fondo negro, degradados, carruseles ni assets.
+  - Sika/BECOSAN: cinco necesidades visibles conectadas con los nombres de servicios y textos técnicos existentes; enlace a condiciones por sector. Imágenes ilustrativas identificadas. No se agregan sistemas, promesas o servicios ajenos.
+  - Stripe: secuencia problema/intervención/resultado visible; intervención completa movida, no duplicada; fotos documentadas ampliadas y CTA de contacto al terminar casos. Materiales, duración y resultado completo conservados en details.
+  - Familias, logotipo, colores, condiciones de alcance y datos fuente intactos. Cabecera y controles existentes preservados; resto de secciones sin modificaciones estructurales.
+  - Adaptación móvil propia: una columna y fotos apiladas sin interacción obligatoria; las cuatro referencias sí se inspeccionaron en ambas anchuras.
+  - Autorizaciones de fotos verificadas en registros Delticom/Hologram: AUTH-RESP-20260717-E240002 y AUTH-RESP-20260717-E250005. No se añaden medios ni se modifica activación.
+- referencias:
+  - https://www.apple.com/macbook-pro/
+  - https://www.sika.com/en/construction/floor-systems.html
+  - https://www.becosan.com/
+  - https://stripe.com/ (redirección observada /es)
+- evidencia:
+  - Entrega: /tmp/obraxen-reference-20260909/comparativa.html.
+  - Capturas obraxen-before/after-1440/390-top/services/projects/contact/full.png dentro de ese directorio.
+  - Referencias: capturas top/detail/full en 1440 y390; algunos medios/variantes diferidas de BECOSAN y Stripe no cargados; evaluación limitada a contenido visible. Cookies opcionales rechazadas en Sika y Stripe.
+  - before.json y after.json: misma ruta e idioma, 1440x900/390x900, DPR1, escala1, movimiento reducido, details cerrados, formulario vacío, sin foco, fuentes listas y13/13 imágenes cargadas. Nuevos rótulos y solución visible son cambios deliberados; registros idénticos.
+  - verification.json: navegación escritorio y móvil, menú/Escape, foco3px, enlace sectores y contacto, casos, 320/390/768/1024/1440 con texto16/32px sin overflow; Axe0; pageErrors0; failed requests0.
+  - Consola: 34 avisos antes de Axe y16 posteriores, clasificados CSP de React desarrollo y estilos insertados; cero fuera de esas categorías. next.config.ts ya conserva style-src self y no permite unsafe-eval. No se cambia seguridad.
+  - Vitest27/27, TypeScript --noEmit y ESLint aprobados; detector sin hallazgos; git diff --check limpio.
+  - Componentes de controles, page gate, datos de empresa, tokens y next-env preservados por checksum. No homepage principal, publicación, despliegue o cambios remotos.
+- pendiente: Dispositivos físicos, lectores de pantalla y otras plataformas de fuentes; auditoría multimedia exhaustiva de referencias fuera de esta comparación. CSP de desarrollo documentada sin relajar.
+- mensaje_enviado_a: 01a08591-131c-7ff2-a5c2-335bdecfa8fc
