@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { isClaimPath } from "./claims.mjs";
 import { getCoordinationPaths, registerClone } from "./lease.mjs";
 import { loadPolicy } from "./policy.mjs";
+import { validateAuditorOutput } from "./contracts.mjs";
 
 export const GROUPED_AUTHORIZATION_ACTIONS = [
   "commit_candidate",
@@ -510,6 +511,7 @@ function deriveAuthorizationState(bundle, events, now = new Date()) {
   let visited = 0;
   let nextStepIndex = 0;
   let commitSha = bundle.candidate.commitSha;
+  let candidateDigest = null;
   let reservation = null;
   let revoked = false;
   let lastOccurredAt = bundle.issuedAt;
@@ -532,7 +534,10 @@ function deriveAuthorizationState(bundle, events, now = new Date()) {
       }
       if (current.type === "reserved") {
         if (reservation) throw new Error("an authorization step can only be reserved once");
-        validateContext(current.context, bundle, { nextStep: step, commitSha });
+        validateContext(current.context, bundle, { nextStep: step, commitSha, candidateDigest }, {
+          allowLegacy: true, observedAt: new Date(current.occurredAt),
+        });
+        candidateDigest ??= current.context.candidateDigest ?? null;
         reservation = current;
       } else {
         if (!reservation || current.previousEventId !== reservation.eventId) {
@@ -581,6 +586,7 @@ function deriveAuthorizationState(bundle, events, now = new Date()) {
     nextStep: complete || revoked ? null : bundle.steps[nextStepIndex],
     nextStepIndex,
     commitSha,
+    candidateDigest,
     reservation,
     latestEventId: walk.at(-1)?.eventId ?? null,
     latestOccurredAt: walk.at(-1)?.occurredAt ?? bundle.issuedAt,
@@ -608,8 +614,12 @@ export function readAuthorizationStatus(authorizationId, {
   return { bundle, ...deriveAuthorizationState(bundle, events, now) };
 }
 
-function validateContext(raw, bundle, state) {
+function validateContext(raw, bundle, state, { allowLegacy = false, observedAt = new Date() } = {}) {
   const context = object(raw, "authorization context");
+  const legacy = context.schemaVersion === 1;
+  if (context.schemaVersion !== 2 && !(allowLegacy && legacy)) {
+    throw new Error("new delivery requires authorization context schemaVersion 2 with independent audit evidence");
+  }
   exactKeys(context, "authorization context", [
     "activationDigest",
     "baseSha",
@@ -619,8 +629,8 @@ function validateContext(raw, bundle, state) {
     "checks",
     "headSha",
     "schemaVersion",
+    ...(!legacy ? ["candidateDigest", "runtimeFingerprint", "audit"] : []),
   ]);
-  if (context.schemaVersion !== 1) throw new Error("authorization context schemaVersion must be 1");
   if (
     context.candidateId !== bundle.candidate.candidateId
     || context.baseSha !== bundle.candidate.baseSha
@@ -648,6 +658,27 @@ function validateContext(raw, bundle, state) {
     if (check.status !== "passed") throw new Error(`authorization check ${check.checkId} did not pass`);
     sha256(check.evidenceDigest, `authorization context.checks[${index}].evidenceDigest`);
   });
+  if (!legacy) {
+    sha256(context.candidateDigest, "authorization context.candidateDigest");
+    sha256(context.runtimeFingerprint, "authorization context.runtimeFingerprint");
+    if (state.candidateDigest && state.candidateDigest !== context.candidateDigest) {
+      throw new Error("authorization candidate content drifted between delivery steps");
+    }
+    const audit = object(context.audit, "independent audit");
+    exactKeys(audit, "independent audit", ["builderId", "reviewerId", "completedAt", "candidateDigest", "output"]);
+    safeIdentifier(audit.builderId, "independent audit.builderId");
+    safeIdentifier(audit.reviewerId, "independent audit.reviewerId");
+    if (audit.builderId === audit.reviewerId) throw new Error("independent audit reviewer must differ from builder");
+    timestamp(audit.completedAt, "independent audit.completedAt");
+    if (Date.parse(audit.completedAt) > observedAt.getTime()) throw new Error("independent audit must precede delivery reservation");
+    const output = validateAuditorOutput(audit.output);
+    if (output.verdict !== "pass") throw new Error("independent audit did not pass");
+    if (audit.candidateDigest !== context.candidateDigest
+      || output.candidateId !== context.candidateId || output.baseSha !== context.baseSha
+      || output.runtimeFingerprint !== context.runtimeFingerprint) {
+      throw new Error("independent audit does not match the exact candidate");
+    }
+  }
   return context;
 }
 
@@ -656,7 +687,7 @@ export function inspectAuthorizationStep(authorizationId, context, options = {})
   if (status.status !== "pending" || !status.nextStep) {
     throw new Error(`authorization cannot reserve a step while status is ${status.status}`);
   }
-  validateContext(context, status.bundle, status);
+  validateContext(context, status.bundle, status, { observedAt: options.now ?? new Date() });
   return {
     authorizationId,
     action: status.nextStep.action,
@@ -703,7 +734,9 @@ export function reserveAuthorizationStep({
     if (Date.parse(occurredAt) < Date.parse(status.latestOccurredAt)) {
       throw new Error("authorization event must be chronological");
     }
-    validateContext(context, status.bundle, status);
+    validateContext(context, status.bundle, status, {
+      observedAt: new Date(Math.min(now.getTime(), Date.parse(occurredAt))),
+    });
     const token = randomBytes(32).toString("base64url");
     const reservationExpiresAt = new Date(Math.min(
       now.getTime() + policy.groupedAuthorizations.reservationTtlSeconds * 1000,
@@ -753,6 +786,11 @@ export function completeAuthorizationStep({
     if (status.status !== "reserved" || !status.reservation) {
       throw new Error(`authorization cannot complete a step while status is ${status.status}`);
     }
+    // Historical v1 chains remain readable, but cannot acquire new delivery
+    // authority through completion of a legacy, unaudited reservation.
+    validateContext(status.reservation.context, status.bundle, status, {
+      observedAt: new Date(status.reservation.occurredAt),
+    });
     if (digest(reservationToken) !== status.reservation.reservationTokenDigest) {
       throw new Error("reservation token does not match");
     }

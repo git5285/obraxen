@@ -12,9 +12,18 @@ Read these files before acting:
 2. `COORDINATION.md`
 3. `.coordination/README.md`
 4. `automation/agents/policy.json`
-5. `automation/agents/README.md`
+5. `automation/agents/README.md`, including `Common runtime`, `Current mode` and
+   `Adaptador de repositorio: implementación local desactivada`.
 
-Run:
+Before state-writing preflight, host probes or candidate preparation, establish
+the selected executor's availability using read-only evidence. Policy mode and
+`allowLocalDiff` do not establish executor readiness. A known-disabled route is
+blocked before creating a worktree, claim or lease. Do not enable it, substitute
+the parent as builder or run probes to bypass the gate. Complete independent
+authorized read-only work and report the exact blocked route. Under a strict
+no-write request, do not persist a blocked report or refresh private state.
+
+For an available, authorized cycle route, run:
 
 ```sh
 node automation/agents/runtime.mjs exec -- node automation/agents/policy.mjs
@@ -201,13 +210,6 @@ Before review:
    migration, retain both valid reports and audit every difference; the publish
    switch and all external authority must remain unchanged.
 
-If an exact grouped human authorization is registered, the director may consume
-its contiguous commit, push and draft-PR steps through `authorizations.mjs`.
-Validate the exact committed range again with
-`node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-sha <reviewed-base-sha> --head HEAD` before a push.
-Derive changed paths from Git; never trust the builder's self-report. The
-builder itself still cannot use Git.
-
 Do not weaken assertions or budgets to turn a failure green. The quality gate
 and activation gate have different semantics: activation exit 1 is expected
 while the report is a valid NO-GO.
@@ -224,7 +226,22 @@ the manifest, scout and builder exactly. A veto ends the run. The auditor never
 repairs its own findings. Its `candidateId` and `attentionClass` must exactly
 match the manifest.
 
-### 9. Close safely
+### 9. Deliver only an independently approved candidate
+
+Before reserving any delivery step, require a validated independent auditor
+verdict of `pass` for the exact candidate, base SHA, runtime fingerprint and
+reviewed diff. Missing evidence, `veto`, `needs_human` or candidate drift blocks
+delivery before reservation. The auditor must not be the builder.
+
+Only then may the director consume an exact, unexpired human authorization
+through `authorizations.mjs`. Authorization does not replace independent review
+or required quality, activation or remote gates. Derive changed paths from Git;
+never trust the builder's self-report. Before push, validate the committed range:
+`node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-sha <reviewed-base-sha> --head HEAD`.
+Verify that its content is the reviewed candidate. The builder still cannot
+stage, commit, push or create a pull request.
+
+### 10. Close safely
 
 Append state transitions only for the run's own registered claim. The marker is
 immutable after registration. Record durable engineering decisions in the

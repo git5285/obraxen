@@ -164,10 +164,13 @@ flujo local debe quedar en sombra o deshabilitado para escritura.
 
 Estado local actual: completados tres canarios sombra sobre el mismo SHA (un
 `no_op` y dos confirmaciones independientes deduplicadas del mismo hallazgo) y
-habilitado el paso 4. Cada ciclo puede producir un único diff local aislado; no
-puede commitearlo, subirlo ni abrir un PR. El workflow alojado sigue manual y en
-sombra. Solo un controlador actuando sobre una autorización humana agrupada y
-exacta puede realizar esos pasos para una candidata concreta.
+habilitado el paso 4 de política. Esto no acredita disponibilidad de ejecución:
+el adaptador de repositorio permanece desactivado. Consulta su estado y requisitos
+en `automation/agents/README.md`, «Adaptador de repositorio: implementación local
+desactivada». Las pruebas de fixture no autorizan ejecutar agentes sobre Obraxen.
+El workflow alojado sigue manual y en sombra. La entrega de una candidata exige
+auditoría independiente aprobada y una autorización humana agrupada y exacta;
+no concede merge, despliegue ni publicación.
 
 Una promoción se revierte ante mutación fuera de alcance, evidencia inventada,
 reutilización conflictiva de `runId`, aumento de fallos de contrato, coste sin

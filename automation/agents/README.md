@@ -210,6 +210,29 @@ chain remains the durable history.
 
 ## Grouped human delivery authorization
 
+Every new delivery reservation requires context schema v2: `candidateDigest`,
+`runtimeFingerprint` and `audit` in addition to the existing exact context.
+`audit` contains distinct controller-observed `builderId` and `reviewerId`,
+`completedAt`, the reviewed `candidateDigest`, and the complete schema-v4 auditor
+`output`. It must validate as `pass`, match candidate/base/runtime/content and
+precede reservation. Missing review, self-review, veto, needs_human or drift
+blocks before a reservation event or token is created, including direct PR steps.
+The content digest remains unchanged across the delivery chain.
+
+The trusted delivery controller must obtain actor identities from actual tool
+events, retain the independent review, and measure candidate content from Git
+(including staged, unstaged and untracked content before commit). Use one stable
+base-to-candidate content representation before and after commit. Context fields
+are controller attestations, not cryptographic proof of a model's identity; never
+accept builder-authored attestations or substitute a fabricated passing report.
+Recheck content immediately before the authorized action; reservation is not a
+filesystem lock. No local validation authorizes delivery by itself.
+
+Bundles and event envelopes retain schema v1 and their original digests.
+Historical v1 contexts remain readable, but cannot create a new reservation or
+complete an unaudited legacy reservation. Resolve such a pending reservation
+through a separate human decision; never rewrite history or reclaim it.
+
 `authorizations.mjs` lets one explicit human decision cover one contiguous,
 candidate-specific delivery sequence without granting standing authority. The
 only possible actions are `commit_candidate`, `push_branch` and
@@ -265,6 +288,13 @@ node automation/agents/runtime.mjs exec -- node automation/agents/authorizations
 ```
 
 ## Current mode
+
+Policy eligibility is not executor availability. Before state-writing preflight,
+host probes or candidate preparation, read “Adaptador de repositorio:
+implementación local desactivada” below and check the selected route using
+read-only evidence. A known-disabled route stops before worktree, claim or lease
+creation. Do not enable it or substitute the parent as builder. Independent
+owner-requested local inspection and maintenance remain in their authorized scope.
 
 `policy.json` is currently `active` only for isolated local diffs after three
 reviewed shadow canaries converged safely. `allowLocalDiff` is true, while
