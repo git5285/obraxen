@@ -74,6 +74,10 @@ const locales = [
   },
 ] as const;
 
+function isArchitectureHome(locale: (typeof locales)[number], route: string) {
+  return locale.locale === "es" && route === locale.home;
+}
+
 const contentRoutes = locales.flatMap((entry) => [
   { path: entry.home },
   { path: entry.projects },
@@ -92,9 +96,10 @@ test("mobile usability: short menus keep all links reachable", async ({ page }, 
       await page.goto(locale.home, { waitUntil: "networkidle" });
       const reject = page.locator(".consent-actions .consent-choice").first();
       if (await reject.isVisible()) await reject.click();
-      const trigger = page.locator(".hero-nav .menu-btn");
+      const architecture = locale.locale === "es";
+      const trigger = architecture ? page.locator(".ar-mobile-menu > summary") : page.locator(".hero-nav .menu-btn");
       await trigger.click();
-      const menu = page.locator(".movil-menu");
+      const menu = architecture ? page.locator(".ar-mobile-menu nav") : page.locator(".movil-menu");
       await expect(menu).toBeVisible();
       const first = menu.locator(":scope > a").first();
       const firstBox = await first.boundingBox();
@@ -164,7 +169,8 @@ for (const locale of locales) {
       await page.setViewportSize({ width, height: width === 320 ? 667 : width === 390 ? 844 : 900 });
       for (const route of [locale.home, locale.projects, locale.notice, locale.contact]) {
         await page.goto(route, { waitUntil: "networkidle" });
-        const marks = page.locator(".logo:visible .logo-wordmark");
+        const architecture = isArchitectureHome(locale, route);
+        const marks = architecture ? page.locator(".ar-logo:visible .logo-wordmark") : page.locator(".logo:visible .logo-wordmark");
         await expect(marks).toHaveCount(route === locale.home ? 2 : route === locale.notice ? 0 : 1);
         for (const mark of await marks.all()) {
           await expect(mark).toHaveAttribute("aria-hidden", "true");
@@ -175,35 +181,47 @@ for (const locale of locales) {
           const bounds = await mark.boundingBox();
           expect(bounds?.width).toBeCloseTo(180, 1);
           expect(bounds?.height).toBeCloseTo(180 * 166 / 876, 1);
-          await expect(mark.locator("..")).toHaveAttribute("href", locale.home);
+          await expect(mark.locator("..")).toHaveAttribute("href", architecture ? "#architecture" : locale.home);
           await expect(mark.locator("..")).toHaveAttribute("aria-label", /^Obraxen, .+/);
         }
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
         if (route === locale.home) {
-          const nav = page.locator(".hero-nav");
+          const nav = architecture ? page.locator(".ar-header") : page.locator(".hero-nav");
           const overlap = await nav.evaluate((element) => {
             const bounds = [...element.children].map(child => child.getBoundingClientRect()).filter(rect => rect.width > 0 && rect.height > 0);
             return bounds.some((a, index) => bounds.slice(index + 1).some(b => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom));
           });
           expect(overlap).toBe(false);
-          if (width <= 620) await expect(nav.locator(":scope > .btn")).toBeHidden();
-          await expect(page.locator(".hero-summary > .btn")).toBeVisible();
-          const menu = nav.locator(".menu-btn");
+          if (architecture) {
+            if (width <= 700) await expect(nav.locator(".ar-header-cta")).toBeHidden();
+            await expect(page.locator(".ar-hero .ar-button")).toBeVisible();
+          } else {
+            if (width <= 620) await expect(nav.locator(":scope > .btn")).toBeHidden();
+            await expect(page.locator(".hero-summary > .btn")).toBeVisible();
+          }
+          const menu = architecture ? nav.locator(".ar-mobile-menu > summary") : nav.locator(".menu-btn");
           if (await menu.isVisible()) {
             await menu.focus();
             await page.keyboard.press("Enter");
-            await expect(menu).toHaveAttribute("aria-expanded", "true");
+            if (architecture) await expect(nav.locator(".ar-mobile-menu")).toHaveAttribute("open", "");
+            else await expect(menu).toHaveAttribute("aria-expanded", "true");
             await page.keyboard.press("Escape");
             await expect(menu).toBeFocused();
-            await expect(menu).toHaveAttribute("aria-expanded", "false");
+            if (architecture) await expect(nav.locator(".ar-mobile-menu")).not.toHaveAttribute("open", "");
+            else await expect(menu).toHaveAttribute("aria-expanded", "false");
           }
           await page.screenshot({ path: testInfo.outputPath(`logo-${locale.locale}-${width}.png`) });
           await page.locator("#services").scrollIntoViewIfNeeded();
-          await expect(page.locator(".sticky-nav")).toBeVisible();
-          await expect(page.locator(".sticky-nav .logo-wordmark")).toBeVisible();
-          const stickyBounds = await page.locator(".sticky-nav .logo-wordmark").boundingBox();
-          expect(stickyBounds?.width).toBeCloseTo(180, 1);
-          if (width <= 620) await expect(page.locator(".sticky-nav .inner > .btn")).toBeHidden();
+          if (architecture) {
+            await expect(page.locator(".ar-header")).toBeVisible();
+            await expect(page.locator(".ar-header .logo-wordmark")).toBeVisible();
+          } else {
+            await expect(page.locator(".sticky-nav")).toBeVisible();
+            await expect(page.locator(".sticky-nav .logo-wordmark")).toBeVisible();
+            const stickyBounds = await page.locator(".sticky-nav .logo-wordmark").boundingBox();
+            expect(stickyBounds?.width).toBeCloseTo(180, 1);
+            if (width <= 620) await expect(page.locator(".sticky-nav .inner > .btn")).toBeHidden();
+          }
         }
       }
     }
@@ -253,7 +271,7 @@ for (const route of contentRoutes) {
           scrollWidth: element.scrollWidth,
         })),
       unexpectedTextOverflows: [...document.querySelectorAll<HTMLElement>(
-        ".hero h1, .relato .linea, main h1, main h2, .legal-shell .intro, .contact-intro",
+        ".hero h1, .ar-hero h1, .relato .linea, main h1, main h2, .legal-shell .intro, .contact-intro",
       )]
         .filter((element) => element.clientWidth > 0 && element.scrollWidth > element.clientWidth + 1)
         .map((element) => ({
@@ -330,7 +348,7 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
             scrollWidth: element.scrollWidth,
             text: element.textContent?.trim().slice(0, 80),
           })),
-        textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .relato .linea, .catalogo li")]
+        textOverflows: [...document.querySelectorAll<HTMLElement>(".hero h1, .ar-hero h1, .relato .linea, .catalogo li")]
           .filter((element) => element.scrollWidth > element.clientWidth + 1)
           .map((element) => ({
             text: element.textContent?.trim(),
@@ -342,7 +360,7 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
         .toBeLessThanOrEqual(state.clientWidth);
       expect(state.rectOverflows, `${entry.locale} at ${width}px`).toEqual([]);
       expect(state.textOverflows, `${entry.locale} at ${width}px`).toEqual([]);
-      const nextSectionLabel = await page.locator(".intro .kicker").boundingBox();
+      const nextSectionLabel = await page.locator(entry.locale === "es" ? "#services .ar-section-heading h2" : ".intro .kicker").boundingBox();
       expect(nextSectionLabel, `${entry.locale} at ${width}px: next section exists`).not.toBeNull();
       expect(nextSectionLabel!.y + nextSectionLabel!.height, `${entry.locale} at ${width}px: next section visible`)
         .toBeLessThanOrEqual(667);
@@ -366,7 +384,7 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
   for (const entry of locales) {
     await page.goto(entry.home, { waitUntil: "networkidle" });
     const state = await page.evaluate(() => {
-      const label = document.querySelector<HTMLElement>(".intro .kicker");
+      const label = document.querySelector<HTMLElement>(document.documentElement.lang === "es" ? "#services .ar-section-heading h2" : ".intro .kicker");
       return {
         labelBottom: label?.getBoundingClientRect().bottom,
         clientWidth: document.documentElement.clientWidth,
@@ -384,7 +402,9 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
 for (const entry of locales) {
   test(`${entry.locale} locale has coherent routes and language counterparts`, async ({ page }) => {
     await page.goto(entry.home, { waitUntil: "networkidle" });
-    await expect(page.locator("h1")).toContainText(entry.hero);
+    const heading = page.locator("h1");
+    await expect(heading).toBeVisible();
+    expect((await heading.innerText()).replace(/\s+/g, " ").trim()).toContain(entry.hero);
     for (const counterpart of locales) {
       await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
         .toBeAttached();
@@ -580,7 +600,7 @@ test("redirects, closed routes, contact API and security policy fail closed", as
   test.skip(testInfo.project.name !== "mobile-chromium", "The HTTP policy does not depend on viewport size");
 
   await page.goto("/");
-  await expect(page).toHaveURL(/\/en\/$/);
+  await expect(page).toHaveURL(/\/es\/$/);
   await page.goto("/proyectos/");
   await expect(page).toHaveURL(/\/es\/proyectos\/$/);
 

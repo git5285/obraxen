@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   async redirects() {
     return [
-      { source: "/", destination: "/en/", permanent: true },
+      { source: "/", destination: "/es/", permanent: true },
       { source: "/proyectos", destination: "/es/proyectos/", permanent: true },
       { source: "/proyectos/:slug", destination: "/es/proyectos/:slug/", permanent: true },
       { source: "/aviso-legal", destination: "/es/aviso-legal/", permanent: true },

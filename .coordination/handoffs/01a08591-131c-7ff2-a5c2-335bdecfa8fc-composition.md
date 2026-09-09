@@ -1,0 +1,28 @@
+# Handoff: Composición del prototipo confirmado
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-composition
+- terminado: 2026-09-09 12:39 Europe/Madrid
+- resultado: Composición local completada en architecture-local-20260907, ruta /es/architecture-preview/. Homepage principal intacta.
+- archivos_cambiados: css/architecture.css; src/components/architecture-home.tsx; tests/architecture-preview.test.tsx.
+- decisiones:
+  - Orden: encabezado y explicación, puntos clave y acción, imágenes de apoyo.
+  - Encabezados agrupados en una columna de 65ch; se conservan fuentes, colores y componentes.
+  - Servicios en dos columnas en escritorio y una hasta 1000px; copia precede a miniaturas de 120/88px.
+  - Casos agrupan resumen y details dentro de facts, antes de las fotos; proporción textual 1.2 frente a .8.
+  - Sectores invierten fuente a texto primero y reducen anchura fotográfica; móvil apila copia y foto.
+  - Contacto reparte columnas por igual; el formulario de demostración deja de dominar por anchura.
+  - Todas las descripciones, datos, imágenes, fichas, enlaces y límites de la preview se conservan; sin publicación ni envíos.
+- verificaciones:
+  - Vitest: 26 tests aprobados en architecture-preview y architecture-contact, incluida regresión del orden semántico, estados vacíos y datos largos.
+  - TypeScript --noEmit y ESLint de archivos afectados: salida 0.
+  - Chromium local: fichas por teclado y ratón, foco, formulario ficticio y vista editorial funcionan; cero POST de aplicación y cero pageerror.
+  - Anchos 320,390,768,1024,1440 a fuentes 16/32px sin desbordamiento.
+  - Orden visual y DOM de encabezados, servicios, casos, sectores y contacto comprobado en los cinco anchos.
+  - Texto largo inyectado temporalmente en navegador: sin overflow a 320,390,768,1440; estado vacío temporal a 320.
+  - Axe: cero infracciones detectadas en .ar-page. No equivale a prueba manual de lector de pantalla.
+  - Impeccable detect: salida 0 sin hallazgos emitidos.
+  - Capturas revisadas: /tmp/obraxen-client-flow-1440.png; /tmp/obraxen-client-flow-390.png; /tmp/obraxen-composition-services-390.png.
+  - Informes: /tmp/obraxen-client-flow-report.json; /tmp/obraxen-composition-report.json.
+  - Baseline: /tmp/obraxen-composition.TRxRCi/. Diff de componente solo reordena y cambia sizes; no elimina información.
+  - Checksums preservados de next-env.d.ts, architecture-content.ts, architecture-controls.tsx y page.tsx.
+- pendiente: Comprobación manual con lector de pantalla y dispositivos/navegadores reales. No se ejecutó check:quality completo ni build de producción; ruta deliberadamente privada de desarrollo. No commit, push, PR ni despliegue.
+- mensaje_enviado_a: 01a08591-131c-7ff2-a5c2-335bdecfa8fc

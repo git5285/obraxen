@@ -1,0 +1,26 @@
+# Handoff: Estados de la revisión local
+- thread_id: 01a08591-131c-7ff2-a5c2-335bdecfa8fc-interaction
+- terminado: 2026-09-09 Europe/Madrid
+- resultado: Formulario de architecture-preview con respuesta persistente y recuperación sin pérdida de datos. Homepage principal, hero y estado privado intactos.
+- archivos_cambiados: src/components/architecture-controls.tsx; css/architecture.css; tests/architecture-interaction.spec.ts.
+- decisiones:
+  - Estado discriminado: reposo, edición, error, resultado y borrado; preparación inicial derivada de hidratación. La revisión es síncrona local, sin spinner, latencia artificial ni red.
+  - Error junto al campo, aria-invalid y aria-describedby; estado general explica corregir y revisar de nuevo. Cambiar otro campo no oculta el error. La alternativa teléfono resuelve la falta de contacto.
+  - No se borran valores ni archivos ante validación fallida. Datos opcionales se abren para mostrar un error. Editar mantiene contenido; borrar confirma la acción.
+  - Resultado enfocable y con nombre accesible. Layout effect limitado a foco y posición tras el DOM actualizado; elimina el requestAnimationFrame anterior. Desplazamiento instantáneo para mostrar el encabezado del resumen largo o el error completo, sin transición pendiente que pueda superar una acción posterior.
+  - Se reutilizan tipografía, paleta y controles. Activación visible del botón; sin dependencias ni animaciones nuevas.
+- verificaciones:
+  - Preflight con runtime fijado 24.18.0: sin bloqueos ni claims ajenas activas.
+  - Playwright: 8 pruebas aprobadas. Seis combinaciones de 320/390/1440 px con reduce/no-preference, más carga de JavaScript aplazada y JavaScript deshabilitado.
+  - Reposo, foco visible, Tab/Shift+Tab, activación con Space y Enter, error vacío y de correo, recuperación mediante teléfono, error de fotografía, resultado largo, edición, borrado, revisión repetida y acciones consecutivas pasan.
+  - La espera inicial se simula reteniendo scripts: botón deshabilitado y explicación; texto introducido antes de activar conservado tras hidratación. Sin JavaScript se muestran alternativas y el envío continúa deshabilitado.
+  - Fotografías inválidas simuladas con un archivo ficticio text/plain; sin lectura de contenido ni subida. requestSubmit y reset en la misma ejecución simulan una carrera; prevalece borrado sin salto de foco tardío.
+  - Sin overflow en error, resultado y borrado. Cero animaciones activas en formulario y scroll-behavior auto con movimiento reducido. Axe sin infracciones en error estrecho.
+  - Cero errores de página inesperados, peticiones fallidas o POST de aplicación. Persisten avisos preexistentes de React dev/CSP y estilos bloqueados; política no relajada.
+  - Vitest: 27 pruebas aprobadas. ESLint y TypeScript --noEmit: salida 0. git diff --check y detector Impeccable: salida 0.
+  - Capturas de error, resultado, error de fotografía y borrado inspeccionadas en /tmp/obraxen-interaction-results/.
+  - Comando: ARCHITECTURE_CDP=<websocket local de agent-browser> node node_modules/@playwright/test/cli.js test --config /tmp/obraxen-interaction-playwright.config.mjs. Esta suite privada no se incorpora al build público: la ruta permanece cerrada en producción.
+- preservacion: Diff ajeno del control conserva SHA256 62a716d25fb70d64b3ccc49713b84ec13ad56a2e62f9a88cd2ea2f761a8c77fb. Checksums de next-env.d.ts, architecture-home.tsx, architecture-content.ts, guard page.tsx y tokens.css idénticos antes/después.
+- pendiente: Emulación Chromium, no dispositivo real ni lector de pantalla. No hay operación de red que simular como error de servidor. No build público ni check:quality completo en esta pasada local; no publicación, commit, push ni despliegue.
+- skills: impeccable, agent-browser, agent-browser-verify, webapp-testing y react-best-practices.
+- mensaje_enviado_a: 01a08591-131c-7ff2-a5c2-335bdecfa8fc
