@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import delticomInitial from "../../../img/proyectos/delticom/estado-inicial.webp";
-import delticomResult from "../../../img/proyectos/delticom/resultado.webp";
-import hologramInitial from "../../../img/proyectos/hologram/estado-inicial-huecos.webp";
-import hologramResult from "../../../img/proyectos/hologram/resultado.webp";
-import "../../../css/architecture.css";
-import { ArchitectureHome } from "@/components/architecture-home";
 import { CompanySection } from "@/components/company-section";
 import { FaqSection } from "@/components/faq-section";
 import { HeroSection } from "@/components/hero-section";
@@ -25,40 +19,8 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
-import { internalProjects } from "@/lib/internal-projects";
 
 type HomePageProps = { params: Promise<{ lang: string }> };
-
-const architectureProjectImages = {
-  "delticom-hannover": { initial: delticomInitial, result: delticomResult },
-  "hologram-paris": { initial: hologramInitial, result: hologramResult },
-};
-
-function getArchitectureDefaultMetadata(domain = brand.dominio): Metadata {
-  const path = getPath("es", "home");
-  const url = domain ? absoluteSiteUrl(domain, path) : undefined;
-  const image = domain ? absoluteSiteUrl(domain, "/img/architecture-hall-illustrative.png") : undefined;
-  return {
-    title: "Obraxen | Reparación de pavimentos industriales",
-    description: "Reparación y rehabilitación de pavimentos industriales.",
-    alternates: getLocalizedAlternates(domain, "es", "home"),
-    openGraph: {
-      title: "Obraxen | Reparación de pavimentos industriales",
-      description: "Reparación y rehabilitación de pavimentos industriales.",
-      type: "website",
-      locale: openGraphLocales.es,
-      siteName: brand.nombre ?? "Obraxen",
-      url,
-      ...(image ? { images: [{ url: image, alt: "Reparación de pavimentos industriales" }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Obraxen | Reparación de pavimentos industriales",
-      description: "Reparación y rehabilitación de pavimentos industriales.",
-      ...(image ? { images: [image] } : {}),
-    },
-  };
-}
 
 export function getHomeMetadata(lang: Locale, domain = brand.dominio): Metadata {
   const homepage = getHomepage(lang);
@@ -93,46 +55,12 @@ export function getHomeMetadata(lang: Locale, domain = brand.dominio): Metadata 
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
   const { lang } = await params;
-  if (lang === "es") return getArchitectureDefaultMetadata();
   return isLocale(lang) ? getHomeMetadata(lang) : {};
-}
-
-function getArchitectureProjects() {
-  return ["delticom-hannover", "hologram-paris"].map((slug) => {
-    const project = internalProjects.find((item) => item.slug === slug);
-    if (!project) throw new Error(`Falta el registro interno ${slug}`);
-    const images = ["Estado inicial", "Resultado documentado"].map((stage) => {
-      const image = project.imagenes.find((item) => item.etapa === stage);
-      if (!image) throw new Error(`Falta la fotografía ${stage} de ${slug}`);
-      const asset = architectureProjectImages[slug as keyof typeof architectureProjectImages][stage === "Estado inicial" ? "initial" : "result"];
-      return {
-        src: asset.src,
-        alt: image.alt,
-        stage,
-        width: asset.width,
-        height: asset.height,
-      };
-    });
-    return {
-      name: project.cliente,
-      city: project.ubicacion.ciudad,
-      country: project.traducciones.es.pais,
-      sector: project.traducciones.es.sector,
-      area: project.superficieM2,
-      description: project.traducciones.es.solucion,
-      problem: project.traducciones.es.problema,
-      result: project.traducciones.es.resultado,
-      duration: project.traducciones.es.duracionReal,
-      materials: project.traducciones.es.materiales,
-      images,
-    };
-  });
 }
 
 export default async function HomePage({ params }: HomePageProps) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  if (lang === "es") return <ArchitectureHome projects={getArchitectureProjects()} />;
   const homepage = getHomepage(lang);
   const { dictionary } = homepage;
   const homeHref = getPath(lang, "home");
