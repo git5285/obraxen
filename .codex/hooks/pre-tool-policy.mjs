@@ -11,8 +11,23 @@ const autonomousRoles = new Set([
 ]);
 
 const readOnlyRoles = new Set(["scout", "auditor"]);
-const writeToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|create|save|upload|delete|remove|copy|move|rename|mkdir)/i;
-const applyPatchToolPattern = /apply_patch/i;
+const mutatingToolNames = new Set([
+  "apply_patch",
+  "copy_file",
+  "create_file",
+  "delete_file",
+  "edit_file",
+  "mkdir",
+  "move_file",
+  "remove_file",
+  "rename_file",
+  "savefile",
+  "save_file",
+  "upload_asset",
+  "write",
+  "write_file",
+]);
+const builderWriteToolPattern = /(?:apply_patch|\bedit\b|\bwrite\b|write_file|create|save|upload|delete|remove|copy|move|rename|mkdir)/i;
 const runtimeSensitiveCommandPattern = /(?:^|[\s;&|"'`/])(?:node|npm|npx|pnpm|yarn|eslint|next|tsc|vitest)\b/i;
 const runtimeWrapperPattern = /^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:(?:status|assert)\s*|exec\s+--\s+\S(?:[\s\S]*\S)?\s*)$/i;
 const shellCompositionPattern = /[\r\n;&|`<>]|\$\(/;
@@ -22,7 +37,6 @@ const builderVerificationScripts = new Set([
   "check:activation",
   "check:agent-runtime",
   "check:diff",
-  "check:quality",
   "lighthouse:ci",
   "lint",
   "test",
@@ -72,6 +86,14 @@ function commandFromInput(toolInput) {
   return "";
 }
 
+function isMutatingTool(toolName) {
+  return typeof toolName === "string" && mutatingToolNames.has(toolName.toLowerCase());
+}
+
+function isApplyPatchTool(toolName) {
+  return typeof toolName === "string" && toolName.toLowerCase() === "apply_patch";
+}
+
 function canonicalRepositoryPath(path) {
   return typeof path === "string"
     && path.length > 0
@@ -109,7 +131,24 @@ function usesExclusiveRuntimeWrapper(command) {
   return runtimeWrapperPattern.test(command) && !shellCompositionPattern.test(command);
 }
 
-function builderUsesApprovedRuntimeCommand(command) {
+// This bounded role does not need shell expansion or concatenated quoted words.
+// Parse simple words / whole quoted arguments without executing a shell. Inspect
+// decoded words so quoting an executable cannot conceal rm, mv or another deny.
+function builderCommandWords(command) {
+  if (/[\\$`]/.test(command) || shellCompositionPattern.test(command)) return null;
+  const source = command.trim();
+  const word = /\s*(?:([^\s"']+)|"([^"]*)"|'([^']*)')(?=\s|$)/y;
+  const words = [];
+  while (word.lastIndex < source.length) {
+    const match = word.exec(source);
+    if (!match) return null;
+    if (match[1] && /[*?\[\]{}~]/.test(match[1])) return null;
+    words.push(match[1] ?? match[2] ?? match[3]);
+  }
+  return words;
+}
+
+function builderUsesApprovedRuntimeCommand(command, words) {
   if (/^\s*node\s+automation\/agents\/runtime\.mjs\s+(?:status|assert)\s*$/i.test(command)) {
     return true;
   }
@@ -120,9 +159,35 @@ function builderUsesApprovedRuntimeCommand(command) {
     return true;
   }
   const npmRun = command.match(
-    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+([A-Za-z0-9:_-]+)\b/i,
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+([A-Za-z0-9:_-]+)(?:\s+--\s+\S[\s\S]*)?\s*$/i,
   );
-  return npmRun ? builderVerificationScripts.has(npmRun[1]) : false;
+  if (!npmRun || !builderVerificationScripts.has(npmRun[1])) return false;
+  const separator = words.indexOf("--", 7);
+  const args = separator === -1 ? [] : words.slice(separator + 1);
+  // Versioned checks may accept only the bounded arguments this role needs.
+  // Root/config/runner/reporters and arbitrary script options can load code or
+  // redirect work outside the reviewed checkout; do not pass them through.
+  if (npmRun[1] === "check:activation") return args.length === 0 || (args.length === 1 && args[0] === "--json");
+  if (npmRun[1] === "check:diff") {
+    for (let i = 0; i < args.length; i += 1) {
+      if (args[i] === "--worktree") continue;
+      if (!["--base-sha", "--base-ref", "--head"].includes(args[i])
+        || !args[i + 1] || args[i + 1].startsWith("-")) return false;
+      i += 1;
+    }
+    return true;
+  }
+  if (npmRun[1] === "test") {
+    for (let i = 0; i < args.length; i += 1) {
+      if (args[i] === "--no-file-parallelism") continue;
+      if (["-t", "--testNamePattern"].includes(args[i])) {
+        if (!args[i + 1] || args[i + 1].startsWith("-")) return false;
+        i += 1;
+      } else if (args[i].startsWith("-") || !canonicalRepositoryPath(args[i])) return false;
+    }
+    return true;
+  }
+  return args.length === 0;
 }
 
 function readOnlyUsesApprovedRuntimeCommand(command) {
@@ -175,7 +240,7 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (command && usesRuntimeWrapper && !readOnlyUsesApprovedRuntimeCommand(command)) {
       return deny(`${role} solo puede usar el runtime fijado para lecturas y verificaciones versionadas.`);
     }
-    if (writeToolPattern.test(toolName)) {
+    if (isMutatingTool(toolName)) {
       return deny(`${role} es de solo lectura y no puede usar ${toolName}.`);
     }
     if (command && dangerousCommandPatterns.some((pattern) => pattern.test(command))) {
@@ -190,7 +255,15 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (policy.mode !== "active" || !policy.authority.allowLocalDiff) {
       return deny("El implementador no puede ejecutarse mientras la política no autorice diffs locales en modo activo.");
     }
-    if (command && usesRuntimeWrapper && !builderUsesApprovedRuntimeCommand(command)) {
+    const commandWords = command ? builderCommandWords(command) : [];
+    if (commandWords === null) {
+      return deny("El builder requiere comandos simples, sin expansión, escapes ni concatenación de comillas.");
+    }
+    const decodedCommand = commandWords.join(" ");
+    if (decodedCommand && dangerousCommandPatterns.some((pattern) => pattern.test(decodedCommand))) {
+      return deny("El builder no puede ocultar comandos prohibidos mediante comillas.");
+    }
+    if (command && usesRuntimeWrapper && !builderUsesApprovedRuntimeCommand(command, commandWords)) {
       return deny("El implementador solo puede usar el entorno fijado para preflight y scripts de verificación versionados.");
     }
     if (command && dangerousCommandPatterns.some((pattern) => pattern.test(command))) {
@@ -202,9 +275,15 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
     if (command && commandMentionsProtectedPath(command, policy, usesRuntimeWrapper)) {
       return deny("El implementador intentó tocar una superficie protegida por la política de Obraxen.");
     }
-    if (writeToolPattern.test(toolName)) {
-      if (!applyPatchToolPattern.test(toolName)) {
+    if (builderWriteToolPattern.test(toolName)) {
+      if (!isApplyPatchTool(toolName)) {
         return deny("El implementador solo puede editar mediante apply_patch.");
+      }
+      const patch = typeof input?.tool_input?.patch === "string"
+        ? input.tool_input.patch
+        : typeof input?.tool_input === "string" ? input.tool_input : "";
+      if (/^\*\*\* (?:Delete File|Move to):/m.test(patch)) {
+        return deny("El builder no puede borrar ni mover archivos.");
       }
       const paths = patchPaths(input?.tool_input);
       if (paths.length === 0 || paths.some((path) => !canonicalRepositoryPath(path))) {
@@ -223,6 +302,18 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
 }
 
 function main() {
+  // Bound by the controller's process environment, not model/tool arguments.
+  // This is the diagnostic hook: every isolated tool remains blocked. Fail
+  // closed on partial/unknown bindings instead of falling back to root policy.
+  const boundRole = process.env.OBRAXEN_ISOLATED_ROLE;
+  const boundMode = process.env.OBRAXEN_ISOLATED_MODE;
+  if (boundRole !== undefined || boundMode !== undefined) {
+    const reason = autonomousRoles.has(boundRole) && boundMode === "diagnostic"
+      ? `Obraxen ${boundRole}: diagnóstico aislado; ninguna herramienta autorizada.`
+      : "Obraxen: vinculación aislada ausente o inválida; herramientas bloqueadas.";
+    process.stdout.write(`${JSON.stringify(deny(reason))}\n`);
+    return;
+  }
   const raw = readFileSync(0, "utf8");
   const result = evaluateToolUse(JSON.parse(raw));
   if (result) process.stdout.write(`${JSON.stringify(result)}\n`);

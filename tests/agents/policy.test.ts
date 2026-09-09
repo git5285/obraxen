@@ -311,6 +311,77 @@ describe("custom-agent pre-tool hook", () => {
     expect(result?.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 
+  it.each([
+    "*** Delete File: src/components/project-card.tsx",
+    "*** Update File: src/components/project-card.tsx\n*** Move to: src/components/renamed-card.tsx",
+  ])("rejects builder deletion or movement even between ordinary paths: %s", (patch) => {
+    for (const tool_input of [patch, { patch }]) {
+      expect(evaluateToolUse({ agent_type: "builder", tool_name: "apply_patch", tool_input }, activePolicy())
+        ?.hookSpecificOutput.permissionDecision).toBe("deny");
+    }
+  });
+
+  it("rejects the network-dependent aggregate gate but preserves local builder checks", () => {
+    const input = (script: string) => ({agent_type: "builder", tool_name: "exec_command",
+      tool_input: {cmd: `node automation/agents/runtime.mjs exec -- npm run ${script}`}});
+    expect(evaluateToolUse(input("check:quality"), activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+    expect(evaluateToolUse(input("check:security"), activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
+    for (const script of ["check", "lint", "typecheck", "test -- tests/card.test.ts", "build"])
+      expect(evaluateToolUse(input(script), activePolicy())).toBeNull();
+    expect(evaluateToolUse({agent_type: "builder", tool_name: "apply_patch", tool_input: {
+      patch: "*** Begin Patch\n*** Update File: src/components/project-card.tsx\n@@\n-old\n+new\n*** End Patch",
+    }}, activePolicy())).toBeNull();
+  });
+
+  it.each([
+    'node automation/agents/runtime.mjs exec -- npm run check"":quality',
+    'r""m src/components/project-card.tsx',
+    'm""v src/components/project-card.tsx src/components/renamed-card.tsx',
+    '"rm" src/components/project-card.tsx',
+    "env 'mv' src/a.ts src/b.ts",
+    "r\\m src/a.ts",
+    "$'\\162\\155' src/a.ts",
+    "/bin/r[m] -- src/components/project-card.tsx",
+    "/bin/m[v] -- src/components/project-card.tsx src/components/renamed-card.tsx",
+    "node automation/agents/runtime.mjs exec -- npm run check --prefix /tmp/other-project",
+    "node automation/agents/runtime.mjs exec -- npm run check --prefix=/tmp/other-project",
+    "node automation/agents/runtime.mjs exec -- npm run test --workspace foreign",
+    "node automation/agents/runtime.mjs exec -- npm run test -- --config /tmp/foreign.ts",
+    'node automation/agents/runtime.mjs exec -- npm run test -- "--config" /tmp/foreign.ts',
+    'node automation/agents/runtime.mjs exec -- npm run test -- "--config=/tmp/foreign.ts"',
+    "node automation/agents/runtime.mjs exec -- npm run test -- '--config' /tmp/foreign.ts",
+    "node automation/agents/runtime.mjs exec -- npm run test -- '--config=/tmp/foreign.ts'",
+    'node automation/agents/runtime.mjs exec -- npm run test -- "--workspace" foreign',
+    'node automation/agents/runtime.mjs exec -- npm run test -- --root /tmp/foreign-project',
+    'node automation/agents/runtime.mjs exec -- npm run test -- "--root=/tmp/foreign-project"',
+    'node automation/agents/runtime.mjs exec -- npm run test -- -r /tmp/foreign-project',
+    'node automation/agents/runtime.mjs exec -- npm run test -- --runner /tmp/foreign.mjs',
+    'node automation/agents/runtime.mjs exec -- npm run test -- --reporter /tmp/foreign.mjs',
+    'node automation/agents/runtime.mjs exec -- npm run test -- /tmp/foreign.test.ts',
+    'node automation/agents/runtime.mjs exec -- npm run test -- --testTimeout 999999',
+    'node automation/agents/runtime.mjs exec -- npm run build -- /tmp/foreign-project',
+  ])("rejects shell spellings that conceal forbidden builder commands: %s", (cmd) => {
+    expect(evaluateToolUse({agent_type: "builder", tool_name: "exec_command", tool_input: {cmd}}, activePolicy())
+      ?.hookSpecificOutput.permissionDecision).toBe("deny");
+  });
+
+  it("preserves whole quoted arguments for ordinary local inspection", () => {
+    expect(evaluateToolUse({agent_type: "builder", tool_name: "exec_command",
+      tool_input: {cmd: 'rg "project card" src/components'}}, activePolicy())).toBeNull();
+    expect(evaluateToolUse({agent_type: "builder", tool_name: "exec_command",
+      tool_input: {cmd: "sed -n '1,30p' 'src/app/[lang]/page.tsx'"}}, activePolicy())).toBeNull();
+  });
+
+  it("preserves bounded test selection and documented check arguments", () => {
+    for (const cmd of [
+      'node automation/agents/runtime.mjs exec -- npm run test -- tests/card.test.ts -t "renders card"',
+      'node automation/agents/runtime.mjs exec -- npm run test -- tests/agents --no-file-parallelism',
+      'node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-sha abc123 --head HEAD',
+      'node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-sha abc123 --worktree',
+      'node automation/agents/runtime.mjs exec -- npm run check:activation -- --json',
+    ]) expect(evaluateToolUse({agent_type: "builder", tool_name: "exec_command", tool_input: {cmd}}, activePolicy())).toBeNull();
+  });
+
   it("validates move destinations before allowing a builder patch", () => {
     for (const destination of [
       "automation/agents/escaped.mjs",
@@ -469,13 +540,23 @@ describe("custom-agent pre-tool hook", () => {
 
   it("treats create and save tools as writes for every specialist", () => {
     for (const role of ["scout", "auditor", "builder"]) {
-      for (const tool_name of ["create_file", "SaveFile", "upload_asset"]) {
+      for (const tool_name of ["create_file", "SaveFile", "upload_asset", "write_file", "delete_file"]) {
         expect(evaluateToolUse({
           agent_type: role,
           tool_name,
           tool_input: { path: "src/generated-output.txt" },
         }, activePolicy())?.hookSpecificOutput.permissionDecision).toBe("deny");
       }
+    }
+  });
+
+  it("does not classify read-only tool names by incidental verbs", () => {
+    for (const tool_name of ["create_report", "save_query", "copy_search_results", "move_cursor"]) {
+      expect(evaluateToolUse({
+        agent_type: "scout",
+        tool_name,
+        tool_input: { path: "src/example.ts" },
+      }, activePolicy())).toBeNull();
     }
   });
 

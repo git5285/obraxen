@@ -1,5 +1,9 @@
 # Sistema de mejora autónoma de Obraxen
 
+> Este documento describe arquitectura y decisiones de diseño. No es una
+> autorización de ejecución. Para saber qué puede hacer una tarea, prevalecen
+> `AGENTS.md`, `COORDINATION.md`, la política/runtime y el registro operativo.
+
 ## Objetivo y límite
 
 El sistema puede observar la web, recordar resultados, proponer una mejora,
@@ -124,7 +128,9 @@ concede merge, despliegue o publicación.
 4. El director selecciona cero o un hallazgo.
 5. En sombra, termina y registra el informe. En activo, crea un único entorno
    aislado y reserva rutas exactas.
-6. El builder realiza una sola mejora y una corrección como máximo.
+6. El builder realiza una sola mejora y una corrección como máximo. Si la
+   corrección falla, no continúa en bucle ni declara éxito: registra el comando
+   fallido, el riesgo residual y un estado `blocked` para revisión humana.
 7. Los scripts verifican rutas, tamaño, diff completo, tests y calidad. La
    activación debe permanecer igual salvo en una migración solicitada por el
    propietario, donde se revisa la diferencia completa.
@@ -158,10 +164,13 @@ flujo local debe quedar en sombra o deshabilitado para escritura.
 
 Estado local actual: completados tres canarios sombra sobre el mismo SHA (un
 `no_op` y dos confirmaciones independientes deduplicadas del mismo hallazgo) y
-habilitado el paso 4. Cada ciclo puede producir un único diff local aislado; no
-puede commitearlo, subirlo ni abrir un PR. El workflow alojado sigue manual y en
-sombra. Solo un controlador actuando sobre una autorización humana agrupada y
-exacta puede realizar esos pasos para una candidata concreta.
+habilitado el paso 4 de política. Esto no acredita disponibilidad de ejecución:
+el adaptador de repositorio permanece desactivado. Consulta su estado y requisitos
+en `automation/agents/README.md`, «Adaptador de repositorio: implementación local
+desactivada». Las pruebas de fixture no autorizan ejecutar agentes sobre Obraxen.
+El workflow alojado sigue manual y en sombra. La entrega de una candidata exige
+auditoría independiente aprobada y una autorización humana agrupada y exacta;
+no concede merge, despliegue ni publicación.
 
 Una promoción se revierte ante mutación fuera de alcance, evidencia inventada,
 reutilización conflictiva de `runId`, aumento de fallos de contrato, coste sin
@@ -246,7 +255,7 @@ contenido es un reintento idempotente; con contenido diferente se bloquea. Un
 puede retroceder de fase ni cambiar el alcance del hallazgo. El estado legado de
 memoria v1 a v4 se lee sin fabricar linaje, reconciliación, origen o huella de
 runtime históricos. Sus valores desconocidos se conservan como `unknown` o
-`null`, fuera de la eficacia autónoma, y se convierte a v5 al registrar el
+`null`, fuera de la eficacia autónoma, y se convierte a v6 al registrar el
 siguiente informe válido. Un lock o lease viejo
 nunca se elimina
 automáticamente: se inspeccionan proceso, host, worktree, claim y Git antes de
