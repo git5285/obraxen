@@ -32,7 +32,7 @@ describe("private architecture preview", () => {
     const positions = ["services", "projects", "sectors", "contact"].map((id) => html.indexOf(`id="${id}"`));
     expect(positions.every((position) => position > 0)).toBe(true);
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
-    expect(html).not.toContain("Artículos aún no publicados"); expect(html).toContain("No envía consultas ni guarda datos.");
+    expect(html).not.toContain("Artículos aún no publicados"); expect(html).not.toContain("Formulario de demostración");
     expect(html).toContain('href="mailto:info@obraxen.com"'); expect(html).toContain('href="/de/"');
     expect(html).toContain("/obraxen-wordmark-v14.svg#letra-X"); expect(html).not.toContain("style=");
     expect(html).toContain("architecture-hall-illustrative");
@@ -81,7 +81,7 @@ describe("private architecture preview", () => {
       expect(article).toContain('name="architecture-solutions"');
       expect(article).toContain("<figcaption>");
       expect(article.indexOf('class="ar-solution-consult"')).toBeGreaterThan(article.indexOf("</details>"));
-      expect(article).toContain('href="#contact" aria-label="Consultar esta solución:');
+      expect(article).toContain('href="/es/contacto/" aria-label="Consultar esta solución:');
     }
     expect(articles[0][1]).toContain("Juntas y fisuras: fotografías aportadas. Las otras dos son ilustrativas.");
     expect(articles[0][1]).toContain('alt="Detalle de una junta de dilatación en un pavimento de hormigón"');
@@ -137,13 +137,14 @@ describe("private architecture preview", () => {
     expect(html).not.toContain("Fotografías del registro documental;");
     expect(html).not.toContain("<dd></dd>");
   });
-  it("introduces the demonstration before collecting data and keeps real contact primary", () => {
+  it("routes the private preview to the existing contact entry point without a fake form", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[]} />);
-    expect(html.indexOf("Formulario de demostración")).toBeLessThan(html.indexOf('id="ar-name"'));
-    expect(html).toContain("No envía consultas ni guarda datos.");
-    expect(html).toContain("Revisar ejemplo");
-    expect(html).not.toContain("Revisar antes de enviar");
-    expect(html).toContain('class="ar-demo-button"');
+    expect(html).toContain("Abre el formulario de la web vigente para dejar los datos de tu consulta.");
+    expect(html).toContain('class="ar-button" href="/es/contacto/">Abrir formulario de contacto</a>');
+    expect(html).toContain("Si el formulario no está disponible, utiliza el correo, el teléfono o WhatsApp de esta sección.");
+    expect(html).not.toContain("Formulario de demostración");
+    expect(html).not.toContain("Revisar ejemplo");
+    expect(html).not.toContain("ar-contact-form");
     expect(html).toContain('class="ar-button" href="mailto:info@obraxen.com"');
   });
   it("keeps complete concise case facts in the stable summary", () => {
@@ -216,7 +217,7 @@ describe("private architecture preview", () => {
     expect(html).not.toContain('id="start"');
     expect(html).not.toContain("¿Qué pasa después?");
     expect(html).not.toContain("Idiomas y ámbito de consulta");
-    expect(html.indexOf('class="ar-contact-direct"')).toBeLessThan(html.indexOf('class="ar-contact-form"'));
+    expect(html.indexOf('class="ar-contact-direct"')).toBeLessThan(html.indexOf('class="ar-contact-route"'));
     expect(html.match(/class="ar-contact-direct"/g)).toHaveLength(1);
     const css = readFileSync(new URL("../css/architecture.css", import.meta.url), "utf8");
     expect(css).toMatch(/\.ar-page \.ar-mobile-menu nav\{left:0;right:0;width:auto/);
@@ -224,18 +225,10 @@ describe("private architecture preview", () => {
     expect(css).toMatch(/\.ar-page \.ar-case-cover img\{[^}]*object-fit:contain/);
     expect(css).toMatch(/\.ar-page \.ar-solution-grid\{[^}]*align-items:start/);
   });
-  it("asks only for name, one contact channel and the need in the short form", () => {
+  it("does not render a local form alongside the explicit contact route", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[]} />);
-    const form = html.slice(html.indexOf("<form"), html.indexOf("</form>"));
-    expect(form).toContain('data-compact="true"');
-    expect(form.match(/<input /g)).toHaveLength(2);
-    expect(form.match(/<textarea /g)).toHaveLength(1);
-    expect(form).toContain("Email o teléfono");
-    expect(form).not.toContain('id="ar-country"');
-    expect(form).not.toContain('id="ar-city"');
-    expect(form).not.toContain('type="file"');
-    expect(form).toContain("No envía consultas ni guarda datos.");
-    expect(form).not.toContain("Solución elegida");
-    expect(form).toContain('placeholder="Localidad, uso del espacio y daño visible."');
+    expect(html).not.toContain("<form");
+    expect(html).not.toContain("Solución elegida");
+    expect(html.match(/href="\/es\/contacto\/"/g)).toHaveLength(5);
   });
 });
