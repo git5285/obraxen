@@ -3,10 +3,20 @@ import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ArchitecturePreview from "@/app/[lang]/architecture-preview/page";
 import { ArchitectureHome } from "@/components/architecture-home";
+import { ResponsiveImage } from "@/components/responsive-image";
 import { publicProjects } from "@/lib/projects";
 
 afterEach(() => vi.unstubAllEnvs());
 describe("private architecture preview", () => {
+  it("defers non-critical responsive images while preserving an explicit eager hero", () => {
+    const lazy = renderToStaticMarkup(<ResponsiveImage src="/example.jpg" width={400} height={200} alt="Imagen secundaria" />);
+    const eager = renderToStaticMarkup(<ResponsiveImage src="/example.jpg" width={400} height={200} alt="Hero" loading="eager" fetchPriority="high" />);
+    const priority = renderToStaticMarkup(<ResponsiveImage src="/example.jpg" width={400} height={200} alt="Hero heredado" priority />);
+    expect(lazy).toContain('loading="lazy"');
+    expect(eager).toContain('loading="eager"');
+    expect(eager).toContain('fetchPriority="high"');
+    expect(priority).not.toContain('loading="lazy"');
+  });
   it.each([
     ["production", "local-only", "", "es"], ["development", "", "", "es"],
     ["development", "local-only", "1", "es"], ["development", "local-only", "", "en"],
