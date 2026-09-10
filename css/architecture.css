@@ -227,7 +227,7 @@
 .ar-page .ar-solution-intro{margin-bottom:16px}
 .ar-page .ar-solution-heading{font-size:1.5rem;font-weight:600;line-height:1.3;text-wrap:pretty;min-height:2.6em;margin-bottom:4px}
 .ar-page .ar-solution-need{color:var(--brand-muted);font-size:.9375rem;line-height:1.5}
-.ar-page .ar-solution-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.ar-page .ar-solution-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.ar-page .ar-solution-photos:has(img:only-child){grid-template-columns:1fr}
 .ar-page .ar-solution-photos img{width:100%;height:auto;aspect-ratio:2/1;object-fit:cover}
 .ar-page .ar-solution-gallery figcaption{margin-top:8px;font-size:var(--ar-type-label);line-height:var(--ar-leading-label);color:var(--brand-muted)}
 .ar-page .ar-solution-services{list-style:disc;padding-left:18px;margin:12px 0;color:var(--brand-muted);font-size:1rem;line-height:1.6}
@@ -381,14 +381,20 @@
 }
 
 @media(max-width:700px){
-  .ar-page.ar-home .ar-hero{min-height:20rem}
-  .ar-page.ar-home .ar-hero-copy{padding-top:4rem}
+  .ar-page.ar-home .ar-hero{min-height:18rem}
+  .ar-page.ar-home .ar-hero-copy{padding-top:3rem;padding-bottom:1rem}
+  .ar-page.ar-home .ar-hero h1{font-size:1.5rem}
+  .ar-page.ar-home .ar-actions{gap:10px 14px;margin-top:1rem}
+  .ar-page.ar-home .ar-actions .ar-button{font-size:1rem;padding-inline:12px}
   .ar-page.ar-home .ar-hero-caption{padding-block:.5rem}
   .ar-page.ar-home .ar-services{padding:1rem 2rem 2rem}
   .ar-page.ar-home :is(.ar-projects,.ar-contact){padding-block:2rem}
 }
 
 /* Clarify: consequences are adjacent to the controls they explain. */
+.ar-page.ar-home .ar-solution-need{display:grid;gap:2px}
+.ar-page.ar-home .ar-solution-need>span{font-size:var(--ar-type-label);font-weight:600;line-height:var(--ar-leading-label);color:var(--brand-ink)}
+.ar-page.ar-home .ar-contact-guidance{color:var(--brand-on-dark);font-size:var(--ar-type-label);line-height:1.5}
 .ar-page.ar-home .ar-selected-solution{flex-wrap:wrap}
 .ar-page.ar-home .ar-selected-solution>p:first-child{flex:1}
 .ar-page.ar-home .ar-selection-help{flex-basis:100%;font-size:var(--ar-type-label);line-height:1.5}
@@ -413,3 +419,24 @@
 /* Onboard: contextual next steps, no tour, account, or stored onboarding state. */
 .ar-page.ar-home :is(.ar-first-use,.ar-empty) a{display:inline-flex;align-items:center;min-height:44px;color:var(--brand-primary-dark);text-decoration:underline;text-underline-offset:4px}
 .ar-page.ar-home .ar-contact-form label>.ar-note{margin-top:0;font-size:var(--ar-type-label);line-height:1.5}
+
+/* Layout: compare a route in one row, rather than scan four competing cards. */
+.ar-page.ar-home .ar-solution-grid{grid-template-columns:1fr;gap:0;border-bottom:1px solid var(--brand-line)}
+.ar-page.ar-home .ar-solution{display:grid;grid-template-columns:minmax(11rem,.72fr) minmax(16rem,1.08fr) minmax(14rem,.9fr);align-items:start;gap:16px 32px;padding-block:32px;border:0;border-top:1px solid var(--brand-line)}
+.ar-page.ar-home .ar-solution-intro{grid-column:1;grid-row:1 / span 3;margin:0}
+.ar-page.ar-home .ar-solution-gallery{grid-column:2;grid-row:1 / span 3}
+.ar-page.ar-home .ar-solution-services{grid-column:3;margin:0}
+.ar-page.ar-home .ar-solution-details{grid-column:3;margin:0}
+.ar-page.ar-home .ar-solution-consult{grid-column:3;align-self:end;margin:0}
+@media(max-width:1000px){
+  .ar-page.ar-home .ar-solution{grid-template-columns:minmax(10rem,.75fr) minmax(0,1.25fr);gap:16px 28px}
+  .ar-page.ar-home .ar-solution-intro{grid-column:1;grid-row:1}
+  .ar-page.ar-home .ar-solution-gallery{grid-column:2;grid-row:1}
+  .ar-page.ar-home .ar-solution-services,.ar-page.ar-home .ar-solution-details,.ar-page.ar-home .ar-solution-consult{grid-column:1 / -1}
+}
+@media(max-width:700px){
+  .ar-page.ar-home .ar-solution{display:flex;gap:0;padding-block:24px}
+  .ar-page.ar-home .ar-solution-intro{margin-bottom:16px}
+  .ar-page.ar-home .ar-solution-gallery{margin-bottom:12px}
+  .ar-page.ar-home .ar-solution-services{margin-block:0 12px}
+}
