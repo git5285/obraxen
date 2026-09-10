@@ -4,7 +4,6 @@
 # Dependencias y salidas generadas
 node_modules/
 .next/
-dist/
 coverage/
 playwright-report/
 test-results/
