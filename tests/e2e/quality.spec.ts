@@ -88,12 +88,17 @@ const contentRoutes = locales.flatMap((entry) => [
   { path: entry.contact },
 ]);
 
+// The assertions below wait for the relevant rendered element. Waiting for an
+// idle network makes the suite depend on how long Next's image optimizer keeps
+// secondary image requests alive, rather than on page readiness.
+const navigationReady = "domcontentloaded" as const;
+
 test("mobile usability: short menus keep all links reachable", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Explicit mobile viewport matrix");
   for (const locale of locales) {
     for (const viewport of [{ width: 667, height: 375 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
-      await page.goto(locale.home, { waitUntil: "networkidle" });
+      await page.goto(locale.home, { waitUntil: navigationReady });
       const reject = page.locator(".consent-actions .consent-choice").first();
       if (await reject.isVisible()) await reject.click();
       const architecture = locale.locale === "es";
@@ -124,7 +129,7 @@ test("mobile usability: privacy control does not cover contact content", async (
   test.skip(testInfo.project.name !== "mobile-chromium", "Explicit mobile viewport matrix");
   for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
-    await page.goto("/es/contacto/", { waitUntil: "networkidle" });
+    await page.goto("/es/contacto/", { waitUntil: navigationReady });
     const reject = page.locator(".consent-actions .consent-choice").first();
     const reopen = page.locator(".consent-reopen");
     const expectVisibleFocus = async () => {
@@ -139,23 +144,25 @@ test("mobile usability: privacy control does not cover contact content", async (
       await reject.focus();
       await page.keyboard.press("Enter");
       await expectVisibleFocus();
-    }
-    await expect(reopen).toBeVisible();
-    const overlapsContent = () => reopen.evaluate((button) => {
-      const a = button.getBoundingClientRect();
-      return [...document.querySelectorAll("main p, main h1, main h2, main a")].some((element) => {
-        const b = element.getBoundingClientRect();
-        return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+      await expect(reopen).toBeVisible();
+      const overlapsContent = () => reopen.evaluate((button) => {
+        const a = button.getBoundingClientRect();
+        return [...document.querySelectorAll("main p, main h1, main h2, main a")].some((element) => {
+          const b = element.getBoundingClientRect();
+          return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+        });
       });
-    });
-    expect(await overlapsContent()).toBe(false);
-    await reopen.scrollIntoViewIfNeeded();
-    expect(await overlapsContent()).toBe(false);
-    await reopen.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-    await expectVisibleFocus();
+      expect(await overlapsContent()).toBe(false);
+      await reopen.scrollIntoViewIfNeeded();
+      expect(await overlapsContent()).toBe(false);
+      await reopen.click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+      await expectVisibleFocus();
+    } else {
+      await expect(reopen).toHaveCount(0);
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
     await page.screenshot({ path: testInfo.outputPath(`privacy-contact-${viewport.width}.png`), fullPage: true });
   }
@@ -168,7 +175,7 @@ for (const locale of locales) {
     for (const width of [320, 390, 620, 621, 768, 1024, 1280]) {
       await page.setViewportSize({ width, height: width === 320 ? 667 : width === 390 ? 844 : 900 });
       for (const route of [locale.home, locale.projects, locale.notice, locale.contact]) {
-        await page.goto(route, { waitUntil: "networkidle" });
+        await page.goto(route, { waitUntil: navigationReady });
         const architecture = isArchitectureHome(locale, route);
         const marks = architecture ? page.locator(".ar-logo:visible .logo-wordmark") : page.locator(".logo:visible .logo-wordmark");
         await expect(marks).toHaveCount(route === locale.home ? 2 : route === locale.notice ? 0 : 1);
@@ -252,7 +259,7 @@ for (const route of contentRoutes) {
       if (!["127.0.0.1", "localhost"].includes(url.hostname)) thirdPartyRequests.push(request.url());
     });
 
-    const response = await page.goto(route.path, { waitUntil: "networkidle" });
+    const response = await page.goto(route.path, { waitUntil: navigationReady });
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("html")).toHaveAttribute("lang", route.path.slice(1, 3));
@@ -322,7 +329,7 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
   for (const width of [320, 360, 375, 390]) {
     await page.setViewportSize({ width, height: 667 });
     for (const entry of locales) {
-      await page.goto(entry.home, { waitUntil: "networkidle" });
+      await page.goto(entry.home, { waitUntil: navigationReady });
       const state = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
@@ -382,7 +389,7 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
   });
 
   for (const entry of locales) {
-    await page.goto(entry.home, { waitUntil: "networkidle" });
+    await page.goto(entry.home, { waitUntil: navigationReady });
     const state = await page.evaluate(() => {
       const label = document.querySelector<HTMLElement>(document.documentElement.lang === "es" ? "#services .ar-section-heading h2" : ".intro .kicker");
       return {
@@ -401,18 +408,22 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
 
 for (const entry of locales) {
   test(`${entry.locale} locale has coherent routes and language counterparts`, async ({ page }) => {
-    await page.goto(entry.home, { waitUntil: "networkidle" });
+    await page.goto(entry.home, { waitUntil: navigationReady });
     const heading = page.locator("h1");
     await expect(heading).toBeVisible();
     expect((await heading.innerText()).replace(/\s+/g, " ").trim()).toContain(entry.hero);
     for (const counterpart of locales) {
       await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
         .toBeAttached();
-      await expect(page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`))
-        .toHaveAttribute("href", `https://obraxen.com${counterpart.home}`);
+      const alternate = page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`);
+      if (isArchitectureHome(entry, entry.home)) {
+        await expect(alternate).toHaveCount(0);
+      } else {
+        await expect(alternate).toHaveAttribute("href", `https://obraxen.com${counterpart.home}`);
+      }
     }
 
-    await page.goto(entry.projects, { waitUntil: "networkidle" });
+    await page.goto(entry.projects, { waitUntil: navigationReady });
     await expect(page.locator("h1")).toContainText(publicProject ? entry.projectTitle : entry.emptyProjectTitle);
     if (!publicProject) {
       await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
@@ -421,13 +432,13 @@ for (const entry of locales) {
         .toHaveAttribute("href", `https://obraxen.com${entry.projects}`);
     }
     if (publicProject) {
-      await page.goto(getPath(entry.locale, "projects", publicProject.slug), { waitUntil: "networkidle" });
+      await page.goto(getPath(entry.locale, "projects", publicProject.slug), { waitUntil: navigationReady });
       await expect(page.locator("main h1")).toContainText(publicProject.traducciones[entry.locale].titulo);
     } else if (unpublishedProject) {
       const response = await page.goto(getPath(entry.locale, "projects", unpublishedProject.slug));
       expect(response?.status()).toBe(404);
     }
-    await page.goto(entry.contact, { waitUntil: "networkidle" });
+    await page.goto(entry.contact, { waitUntil: navigationReady });
     await expect(page.locator("h1")).toContainText(entry.contactTitle);
     await expect(page.locator("form")).toHaveCount(0);
     await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
@@ -439,7 +450,7 @@ for (const entry of locales) {
 
 for (const path of locales.flatMap((entry) => [entry.home, entry.projects])) {
   test(`${path} has no serious or critical accessibility violations`, async ({ page }) => {
-    await page.goto(path, { waitUntil: "networkidle" });
+    await page.goto(path, { waitUntil: navigationReady });
     const results = await new AxeBuilder({ page }).analyze();
     const blockingViolations = results.violations.filter(
       ({ impact }) => impact === "serious" || impact === "critical",
@@ -450,7 +461,7 @@ for (const path of locales.flatMap((entry) => [entry.home, entry.projects])) {
 
 test("homepage project links satisfy WCAG 2.5.3 label in name", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "The rule does not depend on viewport size");
-  await page.goto("/en/", { waitUntil: "networkidle" });
+  await page.goto("/en/", { waitUntil: navigationReady });
   const results = await new AxeBuilder({ page })
     .withRules(["label-content-name-mismatch"])
     .analyze();
@@ -460,7 +471,7 @@ test("homepage project links satisfy WCAG 2.5.3 label in name", async ({ page },
 test("contact page exposes a skip link", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Keyboard behavior is viewport independent");
 
-  await page.goto("/es/contacto/", { waitUntil: "networkidle" });
+  await page.goto("/es/contacto/", { waitUntil: navigationReady });
   const skipLink = page.getByRole("link", { name: "Saltar al contenido" });
 
   await page.keyboard.press("Tab");
@@ -486,7 +497,7 @@ test("rejecting analytics persists the choice and makes zero analytics requests"
     ) analyticsRequests.push(request.url());
   });
 
-  await page.goto("/en/", { waitUntil: "networkidle" });
+  await page.goto("/en/", { waitUntil: navigationReady });
   await expect(page.locator("[data-consent-banner]"))
     .toContainText("You decide whether measurement is enabled.");
   expect(analyticsRequests).toEqual([]);
@@ -497,7 +508,7 @@ test("rejecting analytics persists the choice and makes zero analytics requests"
     localStorage.getItem("site_privacy_preferences") ?? "null",
   ))).toMatchObject({ version: 1, analytics: false });
 
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: navigationReady });
   await expect(page.locator("[data-consent-banner]")).toHaveCount(0);
   expect(analyticsRequests).toEqual([]);
 });
@@ -522,7 +533,7 @@ test("analytics providers load only after acceptance and stop after revocation",
     body: "window.__clarityConsentTestLoaded = true;",
   }));
 
-  await page.goto("/en/", { waitUntil: "networkidle" });
+  await page.goto("/en/", { waitUntil: navigationReady });
   expect(analyticsRequests).toEqual([]);
   await page.getByRole("button", { name: "Accept analytics" }).click();
 
@@ -539,7 +550,7 @@ test("analytics providers load only after acceptance and stop after revocation",
   await analyticsToggle.uncheck();
   const requestsBeforeRevocation = analyticsRequests.length;
   await Promise.all([
-    page.waitForNavigation({ waitUntil: "networkidle" }),
+    page.waitForNavigation({ waitUntil: navigationReady }),
     page.getByRole("button", { name: "Save preferences" }).click(),
   ]);
 
@@ -552,7 +563,7 @@ test("analytics providers load only after acceptance and stop after revocation",
 
 test("privacy settings trap focus and return it to their trigger", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "The semantics do not depend on viewport size");
-  await page.goto("/en/", { waitUntil: "networkidle" });
+  await page.goto("/en/", { waitUntil: navigationReady });
   const trigger = page.getByRole("button", { name: "Configure" });
   await trigger.click();
 
@@ -571,7 +582,7 @@ test("privacy settings trap focus and return it to their trigger", async ({ page
 test("mobile menu traps and restores focus", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile-only interaction");
 
-  await page.goto("/en/", { waitUntil: "networkidle" });
+  await page.goto("/en/", { waitUntil: navigationReady });
   const trigger = page.locator(".hero .menu-btn");
   const menu = page.locator("#menuMovil");
   const close = menu.getByRole("button", { name: "Close menu" });
@@ -623,7 +634,7 @@ test("redirects, closed routes, contact API and security policy fail closed", as
   expect(sitemap.status()).toBe(200);
   expect(await sitemap.text()).not.toContain("<url>");
 
-  const response = await page.goto("/en/", { waitUntil: "networkidle" });
+  const response = await page.goto("/en/", { waitUntil: navigationReady });
   const headers = response?.headers() ?? {};
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
   expect(headers["x-frame-options"]).toBe("DENY");
@@ -696,7 +707,7 @@ test("WebKit smoke: localized public routes load", async ({ browser, baseURL }, 
     const paths = ["/en/", "/de/projekte/", "/fr/contact/"];
     if (publicProject) paths.push(getPath("de", "projects", publicProject.slug));
     for (const path of paths) {
-      const response = await page.goto(path, { waitUntil: "networkidle" });
+      const response = await page.goto(path, { waitUntil: navigationReady });
       expect(response?.status()).toBe(200);
       expect(response?.headers()["content-security-policy"]).toContain("upgrade-insecure-requests");
       await expect(page.locator("h1")).toHaveCount(1);

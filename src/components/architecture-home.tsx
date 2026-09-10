@@ -19,7 +19,8 @@ import { brand } from "@/lib/brand";
 import { architectureCompany as company } from "@/lib/architecture-content";
 import { getPath, locales } from "@/lib/i18n";
 import { getImageDimensions } from "@/lib/homepage";
-import { ArchitectureCaseDetails, ArchitectureMenu, ArchitectureSolutionLink } from "./architecture-controls";
+import { ArchitectureSolutionLink } from "./architecture-controls";
+import { ArchitectureCaseDetails, ArchitectureMenu } from "./architecture-interactions";
 import { LogoMark } from "./logo-mark";
 import { ResponsiveImage } from "./responsive-image";
 
