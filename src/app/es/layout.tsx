@@ -42,12 +42,12 @@ export default function SpanishLayout({ children }: Readonly<{ children: ReactNo
     <html lang="es">
       <body>
         {children}
-        <ConsentManager
-          analyticsAvailable={analyticsAvailable}
+        {analyticsAvailable ? <ConsentManager
+          analyticsAvailable
           copy={dictionary.consent}
           cookieUrl={getPath("es", "cookies")}
           privacyUrl={getPath("es", "privacy")}
-        />
+        /> : null}
       </body>
     </html>
   );
