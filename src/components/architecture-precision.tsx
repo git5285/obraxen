@@ -2,7 +2,8 @@ import Link from "next/link";
 import { brand } from "@/lib/brand";
 import { architectureCompany as company } from "@/lib/architecture-content";
 import { getPath, locales } from "@/lib/i18n";
-import { ArchitectureContact, ArchitectureMenu } from "./architecture-controls";
+import { ArchitectureContact } from "./architecture-controls";
+import { ArchitectureMenu } from "./architecture-interactions";
 import { LogoMark } from "./logo-mark";
 import { ResponsiveImage } from "./responsive-image";
 
