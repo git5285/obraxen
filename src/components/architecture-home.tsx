@@ -19,7 +19,7 @@ import { brand } from "@/lib/brand";
 import { architectureCompany as company } from "@/lib/architecture-content";
 import { getPath, locales } from "@/lib/i18n";
 import { getImageDimensions } from "@/lib/homepage";
-import { ArchitectureCaseDetails, ArchitectureContact, ArchitectureInquiryProvider, ArchitectureMenu, ArchitectureSolutionLink } from "./architecture-controls";
+import { ArchitectureCaseDetails, ArchitectureMenu, ArchitectureSolutionLink } from "./architecture-controls";
 import { LogoMark } from "./logo-mark";
 import { ResponsiveImage } from "./responsive-image";
 
@@ -115,7 +115,7 @@ function CompactProject({ project }: { project: PreviewProject }) {
 
 export function ArchitectureHome({ projects, showEditorialPreview = false }: { projects: readonly PreviewProject[]; showEditorialPreview?: boolean }) {
   const navigationLinks = architectureLinks.filter(([, id]) => showEditorialPreview || id !== "blog");
-  return <ArchitectureInquiryProvider><div className="ar-page ar-home" id="architecture">
+  return <div className="ar-page ar-home" id="architecture">
     <a href="#ar-content" className="skip">Saltar al contenido</a>
     <header className="ar-header"><div className="ar-wrap ar-header-inner">
       <LogoMark brandName={brand.nombre} href="#architecture" homeLabel="inicio" className="ar-logo" />
@@ -142,7 +142,7 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
             {solution.services.map(service => <div className="ar-solution-tech" key={service.title}><h4>{service.title}</h4><p>{service.scope}</p><dl className="ar-technical-facts"><div><dt>Qué revisar</dt><dd>{service.review}</dd></div><div><dt>Alcance</dt><dd>{service.body}</dd></div></dl></div>)}
             {solution.extra ? <p>{solution.extra}</p> : null}
           </details>
-          <ArchitectureSolutionLink title={solution.title} />
+          <ArchitectureSolutionLink title={solution.title} href={getPath("es", "contact")} />
         </article>)}</div>
       </section>
       <section id="projects" className="ar-wrap ar-section ar-projects">
@@ -164,7 +164,7 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
           <div className="ar-contact-direct"><a className="ar-button" href={`mailto:${company.email}`}>Escribir por correo</a><a href={company.phoneHref}>Llamar al {company.phone}</a><a href={company.whatsappHref}>WhatsApp</a></div>
           <p className="ar-note">Teléfono y WhatsApp temporales. Consultas atendidas por dirección.</p>
         </div>
-        <ArchitectureContact compact />
+        <div className="ar-contact-route"><h3>Formulario de contacto</h3><p>Abre el formulario de la web vigente para dejar los datos de tu consulta.</p><a className="ar-button" href={getPath("es", "contact")}>Abrir formulario de contacto</a><p className="ar-note">Si el formulario no está disponible, utiliza el correo, el teléfono o WhatsApp de esta sección.</p></div>
       </div></section>
       {showEditorialPreview ? <section id="blog" className="ar-blog-preview ar-band ar-section"><div className="ar-wrap"><h2>Blog · Revisión interna</h2><p className="ar-note">Temas propuestos · Artículos aún no publicados</p><div className="ar-three">
         {topics.map((topic) => <article key={topic.title}><ResponsiveImage src={topic.image} {...getImageDimensions(topic.image, { width: 860, height: 484 })} alt={`Imagen ilustrativa: ${topic.title}`} sizes="(max-width: 700px) 90vw, 23vw" /><h3>{topic.title}</h3><details><summary aria-label={`Ver tema propuesto: ${topic.title}`}>Ver tema propuesto</summary><p>{topic.body}</p></details></article>)}
@@ -179,5 +179,5 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
     </div><div className="ar-footer-bottom"><nav aria-label="Información legal"><a href={getPath("es", "legalNotice")}>Aviso legal</a><a href={getPath("es", "privacy")}>Privacidad</a><a href={getPath("es", "cookies")}>Cookies</a></nav>
       <div className="ar-language-links"><p id="ar-language-notice">Idiomas de la web vigente · Saldrás de esta propuesta.</p><nav id="ar-languages" aria-label="Idiomas de la web vigente" aria-describedby="ar-language-notice">{locales.map((locale) => <a key={locale} href={getPath(locale, "home")} hrefLang={locale} lang={locale}>{locale.toUpperCase()}</a>)}</nav></div>
     </div><p className="ar-note">{company.legalName} · NIF {company.taxId}<br />{company.address}</p><p className="ar-note">El hero, parte de las soluciones, sectores y Blog utilizan imágenes ilustrativas, no acreditan obras realizadas. Las fotografías aportadas se identifican en sus soluciones. Preview privada en español; idiomas y enlaces legales abren las versiones vigentes. No publicado.</p><a className="ar-editorial-link" href={showEditorialPreview ? "?review=client#architecture" : "?review=editorial#blog"}>{showEditorialPreview ? "Volver al recorrido para clientes" : "Revisión editorial interna"}</a></div></footer>
-  </div></ArchitectureInquiryProvider>;
+  </div>;
 }

@@ -16,7 +16,9 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
-  workers: 2,
+  // The Spanish architecture preview is image-heavy; serial execution keeps
+  // `networkidle` assertions deterministic on local and CI runners.
+  workers: 1,
   timeout: 30_000,
   expect: { timeout: 5_000 },
   reporter: isCi
