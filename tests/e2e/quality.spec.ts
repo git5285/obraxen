@@ -408,8 +408,12 @@ for (const entry of locales) {
     for (const counterpart of locales) {
       await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
         .toBeAttached();
-      await expect(page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`))
-        .toHaveAttribute("href", `https://obraxen.com${counterpart.home}`);
+      const alternate = page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`);
+      if (isArchitectureHome(entry, entry.home)) {
+        await expect(alternate).toHaveCount(0);
+      } else {
+        await expect(alternate).toHaveAttribute("href", `https://obraxen.com${counterpart.home}`);
+      }
     }
 
     await page.goto(entry.projects, { waitUntil: "networkidle" });

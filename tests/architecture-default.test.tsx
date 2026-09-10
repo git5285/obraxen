@@ -25,7 +25,27 @@ describe("architecture default home", () => {
       title: "Obraxen | Reparación de pavimentos industriales",
       description: "Reparación y rehabilitación de pavimentos industriales.",
       alternates: { canonical: "https://obraxen.com/es/" },
-      openGraph: { locale: "es_ES", url: "https://obraxen.com/es/" },
+      openGraph: {
+        locale: "es_ES",
+        url: "https://obraxen.com/es/",
+        images: [{ url: expect.stringMatching(/^https:\/\/obraxen\.com\/.*architecture-hall-illustrative.*\.png$/) }],
+      },
     });
+    expect(spanishMetadata.alternates).not.toHaveProperty("languages");
+  });
+
+  it("emits only visible, verified organization data as JSON-LD", () => {
+    const html = renderToStaticMarkup(<SpanishHomePage />);
+    const source = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
+    expect(source).toBeDefined();
+
+    const graph = JSON.parse(source!) as { "@graph": Array<Record<string, unknown>> };
+    expect(graph["@graph"]).toEqual(expect.arrayContaining([
+      expect.objectContaining({ "@type": "Organization", name: "Obraxen Surface S.L.", email: "info@obraxen.com" }),
+      expect.objectContaining({ "@type": "WebSite", name: "Obraxen", inLanguage: "es" }),
+      expect.objectContaining({ "@type": "WebPage", url: "https://obraxen.com/es/", inLanguage: "es" }),
+    ]));
+    expect(JSON.stringify(graph)).not.toContain("FAQPage");
+    expect(JSON.stringify(graph)).not.toContain("LocalBusiness");
   });
 });
