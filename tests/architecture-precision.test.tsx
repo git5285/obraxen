@@ -54,11 +54,13 @@ describe("precision local alternative", () => {
     expect(html).toContain("No hay proyectos disponibles en esta selección.");
     expect(html).not.toContain("Fotografías del registro documental.");
   });
-  it("keeps demo collapsed, real contact first, and current preview reachable", () => {
+  it("keeps the contact route collapsed, real contact first, and current preview reachable", () => {
     const html = renderToStaticMarkup(<ArchitecturePrecision projects={[]} />);
     expect(html).toContain('<details class="ap-demo">');
     expect(html.indexOf('href="mailto:info@obraxen.com"')).toBeLessThan(html.indexOf('class="ap-demo"'));
-    expect(html.indexOf("No envía consultas ni guarda datos.")).toBeLessThan(html.indexOf('id="ar-name"'));
+    expect(html).toContain('href="/es/contacto">Abrir formulario de contacto</a>');
+    expect(html).toContain("No envía consultas ni guarda datos.");
+    expect(html).not.toContain('id="ar-name"');
     expect(html).toMatch(/href="\/es\/architecture-preview\/?"/);
     expect(html).toContain("Teléfono y WhatsApp temporales");
     expect(html).toContain("Sin envío ni almacenamiento");
