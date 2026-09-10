@@ -1,4 +1,3 @@
-import hero from "../../img/hero-nave.jpg";
 import architectureHall from "../../img/architecture-hall-illustrative.png";
 import joints from "../../img/juntas.jpg";
 import cracks from "../../img/fisuras.jpg";
@@ -36,18 +35,16 @@ const services = [
 const solutions = [
   { id: "repair", title: "Reparación de pavimentos", need: "Juntas deterioradas, fisuras y daños localizados.", photos: [
     { image: suppliedJoint, alt: "Detalle de una junta de dilatación en un pavimento de hormigón", supplied: true },
-    { image: suppliedCrack, alt: "Fisura abierta con bordes deteriorados en un pavimento de hormigón", supplied: true },
-    services[4], services[2]],
+    { image: suppliedCrack, alt: "Fisura abierta con bordes deteriorados en un pavimento de hormigón", supplied: true }],
     items: ["Reparación de juntas", "Tratamiento de fisuras", "Parches de hormigón, según diagnóstico"], services: [services[0], services[1]],
     extra: "Los parches de hormigón pueden formar parte del alcance cuando el diagnóstico lo requiera." },
-  { id: "level", title: "Nivelación y recrecidos", need: "Desniveles en el pavimento.", photos: [services[2], services[4], services[3], { image: hero, alt: "Pavimento de hormigón en una nave" }],
+  { id: "level", title: "Nivelación y recrecidos", need: "Desniveles en el pavimento.", photos: [services[2]],
     items: ["Corrección de desniveles", "Recrecidos"], services: [services[2]], extra: null },
-  { id: "renew", title: "Pulido y rehabilitación", need: "Superficies desgastadas que recuperar.", photos: [services[3], services[0], services[1], { image: hero, alt: "Superficie de hormigón en una nave" }],
+  { id: "renew", title: "Pulido y rehabilitación", need: "Superficies desgastadas que recuperar.", photos: [services[3]],
     items: ["Lijado y pulido", "Recuperación de superficies desgastadas"], services: [services[3]], extra: null },
   { id: "prepare", title: "Retirada y preparación del soporte", need: "Revestimientos existentes que retirar.", photos: [
     { image: suppliedEpoxy, alt: "Desbastado de epoxi sobre un pavimento industrial azul", supplied: true },
-    { image: suppliedAnchors, alt: "Huecos de anclajes retirados en un pavimento de hormigón", supplied: true },
-    services[2], services[0]],
+    { image: suppliedAnchors, alt: "Huecos de anclajes retirados en un pavimento de hormigón", supplied: true }],
     items: ["Retirada de revestimientos", "Retirada de anclajes, según diagnóstico", "Preparación del soporte"], services: [services[4]],
     extra: "La retirada de anclajes puede formar parte del alcance cuando el diagnóstico lo requiera." },
 ];
@@ -122,22 +119,22 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
       <LogoMark brandName={brand.nombre} href="#architecture" homeLabel="inicio" className="ar-logo" />
       <nav className="ar-desktop-nav" aria-label="Navegación principal">{navigationLinks.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}</nav>
       <a className="ar-language" href="#ar-languages" aria-label="Idiomas de la web vigente, español actual">ES</a>
-      <a href="#contact" className="ar-button ar-header-cta">Consultar proyecto</a><ArchitectureMenu items={navigationLinks} />
+      <a href="#contact" className="ar-button ar-header-cta">Describir una necesidad</a><ArchitectureMenu items={navigationLinks} />
     </div></header>
     <main id="ar-content" tabIndex={-1}>
       <p className="ar-preview-note">Vista privada · Propuesta en revisión</p>
 <section className="ar-hero" aria-labelledby="ar-title">
         <ResponsiveImage className="ar-hero-image" src={architectureHall} {...getImageDimensions(architectureHall, { width: 1774, height: 887 })} alt="Imagen ilustrativa generada de una nave diáfana luminosa y su pavimento de hormigón" sizes="100vw" loading="eager" fetchPriority="high" />
-        <div className="ar-wrap ar-hero-copy"><h1 id="ar-title">Reparación de<br />pavimentos industriales.</h1><p>Juntas, fisuras y rehabilitación de superficies.</p>
-          <div className="ar-actions"><a className="ar-button" href="#contact">Consultar proyecto</a><a href="#projects">Ver proyectos</a></div>
+        <div className="ar-wrap ar-hero-copy"><h1 id="ar-title">Reparación de<br />pavimentos industriales.</h1><p>Cuéntanos el daño visible. Revisamos soporte y uso antes de concretar el alcance.</p>
+          <div className="ar-actions"><a className="ar-button" href="#contact">Pedir consulta</a><a href="#projects">Ver casos</a></div>
         </div>
       </section>
       <p className="ar-wrap ar-hero-caption">Imagen ilustrativa generada. No corresponde a una obra acreditada.</p>
       <section id="services" className="ar-wrap ar-section ar-services">
-        <div className="ar-section-heading"><h2>Cuatro soluciones para tu pavimento</h2><p className="ar-first-use">Elige según el daño visible o <a href="#contact">describe tu caso al contactar</a>. El alcance técnico se concreta después de revisar el soporte y el uso del espacio.</p></div>
+        <div className="ar-section-heading"><h2>Cuatro soluciones para tu pavimento</h2><p className="ar-first-use">Elige según el daño visible o <a href="#contact">describe tu caso al contactar</a>. Revisaremos el soporte, el uso y los accesos antes de concretar el alcance.</p></div>
         <div className="ar-solution-grid">{solutions.map(solution => <article className="ar-solution" id={`ar-solution-${solution.id}`} key={solution.id}>
-          <div className="ar-solution-intro"><h3 className="ar-solution-heading" tabIndex={-1}>{solution.title}</h3><p className="ar-solution-need">{solution.need}</p></div>
-          <figure className="ar-solution-gallery"><div className="ar-solution-photos">{solution.photos.map(photo => <ResponsiveImage key={photo.alt} src={photo.image} {...getImageDimensions(photo.image, { width: 860, height: 484 })} alt={"supplied" in photo && photo.supplied ? photo.alt : `Imagen ilustrativa: ${photo.alt}`} sizes="(max-width: 700px) 42vw, (max-width: 1400px) 21vw, 280px" />)}</div><figcaption>{solution.id === "repair" ? "Juntas y fisuras: fotografías aportadas. Las otras dos son ilustrativas." : solution.id === "prepare" ? "Epoxi y anclajes: fotografías aportadas. Las otras dos son ilustrativas." : "Imágenes ilustrativas; no acreditan obras realizadas."}</figcaption></figure>
+          <div className="ar-solution-intro"><h3 className="ar-solution-heading" tabIndex={-1}>{solution.title}</h3><p className="ar-solution-need"><span>Daño visible</span>{solution.need}</p></div>
+          <figure className="ar-solution-gallery"><div className="ar-solution-photos">{solution.photos.map(photo => <ResponsiveImage key={photo.alt} src={photo.image} {...getImageDimensions(photo.image, { width: 860, height: 484 })} alt={"supplied" in photo && photo.supplied ? photo.alt : `Imagen ilustrativa: ${photo.alt}`} sizes="(max-width: 700px) 42vw, (max-width: 1400px) 21vw, 280px" />)}</div><figcaption>{solution.id === "repair" ? "Juntas y fisuras: fotografías aportadas." : solution.id === "prepare" ? "Epoxi y anclajes: fotografías aportadas." : "Imagen ilustrativa; no acredita una obra realizada."}</figcaption></figure>
           <ul className="ar-solution-services">{solution.items.map(item => <li key={item}>{item}</li>)}</ul>
           <details className="ar-solution-details" name="architecture-solutions"><summary aria-label={`Ver alcance técnico: ${solution.title}`}>Ver alcance técnico</summary>
             {solution.services.map(service => <div className="ar-solution-tech" key={service.title}><h4>{service.title}</h4><p>{service.scope}</p><dl className="ar-technical-facts"><div><dt>Qué revisar</dt><dd>{service.review}</dd></div><div><dt>Alcance</dt><dd>{service.body}</dd></div></dl></div>)}
@@ -147,7 +144,7 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
         </article>)}</div>
       </section>
       <section id="projects" className="ar-wrap ar-section ar-projects">
-        <div className="ar-section-heading"><h2>Experiencia del equipo</h2><div className="ar-experience-context"><p>Selección de intervenciones anteriores de integrantes del equipo.</p><p>{company.experience}</p></div></div>
+        <div className="ar-section-heading"><h2>Experiencia del equipo</h2><div className="ar-experience-context"><p>Selección de intervenciones anteriores de integrantes del equipo.</p><p>Consulta cada caso por problema, intervención y resultado documentado.</p><p>{company.experience}</p></div></div>
         <div className="ar-case-grid">{projects.map(project => <CompactProject key={project.name} project={project} />)}</div>
         {projects.length === 0 ? <p className="ar-empty">No hay proyectos disponibles en esta selección. <a href="#contact">Consultar una necesidad concreta</a>.</p> : null}
         {projects.some(project => project.images.length > 0) ? <p className="ar-note">Fotografías del registro documental. Selección local en revisión.</p> : null}
@@ -161,7 +158,7 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
         <p className="ar-note">Fotografías de referencia de los sectores; no corresponden a obras de Obraxen.</p>
       </div></section>
       <section className="ar-contact ar-section" id="contact"><div className="ar-wrap ar-contact-grid">
-        <div className="ar-contact-heading"><h2 id="ar-contact-title" tabIndex={-1}>Cuéntanos tu proyecto</h2><p>Cuéntanos la localidad, el uso del espacio y el daño visible.</p>
+        <div className="ar-contact-heading"><h2 id="ar-contact-title" tabIndex={-1}>Cuéntanos tu proyecto</h2><p>Cuéntanos la localidad, el uso del espacio y el daño visible.</p><p className="ar-contact-guidance">Con esa información podremos orientar la consulta y el siguiente paso.</p>
           <div className="ar-contact-direct"><a className="ar-button" href={`mailto:${company.email}`}>Escribir por correo</a><a href={company.phoneHref}>Llamar al {company.phone}</a><a href={company.whatsappHref}>WhatsApp</a></div>
           <p className="ar-note">Teléfono y WhatsApp temporales. Consultas atendidas por dirección.</p>
         </div>

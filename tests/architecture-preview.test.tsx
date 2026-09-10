@@ -75,7 +75,7 @@ describe("private architecture preview", () => {
     expect(html).toContain('href="?review=editorial#blog"');
     expect(html).toContain("imágenes ilustrativas, no acreditan obras realizadas.");
   });
-  it("renders four solution boxes with four photos each, photographed sectors and compact cases", () => {
+  it("renders four solution routes with evidence-first galleries, photographed sectors and compact cases", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[{
       name: "Caso ordenado", city: "Ciudad", country: "País", sector: "Industria", area: null,
       description: "Alcance conservado", problem: "Daño", result: "Resultado", duration: null,
@@ -85,7 +85,6 @@ describe("private architecture preview", () => {
     const articles = [...services.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/g)];
     expect(articles).toHaveLength(4);
     for (const [, article] of articles) {
-      expect(article.match(/<img /g)).toHaveLength(4);
       expect(article.indexOf("<h3")).toBeLessThan(article.indexOf("<img"));
       expect(article).toContain('class="ar-solution-photos"');
       expect(article).toContain('name="architecture-solutions"');
@@ -93,17 +92,20 @@ describe("private architecture preview", () => {
       expect(article.indexOf('class="ar-solution-consult"')).toBeGreaterThan(article.indexOf("</details>"));
       expect(article).toContain('href="/es/contacto/" aria-label="Consultar esta solución:');
     }
-    expect(articles[0][1]).toContain("Juntas y fisuras: fotografías aportadas. Las otras dos son ilustrativas.");
+    expect(articles[0][1].match(/<img /g)).toHaveLength(2);
+    expect(articles[0][1]).toContain("Juntas y fisuras: fotografías aportadas.");
     expect(articles[0][1]).toContain('alt="Detalle de una junta de dilatación en un pavimento de hormigón"');
     expect(articles[0][1]).toContain('alt="Fisura abierta con bordes deteriorados en un pavimento de hormigón"');
-    expect(articles[0][1].match(/alt="Imagen ilustrativa:/g)).toHaveLength(2);
-    expect(articles[3][1]).toContain("Epoxi y anclajes: fotografías aportadas. Las otras dos son ilustrativas.");
+    expect(articles[0][1].match(/alt="Imagen ilustrativa:/g) ?? []).toHaveLength(0);
+    expect(articles[3][1].match(/<img /g)).toHaveLength(2);
+    expect(articles[3][1]).toContain("Epoxi y anclajes: fotografías aportadas.");
     expect(articles[3][1]).toContain('alt="Desbastado de epoxi sobre un pavimento industrial azul"');
     expect(articles[3][1]).toContain('alt="Huecos de anclajes retirados en un pavimento de hormigón"');
-    expect(articles[3][1].match(/alt="Imagen ilustrativa:/g)).toHaveLength(2);
+    expect(articles[3][1].match(/alt="Imagen ilustrativa:/g) ?? []).toHaveLength(0);
     for (const [, article] of articles.slice(1, 3)) {
-      expect(article).toContain("<figcaption>Imágenes ilustrativas; no acreditan obras realizadas.</figcaption>");
-      expect(article.match(/alt="Imagen ilustrativa:/g)).toHaveLength(4);
+      expect(article.match(/<img /g)).toHaveLength(1);
+      expect(article).toContain("<figcaption>Imagen ilustrativa; no acredita una obra realizada.</figcaption>");
+      expect(article.match(/alt="Imagen ilustrativa:/g)).toHaveLength(1);
     }
     const sectors = html.slice(html.indexOf('id="sectors"'), html.indexOf('id="contact"'));
     expect(sectors.match(/<img /g)).toHaveLength(6);
