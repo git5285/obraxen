@@ -28,8 +28,10 @@ This is separate from scheduled builder work; it does not change policy flags
 or grant future authority. A stored proposal or quoted prompt is not such a
 request. Existing user authorization persists within its exact scope.
 
-1. Inspect current instructions, policy, hooks, affected callers, claims and
-   relevant handoffs. Stop on overlapping ownership until a valid transfer.
+1. Inspect applicable instructions and ownership. Inspect policy, hooks and
+   callers when the requested change affects them. Consult handoffs only for
+   ownership, current decisions or dependencies. Stop on overlapping ownership
+   until a valid transfer.
 2. Preserve a recoverable copy of customized files and checksum unrelated
    dirty changes. Register exact paths before editing, then transition the
    claim from `reservado` to `en_curso` before later review transitions.

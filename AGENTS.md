@@ -4,7 +4,13 @@ Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
 
 ## Antes de editar
 
-1. Lee `COORDINATION.md` y `.coordination/README.md` completos.
+Una tarea de solo lectura no crea claim. `COORDINATION.md` es un resumen opcional.
+
+1. Lee, de `.coordination/README.md`, «Alcance y lectura»,
+   «Ciclo obligatorio por tarea», «Plantilla de claim» y «Conflictos».
+   Consulta «Registro operativo» antes de registrar o cerrar una claim;
+   «Plantilla de handoff» antes de entregar y «Autorizacion agrupada de entrega»
+   solo para esa vía. No releas contenido vigente ya disponible en el contexto.
 2. Revisa `git status --short` y las claims activas.
 3. Consulta handoffs relacionados solo cuando sean necesarios para resolver
    propiedad, una decisión vigente o una dependencia del cambio. No recorras
@@ -43,6 +49,10 @@ Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
   del primer push desde cada clon.
 - Nunca hagas push directo a `main` ni omitas el hook con `--no-verify`.
 - Toda rama ejecuta `npm run check:quality` antes de subir y abre una pull request.
+  El hook usa `--reuse --head <sha>`: solo reutiliza lint, tipos, tests con
+  cobertura y build si el recibo local verificable tiene menos de una hora y
+  coincide con todos sus inputs. Seguridad, navegador y CI se ejecutan de nuevo.
+  Sin evidencia válida se ejecutan todos los checks; nunca se omite el hook.
 - Solo se fusiona el SHA revisado cuando su ejecución remota `Quality gate` está
   verde. GitHub Free no impone este check en repositorios privados: esta regla y
   el hook local son obligatorios para todas las tareas.
@@ -68,6 +78,13 @@ Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
 - Nombre, sociedad, dominio, contacto y legal no se inventan.
 - La investigación de naming no autoriza selección, compra ni integración.
 - Los datos desconocidos permanecen `null`, `sin dato` u omitidos.
+
+## Alcance de documentación
+
+Consulta las guías locales Next.js solo cuando el cambio afecte sus APIs,
+convenciones, renderizado, routing o configuración. Para código ajeno a Next.js
+no se exige una guía del framework: «relevant guide» en el bloque siguiente se
+refiere únicamente a los aspectos de Next.js afectados. Conserva el bloque generado.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
