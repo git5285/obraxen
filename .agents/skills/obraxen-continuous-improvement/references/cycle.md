@@ -9,8 +9,9 @@ below run from the repository root.
 Read these files before acting:
 
 1. `AGENTS.md`
-2. `COORDINATION.md`
-3. `.coordination/README.md`
+2. `COORDINATION.md` only when a coordination overview is needed.
+3. The coordination sections selected by `AGENTS.md`; load the exact operation
+   and evidence procedure before registering, transitioning or closing a claim.
 4. `automation/agents/policy.json`
 5. `automation/agents/README.md`, including `Common runtime`, `Current mode` and
    `Adaptador de repositorio: implementación local desactivada`.
@@ -183,7 +184,12 @@ status and claim, then require human resolution.
 Invoke `builder` with the complete manifest and validate its returned text with
 `automation/agents/contracts.mjs`. Require its runtime fingerprint to match the
 manifest and scout exactly. It may edit only exact allowed paths and one
-improvement. It gets one correction iteration at most.
+improvement. Scheduled cycles get at most `policy.limits.maxCorrectionIterations`
+corrections. For a human-directed repair (`trigger=human_request`, or a verified
+human-directed continuation), the controller declares a repair deadline before
+implementation, within `policy.limits.maxRunSeconds`. Continue relevant repairs
+inside that deadline and the same exact allowed paths; no new authority or lease
+extension is implied. Pass the origin and deadline to every builder invocation.
 Its `candidateId` and `attentionClass` must exactly match the manifest.
 Any attempt to expand scope, silently weaken a gate, install a dependency or use
 the network ends the run as `blocked`. An owner-directed policy migration is
@@ -194,17 +200,43 @@ before/after activation reports and independent review.
 
 Before review:
 
+Classify required checks by execution environment before implementation. Local
+checks run with the pinned runtime; the dependency security audit requires an
+explicitly authorized network-capable controller. The remote Quality gate is
+required for the exact delivered SHA before merge, not before a local diff exists.
+These requirements are cumulative. No local result substitutes for an external
+gate. A delivery bundle alone does not grant network-audit authority. When
+preparing the human delivery decision, offer the separate optional audit item in
+`.coordination/README.md`, including its dependency-data disclosure. Explicit
+approval of both items covers both scopes without another prompt.
+
 1. Validate paths and diff size with `automation/agents/diff-policy.mjs`.
 2. Validate the complete candidate, including staged, unstaged and untracked
    files, with `node automation/agents/runtime.mjs exec -- npm run check:diff -- --base-sha <reviewed-base-sha>`; run focused
    tests for the selected finding.
-3. Inspect the current package scripts before composing the checks. When
-   `check:quality` includes `check`, one successful complete invocation supplies
-   both checks; do not run `check` separately again on the same unchanged
-   candidate. If that composition changes, execute the missing required checks.
-4. Run `node automation/agents/runtime.mjs exec -- npm run check:quality`; its Playwright and Lighthouse runners allocate
-   isolated ports and refuse to reuse an existing server. This includes both the
-   locally enabled contact form and the normal fail-closed build.
+3. Inspect the current package scripts and quality runner. The full gate covers
+   lint, types, unit tests with coverage and build; do not also run plain `test`
+   or `check` on the same unchanged inputs. Execute any missing required checks.
+4. The controller runs `node automation/agents/runtime.mjs exec -- npm run check:quality`
+   only in an environment authorized for its network-dependent `check:security`.
+   A network-prohibited builder runs the local components assigned in its manifest:
+   `lint`, `typecheck`, `test:coverage`, `build`, `test:e2e:contact`, `test:e2e`,
+   and `lighthouse:ci`, through the runtime
+   launcher, only after inspecting their actual prerequisites. Assign
+   `lighthouse:ci` only with the verified locked local dependency at
+   `node_modules/.bin/lighthouse`; the runner has no download fallback.
+   Missing runners remain pending
+   for an authorized controller, without automatic installation. Reuse successful
+   unchanged-input results; do not run `check` twice.
+   The Playwright and Lighthouse runners allocate isolated ports and refuse to
+   reuse an existing server, covering enabled contact UI and the fail-closed build.
+   Preserve missing external checks as pending, not passed. Without complete
+   required quality evidence, retain the candidate as blocked for delivery and
+   report the exact missing check; do not claim a completed quality-gated cycle.
+   Pre-push still runs the quality entrypoint. Its `--reuse --head <sha>` option
+   can reuse only matching local lint/types/coverage/build evidence younger than
+   one hour. Missing, corrupt, expired or mismatched evidence runs those checks.
+   Security and browser checks run fresh; remote CI remains mandatory and fresh.
 5. Capture activation JSON again and require an exact match through
    `automation/agents/activation-policy.mjs`. For an owner-directed activation
    migration, retain both valid reports and audit every difference; the publish
@@ -222,7 +254,11 @@ visible as unresolved warnings until their own evidence exists.
 Invoke `auditor` with the manifest, diff, before/after activation reports and
 check results. Validate its returned text with
 `automation/agents/contracts.mjs` and require its runtime fingerprint to match
-the manifest, scout and builder exactly. A veto ends the run. The auditor never
+the manifest, scout and builder exactly. A veto ends a scheduled run. For a
+human-directed repair, actionable in-scope findings return to the builder within
+the original repair deadline; fresh independent review is required after changes.
+Authority, ownership, unavailable evidence or out-of-scope vetoes remain blockers.
+The auditor never
 repairs its own findings. Its `candidateId` and `attentionClass` must exactly
 match the manifest.
 

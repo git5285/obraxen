@@ -38,8 +38,14 @@ jobs:
       - name: Install Chromium and WebKit
         run: npx playwright install --with-deps chromium webkit
 
-      - name: Lint, types, unit tests and Next.js build
-        run: npm run check
+      - name: Lint and types
+        run: npm run lint && npm run typecheck
+
+      - name: Unit test coverage thresholds
+        run: npm run test:coverage
+
+      - name: Next.js build
+        run: npm run build
 
       - name: Contact form browser tests with enabled UI
         run: npm run test:e2e:contact

@@ -91,6 +91,24 @@ activo desaparece, su estado compartido sigue bloqueando al writer. Durante la
 transicion, conservar el marcador inicial permite que runners anteriores vean
 al menos una claim activa y se bloqueen de forma conservadora.
 
+### Cierre de una tarea local terminada
+
+Una tarea local ordinaria puede completar su entrega sin esperar aprobación humana
+cuando el resultado solicitado y sus verificaciones están completos. Escribe un
+handoff con rutas, checks, decisiones y sin trabajo pendiente bajo esa claim;
+calcula su SHA-256 y aporta `[{"kind":"handoff","path":".coordination/handoffs/<id>.md","contentDigest":"<sha256>"}]`
+mediante `--evidence-file` al pasar de `esperando_revision` a `liberado`.
+El controlador comprueba que el archivo existe, que su checksum coincide y que
+no queda trabajo pendiente: el registro valida el formato de la evidencia, no
+el contenido del handoff. Verifica después el estado efectivo con
+`operations.mjs status`. Esta liberación
+conserva los archivos y su historial; no aprueba Git ni acciones externas.
+
+Una candidata autónoma retenida pendiente de revisión no es una tarea local
+terminada: sigue reservada hasta su evidencia terminal o decisión correspondiente.
+Un handoff que documente trabajo pendiente no sirve para declarar finalizada una
+tarea. Conserva los bloqueos de ownership y la evidencia de cualquier transferencia.
+
 ## Autorizacion agrupada de entrega
 
 Una decision humana puede cubrir sin nuevas interrupciones una secuencia
@@ -99,6 +117,27 @@ contigua y exacta de `commit_candidate`, `push_branch` y
 `authorizations.mjs`; el registro fija repositorio, candidata, base, rama
 `codex/`, rutas exactas sin comodines, checksum de activacion, checks, orden y
 una vigencia maxima de 24 horas.
+
+Al preparar esta decisión, ofrece como item opcional separado la auditoría de
+dependencias. Presenta la orden exacta `npm audit --audit-level=moderate
+--package-lock-only --ignore-scripts --include=dev --include=optional --include=peer`,
+con `npm_config_registry=https://registry.npmjs.org`, el
+repositorio, candidata, SHA-256 de package-lock.json, entorno controlador, registry
+y caducidad. Explica que envía información de dependencias al registry, sin
+instalar paquetes ni modificar datos remotos del proyecto. Registra la aprobación
+explícita y su fuente en un handoff; una sola respuesta puede aprobar ambos items.
+No añadas un cuarto paso ni campos libres al bundle de entrega: el permiso de
+auditoría es una decisión separada y verificable con el mismo contexto humano.
+Antes de ejecutarla, comprueba esos datos y su vigencia; si falta el item aprobado
+no infieras permiso del bundle. Cambiar registry, lockfile o candidata requiere
+renovar ese item. Antes de ejecutar el gate o el push, valida el permiso de
+auditoría y fija `npm_config_registry` al registry aprobado en el entorno del
+comando completo; comprueba `npm config get registry` en ese mismo entorno.
+Así `check:security`, incluido el invocado por pre-push, usa el destino aprobado.
+Si se rechaza el item, prepara la candidata local y deja la entrega pendiente
+de evidencia de seguridad: nunca omitas el check obligatorio.
+Los roles sin red conservan su restricción; ejecuta la auditoría
+solo en el controlador autorizado. No concedas una bandera permanente de red.
 
 Antes de cada accion el controlador valida el contexto y crea una reserva
 exclusiva de 10 minutos. Al terminar, consume esa reserva con su token y registra
