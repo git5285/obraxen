@@ -12,7 +12,8 @@ describe("architecture default home", () => {
 
     expect(defaultLocale).toBe("es");
     expect(spanish).toContain("Reparación de<br/>pavimentos industriales.");
-    expect(spanish).toContain("Delticom");
+    expect(spanish).not.toContain("Delticom");
+    expect(spanish).toContain("No hay proyectos disponibles en esta selección.");
     expect(spanish).toContain("Vista privada · Propuesta en revisión");
     expect(english).toContain('id="inicio"');
     expect(english).not.toContain("Delticom");
@@ -41,10 +42,15 @@ describe("architecture default home", () => {
 
     const graph = JSON.parse(source!) as { "@graph": Array<Record<string, unknown>> };
     expect(graph["@graph"]).toEqual(expect.arrayContaining([
-      expect.objectContaining({ "@type": "Organization", name: "Obraxen Surface S.L.", email: "info@obraxen.com" }),
+      expect.objectContaining({ "@type": "Organization", name: "Obraxen" }),
       expect.objectContaining({ "@type": "WebSite", name: "Obraxen", inLanguage: "es" }),
       expect.objectContaining({ "@type": "WebPage", url: "https://obraxen.com/es/", inLanguage: "es" }),
     ]));
+    const organization = graph["@graph"].find(item => item["@type"] === "Organization");
+    expect(organization).not.toHaveProperty("email");
+    expect(organization).not.toHaveProperty("telephone");
+    expect(organization).not.toHaveProperty("address");
+    expect(JSON.stringify(graph)).not.toMatch(/Obraxen Surface S\.L\.|B93963841|Federico García Lorca|info@obraxen\.com|34653916970/);
     expect(JSON.stringify(graph)).not.toContain("FAQPage");
     expect(JSON.stringify(graph)).not.toContain("LocalBusiness");
   });

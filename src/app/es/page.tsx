@@ -1,51 +1,20 @@
 import type { Metadata } from "next";
 import type { StaticImageData } from "next/image";
-import delticomInitial from "../../../img/proyectos/delticom/estado-inicial.webp";
-import delticomResult from "../../../img/proyectos/delticom/resultado.webp";
-import hologramInitial from "../../../img/proyectos/hologram/estado-inicial-huecos.webp";
-import hologramResult from "../../../img/proyectos/hologram/resultado.webp";
 import architectureHall from "../../../img/architecture-hall-illustrative.png";
 import "../../../css/architecture.css";
 import { ArchitectureHome } from "@/components/architecture-home";
 import { brand } from "@/lib/brand";
-import { architectureCompany } from "@/lib/architecture-content";
 import { getPath, openGraphLocales } from "@/lib/i18n";
-import { internalProjects } from "@/lib/internal-projects";
 import { absoluteSiteUrl } from "@/lib/metadata";
-
-const architectureProjectImages = {
-  "delticom-hannover": { initial: delticomInitial, result: delticomResult },
-  "hologram-paris": { initial: hologramInitial, result: hologramResult },
-};
 
 function getStaticImagePath(image: StaticImageData | string) {
   return typeof image === "string" ? image : image.src;
 }
 
 function getArchitectureProjects() {
-  return ["delticom-hannover", "hologram-paris"].map((slug) => {
-    const project = internalProjects.find((item) => item.slug === slug);
-    if (!project) throw new Error(`Falta el registro interno ${slug}`);
-    const images = ["Estado inicial", "Resultado documentado"].map((stage) => {
-      const image = project.imagenes.find((item) => item.etapa === stage);
-      if (!image) throw new Error(`Falta la fotografía ${stage} de ${slug}`);
-      const asset = architectureProjectImages[slug as keyof typeof architectureProjectImages][stage === "Estado inicial" ? "initial" : "result"];
-      return { src: asset.src, alt: image.alt, stage, width: asset.width, height: asset.height };
-    });
-    return {
-      name: project.cliente,
-      city: project.ubicacion.ciudad,
-      country: project.traducciones.es.pais,
-      sector: project.traducciones.es.sector,
-      area: project.superficieM2,
-      description: project.traducciones.es.solucion,
-      problem: project.traducciones.es.problema,
-      result: project.traducciones.es.resultado,
-      duration: project.traducciones.es.duracionReal,
-      materials: project.traducciones.es.materiales,
-      images,
-    };
-  });
+  // Project records and photographs remain unpublished until their evidence,
+  // permissions and professional review are complete.
+  return [];
 }
 
 const path = getPath("es", "home");
@@ -65,21 +34,16 @@ function getArchitectureJsonLd() {
       {
         "@type": "Organization",
         "@id": organizationId,
-        name: architectureCompany.legalName,
+        name: brand.nombre ?? "Obraxen",
         url: siteUrl,
-        email: architectureCompany.email,
-        telephone: architectureCompany.phone,
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: architectureCompany.address,
-          addressLocality: "Málaga",
-          addressCountry: "ES",
-        },
+        ...(brand.email ? { email: brand.email } : {}),
+        ...(brand.telefono ? { telephone: brand.telefono } : {}),
+        ...(brand.direccion ? { address: { "@type": "PostalAddress", streetAddress: brand.direccion } } : {}),
       },
       {
         "@type": "WebSite",
         "@id": websiteId,
-        name: brand.nombre ?? architectureCompany.legalName,
+        name: brand.nombre ?? "Obraxen",
         url: siteUrl,
         inLanguage: "es",
         publisher: { "@id": organizationId },

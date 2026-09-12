@@ -2,11 +2,11 @@ import { z } from "zod";
 
 // User-confirmed draft, 2026-09-07; does not change the shared publication data.
 export const architectureCompany = {
-  legalName: "Obraxen Surface S.L.", taxId: "B93963841",
-  address: "Calle Federico García Lorca, 22, Málaga", postalCode: null,
-  email: "info@obraxen.com", phone: "+34 653 91 69 70", phoneHref: "tel:+34653916970",
-  whatsappHref: "https://wa.me/34653916970", phoneTemporary: true,
-  response: "Respondemos en un plazo de 24 horas laborables.",
+  legalName: null, taxId: null,
+  address: null, postalCode: null,
+  email: null, phone: null, phoneHref: null,
+  whatsappHref: null, phoneTemporary: false,
+  response: null,
   languages: "Español, inglés, alemán, francés e italiano",
   experience: "Algunas personas del equipo cuentan con hasta una década de experiencia en pavimentos industriales.",
   priority: "Nuestra prioridad comercial a corto plazo es Europa occidental.",

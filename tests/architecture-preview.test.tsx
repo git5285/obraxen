@@ -24,17 +24,14 @@ describe("private architecture preview", () => {
     vi.stubEnv("NODE_ENV", mode); vi.stubEnv("OBRAXEN_ARCHITECTURE_PREVIEW", flag); vi.stubEnv("VERCEL", vercel);
     await expect(ArchitecturePreview({ params: Promise.resolve({ lang }) })).rejects.toThrow("NEXT_HTTP_ERROR_FALLBACK;404");
   });
-  it("renders internal records only under the explicit Spanish local-development gate", async () => {
+  it("keeps redacted project records unavailable under the explicit Spanish local-development gate", async () => {
     vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("OBRAXEN_ARCHITECTURE_PREVIEW", "local-only"); vi.stubEnv("VERCEL", "");
     const html = renderToStaticMarkup(await ArchitecturePreview({ params: Promise.resolve({ lang: "es" }) }));
-    expect(html).toContain("Delticom"); expect(html).toContain("18.084");
+    expect(html).not.toContain("Delticom"); expect(html).not.toContain("18.084");
     expect(html).toContain("Experiencia del equipo");
     expect(html).not.toContain("data:image/webp;base64,");
-    expect(html).toContain("%2Fes%2Farchitecture-preview%2Fmedia%2Fdelticom-hannover%2Fresult%2F");
-    expect(html).toContain("%2Fes%2Farchitecture-preview%2Fmedia%2Fhologram-paris%2Finitial%2F");
-    expect(html).toContain("Duración documentada");
-    expect(html).toContain("2 meses");
-    expect(html).toContain("Retirada de 5.362 m² de revestimiento");
+    expect(html).not.toContain("architecture-preview/media");
+    expect(html).toContain("No hay proyectos disponibles en esta selección.");
     expect(html).not.toContain("/img/proyectos/"); expect(publicProjects).toHaveLength(0);
   });
   it("preserves approved section order, functional details and honest preview boundaries", () => {
@@ -43,7 +40,7 @@ describe("private architecture preview", () => {
     expect(positions.every((position) => position > 0)).toBe(true);
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
     expect(html).not.toContain("Artículos aún no publicados"); expect(html).not.toContain("Formulario de demostración");
-    expect(html).toContain('href="mailto:info@obraxen.com"'); expect(html).toContain('href="/de/"');
+    expect(html).not.toContain('href="mailto:'); expect(html).toContain('href="/de/"');
     expect(html).toContain("/obraxen-wordmark-v14.svg#letra-X"); expect(html).not.toContain("style=");
     expect(html).toContain("architecture-hall-illustrative");
     expect(html).toContain('sizes="100vw"');
@@ -60,14 +57,15 @@ describe("private architecture preview", () => {
     expect(html).not.toContain("Casos y fotografías solo con autorización");
     expect(html).toContain("Selección de intervenciones anteriores de integrantes del equipo.");
     expect(html).not.toContain("24 horas laborables");
-    expect(html).toContain("Obraxen Surface S.L.");
-    expect(html).toContain("B93963841");
-    expect(html).toContain("Calle Federico García Lorca, 22, Málaga");
-    expect(html).toContain('href="https://wa.me/34653916970"');
+    expect(html).not.toContain("Obraxen Surface S.L.");
+    expect(html).not.toContain("B93963841");
+    expect(html).not.toContain("Calle Federico García Lorca, 22, Málaga");
+    expect(html).not.toContain('href="https://wa.me/34653916970"');
     expect(html).not.toContain('href="/it/"');
     expect(html).not.toContain("24 horas naturales");
     expect(html).toContain('aria-label="Ver alcance técnico: Nivelación y recrecidos"');
-    expect(html).toContain('class="ar-button" href="mailto:info@obraxen.com"');
+    expect(html).not.toContain('class="ar-button" href="mailto:');
+    expect(html).toContain("Contacto directo pendiente de validación.");
     expect(html).toContain("Imagen ilustrativa generada de una nave diáfana luminosa");
     expect(html).not.toContain("Preguntas frecuentes"); expect(html).not.toContain('class="ar-footer-x"');
     expect(html).toContain('aria-label="Ver alcance técnico: Reparación de pavimentos"');
@@ -151,11 +149,11 @@ describe("private architecture preview", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[]} />);
     expect(html).toContain("Abre el formulario de la web vigente para dejar los datos de tu consulta.");
     expect(html).toContain('class="ar-button" href="/es/contacto/">Abrir formulario de contacto</a>');
-    expect(html).toContain("Si el formulario no está disponible, utiliza el correo, el teléfono o WhatsApp de esta sección.");
+    expect(html).toContain("El formulario será el canal de consulta cuando se habilite la captación.");
     expect(html).not.toContain("Formulario de demostración");
     expect(html).not.toContain("Revisar ejemplo");
     expect(html).not.toContain("ar-contact-form");
-    expect(html).toContain('class="ar-button" href="mailto:info@obraxen.com"');
+    expect(html).not.toContain('class="ar-button" href="mailto:');
   });
   it("keeps complete concise case facts in the stable summary", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[{
@@ -182,7 +180,7 @@ describe("private architecture preview", () => {
     const html = renderToStaticMarkup(<ArchitectureHome projects={[{
       name: "Caso", city: "Ciudad", country: "País", sector: "Industria", area: 500,
       description: "Intervención muy detallada con datos documentados que deben quedar disponibles en el desplegable sin dominar el resumen inicial.", problem: "Daño localizado.", result: "Resultado confirmado.", duration: "Dos semanas", materials: ["Material documentado"],
-      images: [{ src: "/es/architecture-preview/media/delticom-hannover/result/", alt: "Resultado", stage: "Resultado documentado", width: 1400, height: 646 }],
+      images: [{ src: "/es/architecture-preview/media/redacted/result/", alt: "Resultado", stage: "Resultado documentado", width: 1400, height: 646 }],
     }]} />);
     expect(html).toContain("Intervención muy detallada con datos documentados que deben quedar disponibles en el desplegable sin dominar el resumen");
     expect(html).toContain("Intervención completa");
