@@ -27,10 +27,11 @@ describe("precision local alternative", () => {
   it("renders truthful private records only in explicitly enabled local development", async () => {
     vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("OBRAXEN_ARCHITECTURE_PREVIEW", "local-only"); vi.stubEnv("VERCEL", "");
     const html = renderToStaticMarkup(await PrecisionPreview({ params: Promise.resolve({ lang: "es" }) }));
-    expect(html).toContain("Delticom"); expect(html).toContain("Hologram");
-    expect(html).toContain("18.084"); expect(html).toContain("2 meses");
+    expect(html).not.toContain("Delticom"); expect(html).not.toContain("Hologram");
+    expect(html).not.toContain("18.084"); expect(html).not.toContain("2 meses");
     expect(html).toContain("intervenciones anteriores de integrantes del equipo");
-    expect(html).toContain("data:image/webp;base64,"); expect(html).not.toContain("/img/proyectos/");
+    expect(html).not.toContain("data:image/webp;base64,"); expect(html).not.toContain("/img/proyectos/");
+    expect(html).toContain("No hay proyectos disponibles en esta selección.");
     expect(html).not.toContain("architecture-hall-illustrative"); expect(html).not.toContain("style=");
     expect(publicProjects).toHaveLength(0);
     expect(metadata.robots).toEqual({ index: false, follow: false, nocache: true });
@@ -57,12 +58,12 @@ describe("precision local alternative", () => {
   it("keeps the contact route collapsed, real contact first, and current preview reachable", () => {
     const html = renderToStaticMarkup(<ArchitecturePrecision projects={[]} />);
     expect(html).toContain('<details class="ap-demo">');
-    expect(html.indexOf('href="mailto:info@obraxen.com"')).toBeLessThan(html.indexOf('class="ap-demo"'));
+    expect(html).not.toContain('href="mailto:info@obraxen.com"');
     expect(html).toContain('href="/es/contacto">Abrir formulario de contacto</a>');
     expect(html).toContain("No envía consultas ni guarda datos.");
     expect(html).not.toContain('id="ar-name"');
     expect(html).toMatch(/href="\/es\/architecture-preview\/?"/);
-    expect(html).toContain("Teléfono y WhatsApp temporales");
+    expect(html).toContain("Contacto directo pendiente de validación.");
     expect(html).toContain("Sin envío ni almacenamiento");
   });
   it("isolates its CSS and uses the approved global font and color tokens", () => {

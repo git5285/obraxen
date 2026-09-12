@@ -39,10 +39,15 @@ describe("local architecture contact", () => {
     expect(validateArchitecturePhotos([{ type: "image/svg+xml", size: 100 }])).not.toBe("");
   });
   it("keeps confirmed declarations distinct from readiness to publish", () => {
-    expect(architectureCompany.response).toContain("24 horas laborables");
-    expect(architectureCompany.phoneTemporary).toBe(true);
+    expect(architectureCompany.response).toBeNull();
+    expect(architectureCompany.phoneTemporary).toBe(false);
     expect(architectureCompany.postalCode).toBeNull();
-    expect(architectureCompany.whatsappHref).toBe("https://wa.me/34653916970");
+    expect(architectureCompany.legalName).toBeNull();
+    expect(architectureCompany.taxId).toBeNull();
+    expect(architectureCompany.address).toBeNull();
+    expect(architectureCompany.email).toBeNull();
+    expect(architectureCompany.phone).toBeNull();
+    expect(architectureCompany.whatsappHref).toBeNull();
     expect(architectureCompany.experience).toContain("Algunas personas");
   });
   it.each([

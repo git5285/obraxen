@@ -116,6 +116,9 @@ function CompactProject({ project }: { project: PreviewProject }) {
 
 export function ArchitectureHome({ projects, showEditorialPreview = false }: { projects: readonly PreviewProject[]; showEditorialPreview?: boolean }) {
   const navigationLinks = architectureLinks.filter(([, id]) => showEditorialPreview || id !== "blog");
+  const phoneHref = brand.telefono ? `tel:${brand.telefono.replace(/[^+\d]/g, "")}` : null;
+  const whatsappHref = brand.whatsapp ? `https://wa.me/${brand.whatsapp.replace(/\D/g, "")}` : null;
+  const hasDirectContact = Boolean(brand.email || phoneHref || whatsappHref);
   return <div className="ar-page ar-home" id="architecture">
     <a href="#ar-content" className="skip">Saltar al contenido</a>
     <header className="ar-header"><div className="ar-wrap ar-header-inner">
@@ -162,10 +165,15 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
       </div></section>
       <section className="ar-contact ar-section" id="contact"><div className="ar-wrap ar-contact-grid">
         <div className="ar-contact-heading"><h2 id="ar-contact-title" tabIndex={-1}>Cuéntanos tu proyecto</h2><p>Cuéntanos la localidad, el uso del espacio y el daño visible.</p>
-          <div className="ar-contact-direct"><a className="ar-button" href={`mailto:${company.email}`}>Escribir por correo</a><a href={company.phoneHref}>Llamar al {company.phone}</a><a href={company.whatsappHref}>WhatsApp</a></div>
-          <p className="ar-note">Teléfono y WhatsApp temporales. Consultas atendidas por dirección.</p>
+          <div className="ar-contact-direct">
+            {brand.email ? <a className="ar-button" href={`mailto:${brand.email}`}>Escribir por correo</a> : null}
+            {brand.telefono && phoneHref ? <a href={phoneHref}>Llamar al {brand.telefono}</a> : null}
+            {whatsappHref ? <a href={whatsappHref}>WhatsApp</a> : null}
+            {!hasDirectContact ? <p className="ar-note">Contacto directo pendiente de validación.</p> : null}
+          </div>
+          <p className="ar-note">{hasDirectContact ? "Teléfono y WhatsApp temporales. Consultas atendidas por dirección." : "El contacto directo se habilitará cuando los canales estén validados."}</p>
         </div>
-        <div className="ar-contact-route"><h3>Formulario de contacto</h3><p>Abre el formulario de la web vigente para dejar los datos de tu consulta.</p><a className="ar-button" href={getPath("es", "contact")}>Abrir formulario de contacto</a><p className="ar-note">Si el formulario no está disponible, utiliza el correo, el teléfono o WhatsApp de esta sección.</p></div>
+        <div className="ar-contact-route"><h3>Formulario de contacto</h3><p>Abre el formulario de la web vigente para dejar los datos de tu consulta.</p><a className="ar-button" href={getPath("es", "contact")}>Abrir formulario de contacto</a><p className="ar-note">{hasDirectContact ? "Si el formulario no está disponible, utiliza el correo, el teléfono o WhatsApp de esta sección." : "El formulario será el canal de consulta cuando se habilite la captación."}</p></div>
       </div></section>
       {showEditorialPreview ? <section id="blog" className="ar-blog-preview ar-band ar-section"><div className="ar-wrap"><h2>Blog · Revisión interna</h2><p className="ar-note">Temas propuestos · Artículos aún no publicados</p><div className="ar-three">
         {topics.map((topic) => <article key={topic.title}><ResponsiveImage src={topic.image} {...getImageDimensions(topic.image, { width: 860, height: 484 })} alt={`Imagen ilustrativa: ${topic.title}`} sizes="(max-width: 700px) 90vw, 23vw" /><h3>{topic.title}</h3><details><summary aria-label={`Ver tema propuesto: ${topic.title}`}>Ver tema propuesto</summary><p>{topic.body}</p></details></article>)}
@@ -176,9 +184,9 @@ export function ArchitectureHome({ projects, showEditorialPreview = false }: { p
       <div><div className="ar-footer-brand"><LogoMark brandName={brand.nombre} href="#architecture" homeLabel="inicio" className="ar-logo" /></div><p>Reparación y rehabilitación de pavimentos industriales.</p></div>
       <nav aria-label="Navegación del pie"><h2>Explorar</h2>{navigationLinks.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}</nav>
       <nav aria-label="Soluciones del pie"><h2>Soluciones</h2>{solutions.map(solution => <a key={solution.id} href={`#ar-solution-${solution.id}`}>{solution.title}</a>)}</nav>
-      <div><h2>Contacto</h2><a href={`mailto:${company.email}`}>{company.email}</a><a href={company.phoneHref}>{company.phone} (temporal)</a><a href={company.whatsappHref}>WhatsApp (temporal)</a><a href="#contact">Revisar una consulta</a></div>
+      <div><h2>Contacto</h2>{brand.email ? <a href={`mailto:${brand.email}`}>{brand.email}</a> : null}{brand.telefono && phoneHref ? <a href={phoneHref}>{brand.telefono} (temporal)</a> : null}{whatsappHref ? <a href={whatsappHref}>WhatsApp (temporal)</a> : null}<a href="#contact">Revisar una consulta</a></div>
     </div><div className="ar-footer-bottom"><nav aria-label="Información legal"><a href={getPath("es", "legalNotice")}>Aviso legal</a><a href={getPath("es", "privacy")}>Privacidad</a><a href={getPath("es", "cookies")}>Cookies</a></nav>
       <div className="ar-language-links"><p id="ar-language-notice">Idiomas de la web vigente · Saldrás de esta propuesta.</p><nav id="ar-languages" aria-label="Idiomas de la web vigente" aria-describedby="ar-language-notice">{locales.map((locale) => <a key={locale} href={getPath(locale, "home")} hrefLang={locale} lang={locale}>{locale.toUpperCase()}</a>)}</nav></div>
-    </div><p className="ar-note">{company.legalName} · NIF {company.taxId}<br />{company.address}</p><p className="ar-note">El hero, parte de las soluciones, sectores y Blog utilizan imágenes ilustrativas, no acreditan obras realizadas. Las fotografías aportadas se identifican en sus soluciones. Preview privada en español; idiomas y enlaces legales abren las versiones vigentes. No publicado.</p><a className="ar-editorial-link" href={showEditorialPreview ? "?review=client#architecture" : "?review=editorial#blog"}>{showEditorialPreview ? "Volver al recorrido para clientes" : "Revisión editorial interna"}</a></div></footer>
+    </div>{brand.nombreLegal || brand.cif || brand.direccion ? <p className="ar-note">{brand.nombreLegal}{brand.cif ? <> · NIF {brand.cif}</> : null}<br />{brand.direccion}</p> : null}<p className="ar-note">El hero, parte de las soluciones, sectores y Blog utilizan imágenes ilustrativas, no acreditan obras realizadas. Las fotografías aportadas se identifican en sus soluciones. Preview privada en español; idiomas y enlaces legales abren las versiones vigentes. No publicado.</p><a className="ar-editorial-link" href={showEditorialPreview ? "?review=client#architecture" : "?review=editorial#blog"}>{showEditorialPreview ? "Volver al recorrido para clientes" : "Revisión editorial interna"}</a></div></footer>
   </div>;
 }

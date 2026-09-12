@@ -17,21 +17,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ lang
     || !["delticom-hannover", "hologram-paris"].includes(slug)
     || !["initial", "result"].includes(stage)) return unavailable();
 
-  // Only an allowlisted record supplies a filename, and only after every gate.
-  const { internalProjects } = await import("@/lib/internal-projects");
-  const image = internalProjects.find(project => project.slug === slug)?.imagenes.find(
-    image => image.etapa === (stage === "initial" ? "Estado inicial" : "Resultado documentado"),
-  );
-  if (!image) return unavailable();
-  const { resolve, sep } = await import("node:path");
-  const root = resolve(process.cwd(), "img/proyectos");
-  const path = resolve(process.cwd(), image.src);
-  if (!path.startsWith(`${root}${sep}`) || !path.endsWith(".webp")) return unavailable();
-  const { readFile } = await import("node:fs/promises");
-  try {
-    const bytes = await readFile(path);
-    return new Response(new Uint8Array(bytes), { headers: { ...headers, "Content-Type": "image/webp" } });
-  } catch {
-    return unavailable();
-  }
+  // All project photographs were redacted. Keep the endpoint fail-closed until
+  // a separately approved, documented asset set is available.
+  return unavailable();
 }

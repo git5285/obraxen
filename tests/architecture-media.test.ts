@@ -1,8 +1,5 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/[lang]/architecture-preview/media/[project]/[stage]/route";
-import { internalProjects } from "@/lib/internal-projects";
 
 afterEach(() => vi.unstubAllEnvs());
 const allowed = () => {
@@ -32,17 +29,13 @@ describe("private architecture media", () => {
   ])("rejects non-allowlisted requests %s/%s/%s on %s", async (lang, project, stage, host) => {
     allowed();expect((await request(lang, project, stage, host)).status).toBe(404);
   });
-  it.each(["delticom-hannover", "hologram-paris"])("serves unchanged private image bytes for %s", async slug => {
+  it.each(["delticom-hannover", "hologram-paris"])("keeps redacted private image bytes unavailable for %s", async slug => {
     allowed();
     for (const stage of ["initial", "result"]) {
       const response = await request("es", slug, stage);
-      const image = internalProjects.find(p => p.slug === slug)!.imagenes.find(i => i.etapa === (stage === "initial" ? "Estado inicial" : "Resultado documentado"))!;
-      expect(response.status).toBe(200);
-      expect(Buffer.from(await response.arrayBuffer())).toEqual(await readFile(resolve(image.src)));
-      expect(response.headers.get("content-type")).toBe("image/webp");
-      expect(response.headers.get("cache-control")).toBe("private, no-store, no-transform");
-      expect(response.headers.get("cross-origin-resource-policy")).toBe("same-origin");
-      expect(response.headers.get("x-robots-tag")).toContain("noindex");
+      expect(response.status).toBe(404);
+      expect(await response.text()).toBe("");
+      expect(response.headers.get("cache-control")).toContain("no-store");
     }
   });
 });

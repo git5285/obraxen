@@ -59,6 +59,9 @@ function ProjectCase({ project, featured }: { project: PrecisionProject; feature
 
 export function ArchitecturePrecision({ projects }: { projects: readonly PrecisionProject[] }) {
   const hero = projects[0]?.images.find(image => image.stage === "Resultado documentado");
+  const phoneHref = brand.telefono ? `tel:${brand.telefono.replace(/[^+\d]/g, "")}` : null;
+  const whatsappHref = brand.whatsapp ? `https://wa.me/${brand.whatsapp.replace(/\D/g, "")}` : null;
+  const hasDirectContact = Boolean(brand.email || phoneHref || whatsappHref);
   return <div className="ap-page" id="precision">
     <a href="#ap-content" className="skip">Saltar al contenido</a>
     <div className="ap-preview"><div className="ap-wrap"><span>Alternativa local · No publicada</span><Link prefetch={false} href="/es/architecture-preview/">Versión anterior <Arrow /></Link></div></div>
@@ -96,12 +99,12 @@ export function ArchitecturePrecision({ projects }: { projects: readonly Precisi
       </section>
 
       <section className="ap-contact ap-section" id="contact" aria-labelledby="ap-contact-title"><div className="ap-wrap">
-        <div className="ap-contact-heading"><h2 id="ap-contact-title">Hablemos de<br />tu superficie.</h2><div><p>{company.response}</p><p>Cuéntanos dónde está, cómo se utiliza y qué necesitas revisar.</p></div></div>
-        <a href={`mailto:${company.email}`} className="ap-email">{company.email}<Arrow /></a>
-        <div className="ap-contact-meta"><div><a href={company.phoneHref}>{company.phone}</a><a href={company.whatsappHref}>WhatsApp <Arrow /></a><p>Teléfono y WhatsApp temporales.<br />Consultas atendidas por dirección.</p></div><div><p>Atención comercial en {company.languages.toLowerCase()}.</p><p>{company.priority}</p></div></div>
+        <div className="ap-contact-heading"><h2 id="ap-contact-title">Hablemos de<br />tu superficie.</h2><div><p>{company.response ?? "El plazo de respuesta se definirá cuando los canales de contacto estén validados."}</p><p>Cuéntanos dónde está, cómo se utiliza y qué necesitas revisar.</p></div></div>
+        {brand.email ? <a href={`mailto:${brand.email}`} className="ap-email">{brand.email}<Arrow /></a> : <p className="ap-note">Correo de contacto pendiente de validación.</p>}
+        <div className="ap-contact-meta"><div>{brand.telefono && phoneHref ? <a href={phoneHref}>{brand.telefono}</a> : null}{whatsappHref ? <a href={whatsappHref}>WhatsApp <Arrow /></a> : null}<p>{hasDirectContact ? <>Teléfono y WhatsApp temporales.<br />Consultas atendidas por dirección.</> : "Contacto directo pendiente de validación."}</p></div><div><p>Atención comercial en {company.languages.toLowerCase()}.</p><p>{company.priority}</p></div></div>
         <details className="ap-demo"><summary>Probar el formulario de demostración<span>Sin envío ni almacenamiento</span><span className="ap-plus" aria-hidden="true" /></summary><ArchitectureContact /></details>
       </div></section>
     </main>
-    <footer className="ap-footer ap-wrap"><div className="ap-footer-main"><LogoMark brandName={brand.nombre} href="#precision" homeLabel="inicio" className="ap-logo" /><p>{company.legalName}<br />NIF {company.taxId}<br />{company.address}</p><nav aria-label="Información legal"><a href={getPath("es", "legalNotice")}>Aviso legal</a><a href={getPath("es", "privacy")}>Privacidad</a><a href={getPath("es", "cookies")}>Cookies</a></nav></div><div className="ap-footer-bottom"><p>Preview privada en español. Los enlaces legales e idiomas abren las versiones vigentes.</p><nav aria-label="Idiomas de la web vigente">{locales.map(locale => <a key={locale} href={getPath(locale, "home")} hrefLang={locale} lang={locale}>{locale.toUpperCase()}</a>)}</nav></div></footer>
+    <footer className="ap-footer ap-wrap"><div className="ap-footer-main"><LogoMark brandName={brand.nombre} href="#precision" homeLabel="inicio" className="ap-logo" />{brand.nombreLegal || brand.cif || brand.direccion ? <p>{brand.nombreLegal}{brand.cif ? <><br />NIF {brand.cif}</> : null}{brand.direccion ? <><br />{brand.direccion}</> : null}</p> : <p>Identidad legal pendiente de validación.</p>}<nav aria-label="Información legal"><a href={getPath("es", "legalNotice")}>Aviso legal</a><a href={getPath("es", "privacy")}>Privacidad</a><a href={getPath("es", "cookies")}>Cookies</a></nav></div><div className="ap-footer-bottom"><p>Preview privada en español. Los enlaces legales e idiomas abren las versiones vigentes.</p><nav aria-label="Idiomas de la web vigente">{locales.map(locale => <a key={locale} href={getPath(locale, "home")} hrefLang={locale} lang={locale}>{locale.toUpperCase()}</a>)}</nav></div></footer>
   </div>;
 }
