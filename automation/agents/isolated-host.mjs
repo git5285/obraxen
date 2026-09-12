@@ -9,6 +9,15 @@ const profiles = Object.freeze({
   builder: "obraxen-implementer.toml",
   auditor: "obraxen-auditor.toml",
 });
+const TOML_PARSER_CANDIDATES = Object.freeze([
+  "python3",
+  "python3.14",
+  "python3.13",
+  "python3.12",
+  "python3.11",
+  "/opt/homebrew/bin/python3",
+  "/usr/local/bin/python3",
+]);
 
 function expectedSandbox(role) {
   if (!Object.hasOwn(profiles, role)) throw new Error("unknown_role");
@@ -25,11 +34,24 @@ export function readRoleProfile(cwd, role) {
   const path = resolve(cwd, ".codex/agents", profiles[role]);
   const source = readFileSync(path, "utf8");
   // Parse only this known project profile, never global config or credentials.
-  // Python >=3.11 supplies TOML parsing without installing a dependency.
-  const parsed = spawnSync("python3", ["-c",
-    "import sys,json,tomllib; print(json.dumps(tomllib.loads(sys.stdin.read())))"],
-  { input: source, encoding: "utf8", timeout: 5000, maxBuffer: 256 * 1024 });
-  if (parsed.status !== 0) throw new Error("role_toml_parser_unavailable_or_invalid");
+  // Python >=3.11 supplies TOML parsing without installing a dependency. Some
+  // macOS images expose a legacy /usr/bin/python3 first, so only fall through
+  // when the selected interpreter lacks tomllib; malformed TOML still fails
+  // closed immediately.
+  const parserSource = "import sys,json,tomllib; print(json.dumps(tomllib.loads(sys.stdin.read())))";
+  let parsed = null;
+  for (const interpreter of TOML_PARSER_CANDIDATES) {
+    const result = spawnSync(interpreter, ["-c", parserSource], {
+      input: source, encoding: "utf8", timeout: 5000, maxBuffer: 256 * 1024,
+    });
+    const missingInterpreter = result.error?.code === "ENOENT";
+    const missingTomllib = /No module named [\"']tomllib[\"']/.test(result.stderr ?? "");
+    if (result.status === 0 || (!missingInterpreter && !missingTomllib)) {
+      parsed = result;
+      break;
+    }
+  }
+  if (!parsed || parsed.status !== 0) throw new Error("role_toml_parser_unavailable_or_invalid");
   const profile = JSON.parse(parsed.stdout);
   if (profile.name !== role || profile.approval_policy !== "never"
     || profile.sandbox_mode !== sandbox || typeof profile.model !== "string"
@@ -124,12 +146,14 @@ export async function inspectRoleHost({ cwd, role, codex = "codex", timeoutMs = 
   });
   let nextId = 0;
   let buffer = "";
+  const bufferParts = [];
   let receivedBytes = 0;
   let failed = null;
   const pending = new Map();
   const fail = (code) => {
     failed ??= new Error(code);
     buffer = "";
+    bufferParts.length = 0;
     child.stdout.pause();
     for (const request of pending.values()) request.reject(failed);
     pending.clear();
@@ -142,7 +166,12 @@ export async function inspectRoleHost({ cwd, role, codex = "codex", timeoutMs = 
     if (failed) return;
     receivedBytes += Buffer.byteLength(chunk);
     if (receivedBytes > 2 * 1024 * 1024) return fail("host_output_limit");
-    buffer += chunk;
+    // Do not repeatedly concatenate an unterminated hostile response: that
+    // quadratic work could let the timeout win before the output cap fires.
+    bufferParts.push(chunk);
+    if (!chunk.includes("\n")) return;
+    buffer += bufferParts.join("");
+    bufferParts.length = 0;
     let newline;
     while ((newline = buffer.indexOf("\n")) >= 0) {
       const line = buffer.slice(0, newline);
