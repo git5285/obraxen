@@ -4,6 +4,7 @@ set -eu
 
 zero_sha="0000000000000000000000000000000000000000"
 run_quality=false
+quality_sha=""
 remote_name="${1:-origin}"
 repository_root="$(git rev-parse --show-toplevel)"
 base_ref="refs/remotes/${remote_name}/main"
@@ -29,6 +30,11 @@ while read -r local_ref local_sha remote_ref remote_sha; do
         fi
         cd "$repository_root"
         run_without_local_git_env npm run check:diff -- --base-ref "$base_ref" --head "$local_sha"
+        if [ -n "$quality_sha" ] && [ "$quality_sha" != "$local_sha" ]; then
+          echo "Sube cada candidata desde su checkout verificado por separado." >&2
+          exit 1
+        fi
+        quality_sha="$local_sha"
         run_quality=true
       fi
       ;;
@@ -38,5 +44,5 @@ done
 if [ "$run_quality" = true ]; then
   cd "$repository_root"
   echo "Ejecutando el gate local antes del push..."
-  run_without_local_git_env npm run check:quality
+  run_without_local_git_env npm run check:quality -- --reuse --head "$quality_sha"
 fi

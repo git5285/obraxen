@@ -328,6 +328,22 @@ snapshots and owns coordination writes. Specialists use only bound immutable
 read/check commands. The legacy Desktop hook remains a separate boundary;
 this delivery does not change its existing command allowlist.
 
+The full local entrypoint delegates to `scripts/quality-gate.mjs` after the
+explicit security step. Its local group is lint, types, tests with coverage and
+build; plain unit tests are not run a second time. Pre-push requests `--reuse
+--head <sha>`. Receipts under `~/.local/state/obraxen/quality-receipts/` contain
+only digests, timestamps and check identities. Reuse requires matching checkout
+content (including ignored source inputs, untracked and root environment files), installed dependency
+contents, runtime, Git HEAD/ref/config, npm configuration and environment, within
+one hour. Committing or switching branches therefore requires fresh checks. Reuse
+does not extend that hour, measured conservatively from the local check start.
+Vitest's mutable `node_modules/.vite` output is excluded from dependency content;
+generated compiler inputs are bound separately after the build and checked before
+reuse. Source/input drift during verification fails the gate. A new failure
+invalidates previous local evidence. A pushed SHA must match a clean checkout with no
+untracked inputs. Unknown inputs disable reuse. Security, both browser modes,
+Lighthouse and remote CI always run fresh; receipts grant no external authority.
+
 Policy limits have explicit enforcement owners:
 
 | Limit | Enforcement |
@@ -337,7 +353,7 @@ Policy limits have explicit enforcement owners:
 | findings | response contract validator |
 | changed files and diff lines | deterministic diff policy |
 | run time | Codex `job_max_runtime_seconds` plus the director deadline |
-| correction iterations | director state machine; the auditor never repairs |
+| correction iterations | scheduled: policy limit; human-directed repair: declared deadline within maxRunSeconds, same paths and fresh independent review; the auditor never repairs |
 | lease TTL | investigation signal only; stale leases are never auto-reclaimed |
 | active system PRs | `reconcile.mjs` compares exact Git/PR identity before any PR action |
 | grouped delivery | immutable human bundle plus single-use append-only reservations |

@@ -1,6 +1,6 @@
 ---
 name: obraxen-continuous-improvement
-description: Run a bounded Obraxen website improvement cycle with evidence-first scouting, one writer, deterministic checks and independent review. Use for website audits and improvements or an explicitly requested or scheduled agent cycle. Questions about capabilities, prompt drafting and plugin or skill maintenance do not by themselves start a website improvement cycle.
+description: Run explicitly requested/scheduled Obraxen improvement cycles or agent-system maintenance. Exclude ordinary website questions, audits and individual edits.
 compatibility: Codex 0.144.2 or newer, Git worktrees, the exact Node.js and npm versions pinned by the repository, and this repository's coordination protocol.
 ---
 
@@ -53,8 +53,9 @@ their recording requirements.
 ## Validation and reporting
 
 Use checks appropriate to the authorized scope. Website cycles retain their
-full gate. Inspect package scripts: when `check:quality` includes `check`, one
-successful complete invocation covers both on the same unchanged candidate.
+full gate. Inspect package scripts and their runner: `check:quality` covers lint,
+types, the unit suite with coverage and build without also running plain `test`.
+A successful complete invocation covers the equivalent `check` requirements.
 A partial or failed invocation does not supply passed coverage.
 
 Report human maintenance in the user's requested format. Actual cycle reports
