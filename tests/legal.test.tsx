@@ -5,6 +5,12 @@ import { getDictionary, locales, routeSegments } from "@/lib/i18n";
 
 describe("localized legal draft routes", () => {
   const obsoleteIdentityClaims = [
+    "OBRAXEN SURFACE S.L.",
+    "B93963841",
+    "Calle Federico García Lorca 22",
+    "+34 653 916 970",
+    "info@obraxen.com",
+    "privacy@obraxen.com",
     "once the company exists",
     "nach Gründung der Gesellschaft",
     "cuando exista la sociedad",
@@ -27,18 +33,9 @@ describe("localized legal draft routes", () => {
       const html = renderToStaticMarkup(page);
       expect(html).toContain(`<h1>${title}</h1>`);
       expect(html).toContain(dictionary.legal.draftStatus);
-      expect(html).toContain("OBRAXEN SURFACE S.L.");
-      if (route === "legalNotice") {
-        expect(html).toContain(dictionary.common.noData);
-        for (const obsoleteClaim of obsoleteIdentityClaims) {
-          expect(html).not.toContain(obsoleteClaim);
-        }
-      } else {
-        expect(html).not.toContain(dictionary.common.noData);
-      }
-      if (route === "privacy") {
-        expect(html).toContain("B93963841");
-        expect(html).toContain("Calle Federico García Lorca 22");
+      expect(html).toContain(dictionary.common.noData);
+      for (const obsoleteClaim of obsoleteIdentityClaims) {
+        expect(html).not.toContain(obsoleteClaim);
       }
       expect(html).not.toContain(">null<");
       expect(html).not.toContain("RemainOn");

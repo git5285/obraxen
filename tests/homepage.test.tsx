@@ -93,7 +93,7 @@ describe("localized Next.js homepage", () => {
     expect(getHomepage(locale).contactFormEnabled).toBe(false);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
     expect(html).not.toContain('class="cta-fila"');
-    expect(html).toContain('href="mailto:info@obraxen.com"');
+    expect(html).not.toContain("info@obraxen.com");
   });
 
   it.each(locales)("uses assessment when the contact form is enabled on the %s homepage", async (locale) => {
@@ -106,7 +106,7 @@ describe("localized Next.js homepage", () => {
     expect(getHomepage(locale).contactFormEnabled).toBe(true);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
     expect(html).toContain('class="cta-fila"');
-    expect(html).toContain('href="mailto:info@obraxen.com"');
+    expect(html).not.toContain("info@obraxen.com");
   });
 
   it("renders EN and DE operational copy with conditional interventions", async () => {
@@ -136,7 +136,7 @@ describe("localized Next.js homepage", () => {
   });
 
   it("does not retain an image import for an unauthorized project", () => {
-    expect(() => getProjectImage(internalProjects[0].imagenes[0].src)).toThrow("No existe un import de imagen");
+    expect(() => getProjectImage("img/proyectos/redacted.webp")).toThrow("No existe un import de imagen");
   });
 
   it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {

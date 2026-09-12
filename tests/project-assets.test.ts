@@ -16,7 +16,14 @@ const approvedImage = {
 
 describe("public project assets", () => {
   it("requires an explicitly approved asset for every public project image", () => {
-    const project = internalProjects[0];
+    const project = {
+      ...internalProjects[0],
+      imagenes: [{
+        src: "img/proyectos/redacted.webp",
+        alt: "Redacted project image",
+        etapa: "Redacted",
+      }],
+    };
     const imageMap: PublicProjectImageMap = Object.fromEntries(
       project.imagenes.map(({ src }) => [src, approvedImage]),
     );
