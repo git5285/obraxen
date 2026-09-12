@@ -101,7 +101,7 @@ const projectTranslation = z.object({
   maquinaria: z.array(text),
   materiales: z.array(text),
   magnitudes: z.array(text).min(1),
-  imagenes: z.array(localizedImage).min(3),
+  imagenes: z.array(localizedImage),
 }).strict();
 
 const publicationScope = z.enum([
@@ -198,7 +198,7 @@ export const projectSchema = z.object({
     src: z.string().startsWith("img/"),
     alt: text,
     etapa: text,
-  }).strict()).min(3),
+  }).strict()),
   traducciones: localized(projectTranslation),
 }).strict().superRefine((project, context) => {
   for (const language of siteLocales) {
