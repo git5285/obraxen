@@ -10,7 +10,8 @@ export function hasPublicProjectAssets(
   project: Project,
   imageMap: PublicProjectImageMap = publicProjectImages,
 ): boolean {
-  return project.imagenes.every((image) => Boolean(imageMap[image.src]));
+  return project.imagenes.length > 0
+    && project.imagenes.every((image) => Boolean(imageMap[image.src]));
 }
 
 export function getPublicProjectImage(
