@@ -2,7 +2,7 @@
 
 Actualizado: 2026-09-06 Europe/Madrid.
 
-`AGENTS.md` es la entrada de instrucciones del repositorio. Este documento la
+`AGENTS.md` es la entrada de instrucciones del repositorio. Este resumen opcional la
 complementa con el modelo de coordinación y la fuente de verdad del estado de
 las claims; no repite el checklist de arranque. El estado efectivo procede del
 registro operativo. Claims cerradas, handoffs y Git conservan historial, pero no
