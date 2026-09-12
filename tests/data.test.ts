@@ -31,6 +31,7 @@ describe("structured data", () => {
         expect(project.traducciones[locale].imagenes).toHaveLength(project.imagenes.length);
         expect(project.traducciones[locale].magnitudes.length).toBeGreaterThan(0);
       }
+      expect(project.imagenes).toHaveLength(0);
     }
     for (const offer of offers) {
       expect(Object.keys(offer.traducciones).sort()).toEqual([...locales].sort());
@@ -95,15 +96,15 @@ describe("structured data", () => {
     expect(brand).toMatchObject({
       nombre: "Obraxen",
       nombreRevisionAprobada: false,
-      nombreLegal: "OBRAXEN SURFACE S.L.",
-      cif: "B93963841",
+      nombreLegal: null,
+      cif: null,
       empresaConstituida: true,
       dominio: "obraxen.com",
-      email: "info@obraxen.com",
-      emailPrivacidad: "privacy@obraxen.com",
-      telefono: "+34 653 916 970",
+      email: null,
+      emailPrivacidad: null,
+      telefono: null,
       whatsapp: null,
-      direccion: "Calle Federico García Lorca 22",
+      direccion: null,
       publicar: false,
     });
   });

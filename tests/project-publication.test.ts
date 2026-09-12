@@ -11,7 +11,25 @@ describe("public project selector", () => {
   });
 
   it("requires both linked legal evidence and every approved asset", () => {
-    const project = internalProjects[0];
+    const fixtureImage = {
+      src: "img/proyectos/approved-fixture.webp",
+      alt: "Approved fixture",
+      etapa: "resultado",
+    } as const;
+    const fixtureTranslationImage = {
+      alt: fixtureImage.alt,
+      etapa: fixtureImage.etapa,
+    } as const;
+    const project: Project = {
+      ...internalProjects[0],
+      imagenes: [fixtureImage],
+      traducciones: {
+        en: { ...internalProjects[0].traducciones.en, imagenes: [fixtureTranslationImage] },
+        de: { ...internalProjects[0].traducciones.de, imagenes: [fixtureTranslationImage] },
+        es: { ...internalProjects[0].traducciones.es, imagenes: [fixtureTranslationImage] },
+        fr: { ...internalProjects[0].traducciones.fr, imagenes: [fixtureTranslationImage] },
+      },
+    };
     const authorizedProject: Project = {
       ...project,
       autorizacionPublicacion: {
