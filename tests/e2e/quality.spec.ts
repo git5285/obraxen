@@ -78,6 +78,10 @@ function isArchitectureHome(locale: (typeof locales)[number], route: string) {
   return locale.locale === "es" && route === locale.home;
 }
 
+function architectureLogoWidth(viewportWidth: number) {
+  return viewportWidth <= 700 ? Math.min(168, Math.max(140, viewportWidth * 0.4)) : 184;
+}
+
 const contentRoutes = locales.flatMap((entry) => [
   { path: entry.home },
   { path: entry.projects },
@@ -186,8 +190,11 @@ for (const locale of locales) {
           await expect.poll(() => mark.evaluate((svg: SVGSVGElement) => svg.getBBox().width)).toBe(828);
           expect(await mark.evaluate((svg: SVGSVGElement) => svg.getBBox().height)).toBe(118);
           const bounds = await mark.boundingBox();
-          expect(bounds?.width).toBeCloseTo(180, 1);
-          expect(bounds?.height).toBeCloseTo(180 * 166 / 876, 1);
+          const responsiveArchitectureHeader = architecture
+            && await mark.evaluate((svg: SVGSVGElement) => Boolean(svg.closest(".ar-header")));
+          const expectedWidth = responsiveArchitectureHeader ? architectureLogoWidth(width) : 180;
+          expect(bounds?.width).toBeCloseTo(expectedWidth, 1);
+          expect(bounds?.height).toBeCloseTo(expectedWidth * 166 / 876, 1);
           await expect(mark.locator("..")).toHaveAttribute("href", architecture ? "#architecture" : locale.home);
           await expect(mark.locator("..")).toHaveAttribute("aria-label", /^Obraxen, .+/);
         }
@@ -413,8 +420,12 @@ for (const entry of locales) {
     await expect(heading).toBeVisible();
     expect((await heading.innerText()).replace(/\s+/g, " ").trim()).toContain(entry.hero);
     for (const counterpart of locales) {
-      await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
-        .toBeAttached();
+      const counterpartLink = page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`);
+      if (isArchitectureHome(entry, entry.home) && counterpart.locale !== "es") {
+        await expect(counterpartLink).toHaveCount(0);
+      } else {
+        await expect(counterpartLink.first()).toBeAttached();
+      }
       const alternate = page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`);
       if (isArchitectureHome(entry, entry.home)) {
         await expect(alternate).toHaveCount(0);
