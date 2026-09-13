@@ -1,4 +1,3 @@
-import type { StaticImageData } from "next/image";
 import diagnosticoImage from "../../img/diagnostico.jpg";
 import fisurasImage from "../../img/fisuras.jpg";
 import heroImage from "../../img/hero-nave.jpg";
@@ -6,9 +5,9 @@ import juntasImage from "../../img/juntas.jpg";
 import pulidoImage from "../../img/pulido.jpg";
 import recrecidosImage from "../../img/recrecidos.jpg";
 import { brand, getBrandTranslation } from "./brand";
-import { resolveContactConfig } from "./contact";
+import { resolveRuntimeConfig } from "./runtime-config";
+import { naturalList } from "./formatting";
 import { getDictionary, getPath, type Locale } from "./i18n";
-import { getPublicProjectImage } from "./public-project-assets";
 import { publicProjects } from "./projects";
 
 export type ServiceIcon = "joint" | "crack" | "level" | "surface";
@@ -22,26 +21,11 @@ export type NavigationItem = {
 const serviceImages = [juntasImage, fisurasImage, recrecidosImage, pulidoImage] as const;
 const serviceIcons: readonly ServiceIcon[] = ["joint", "crack", "level", "surface"];
 
-export const getProjectImage = getPublicProjectImage;
-
-export function getImageDimensions(
-  image: StaticImageData | string,
-  fallback: { width: number; height: number },
-) {
-  return typeof image === "string"
-    ? fallback
-    : { width: image.width, height: image.height };
-}
-
-export function naturalList(items: readonly string[], locale: Locale): string {
-  return new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(items);
-}
-
 export function getHomepage(locale: Locale) {
   const dictionary = getDictionary(locale);
   const brandCopy = getBrandTranslation(locale);
   const hasContactChannel = Boolean(brand.email || brand.telefono || brand.whatsapp);
-  const contactFormEnabled = resolveContactConfig(process.env).enabled;
+  const contactFormEnabled = resolveRuntimeConfig().contact.enabled;
   const navigationItems: readonly NavigationItem[] = dictionary.navigation.items
     .filter((item) => item.route !== "projects" || publicProjects.length > 0)
     .sort((left, right) => Number(right.section === "services") - Number(left.section === "services"))
@@ -84,7 +68,7 @@ export function getHomepage(locale: Locale) {
     ],
     brandKicker: brand.nombre ?? dictionary.intro.fallbackKicker,
     whyKicker: brand.nombre
-      ? `${locale === "de" ? "Warum" : locale === "fr" ? "Pourquoi" : locale === "es" ? "Por qué" : "Why"} ${brand.nombre}`
+      ? `${dictionary.company.whyPrefix} ${brand.nombre}`
       : dictionary.intro.whyFallbackKicker,
     services: dictionary.services.items.map((service, index) => ({
       ...service,
@@ -125,13 +109,22 @@ export function getHomepageJsonLd(locale: Locale): string {
       ...(brand.nombre
         ? [{
             "@type": "Organization",
+            ...(origin ? { "@id": absolute("/#organization") } : {}),
             name: brand.nombre,
             description: homepage.claim,
             areaServed: getBrandTranslation(locale).areasServicio,
             ...(brand.email ? { email: brand.email } : {}),
             ...(brand.telefono ? { telephone: brand.telefono } : {}),
-            ...(brand.direccion ? { address: brand.direccion } : {}),
-            ...(origin ? { url: absolute(getPath(locale, "home")) } : {}),
+            ...(brand.direccion ? {
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: brand.direccion,
+              },
+            } : {}),
+            ...(origin ? {
+              url: absolute("/"),
+              logo: absolute("/obraxen-wordmark-v14.svg"),
+            } : {}),
           }]
         : []),
       {

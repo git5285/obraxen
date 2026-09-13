@@ -21,6 +21,7 @@ export function LegalPage({ locale, route, document, facts = [] }: LegalPageProp
   const legal = dictionary.legal;
   return (
     <div className="legal-shell">
+      <a className="skip" href="#legal-content">{dictionary.common.skipToContent}</a>
       <nav className="legal-nav" aria-label={legal.navigationAria}>
         <div>
           <a href={getPath(locale, "home")}>{getBrandTranslation(locale).claim}</a>
@@ -31,7 +32,7 @@ export function LegalPage({ locale, route, document, facts = [] }: LegalPageProp
           <a className="volver" href={getPath(locale, "home")}>{legal.backToSite}</a>
         </div>
       </nav>
-      <main>
+      <main id="legal-content">
         <p className="estado">{legal.draftStatus}</p>
         <h1>{document.title}</h1>
         <p className="intro">{document.intro}</p>
@@ -71,8 +72,8 @@ export function LegalPage({ locale, route, document, facts = [] }: LegalPageProp
         <footer>
           {legal.lastReview} ·{" "}
           <a href={getPath(locale, document.relatedRoute as RouteKey)}>{document.relatedLabel}</a>
-          {brand.formularioProveedor && route === "privacy" ? (
-            <> · <a href="https://resend.com/legal/dpa" rel="noopener">Resend DPA</a></>
+          {brand.formularioProveedor === "Resend" && route === "privacy" ? (
+            <> · <a href="https://resend.com/legal/dpa" rel="noopener">{legal.resendDpa}</a></>
           ) : null}
         </footer>
       </main>

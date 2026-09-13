@@ -30,6 +30,9 @@ test("enabled contact UI validates, submits once and reports success", async ({ 
   await submit.click();
   expect(apiRequests).toBe(0);
   await expect(page.locator("#contact-name")).toBeFocused();
+  await expect(page.locator("#contact-name")).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#contact-name-error")).toBeVisible();
+  await expect(page.locator("#contact-status")).toContainText("Review the highlighted fields before submitting.");
 
   await fillValidContactForm(page);
   await submit.click();

@@ -29,19 +29,18 @@ vi.mock("@/lib/contact", async (importOriginal) => {
 
 import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
-import { getHomepage, getProjectImage } from "@/lib/homepage";
+import { getHomepage, getHomepageJsonLd } from "@/lib/homepage";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
 import { internalProjects } from "@/lib/internal-projects";
+import { getProjectImage } from "@/lib/media";
 import { publicProjects } from "@/lib/projects";
-
-const legacyLocales = locales.filter((locale) => locale !== "es");
 
 afterEach(() => {
   contactMock.enabled = false;
 });
 
 describe("localized Next.js homepage", () => {
-  it.each(legacyLocales)("renders only authorized project content on the %s legacy homepage", async (locale) => {
+  it.each(locales)("renders only authorized project content on the %s homepage", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(
       await HomePage({ params: Promise.resolve({ lang: locale }) }),
@@ -85,7 +84,7 @@ describe("localized Next.js homepage", () => {
     expect(html).toContain(condition);
   });
 
-  it.each(legacyLocales)("falls back to services while no project is authorized on the %s legacy homepage", async (locale) => {
+  it.each(locales)("falls back to services while no project is authorized on the %s homepage", async (locale) => {
     contactMock.enabled = false;
     const dictionary = getDictionary(locale);
     expect(getHomepage(locale).cta).toEqual({
@@ -98,7 +97,7 @@ describe("localized Next.js homepage", () => {
     expect(html).not.toContain("info@obraxen.com");
   });
 
-  it.each(legacyLocales)("uses assessment when the contact form is enabled on the %s legacy homepage", async (locale) => {
+  it.each(locales)("uses assessment when the contact form is enabled on the %s homepage", async (locale) => {
     contactMock.enabled = true;
     const dictionary = getDictionary(locale);
     expect(getHomepage(locale).cta).toEqual({
@@ -127,7 +126,7 @@ describe("localized Next.js homepage", () => {
     expect(germanHtml).toContain(german.hero.body);
   });
 
-  it.each(legacyLocales)("keeps visible project text inside accessible names in %s", async (locale) => {
+  it.each(locales)("keeps visible project text inside accessible names in %s", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ lang: locale }) }));
     expect((html.match(new RegExp(`>${dictionary.projectsSection.openCase} <span aria-hidden="true">`, "g")) ?? []))
@@ -141,7 +140,7 @@ describe("localized Next.js homepage", () => {
     expect(() => getProjectImage("img/proyectos/redacted.webp")).toThrow("No existe un import de imagen");
   });
 
-  it.each(legacyLocales)("provides %s social metadata for the verified domain", async (locale) => {
+  it.each(locales)("provides %s social metadata for the verified domain", async (locale) => {
     const metadata = await generateMetadata({ params: Promise.resolve({ lang: locale }) });
     expect(metadata.openGraph).toMatchObject({ type: "website" });
     expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
@@ -153,6 +152,20 @@ describe("localized Next.js homepage", () => {
     expect(metadata.openGraph && "images" in metadata.openGraph
       ? metadata.openGraph.images
       : undefined).toHaveLength(1);
+  });
+
+  it("emits a connected organization entity with only verified identity fields", () => {
+    const graph = JSON.parse(getHomepageJsonLd("en"))["@graph"] as { [key: string]: unknown }[];
+    const organization = graph.find((entry) => entry["@type"] === "Organization");
+
+    expect(organization).toMatchObject({
+      "@id": "https://obraxen.com/#organization",
+      url: "https://obraxen.com/",
+      logo: "https://obraxen.com/obraxen-wordmark-v14.svg",
+    });
+    expect(organization).not.toHaveProperty("email");
+    expect(organization).not.toHaveProperty("telephone");
+    expect(organization).not.toHaveProperty("address");
   });
 
   it.each(locales)("provides absolute %s candidate metadata with an injected domain", (locale) => {

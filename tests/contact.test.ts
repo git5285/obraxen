@@ -66,6 +66,32 @@ describe("contact capture gate", () => {
     expect(config.issues).toContain("falta la revisión registral y marcaria del nombre");
   });
 
+  it("stays closed when the delivery recipient differs from the public contact", () => {
+    const config = resolveContactConfig({
+      ...environment,
+      CONTACT_TO_EMAIL: "other@example.com",
+    }, publicIdentity);
+
+    expect(config.enabled).toBe(false);
+    expect(config.issues).toContain("CONTACT_TO_EMAIL no coincide con brand.email");
+  });
+
+  it("stays closed when the verified domain or provider identity is incomplete", () => {
+    const missingDomain = resolveContactConfig(environment, {
+      ...publicIdentity,
+      dominio: null,
+    });
+    expect(missingDomain.enabled).toBe(false);
+    expect(missingDomain.issues).toContain("falta el dominio definitivo");
+
+    const wrongProvider = resolveContactConfig(environment, {
+      ...publicIdentity,
+      formularioProveedor: "Other provider",
+    });
+    expect(wrongProvider.enabled).toBe(false);
+    expect(wrongProvider.issues).toContain("el proveedor de formulario no coincide con Resend");
+  });
+
   it("validates bounded lead data and omits field content from attribution", () => {
     const submission = contactSubmissionSchema.parse({
       locale: "de",
@@ -84,6 +110,37 @@ describe("contact capture gate", () => {
     const email = buildContactEmail(submission);
     expect(email).toContain("Muster GmbH");
     expect(email).toContain("industry-newsletter");
+    const noAttribution = contactSubmissionSchema.parse({ ...submission, utm: undefined });
+    expect(buildContactEmail(noAttribution)).toContain("sin atribución UTM");
     expect(contactSubmissionSchema.safeParse({ ...submission, website: "spam" }).success).toBe(false);
+  });
+
+  it("rejects critical form validation bypasses", () => {
+    const valid = {
+      locale: "en" as const,
+      name: "Alex Example",
+      email: "alex@example.org",
+      company: "Example GmbH",
+      country: "Germany",
+      phone: "",
+      message: "Damaged joints in an operating logistics facility.",
+      consent: true as const,
+      website: "",
+      startedAt: 1_750_000_000_000,
+      source: "/en/contact/",
+      utm: { source: "quality-test" },
+    };
+
+    const candidates = [
+      { ...valid, locale: "pt" },
+      { ...valid, consent: false },
+      { ...valid, message: "too short" },
+      { ...valid, unexpected: "field" },
+      { ...valid, utm: { unexpected: "field" } },
+    ];
+
+    for (const candidate of candidates) {
+      expect(contactSubmissionSchema.safeParse(candidate).success).toBe(false);
+    }
   });
 });

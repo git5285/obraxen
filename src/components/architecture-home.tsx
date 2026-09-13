@@ -18,7 +18,7 @@ import suppliedAnchors from "../../img/solutions/extraccion-anclajes-2015.jpg";
 import { brand } from "@/lib/brand";
 import { architectureCompany as company } from "@/lib/architecture-content";
 import { getPath, locales } from "@/lib/i18n";
-import { getImageDimensions } from "@/lib/homepage";
+import { getImageDimensions } from "@/lib/media";
 import { ArchitectureSolutionLink } from "./architecture-controls";
 import { ArchitectureCaseDetails, ArchitectureMenu } from "./architecture-interactions";
 import { LogoMark } from "./logo-mark";

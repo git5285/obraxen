@@ -1,5 +1,5 @@
 import type { Project } from "@/lib/schemas";
-import { getImageDimensions, getProjectImage } from "@/lib/homepage";
+import { getImageDimensions, getProjectImage } from "@/lib/media";
 import { getProjectLocation } from "@/lib/project-pages";
 import { getDictionary, getPath, type Locale } from "@/lib/i18n";
 import { Fragment } from "react";

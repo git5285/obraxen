@@ -21,6 +21,12 @@ export const fr: Dictionary = {
     mobileMenu: "Menu mobile",
     breadcrumbs: "Fil d'Ariane",
   },
+  notFound: {
+    code: "404 · Introuvable",
+    title: "Cette page n'est pas disponible.",
+    body: "L'adresse demandée ne correspond pas à une page publiée. Revenez au site et poursuivez depuis le point d'entrée vérifié.",
+    link: "Retour au site",
+  },
   navigation: {
     items: [
       { label: "Méthode", section: "process" },
@@ -95,6 +101,7 @@ export const fr: Dictionary = {
     openCaseAria: "Voir le projet complet :",
   },
   company: {
+    whyPrefix: "Pourquoi",
     title: "L'expérience du chantier appliquée à chaque réparation",
     intro: "Plus de dix ans d'expérience cumulée en exécution et réparation permettent de définir chaque intervention selon le support, le désordre et l'activité du site.",
     diagnosisTitle: "Un diagnostic fondé sur l'exécution",
@@ -244,12 +251,13 @@ export const fr: Dictionary = {
     backToSite: "Retour au site",
     draftStatus: "Brouillon incomplet · impropre à la publication",
     lastReview: "Dernière révision du brouillon : 6 septembre 2026",
+    resendDpa: "Resend DPA",
     notice: {
       title: "Mentions légales",
       description: "Informations juridiques sur l'éditeur de ce site.",
-      intro: "Ce brouillon de travail reprend les informations déclarées sur l'éditeur d'un site professionnel établi en Espagne. Il doit encore faire l'objet d'une révision juridique professionnelle et être adapté aux exigences applicables avant toute publication.",
+      intro: "Ce brouillon de travail reprend les informations actuellement disponibles sur l'éditeur d'un site professionnel établi en Espagne. Il doit encore faire l'objet d'une révision juridique professionnelle et être complété avant toute publication.",
       alertTitle: "Révision professionnelle en attente",
-      alertText: "La raison sociale, l'identifiant fiscal et l'adresse sont déclarés. Les données d'immatriculation éventuellement applicables et la validation juridique finale restent en attente. Ce brouillon n'autorise pas la publication.",
+      alertText: "L'identité juridique, les données d'immatriculation et l'adresse ne sont pas disponibles actuellement. La validation juridique finale reste également en attente. Ce brouillon n'autorise pas la publication.",
       relatedRoute: "privacy",
       relatedLabel: "Politique de confidentialité",
       sections: [

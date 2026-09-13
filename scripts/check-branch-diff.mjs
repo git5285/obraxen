@@ -1,6 +1,12 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
+const CONTROL_PLANE_PREFIX = ".coordination/";
+
+function isControlPlanePath(path) {
+  return path === ".coordination" || path.startsWith(CONTROL_PLANE_PREFIX);
+}
+
 function git(repo, args) {
   return execFileSync("git", ["-C", repo, ...args], { encoding: "utf8" }).trim();
 }
@@ -52,7 +58,7 @@ export function checkBranchDiff({
     const untracked = execFileSync(
       "git",
       ["-C", repo, "ls-files", "--others", "--exclude-standard", "-z"],
-    ).toString("utf8").split("\0").filter(Boolean);
+    ).toString("utf8").split("\0").filter(Boolean).filter((path) => !isControlPlanePath(path));
     const untrackedFailures = [];
     for (const path of untracked) {
       const check = spawnSync(

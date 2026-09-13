@@ -21,6 +21,12 @@ export const es: Dictionary = {
     mobileMenu: "Menú móvil",
     breadcrumbs: "Migas de pan",
   },
+  notFound: {
+    code: "404 · No encontrado",
+    title: "Esta página no está disponible.",
+    body: "La dirección solicitada no corresponde a una página publicada. Vuelve al sitio y continúa desde el punto de entrada verificado.",
+    link: "Volver al sitio",
+  },
   navigation: {
     items: [
       { label: "Proceso", section: "process" },
@@ -98,6 +104,7 @@ export const es: Dictionary = {
     openCaseAria: "Ver el caso completo:",
   },
   company: {
+    whyPrefix: "Por qué",
     title: "Criterio de obra aplicado a cada reparación",
     intro: "Más de diez años de experiencia acumulada en ejecución y reparación sirven para plantear cada intervención según el soporte, el daño y la actividad de la instalación.",
     diagnosisTitle: "Diagnóstico basado en ejecución",
@@ -251,12 +258,13 @@ export const es: Dictionary = {
     backToSite: "Volver a la web",
     draftStatus: "Borrador incompleto · no apto para publicación",
     lastReview: "Última revisión del borrador: 6 de septiembre de 2026",
+    resendDpa: "Resend DPA",
     notice: {
       title: "Aviso legal",
       description: "Información legal del titular de esta web.",
-      intro: "Este borrador de trabajo recoge los datos declarados del titular de una web empresarial establecida en España. Todavía debe someterse a revisión jurídica profesional y adaptarse a los requisitos que resulten aplicables antes de activar la publicación.",
+      intro: "Este borrador de trabajo recoge la información actualmente disponible sobre el titular de una web empresarial establecida en España. Todavía debe someterse a revisión jurídica profesional y completarse antes de activar la publicación.",
       alertTitle: "Revisión profesional pendiente",
-      alertText: "La razón social, el NIF y el domicilio están declarados. Siguen pendientes los datos registrales que resulten aplicables y la validación jurídica final. Este borrador no autoriza la publicación.",
+      alertText: "La identidad legal, los datos registrales y el domicilio no están disponibles actualmente. También sigue pendiente la validación jurídica final. Este borrador no autoriza la publicación.",
       relatedRoute: "privacy",
       relatedLabel: "Política de privacidad",
       sections: [

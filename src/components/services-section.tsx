@@ -1,4 +1,4 @@
-import { getImageDimensions } from "@/lib/homepage";
+import { getImageDimensions } from "@/lib/media";
 import type { Dictionary } from "@/lib/dictionaries/types";
 import type { StaticImageData } from "next/image";
 import type { ServiceIcon as ServiceIconName } from "@/lib/homepage";

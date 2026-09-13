@@ -26,7 +26,7 @@ vi.mock("@/lib/contact", async (importOriginal) => {
   };
 });
 
-import { POST } from "@/app/api/contact/route";
+import { GET, POST } from "@/app/api/contact/route";
 
 const validSubmission = () => ({
   locale: "en",
@@ -50,6 +50,7 @@ function contactRequest({
   origin = "https://example.com",
   ip = crypto.randomUUID(),
   contentLength,
+  idempotencyKey,
 }: {
   payload?: unknown;
   rawBody?: string;
@@ -57,11 +58,13 @@ function contactRequest({
   origin?: string | null;
   ip?: string;
   contentLength?: string;
+  idempotencyKey?: string;
 } = {}) {
   const headers = new Headers({ "x-forwarded-for": ip });
   if (contentType) headers.set("content-type", contentType);
   if (origin) headers.set("origin", origin);
   if (contentLength) headers.set("content-length", contentLength);
+  if (idempotencyKey) headers.set("idempotency-key", idempotencyKey);
   return new Request("https://example.com/api/contact/", {
     method: "POST",
     headers,
@@ -95,10 +98,27 @@ describe("contact route", () => {
     expect(await response.json()).toEqual({ ok: false, code: "not_configured" });
   });
 
-  it("rejects non-JSON media with 415", async () => {
-    const response = await POST(contactRequest({ contentType: "text/plain" }));
-    expect(response.status).toBe(415);
-    expect(await response.json()).toEqual({ ok: false, code: "unsupported_media_type" });
+  it("requires the exact JSON media type while accepting parameters", async () => {
+    for (const contentType of ["text/plain", "application/jsonp"]) {
+      const unsupported = await POST(contactRequest({ contentType }));
+      expect(unsupported.status).toBe(415);
+      expect(await unsupported.json()).toEqual({ ok: false, code: "unsupported_media_type" });
+    }
+
+    const provider = stubProvider();
+    const accepted = await POST(contactRequest({
+      contentType: "application/json; charset=utf-8",
+      ip: crypto.randomUUID(),
+    }));
+    expect(accepted.status).toBe(202);
+    expect(provider).toHaveBeenCalledOnce();
+  });
+
+  it("returns a non-cacheable response for unsupported reads", async () => {
+    const response = GET();
+    expect(response.status).toBe(405);
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(await response.json()).toEqual({ ok: false, code: "method_not_allowed" });
   });
 
   it("rejects declared and streamed oversized payloads with 413", async () => {
@@ -164,6 +184,7 @@ describe("contact route", () => {
     }
     const response = await POST(contactRequest({ ip }));
     expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("900");
     expect(await response.json()).toEqual({ ok: false, code: "rate_limited" });
     expect(provider).toHaveBeenCalledTimes(5);
   });
@@ -194,12 +215,36 @@ describe("contact route", () => {
     expect(options).toMatchObject({ method: "POST", cache: "no-store" });
     const headers = new Headers(options?.headers);
     expect(headers.get("authorization")).toMatch(/^Bearer re_/);
-    expect(headers.get("idempotency-key")).toMatch(/^contact\/[0-9a-f-]+$/);
+    expect(headers.get("idempotency-key")).toMatch(/^contact\/[0-9a-f]{64}$/);
     expect(JSON.parse(String(options?.body))).toMatchObject({
       from: "web@example.com",
       to: ["contact@example.com"],
       reply_to: "alex@example.org",
       tags: [{ name: "source", value: "website-contact" }],
     });
+  });
+
+  it("accepts a valid client idempotency key with a contact namespace", async () => {
+    const provider = stubProvider();
+    const response = await POST(contactRequest({
+      idempotencyKey: "request-identifier-001",
+    }));
+
+    expect(response.status).toBe(202);
+    const headers = new Headers(provider.mock.calls[0][1]?.headers);
+    expect(headers.get("idempotency-key")).toBe("contact/request-identifier-001");
+  });
+
+  it("keeps retries of the same validated submission idempotent", async () => {
+    const provider = stubProvider();
+    const payload = validSubmission();
+    const ip = "203.0.113.43";
+
+    expect((await POST(contactRequest({ payload, ip }))).status).toBe(202);
+    expect((await POST(contactRequest({ payload, ip }))).status).toBe(202);
+
+    const firstHeaders = new Headers(provider.mock.calls[0][1]?.headers);
+    const secondHeaders = new Headers(provider.mock.calls[1][1]?.headers);
+    expect(firstHeaders.get("idempotency-key")).toBe(secondHeaders.get("idempotency-key"));
   });
 });

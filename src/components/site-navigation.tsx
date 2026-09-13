@@ -1,62 +1,39 @@
 "use client";
 
 import {
-  createContext,
-  useContext,
   useEffect,
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
 } from "react";
-import type { NavigationItem } from "@/lib/homepage";
 import type { Dictionary } from "@/lib/dictionaries/types";
-import { CtaLink } from "./cta-link";
-import { LanguageSwitcher, type LanguageLink } from "./language-switcher";
-import { LogoMark } from "./logo-mark";
-
-type NavigationContextValue = {
-  isOpen: boolean;
-  openMenu: (trigger: HTMLButtonElement) => void;
-};
-
-const NavigationContext = createContext<NavigationContextValue | null>(null);
 
 type SiteNavigationProps = {
-  brandName: string | null;
-  cta: { href: string; text: string };
-  items: readonly NavigationItem[];
-  labels: Pick<Dictionary["common"], "mobileMenu" | "menuClose" | "menuOpen" | "mainNavigation" | "home">;
-  languageLabel: string;
-  languageLinks: readonly LanguageLink[];
-  homeHref: string;
-  children: ReactNode;
+  sectionIds: readonly string[];
+  labels: Pick<Dictionary["common"], "mobileMenu" | "menuClose" | "mainNavigation">;
+  mobileContent: ReactNode;
+  stickyContent: ReactNode;
 };
 
 export function SiteNavigation({
-  brandName,
-  cta,
-  items,
+  sectionIds,
   labels,
-  languageLabel,
-  languageLinks,
-  homeHref,
-  children,
+  mobileContent,
+  stickyContent,
 }: SiteNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [stickyVisible, setStickyVisible] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const menuRef = useRef<HTMLElement>(null);
+  const stickyNavRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  function openMenu(trigger: HTMLButtonElement) {
-    triggerRef.current = trigger;
-    setIsOpen(true);
-  }
-
   function closeMenu({ restoreFocus = true } = {}) {
     setIsOpen(false);
+    window.dispatchEvent(new CustomEvent("site:menu-state", { detail: { open: false } }));
     if (restoreFocus) {
       window.requestAnimationFrame(() => triggerRef.current?.focus());
     }
@@ -74,6 +51,13 @@ export function SiteNavigation({
         once: true,
       });
     });
+  }
+
+  function handleMenuClick(event: MouseEvent<HTMLElement>) {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>("a[href]");
+    if (!link || !menuRef.current?.contains(link)) return;
+    handleMenuLink(link.getAttribute("href") ?? "");
   }
 
   function handleMenuKeyDown(event: KeyboardEvent<HTMLElement>) {
@@ -123,9 +107,8 @@ export function SiteNavigation({
       },
       { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
     );
-    for (const item of items) {
-      if (!item.section) continue;
-      const section = document.getElementById(item.section);
+    for (const sectionId of sectionIds) {
+      const section = document.getElementById(sectionId);
       if (section) sectionObserver.observe(section);
     }
 
@@ -133,10 +116,37 @@ export function SiteNavigation({
       heroObserver.disconnect();
       sectionObserver.disconnect();
     };
-  }, [items]);
+  }, [sectionIds]);
+
+  useEffect(() => {
+    const navigation = stickyNavRef.current;
+    if (!navigation) return;
+
+    for (const link of navigation.querySelectorAll<HTMLAnchorElement>("[data-navigation-section]")) {
+      const active = link.dataset.navigationSection === activeSection;
+      link.classList.toggle("activo", active);
+      if (active) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    }
+  }, [activeSection]);
+
+  useEffect(() => {
+    function handleMenuOpen(event: Event) {
+      const detail =
+        event instanceof CustomEvent && event.detail && typeof event.detail === "object"
+          ? (event.detail as { trigger?: unknown })
+          : {};
+      if (detail.trigger instanceof HTMLButtonElement) triggerRef.current = detail.trigger;
+      setIsOpen(true);
+      window.dispatchEvent(new CustomEvent("site:menu-state", { detail: { open: true } }));
+    }
+
+    window.addEventListener("site:menu-open", handleMenuOpen);
+    return () => window.removeEventListener("site:menu-open", handleMenuOpen);
+  }, []);
 
   return (
-    <NavigationContext value={{ isOpen, openMenu }}>
+    <>
       <nav
         className={`movil-menu${isOpen ? " abierto" : ""}`}
         id="menuMovil"
@@ -145,6 +155,7 @@ export function SiteNavigation({
         inert={!isOpen}
         ref={menuRef}
         onKeyDown={handleMenuKeyDown}
+        onClick={handleMenuClick}
       >
         <button
           className="cerrar"
@@ -155,72 +166,21 @@ export function SiteNavigation({
         >
           ×
         </button>
-        {items.map((item) => (
-          <a key={item.href} href={item.href} onClick={() => handleMenuLink(item.href)}>
-            {item.label}
-          </a>
-        ))}
-        <LanguageSwitcher label={languageLabel} links={languageLinks} />
-        <a
-          className="btn btn-acento"
-          href={cta.href}
-          onClick={() => handleMenuLink(cta.href)}
-          data-analytics-event="cta_select"
-          data-analytics-location="mobile-menu"
-          data-analytics-destination={cta.href}
-        >
-          {cta.text}
-        </a>
+        {mobileContent}
       </nav>
 
       <nav
+        ref={stickyNavRef}
         className={`sticky-nav${stickyVisible ? " visible" : ""}`}
         aria-label={labels.mainNavigation}
         aria-hidden={!stickyVisible}
         inert={!stickyVisible}
       >
         <div className="inner">
-          <LogoMark brandName={brandName} href={homeHref} homeLabel={labels.home} />
-          <ul>
-            {items.map((item) => (
-              <li key={item.href}>
-                <a
-                  className={item.section === activeSection ? "activo" : undefined}
-                  href={item.href}
-                  aria-current={item.section === activeSection ? "location" : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <LanguageSwitcher label={languageLabel} links={languageLinks} />
-          <MenuButton label={labels.menuOpen} />
-          <CtaLink href={cta.href} eventLocation="sticky-navigation">{cta.text}</CtaLink>
+          {stickyContent}
         </div>
       </nav>
 
-      {children}
-    </NavigationContext>
-  );
-}
-
-export function MenuButton({ label = "Open menu" }: { label?: string }) {
-  const context = useContext(NavigationContext);
-  if (!context) throw new Error("MenuButton debe estar dentro de SiteNavigation");
-
-  return (
-    <button
-      className="menu-btn"
-      type="button"
-      aria-label={label}
-      aria-controls="menuMovil"
-      aria-expanded={context.isOpen}
-      onClick={(event) => context.openMenu(event.currentTarget)}
-    >
-      <span />
-      <span />
-      <span />
-    </button>
+    </>
   );
 }

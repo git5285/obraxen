@@ -34,6 +34,8 @@ const publicProject = projectsSource.find(isPublicProject);
 const routes = [
   { name: "home-en", path: "/en/" },
   { name: "projects-de", path: "/de/projekte/" },
+  { name: "contact-fr", path: "/fr/contact/" },
+  { name: "privacy-es", path: "/es/privacidad/" },
   ...(publicProject ? [{ name: `case-${publicProject.slug}-fr`, path: `/fr/projets/${publicProject.slug}/` }] : []),
 ];
 

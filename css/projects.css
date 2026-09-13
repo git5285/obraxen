@@ -1,25 +1,13 @@
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--brand-bg);color:var(--brand-ink);font-family:var(--font-sans);font-size:16px;line-height:1.6}
-a{color:inherit}
-img{max-width:100%}
-h1,h2,h3{font-family:var(--font-display);letter-spacing:0;line-height:1.12}
+.projects-nav .logo,.case-nav .logo{color:var(--brand-ink)}
+.projects-nav .logo-emphasis,.case-nav .logo-emphasis{color:var(--brand-primary)}
+h3{font-family:var(--font-display)}
 :focus-visible{outline:3px solid var(--brand-primary);outline-offset:3px;border-radius:4px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .skip{position:fixed;left:-9999px;top:0;z-index:var(--z-skip-link);padding:10px 18px;background:var(--brand-ink);color:var(--brand-surface)}
 .skip:focus{left:16px}
 .projects-wrap{width:min(calc(100% - 48px),var(--maxw));margin-inline:auto}
 
 .projects-header{position:sticky;top:0;z-index:var(--z-sticky);background:rgb(from var(--brand-on-dark) r g b / .92);border-bottom:1px solid var(--brand-line);backdrop-filter:blur(16px)}
 .projects-nav{width:min(calc(100% - 48px),var(--maxw));height:72px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.logo{display:inline-flex;align-items:center;gap:.5rem;color:var(--brand-ink);font-weight:800;text-decoration:none}
-.logo-word{display:inline-flex;align-items:baseline;font-weight:850;letter-spacing:0;line-height:1;text-transform:uppercase}
-.logo-name{color:currentColor}
-.logo-emphasis{color:var(--brand-primary)}
-.logo-symbol{display:block;flex:none;width:1.55em;height:1.55em;overflow:visible}
-.logo-symbol-slab{fill:currentColor}
-.logo-symbol-seam{fill:var(--brand-primary)}
-.logo-provisional{display:block;width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .back-link{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;font-weight:800;text-decoration:none}
 .back-link span{color:var(--brand-primary);transition:transform var(--dur-fast) var(--ease-standard)}
 .back-link:hover span{transform:translateX(4px)}

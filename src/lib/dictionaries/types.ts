@@ -48,6 +48,12 @@ export type Dictionary = {
     mobileMenu: string;
     breadcrumbs: string;
   };
+  notFound: {
+    code: string;
+    title: string;
+    body: string;
+    link: string;
+  };
   navigation: {
     items: readonly NavigationItemCopy[];
   };
@@ -99,6 +105,7 @@ export type Dictionary = {
     openCaseAria: string;
   };
   company: {
+    whyPrefix: string;
     title: string;
     intro: string;
     diagnosisTitle: string;
@@ -241,6 +248,7 @@ export type Dictionary = {
     backToSite: string;
     draftStatus: string;
     lastReview: string;
+    resendDpa: string;
     notice: LegalDocumentCopy;
     privacy: LegalDocumentCopy;
     cookies: LegalDocumentCopy;

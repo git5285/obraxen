@@ -1,61 +1,34 @@
 # Auditoría fotográfica de proyectos
 
-Fecha: 14 de julio de 2026
+Fecha de actualización: 12 de septiembre de 2026
 
-## Alcance
+## Estado actual
 
-Se revisaron visualmente los seis lotes aportados antes de incorporar imágenes al sitio:
+La selección web de fotografías de proyectos se retiró del árbol de trabajo como
+medida preventiva de privacidad. No quedan copias WebP de proyectos en
+`img/proyectos/` ni referencias a ellas en `data/proyectos.json`. Los seis
+registros internos conservan únicamente sus datos técnicos y sus arrays de
+imágenes están vacíos; ningún caso puede entrar en el catálogo público sin una
+nueva autorización explícita y assets revisados.
 
-| Proyecto | Fotografías | Vídeos |
-| --- | ---: | ---: |
-| TP-Link | 13 | 0 |
-| L’Oréal | 103 | 0 |
-| Delticom | 280 | 1 |
-| Blitz | 57 | 0 |
-| dadada GmbH | 42 | 0 |
-| Hologram Bâtiment | 145 | 0 |
-| **Total** | **640** | **1** |
+La retirada afecta a 18 copias WebP que ocupaban 1.702.898 bytes. Las copias
+JPEG intermedias ya no formaban parte del árbol actual.
 
-La auditoría técnica no encontró archivos ilegibles ni coordenadas GPS. Detectó 8 grupos de imágenes duplicadas o casi idénticas, con 18 fotografías afectadas.
+## Alcance de la decisión
 
-## Criterio aplicado
+- No se conserva en el repositorio ninguna fotografía de obra de los lotes
+  revisados.
+- Se eliminan también las referencias descriptivas de etapa y texto alternativo
+  asociadas a esas copias.
+- Los originales, ZIP o archivos fuera de este repositorio no están incluidos
+  en esta operación y deben gestionarse en su ubicación de origen.
+- Cualquier nueva incorporación exige autorización documental para el caso,
+  revisión legal, limpieza de metadatos y registro del asset público aprobado.
 
-- Se conservan intactos los ZIP y los originales aportados.
-- Se excluyen documentos personales, escenas privadas y primeros planos con personas reconocibles.
-- Se priorizan encuadres que acreditan el estado inicial, la intervención y el resultado cuando existe esa secuencia.
-- TP-Link solo dispone de documentación posterior; por eso sus imágenes se describen como vistas y detalles de la zona intervenida, sin presentar un falso “antes”.
-- No se aplicó IA generativa. Las fotos tienen resolución y nitidez suficientes, y alterar o reconstruir el pavimento reduciría su valor como evidencia de obra.
-- Las copias web solo se han orientado, reducido a un máximo de 1.400 px,
-  convertido a WebP con calidad 82 y limpiado de metadatos EXIF. No se añadieron
-  ni eliminaron elementos de la escena.
+## Comprobación
 
-## Selección web preparada
-
-Esta selección acredita calidad técnica y ausencia de metadatos sensibles; no
-acredita por sí sola titularidad o autorización comercial. La publicación final
-de cada fotografía queda bloqueada hasta registrar su alcance documental y la
-revisión legal del caso.
-
-| Proyecto | Originales seleccionados | Copias web |
-| --- | --- | --- |
-| Delticom | `20250702_142858.jpg`, `20250421_095645.jpg`, `20250513_095404.jpg` | `img/proyectos/delticom/` |
-| TP-Link | `20250726_181148.jpg`, `20250726_181159.jpg`, `20250726_181210.jpg` | `img/proyectos/tp-link/` |
-| dadada GmbH | `20250729_152649.jpg`, `20250729_135514.jpg`, `20250729_141843.jpg` | `img/proyectos/dadada/` |
-| L’Oréal | `20250508_171251.jpg`, `20250505_123409.jpg`, `20250507_150109.jpg` | `img/proyectos/loreal/` |
-| Blitz | `20250410_080430.jpg`, `20250319_112448.jpg`, `20250410_075420.jpg` | `img/proyectos/blitz/` |
-| Hologram Bâtiment | `20250215_170707.jpg`, `20250219_100650.jpg`, `20250211_180246.jpg` | `img/proyectos/hologram/` |
-
-Las 18 copias WebP ocupan 1.702.898 bytes en conjunto —aproximadamente 1,62 MiB—
-y no contienen EXIF. Las copias JPEG intermedias, que sumaban 7.209.017 bytes,
-se retiraron del repositorio después de comprobar que ninguna ruta las utilizaba.
-
-## Exclusiones de privacidad relevantes
-
-- Delticom `20250425_193122.jpg`: documento de identidad visible.
-- Delticom `20250428_211600.jpg`: escena privada ajena a la obra.
-- Delticom `20250702_142956.jpg`, `20250702_143021.jpg` y `20250702_143024.jpg`: autorretratos reconocibles.
-- Se descartaron además encuadres de otros lotes en los que los operarios resultaban identificables en primer plano.
-
-## Límite de las conclusiones
-
-Las fotografías permiten describir el estado visible y la ejecución. No acreditan por sí solas el cumplimiento del plazo, la continuidad operativa, la durabilidad ni una mejora cuantificada. Esos resultados solo deben publicarse cuando exista confirmación expresa del cliente o documentación de cierre.
+- `data/proyectos.json`: seis registros válidos y cero imágenes por registro y
+  por idioma.
+- `img/proyectos/`: no contiene assets de proyectos.
+- `publicProjectImages`: permanece vacío, por lo que el selector público sigue
+  fallando cerrado.

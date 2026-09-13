@@ -9,10 +9,9 @@ import {
 } from "@/lib/i18n";
 import { getProjectJsonLd, getProjectMetadata } from "@/lib/project-pages";
 import { publicProjects, publicProjectsBySlug } from "@/lib/projects";
+import "../../../../../css/case.css";
 
-type ProjectPageProps = {
-  params: Promise<{ lang: string; section: string; slug: string }>;
-};
+type ProjectPageProps = Pick<PageProps<"/[lang]/[section]/[slug]">, "params">;
 
 export const dynamicParams = false;
 

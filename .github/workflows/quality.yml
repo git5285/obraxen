@@ -32,7 +32,7 @@ jobs:
       - name: Verify pinned agent runtime
         run: npm run check:agent-runtime
 
-      - name: Audit production and development dependencies
+      - name: Audit production dependencies
         run: npm run check:security
 
       - name: Install Chromium and WebKit
@@ -96,14 +96,14 @@ jobs:
         run: npm run check:agent-runtime
 
       - name: Pull protected preview settings
-        run: npx --yes vercel@56.1.0 pull --yes --environment=preview --token="$VERCEL_TOKEN"
+        run: ./node_modules/.bin/vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
 
       - name: Build preview artifact
-        run: npx --yes vercel@56.1.0 build --token="$VERCEL_TOKEN"
+        run: ./node_modules/.bin/vercel build --token="$VERCEL_TOKEN"
 
       - name: Deploy preview artifact
         id: deploy
         run: |
-          url=$(npx --yes vercel@56.1.0 deploy --prebuilt --token="$VERCEL_TOKEN")
+          url=$(./node_modules/.bin/vercel deploy --prebuilt --token="$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Protected preview: $url" >> "$GITHUB_STEP_SUMMARY"

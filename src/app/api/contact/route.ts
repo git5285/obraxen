@@ -1,9 +1,9 @@
-import { createHash, randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import {
   buildContactEmail,
   contactSubmissionSchema,
-  resolveContactConfig,
 } from "@/lib/contact";
+import { resolveRuntimeConfig } from "@/lib/runtime-config";
 
 export const dynamic = "force-dynamic";
 
@@ -11,23 +11,34 @@ const bodyLimit = 15_000;
 const rateWindowMs = 15 * 60 * 1_000;
 const rateLimit = 5;
 const maxRateLimitKeys = 10_000;
+const rateLimitRetryAfterSeconds = Math.ceil(rateWindowMs / 1_000);
+const idempotencyKeyPattern = /^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$/;
 const attempts = new Map<string, number[]>();
 let lastRateLimitSweep = 0;
 
-function response(body: object, status: number): Response {
+function response(body: object, status: number, extraHeaders: Record<string, string> = {}): Response {
   return Response.json(body, {
     status,
     headers: {
       "Cache-Control": "private, no-store",
       "X-Robots-Tag": "noindex, nofollow",
+      ...extraHeaders,
     },
   });
 }
 
 function requestKey(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const address = forwarded || "unknown";
+  const address = forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";
   return createHash("sha256").update(address).digest("hex");
+}
+
+function idempotencyKey(request: Request, submission: unknown): string {
+  const supplied = request.headers.get("idempotency-key")?.trim();
+  const value = supplied && idempotencyKeyPattern.test(supplied)
+    ? supplied
+    : createHash("sha256").update(JSON.stringify(submission)).digest("hex");
+  return `contact/${value}`;
 }
 
 function exceedsRateLimit(key: string, now = Date.now()): boolean {
@@ -81,13 +92,17 @@ async function readBoundedBody(request: Request): Promise<string | null> {
   return new TextDecoder().decode(body);
 }
 
+function isJsonContentType(value: string | null): boolean {
+  return value?.split(";", 1)[0]?.trim().toLowerCase() === "application/json";
+}
+
 export async function POST(request: Request): Promise<Response> {
-  const config = resolveContactConfig(process.env);
+  const config = resolveRuntimeConfig().contact;
   if (!config.enabled || !config.apiKey || !config.toEmail || !config.fromEmail) {
     return response({ ok: false, code: "not_configured" }, 503);
   }
 
-  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+  if (!isJsonContentType(request.headers.get("content-type"))) {
     return response({ ok: false, code: "unsupported_media_type" }, 415);
   }
   const declaredLength = Number(request.headers.get("content-length") ?? "0");
@@ -99,7 +114,9 @@ export async function POST(request: Request): Promise<Response> {
     return response({ ok: false, code: "invalid_origin" }, 403);
   }
   if (exceedsRateLimit(requestKey(request))) {
-    return response({ ok: false, code: "rate_limited" }, 429);
+    return response({ ok: false, code: "rate_limited" }, 429, {
+      "Retry-After": String(rateLimitRetryAfterSeconds),
+    });
   }
 
   const body = await readBoundedBody(request);
@@ -124,7 +141,7 @@ export async function POST(request: Request): Promise<Response> {
     headers: {
       Authorization: `Bearer ${config.apiKey}`,
       "Content-Type": "application/json",
-      "Idempotency-Key": `contact/${randomUUID()}`,
+      "Idempotency-Key": idempotencyKey(request, parsed.data),
     },
     body: JSON.stringify({
       from: config.fromEmail,
@@ -140,4 +157,8 @@ export async function POST(request: Request): Promise<Response> {
 
   if (!providerResponse?.ok) return response({ ok: false, code: "delivery_failed" }, 502);
   return response({ ok: true }, 202);
+}
+
+export function GET(): Response {
+  return response({ ok: false, code: "method_not_allowed" }, 405);
 }

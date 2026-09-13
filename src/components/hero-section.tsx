@@ -1,12 +1,12 @@
 import type { StaticImageData } from "next/image";
 import type { NavigationItem } from "@/lib/homepage";
-import { getImageDimensions } from "@/lib/homepage";
+import { getImageDimensions } from "@/lib/media";
 import type { Dictionary } from "@/lib/dictionaries/types";
 import { CtaLink } from "./cta-link";
 import { LanguageSwitcher, type LanguageLink } from "./language-switcher";
 import { LogoMark } from "./logo-mark";
+import { MenuButton } from "./menu-button";
 import { ResponsiveImage } from "./responsive-image";
-import { MenuButton } from "./site-navigation";
 
 type HeroSectionProps = {
   brandName: string | null;
@@ -54,8 +54,8 @@ export function HeroSection({
           alt=""
           width={dimensions.width}
           height={dimensions.height}
-          priority
-          unoptimized
+          preload
+          quality={60}
           sizes="100vw"
         />
         <div className="hero-body">
