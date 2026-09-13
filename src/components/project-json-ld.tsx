@@ -7,7 +7,7 @@ export function ProjectJsonLd({ value }: ProjectJsonLdProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: value }}
+      dangerouslySetInnerHTML={{ __html: value.replace(/</g, "\\u003c") }}
     />
   );
 }

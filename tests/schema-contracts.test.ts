@@ -1,11 +1,12 @@
 import Ajv2020, { type AnySchema, type ValidateFunction } from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import brandSource from "../data/brand.json";
 import offersSource from "../data/ofertas.json";
 import offersJsonSchema from "../data/ofertas.schema.json";
 import projectsSource from "../data/proyectos.json";
 import projectsJsonSchema from "../data/proyectos.schema.json";
-import { offersSchema, projectsSchema } from "@/lib/schemas";
+import { brandSchema, offersSchema, projectsSchema } from "@/lib/schemas";
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 const calendarDate = z.iso.date();
@@ -79,6 +80,46 @@ describe("portable JSON Schema contracts", () => {
 
     expect(validateOffers(invalid)).toBe(false);
     expect(offersSchema.safeParse(invalid).success).toBe(false);
+  });
+
+  it("rejects a public name that is equal to its temporary identifier", () => {
+    const invalid = {
+      ...structuredClone(brandSource),
+      nombre: "Obraxen",
+      nombreTemporalNoPublicable: "obraxen",
+    };
+
+    const result = brandSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some(({ message }) => (
+        message.includes("no puede ser el identificador temporal")
+      ))).toBe(true);
+    }
+  });
+
+  it("rejects a project missing localized image evidence", () => {
+    type Image = { src: string; alt: string; etapa: string };
+    type LocalizedImage = { alt: string; etapa: string };
+    type ProjectFixture = {
+      imagenes: Image[];
+      traducciones: Record<"en" | "de" | "es" | "fr", { imagenes: LocalizedImage[] }>;
+    };
+    const invalid = structuredClone(projectsSource) as unknown as ProjectFixture[];
+    invalid[0].imagenes = [{ src: "img/test.webp", alt: "Test image", etapa: "Before" }];
+    for (const locale of ["en", "de", "es", "fr"] as const) {
+      invalid[0].traducciones[locale].imagenes = [{ alt: "Test image", etapa: "Before" }];
+    }
+    invalid[0].traducciones.de.imagenes = [];
+
+    const result = projectsSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some(({ path, message }) => (
+        path.join(".") === "0.traducciones.de.imagenes"
+        && message.includes("Cada imagen necesita alt y etapa")
+      ))).toBe(true);
+    }
   });
 
   it("keeps cross-evidence linkage in the canonical Zod contract", () => {

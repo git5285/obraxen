@@ -1,4 +1,4 @@
-import { getImageDimensions, getProjectImage } from "@/lib/homepage";
+import { getImageDimensions, getProjectImage } from "@/lib/media";
 import { getDictionary, getPath, type Locale } from "@/lib/i18n";
 import { publicProjects } from "@/lib/projects";
 import { ResponsiveImage } from "./responsive-image";

@@ -1,9 +1,10 @@
 # Entradas pendientes para activar Obraxen
 
-Actualizado: 6 de septiembre de 2026. Estado: **NO-GO**.
+Actualizado: 12 de septiembre de 2026. Estado: **NO-GO**.
 
-Esta es la única hoja documental que mantiene los valores y entradas externas
-vigentes. La fuente canónica del resultado y del recuento es
+Esta es la única hoja documental que mantiene las entradas externas vigentes y
+los datos pendientes, sin reproducir valores de identidad o contacto redactados.
+La fuente canónica del resultado y del recuento es
 `npm run check:activation`; `ACTIVATION_GATE.md` define el contrato que aplica el
 comando, `LEGAL_CHECKLIST.md` enumera los requisitos jurídicos y
 `DEPLOYMENT_RUNBOOK.md` describe el proceso técnico de publicación. Esos
@@ -17,11 +18,13 @@ identificadores internos; los originales se conservan fuera del repositorio.
 
 - [ ] Dictamen profesional favorable sobre disponibilidad registral y marcaria
   de `Obraxen`, con alcance territorial y clases revisadas.
-- [x] Razon social constituida y nombre legal exacto: `OBRAXEN SURFACE S.L.`.
-- [x] CIF/NIF de la sociedad: `B93963841`.
-- [x] Domicilio que pueda publicarse: Calle Federico García Lorca 22.
-- [x] Confirmacion del responsable de que la sociedad esta constituida.
-- [x] Telefono temporal para contacto: `+34 653 916 970`.
+- [ ] Razón social constituida y nombre legal exacto: sin dato en la fuente
+  canónica; el valor anterior fue redactado.
+- [ ] CIF/NIF de la sociedad: sin dato en la fuente canónica.
+- [ ] Domicilio que pueda publicarse: sin dato en la fuente canónica.
+- [x] Confirmación del responsable de que la sociedad está constituida, sin
+  reproducir aquí su identidad legal.
+- [ ] Teléfono para contacto: sin dato en la fuente canónica.
 
 Responsable con capacidad para aprobar proveedor y publicación: **sin dato**.
 
@@ -31,9 +34,15 @@ Responsable con capacidad para aprobar proveedor y publicación: **sin dato**.
   con revisor, fecha y referencia.
 - [ ] Aprobacion del tratamiento de Resend: entidad contratante, DPA y
   transferencias, subencargados, tracking, conservacion, accesos y borrado.
+  El dashboard autenticado muestra el DPA firmado por Resend y lo describe como
+  plenamente ejecutado una vez creada la cuenta; todavía no hay dominio
+  personalizado ni actividad de envío/recepción que valide el buzón de Obraxen.
 
-La regla distribuida de limite de solicitudes para `/api/contact/` es una
-precondicion tecnica adicional y no altera por si sola el resultado del gate.
+La regla distribuida de limite de solicitudes para `/api/contact/` esta publicada
+en Vercel para `Preview`: `POST`, por IP, 100 solicitudes por ventana fija de 60
+segundos y respuesta `429`. `CONTACT_RATE_LIMIT_MODE=vercel-waf` tambien esta
+registrado como variable de configuracion de `Preview`. Esta precondicion tecnica
+queda satisfecha en ese entorno y no altera por si sola el resultado del gate.
 
 ## Idiomas
 

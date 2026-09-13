@@ -31,6 +31,8 @@ describe("localized legal draft routes", () => {
         section: routeSegments[locale][route],
       }) });
       const html = renderToStaticMarkup(page);
+      expect(html).toContain(`href="#legal-content"`);
+      expect(html).toContain(`<main id="legal-content">`);
       expect(html).toContain(`<h1>${title}</h1>`);
       expect(html).toContain(dictionary.legal.draftStatus);
       expect(html).toContain(dictionary.common.noData);

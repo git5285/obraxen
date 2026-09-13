@@ -1,4 +1,4 @@
-import { resolveContactConfig } from "./contact";
+import { resolveRuntimeConfig } from "./runtime-config";
 import { getLocalizedAlternates } from "./metadata";
 import { publicProjects } from "./projects";
 import type { Locale, RouteKey } from "./i18n";
@@ -9,7 +9,7 @@ import { getPublicPublicationState } from "./publication";
 // Publication is a separate gate: this only checks whether a route is useful.
 export function isRouteReadyForIndexing(route: RouteKey): boolean {
   if (route === "projects") return publicProjects.length > 0;
-  if (route === "contact") return resolveContactConfig(process.env).enabled;
+  if (route === "contact") return resolveRuntimeConfig().contact.enabled;
   return true;
 }
 

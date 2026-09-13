@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 const isCi = Boolean(process.env.CI);
 const contactEnabled = process.env.CONTACT_E2E_ENABLED === "true";
+const qaHarnessToken = process.env.QA_CONTACT_HARNESS_TOKEN;
 const requestedPort = Number(process.env.QA_PORT);
 
 if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65_535) {
@@ -16,9 +17,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
-  // The Spanish architecture preview is image-heavy; serial execution keeps
-  // `networkidle` assertions deterministic on local and CI runners.
-  workers: 1,
+  workers: 2,
   timeout: 30_000,
   expect: { timeout: 5_000 },
   reporter: isCi
@@ -28,6 +27,9 @@ export default defineConfig({
     baseURL: baseUrl,
     colorScheme: "light",
     contextOptions: { reducedMotion: "reduce" },
+    ...(contactEnabled && qaHarnessToken
+      ? { extraHTTPHeaders: { "x-obraxen-qa-token": qaHarnessToken } }
+      : {}),
     screenshot: "only-on-failure",
     trace: "on-first-retry",
     video: "retain-on-failure",
@@ -59,7 +61,10 @@ export default defineConfig({
     env: {
       GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID ?? "G-TEST123456",
       CLARITY_PROJECT_ID: process.env.CLARITY_PROJECT_ID ?? "testclarity1",
-      ...(contactEnabled ? { QA_CONTACT_HARNESS: "local-playwright" } : {}),
+      ...(contactEnabled ? {
+        QA_CONTACT_HARNESS: "local-playwright",
+        QA_CONTACT_HARNESS_TOKEN: qaHarnessToken ?? "",
+      } : {}),
     },
     url: baseUrl,
     reuseExistingServer: false,

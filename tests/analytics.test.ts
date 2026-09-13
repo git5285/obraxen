@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  getAnalyticsPageLocation,
   parseAnalyticsConfig,
   resolveAnalyticsConfig,
 } from "@/lib/analytics-config";
@@ -32,6 +33,12 @@ describe("analytics configuration", () => {
       clarityProjectId: null,
     });
   });
+
+  it("strips query strings and fragments from analytics page locations", () => {
+    expect(getAnalyticsPageLocation(
+      "https://example.com/en/contact/?email=alice%40example.com#contact-content",
+    )).toBe("https://example.com/en/contact/");
+  });
 });
 
 describe("consent record", () => {
@@ -47,6 +54,9 @@ describe("consent record", () => {
 
   it("rejects expired, future, malformed and obsolete records", () => {
     const record = createConsentRecord(false, now);
+    expect(parseConsentRecord(null, now)).toBeNull();
+    expect(parseConsentRecord(JSON.stringify({ ...record, decidedAt: null }), now)).toBeNull();
+    expect(parseConsentRecord(JSON.stringify({ ...record, expiresAt: null }), now)).toBeNull();
     expect(parseConsentRecord(serializeConsentRecord(record), now + CONSENT_MAX_AGE_MS))
       .toBeNull();
     expect(parseConsentRecord(serializeConsentRecord(record), now - 1)).toBeNull();

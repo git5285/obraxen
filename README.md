@@ -1,25 +1,30 @@
 # Web corporativa — reparación de pavimentos industriales
 
-Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. El build cerrado actual genera 28 páginas estáticas en inglés,
-alemán, español y francés: cuatro portadas, cuatro hubs, rutas legales y
-contacto. Los casos no generan fichas públicas mientras no superen su puerta de
-evidencia. Navegación, consentimiento y formulario son las únicas interacciones
-cliente propias.
+> **Home oficial — 11 de septiembre de 2026:** la única referencia aprobada es
+> la de la tarea «Iterar homepage», disponible localmente en
+> <http://127.0.0.1:4387/>. Véase [HOMEPAGE.md](HOMEPAGE.md) para su archivo,
+> arranque y dependencias. Las portadas Next.js descritas abajo son la
+> implementación anterior, pendiente de sustitución; no usarlas como referencia
+> de diseño ni abrirlas cuando se solicite la Home actual.
 
-La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` y el correo
-configurados pero sin DNS web, formulario ni despliegues Git de Vercel. El
-repositorio es privado y esa privacidad tampoco autoriza publicar o desplegar el
-sitio.
+Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
+Components. El build cerrado actual genera 29 páginas en inglés, alemán, español
+y francés: cuatro portadas, cuatro hubs, rutas legales y contacto. Las portadas
+y hubs localizados se renderizan dinámicamente para poder aplicar la CSP nonce;
+los casos no generan fichas públicas mientras no superen su puerta de evidencia.
+Navegación, consentimiento y formulario son las únicas interacciones cliente
+propias.
+
+La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` declarado
+pero sin formulario habilitado ni despliegues Git de Vercel. El repositorio es
+privado y esa privacidad tampoco autoriza publicar o desplegar el sitio.
 
 > **Identidad declarada:** `Obraxen` es el nombre comercial seleccionado y vive en
 > `data/brand.json`. El identificador temporal anterior está retirado de la
-> configuración operativa. `obraxen.com`, `info@obraxen.com` y
-> `privacy@obraxen.com` están verificados e integrados. La fuente estructurada
-> declara `OBRAXEN SURFACE S.L.`, NIF `B93963841`, Calle Federico García Lorca 22
-> y el teléfono temporal `+34 653 916 970`. Estas declaraciones no sustituyen
-> comprobaciones registrales, marcarias o legales; la activación pública continúa
-> en NO-GO. Véase
+> configuración operativa. Los campos de identidad legal y contacto están
+> redactados como `null`; el dominio permanece declarado, pero no hay buzón,
+> formulario ni publicación autorizados. La activación pública continúa en
+> NO-GO. Véase
 > `NAMING_CLEARANCE.md`.
 
 ## Arquitectura
@@ -45,18 +50,34 @@ El generador Node y las plantillas HTML anteriores se retiraron tras alcanzar
 paridad. `npm run build`, CI y Vercel tienen ahora una sola implementación:
 Next.js.
 
+Los layouts, páginas y metadata se mantienen en el servidor por defecto. Las
+directivas `"use client"` se limitan a controles que necesitan estado, eventos o
+APIs del navegador (navegación móvil, consentimiento y formulario); las páginas
+resuelven los datos y dejan los componentes de presentación en el grafo servidor.
+En Next.js 16, los segmentos dinámicos reciben `params` como `Promise`; las
+páginas, layouts y funciones de metadata los esperan y usan los helpers globales
+`PageProps` y `LayoutProps`. El proyecto no activa `cacheComponents`: conserva el
+modelo de caché documentado para Next 16, con la configuración de analítica
+estática (`force-static`) y las APIs de contacto dinámicas (`force-dynamic`).
+
+Las imágenes locales se importan desde `img/` y se renderizan con los helpers de
+imagen de Next.js, con dimensiones y `sizes` explícitos; no hay patrones de
+imágenes remotas. La tipografía usa pilas del sistema y no descarga fuentes de
+terceros.
+
 ## Rutas actuales
 
 | Ruta | Estado |
 |---|---|
 | `/` | Redirección permanente a `/en/` |
-| `/en/`, `/de/`, `/es/`, `/fr/` | Cuatro portadas prerenderizadas |
+| `/en/`, `/de/`, `/es/`, `/fr/` | Cuatro portadas renderizadas en servidor con CSP nonce |
 | `/{lang}/{projects}/` | Cuatro hubs sin expedientes públicos mientras la puerta siga cerrada |
 | `/{lang}/{projects}/{slug}/` | No se generan fichas; las rutas devuelven 404 hasta que cada caso sea publicable |
 | Rutas legales localizadas | 12 borradores incompletos, no aptos para publicación |
 | Rutas de contacto localizadas | UI preparada; formulario cerrado hasta aprobación |
 | `/api/analytics-config/` | Configuración del entorno, consultada solo tras aceptar |
 | `/api/contact/` | Entrega Resend fail-closed; 503 mientras falten condiciones |
+| `/api/contact-config/` | Solo disponibilidad pública runtime; `no-store` y sin secretos |
 | `/robots.txt` | Bloquea rastreo mientras la preview esté cerrada |
 | `/sitemap.xml` | Vacío en preview; se completa solo al superar la puerta pública |
 | `/soluciones/` | 404 mientras no existan ofertas publicables |
@@ -69,15 +90,22 @@ herramientas; instala el árbol bloqueado con `npm ci` antes de usarlos.
 
 ```sh
 npm ci
+npm run check:agent-runtime # comprueba Node, npm y el árbol bloqueado
+npm run lint          # ESLint con las reglas de Next.js
+npm run typecheck     # TypeScript sin emitir archivos
 npm run dev          # servidor de desarrollo
 npm run build        # build de producción Next.js
 npm run start        # sirve el build ya generado
 npm run test         # pruebas unitarias y de render
-npm run check:diff   # valida todo el cambio desde la base revisada
+npm run test:coverage # cobertura Vitest con umbrales
+npm run check:diff   # valida el cambio y el worktree desde origin/main
+npm run check:diff -- --base-ref origin/main --head HEAD # valida solo el commit
+npm run check:activation # evalúa la puerta de publicación
 npm run test:e2e:contact # formulario real habilitado en arnés local seguro
 npm run test:e2e     # rutas, responsive, accesibilidad, foco y cabeceras
 npm run lighthouse:ci
 npm run check        # lint + tipos + unitarias + build
+npm run check:security # audit de dependencias de producción
 npm run check:quality # gate completo local
 ```
 
@@ -88,6 +116,15 @@ locales libres y no reutilizan servidores preexistentes. Incluye reflow
 multilingüe entre 320 y 390 px, ramas de seguridad de la API de contacto y
 metadata con dominio inyectado, además de presupuestos Lighthouse en portada,
 hub y caso localizados. Los informes se conservan como artefactos durante 14 días.
+`check:diff` sin argumentos inspecciona también los archivos no rastreados que
+pueden formar parte de la candidata. Excluye el plano de control de
+`.coordination/` y los informes locales generados por Impeccable, que se
+conservan fuera de la candidata; los diffs rastreados siguen pasando la
+comprobación de whitespace. Para una revisión de commit usa la variante
+explícita con `--head`.
+`check:activation` devuelve `NO-GO` y código distinto de cero mientras falte una
+aprobación de publicación; ese resultado es el comportamiento esperado del gate
+cerrado, no un fallo de compilación.
 
 ## Gobernanza Git gratuita
 
@@ -108,20 +145,24 @@ misma política en servidor.
 
 ## Renderizado y Vercel
 
-Se usa el runtime estándar de Next/Vercel con rutas prerenderizadas; no se usa
-`output: "export"`. La exportación pura no admite `headers`, mientras que esta
-arquitectura conserva CSP, HSTS y las demás cabeceras sin convertir las páginas
-en render dinámico.
+Se usa el runtime estándar de Next/Vercel; no se usa `output: "export"`. La
+exportación pura no admite `headers`, mientras que esta arquitectura conserva
+CSP, HSTS y las demás cabeceras. Las rutas de contenido que no dependen de la
+petición mantienen su prerenderizado/SSG; el árbol localizado de portada y
+secciones se sirve dinámicamente porque la CSP usa un nonce por petición.
 
 `vercel.json` mantiene únicamente `git.deploymentEnabled: false`. El framework,
 build y salida se detectan como Next.js. El job de preview también está apagado:
 requiere entorno protegido, secretos, `ENABLE_VERCEL_PREVIEWS=true` y
 autorización expresa.
 
-La CSP mantiene `unsafe-inline` solo en `script-src` para el bootstrap generado
-por App Router. `script-src-attr 'none'` bloquea manejadores inline y
-`style-src` no permite estilos inline. Los nonces no se adoptan porque exigirían
-render dinámico; SRI se reevaluará cuando deje de ser experimental en Next.
+La CSP se genera por petición en `src/proxy.ts`: crea un nonce, lo entrega al
+render mediante `x-nonce` y lo publica también en la respuesta. Así
+`script-src` y `style-src` no necesitan `unsafe-inline`; `script-src-attr
+'none'` bloquea manejadores inline. La configuración `force-dynamic` del layout
+localizado asume el coste de renderizar esas páginas por petición, tal como
+requiere el modelo de nonces de Next.js 16. El Proxy excluye API, assets y
+metadata estática del matcher.
 Los orígenes de GA4 y Clarity están declarados de forma explícita en `script-src`,
 `connect-src` e `img-src`; la allowlist no carga recursos por sí sola y excluye
 los endpoints publicitarios de Google.
@@ -156,16 +197,18 @@ ADR-011 selecciona Resend como adaptador inicial sin base de leads ni adjuntos.
 El endpoint valida origen, tamaño, campos, honeypot, tiempo y un límite efímero de
 defensa; no registra contenido personal. La activación exige además una regla
 externa distribuida para `/api/contact/` y
-`CONTACT_RATE_LIMIT_MODE=vercel-waf`. La UI queda desactivada hasta reunir
-identidad legal, textos legales, DPA/proveedor aprobado, esa regla y variables
-reales; dominio y buzón coincidente ya están preparados. Las traducciones
+`CONTACT_RATE_LIMIT_MODE=vercel-waf`. En Vercel Preview la regla WAF y esta
+variable ya están configuradas, pero la UI queda desactivada hasta reunir
+identidad legal, textos legales, DPA/proveedor aprobado, dominio, buzones y el
+resto de variables reales. Las traducciones
 actuales también requieren revisor profesional y fecha por cada idioma antes de
 publicar.
 
 ## Datos y puerta de publicación
 
 Los valores desconocidos se representan como `null` y no se completan con
-estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
+estimaciones. `publicar: true` bloquea la activación global si falta cualquiera
+de estos controles:
 
 - nombre comercial distinto del identificador temporal;
 - sociedad constituida, razón social, CIF y domicilio validado;
@@ -173,15 +216,20 @@ estimaciones. `publicar: true` falla si falta cualquiera de estos controles:
 - aviso legal, privacidad y cookies revisados profesionalmente;
 - traducciones en/de/es/fr con revisor y fecha de aprobación;
 - proveedor de captación, DPA y tratamiento aprobados;
-- autorización documentada de cada caso para nombre y fotografías;
-- referencia verificable y revisión legal aprobada por caso.
+
+La autorización documentada de cada caso es una puerta independiente de
+contenido: `publicProjects` solo incluye casos con documento, revisión legal
+aprobada y activos públicos completos. Mientras un caso no cumpla esas
+condiciones, queda fuera de la Home, los hubs, sus rutas, el sitemap y el
+JSON-LD; su falta se conserva como advertencia operativa y no abre la
+publicación por sí sola.
 
 Los seis casos conservan una declaración expresa del responsable del 17 de julio
 de 2026 sobre el nombre del cliente y las fotografías web. Esa evidencia interna
 no equivale al documento de autorización ni a su revisión legal; ambas capas
 siguen pendientes para cada caso. Los originales permanecen fuera del
-repositorio. `npm run check:activation` mantiene el recuento canónico y la
-publicación cerrada mientras exista cualquier bloqueo.
+repositorio. `npm run check:activation` mantiene el recuento canónico de los
+bloqueos globales y la publicación cerrada mientras exista cualquiera de ellos.
 
 Canonical, URLs e imágenes sociales absolutas ya se generan contra el dominio
 real en los artefactos locales. El sitemap permanece vacío hasta que toda la
@@ -216,7 +264,10 @@ tareas; no son contenido público del sitio.
 
 Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: dictamen registral y
 marcario, revisión profesional de en/de/es/fr, documentos y revisión legal de los
-casos, legal general y DPA/proveedor. Razón social, NIF, domicilio y teléfono
-temporal ya están declarados; después se audita una URL candidata y se decide
-expresamente si publicar.
-Indexación, analítica real, formulario y despliegue continúan bloqueados.
+casos, legal general y DPA/proveedor. La razón social, NIF, domicilio, teléfono y
+buzones siguen sin autorizarse y permanecen `null` en `data/brand.json`; el dominio
+está declarado, pero no hay contacto público autorizado. Después se audita una
+URL candidata y se decide expresamente si publicar.
+Indexación, analítica real, formulario y un despliegue operativo continúan
+bloqueados; el bootstrap autorizado de `production` quedó en `ERROR` y no se
+promocionó ningún dominio.

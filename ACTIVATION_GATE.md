@@ -23,6 +23,11 @@ web y del tratamiento con Resend, y por revisión profesional de ES, EN, DE y FR
 Los demás faltantes permanecen como advertencias de negocio y no se convierten
 en aprobaciones por dejar de bloquear.
 
+La puerta global no autoriza casos individuales: `publicProjects` solo expone un
+caso cuando sus evidencias documentales, revisión legal aprobada y activos
+públicos cumplen el contrato correspondiente. Los casos que no lo cumplen
+quedan fuera de Home, hubs, rutas, sitemap y JSON-LD aunque `publicar` sea `true`.
+
 El resultado actual no se copia en este documento. Debe consultarse con el
 comando anterior: cualquier bloqueo produce `NO-GO`, y un resultado sin bloqueos
 solo permite preparar una candidata protegida.
@@ -100,12 +105,14 @@ de tracking, conservación y procedimiento de baja/borrado. Hasta entonces,
 
 La activación técnica exige además una regla distribuida de limitación de
 solicitudes para `/api/contact/`, configurada y probada en el proveedor de borde.
-Solo después se puede fijar `CONTACT_RATE_LIMIT_MODE=vercel-waf`. Sin ese valor,
-la configuración del formulario permanece cerrada aunque el resto de variables
-exista. El límite en memoria continúa como defensa secundaria, no como garantía
-entre instancias. Esta precondición de entorno no forma parte del recuento
-documental: la puerta de datos y la de entorno deben estar verdes de forma
-independiente.
+En Vercel Preview ya está publicada una regla `POST` por IP, con 100 solicitudes
+por ventana fija de 60 segundos y respuesta `429`, y
+`CONTACT_RATE_LIMIT_MODE=vercel-waf` está registrado en ese entorno. Sin ese
+valor, la configuración del formulario permanece cerrada aunque el resto de
+variables exista. El límite en memoria continúa como defensa secundaria, no como
+garantía entre instancias. Esta precondición de entorno no forma parte del
+recuento documental: la puerta de datos y la de entorno deben estar verdes de
+forma independiente.
 
 ## Secuencia de cierre
 
@@ -126,5 +133,5 @@ independiente.
 
 Se retira inmediatamente alias/dominio o se desactiva formulario/analítica ante
 exposición sin control, identidad o permiso incorrectos, entrega de correo
-defectuosa, PII en logs o regresión crítica. No existe todavía ningún deployment
-que deba revertirse.
+defectuosa, PII en logs o regresión crítica. El bootstrap `production` actual
+está en estado `ERROR`; no existe un deployment `READY` que deba revertirse.

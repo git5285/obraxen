@@ -38,30 +38,40 @@ export class PublicationConfigurationError extends Error {
   }
 }
 
-const requiredProjectScopes = ["nombre_cliente", "fotografias_web"] as const;
+export const requiredProjectPublicationScopes = ["nombre_cliente", "fotografias_web"] as const;
 const publicationLocales = ["en", "de", "es", "fr"] as const;
+
+function getProjectPublicationDocuments(project: Project) {
+  return project.autorizacionPublicacion.evidencias.filter(
+    (evidence) => evidence.tipo === "documento_referenciado",
+  ).filter((document) => requiredProjectPublicationScopes.every(
+    (scope) => document.alcance.includes(scope),
+  ));
+}
+
+function hasApprovedProjectPublicationReview(project: Project, documentReference: string) {
+  return project.autorizacionPublicacion.evidencias.some(
+    (evidence) => evidence.tipo === "revision_legal_verificada"
+      && evidence.documentoRevisado === documentReference
+      && evidence.resultado === "aprobada",
+  );
+}
+
+export function hasProjectPublicationAuthorization(project: Project): boolean {
+  return getProjectPublicationDocuments(project).some((document) =>
+    hasApprovedProjectPublicationReview(project, document.referenciaDocumento),
+  );
+}
 
 export function getProjectPublicationIssues(projects: readonly Project[]): string[] {
   return projects.flatMap((project) => {
-    const authorization = project.autorizacionPublicacion;
     const issues: string[] = [];
-    const documents = authorization.evidencias.filter(
-      (evidence) => evidence.tipo === "documento_referenciado",
-    );
-    const publicationDocument = documents.find((evidence) =>
-      requiredProjectScopes.every((scope) => evidence.alcance.includes(scope)),
-    );
-    const approvedReview = publicationDocument
-      ? authorization.evidencias.find((evidence) =>
-          evidence.tipo === "revision_legal_verificada"
-          && evidence.documentoRevisado === publicationDocument.referenciaDocumento
-          && evidence.resultado === "aprobada")
-      : undefined;
+    const publicationDocuments = getProjectPublicationDocuments(project);
 
-    if (!publicationDocument) {
+    if (publicationDocuments.length === 0) {
       issues.push(`${project.slug}: falta un documento de autorización que cubra nombre y fotografías`);
     }
-    if (!approvedReview) {
+    if (!hasProjectPublicationAuthorization(project)) {
       issues.push(`${project.slug}: falta una revisión legal verificada del documento de autorización`);
     }
 
@@ -73,6 +83,8 @@ export function getPublicationIssues(
   brand: Brand,
   projects: readonly Project[],
 ): string[] {
+  // This is the global activation gate. Individual cases are selected for
+  // publication by publicProjects, which applies authorization and asset gates.
   void projects; // Project evidence is reported separately as advisory warnings.
   const issues: string[] = [];
 

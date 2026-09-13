@@ -21,6 +21,12 @@ export const de: Dictionary = {
     mobileMenu: "Mobiles Menü",
     breadcrumbs: "Brotkrümelnavigation",
   },
+  notFound: {
+    code: "404 · Nicht gefunden",
+    title: "Diese Seite ist nicht verfügbar.",
+    body: "Die angeforderte Adresse entspricht keiner veröffentlichten Seite. Kehren Sie zur Website zurück und nutzen Sie den verifizierten Einstiegspunkt.",
+    link: "Zur Website zurück",
+  },
   navigation: {
     items: [
       { label: "Ablauf", section: "process" },
@@ -95,6 +101,7 @@ export const de: Dictionary = {
     openCaseAria: "Projekt vollständig ansehen:",
   },
   company: {
+    whyPrefix: "Warum",
     title: "Baustellenerfahrung für jede Reparatur",
     intro: "Mehr als zehn Jahre gebündelte Erfahrung in Ausführung und Reparatur fließen in jede Maßnahme ein – abgestimmt auf Untergrund, Schaden und Anlagenbetrieb.",
     diagnosisTitle: "Ausführungserfahrung als Basis der Diagnose",
@@ -244,12 +251,13 @@ export const de: Dictionary = {
     backToSite: "Zurück zur Website",
     draftStatus: "Unvollständiger Entwurf · nicht zur Veröffentlichung geeignet",
     lastReview: "Letzte Prüfung des Entwurfs: 6. September 2026",
+    resendDpa: "Resend DPA",
     notice: {
       title: "Impressum",
       description: "Rechtliche Informationen zum Betreiber dieser Website.",
-      intro: "Dieser Arbeitsentwurf enthält die angegebenen Daten des Betreibers einer in Spanien ansässigen geschäftlichen Website. Vor der Veröffentlichung muss er noch professionell rechtlich geprüft und an die tatsächlich anwendbaren Anforderungen angepasst werden.",
+      intro: "Dieser Arbeitsentwurf enthält die derzeit verfügbaren Informationen zum Betreiber einer in Spanien ansässigen geschäftlichen Website. Vor der Veröffentlichung muss er noch professionell rechtlich geprüft und vervollständigt werden.",
       alertTitle: "Professionelle Prüfung steht noch aus",
-      alertText: "Firmierung, Steuernummer und Anschrift sind angegeben. Gegebenenfalls erforderliche Registerangaben und die abschließende rechtliche Prüfung stehen noch aus. Dieser Entwurf erlaubt keine Veröffentlichung.",
+      alertText: "Rechtliche Identität, Registerangaben und Anschrift sind derzeit nicht verfügbar. Auch die abschließende rechtliche Prüfung steht noch aus. Dieser Entwurf erlaubt keine Veröffentlichung.",
       relatedRoute: "privacy",
       relatedLabel: "Datenschutzerklärung",
       sections: [

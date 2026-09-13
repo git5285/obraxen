@@ -33,6 +33,7 @@
 .contact-consent input{width:18px!important;height:18px;margin-top:2px}
 .form-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 .contact-status{min-height:24px;margin-top:14px;color:var(--brand-ink-2);font-size:.86rem}
+.form-field-error{display:block;margin-top:6px;color:var(--brand-primary-dark);font-size:.78rem;font-weight:700}
 .language-switcher ul{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
 .language-switcher a{display:block;padding:10px 8px;border-radius:var(--radius-sm);font-size:.7rem;font-weight:750;text-decoration:none;white-space:nowrap}
 .language-switcher a[aria-current="page"]{background:var(--brand-primary-dark);color:var(--brand-surface)}

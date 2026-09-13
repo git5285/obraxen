@@ -3,6 +3,11 @@ export type AnalyticsConfig = {
   clarityProjectId: string | null;
 };
 
+export function getAnalyticsPageLocation(href: string): string {
+  const url = new URL(href);
+  return `${url.origin}${url.pathname}`;
+}
+
 const gaMeasurementIdPattern = /^G-[A-Z0-9]{6,20}$/;
 const clarityProjectIdPattern = /^[a-z0-9]{6,24}$/;
 

@@ -7,8 +7,9 @@ legal, proveedor, idiomas o casos: ese inventario vive en
 `npm run check:activation`.
 
 El runbook no autoriza preview, despliegue, dominio, indexación, analítica ni
-formulario. Next.js es la única implementación y no existe un segundo cutover
-técnico pendiente.
+formulario. Next.js es la única implementación. El bootstrap `production`
+autorizado dejó un deployment fallido y requiere un reintento verificable antes
+de poder auditar una URL candidata; no hay un deployment operativo que revertir.
 
 ## 1. Condiciones de entrada
 
@@ -34,10 +35,22 @@ y `ACTIVATION_GATE.md` documenta el contrato de entrada. Ese comando no sustituy
 la auditoría de la URL ni la decisión humana de publicación.
 
 `data/brand.json` es el control ejecutable. Si `publicar: true` convive con una
-condición incompleta, el build debe fallar; no se corrige el gate para forzar la
-salida.
+condición global incompleta, el gate debe fallar; no se corrige para forzar la
+salida. La autorización y los activos de cada caso se evalúan por separado al
+construir `publicProjects`; un caso no autorizado nunca entra en una ruta,
+imagen social, sitemap o JSON-LD público.
 
 ## 2. Preview candidata protegida
+
+Antes de habilitar previews, verifica con evidencia actual quién puede aprobar
+el entorno GitHub `preview`, qué bypasses existen y si la integración de Vercel
+puede desplegar por otra vía. Obtén primero la aprobación aplicable para esa
+inspección remota. Registra la fuente y fecha de la evidencia, sin secretos.
+`ENABLE_VERCEL_PREVIEWS=true` no autoriza futuras candidatas: cada ejecución
+debe estar cubierta por una aprobación con SHA exacto, destino y nivel de acceso.
+Si no puedes demostrar esa cobertura, no habilites ni ejecutes previews. Si ya
+están habilitadas y falta evidencia, informa del bloqueo y solicita autorización
+para cualquier cambio remoto; no declares que las has desactivado.
 
 1. Crear una rama/PR exclusiva de activación y reservar sus archivos.
 2. Configurar el entorno Vercel `preview` con autenticación comprobada.
@@ -95,9 +108,12 @@ Tras autorización expresa:
 
 ## 5. Rollback
 
-Se revierte inmediatamente ante exposición sin control, formulario con entrega
-incorrecta, error legal/identitario, rutas críticas rotas, PII en logs o
-regresión grave de seguridad/accesibilidad.
+Ante exposición sin control, formulario con entrega incorrecta, error
+legal/identitario, rutas críticas rotas, PII en logs o regresión grave de
+seguridad/accesibilidad, prepara inmediatamente el rollback y conserva evidencia
+mínima sin datos personales. Ejecútalo solo si la autorización humana identifica
+esa acción, entorno y alcance, o si ya existe una autorización de incidente
+aplicable. Sin ella, solicita la decisión antes de modificar el estado externo.
 
 1. retirar alias/dominio del deployment defectuoso o promover el último
    deployment aprobado;

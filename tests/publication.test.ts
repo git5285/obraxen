@@ -82,6 +82,12 @@ describe("publication gate", () => {
     });
   });
 
+  it("uses the same approved project evidence criterion for publication warnings", () => {
+    expect(getPublicationWarnings(publicBrand, publishableProjects)).not.toContain(
+      `${publishableProjects[0].slug}: falta una revisión legal verificada del documento de autorización`,
+    );
+  });
+
   it("keeps business-readiness gaps visible without blocking activation", () => {
     expect(getPublicationIssues(publicBrand, internalProjects)).toEqual([]);
     const warnings = getPublicationWarnings({

@@ -1,6 +1,6 @@
 # Roadmap para una web ejemplar
 
-Fecha de referencia: 6 de septiembre de 2026.
+Fecha de referencia: 12 de septiembre de 2026.
 
 Este plan parte de la evidencia real y del cutover ya completado a Next.js. Los
 siguientes hitos deben conservar contenido, datos, rutas, dirección industrial,
@@ -75,10 +75,10 @@ img/
 tests/
 ```
 
-- Las paginas se prerenderizan en build. No se necesita SSR para contenido que
-  cambia mediante commits.
+- Las rutas que no dependen de la petición se prerenderizan en build. La portada
+  y las secciones localizadas usan render dinámico para aplicar el nonce CSP.
 - El enrutado admite 52 páginas localizadas potenciales bajo `/en/`, `/de/`,
-  `/es/` y `/fr/`; el build cerrado actual genera 28 mientras los expedientes
+  `/es/` y `/fr/`; el build cerrado actual genera 29 mientras los expedientes
   de casos siguen excluidos por su puerta de evidencia. Todos los idiomas llevan
   prefijo y `/` redirige a inglés.
 - `data/brand.json` sigue siendo la puerta de identidad y publicacion.
@@ -162,7 +162,7 @@ La puntuacion usa `(impacto + riesgo) x (6 - esfuerzo)`, con valores de 1 a 5.
 | Consentimiento antes de GA4 y Clarity | 5 | 5 | 3 | 30 | Completado técnicamente; activación bloqueada |
 | Retirar JPEG y asset huerfano | 4 | 3 | 1 | 35 | Completado |
 | Imagenes responsivas y cache versionada | 3 | 2 | 3 | 15 | Portada, hub y casos completados |
-| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Completado salvo bootstrap App Router; decisión en ADR-006 |
+| Externalizar CSS/JS y endurecer CSP | 3 | 3 | 4 | 12 | Completado con nonce en Proxy; portada y secciones localizadas son dinámicas |
 | Tipado, tests y CI | 5 | 4 | 5 | 9 | Fases 1 y 4 |
 
 La puntuacion no convierte una migracion grande en urgente por si sola: el sitio
@@ -194,8 +194,9 @@ precipitada.
 
 - [x] Dividir la portada monolitica en secciones servidoras.
 - [x] Mantener el menu movil y la navegacion sticky como una unica isla cliente.
-- [x] Sustituir el JavaScript heredado y retirar `unsafe-inline` de `style-src`;
-  `script-src` conserva la excepcion temporal del bootstrap estatico de App Router.
+- [x] Sustituir el JavaScript heredado y retirar `unsafe-inline` de `script-src`
+  y `style-src` mediante nonce por petición en `src/proxy.ts`; el layout
+  localizado declara el render dinámico requerido por Next.js 16.
 - [x] Verificar equivalencia visual, accesible y de rendimiento sin retirar la
   plantilla vieja.
 
@@ -231,8 +232,8 @@ precipitada.
 - [x] Revisar la exposición del repositorio y bloquear auditorías e informes
   locales en `.gitignore`.
 - [x] Migrar aviso legal, privacidad, sitemap y metadatos de portada.
-- [x] Adoptar Next/Vercel con prerenderizado y cabeceras como salida única;
-  retirar builder, checker y plantillas legacy.
+- [x] Adoptar Next/Vercel con prerenderizado/SSG donde corresponde y cabeceras
+  dinámicas para el nonce CSP; retirar builder, checker y plantillas legacy.
 - [x] Verificar 41 pruebas unitarias, 36 ejecuciones Playwright y los tres
   presupuestos Lighthouse sin desplegar.
 
@@ -257,7 +258,7 @@ precipitada.
   captación minimizada con Resend, sin activar tratamiento.
 - [x] **6.2 · Datos:** exigir en/de/es/fr en marca, ofertas, proyectos, imágenes y
   datos desconocidos; registrar revisión profesional por idioma como pendiente.
-- [x] **6.3 · Aplicación:** generar 52 páginas localizadas, selector equivalente,
+- [x] **6.3 · Aplicación:** generar 29 páginas localizadas activas, selector equivalente,
   `<html lang>` exacto y redirecciones de las rutas españolas legacy.
 - [x] **6.4 · SEO técnico:** preparar metadata, Open Graph, canonical, `hreflang`,
   `x-default` y sitemap derivados; mantenerlos cerrados hasta dominio/publicación.
@@ -276,12 +277,14 @@ precipitada.
 - [x] **6.7.1 · Nombre comercial:** integrar `Obraxen` desde `data/brand.json`
   por selección expresa del usuario, sin presentar como aprobada la revisión
   profesional registral y marcaria aún pendiente.
-- [x] **6.7.2 · Dominio y correo:** verificar `obraxen.com`, Google Workspace,
-  MX/SPF/DKIM/DMARC y los alias de privacidad/informes; integrarlos en
-  `data/brand.json` sin conectar DNS web, Vercel ni publicación.
-- [x] **6.7.3 · Identidad y contacto declarados:** registrar la constitución,
-  razón social `OBRAXEN SURFACE S.L.`, NIF `B93963841`, domicilio y teléfono
-  temporal, sin sustituir las revisiones legales, de naming o de permisos.
+- [ ] **6.7.2 · Dominio y correo:** confirmar en Resend el dominio, DKIM y los
+  buzones de envío/recepción. El dashboard autenticado muestra cero dominios
+  personalizados y cero envíos/recepciones; la comprobación DNS pública solo
+  permite atribuir MX/SPF a Google y muestra DMARC en observación. Falta el alta
+  y verificación del dominio antes de conectar DNS web, Vercel o publicación.
+- [ ] **6.7.3 · Identidad y contacto:** completar la identidad societaria y los
+  canales de contacto después de su validación legal. Los valores anteriores se
+  retiraron de la fuente canónica y no se reproducen en esta hoja.
 - [ ] **6.7 · Activación:** aprobar las cuatro traducciones, DPA/subencargados y
   textos legales; completar las referencias profesionales de naming y los
   permisos de casos; ejecutar auditoría candidata y decisión expresa de

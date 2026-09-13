@@ -85,12 +85,23 @@ sido una edición dispersa y propensa a error.
 > disponible. Sin titularidad ni disponibilidad acreditadas, dominio y correo no
 > se integran todavía.
 
-> **Actualización 2026-07-16:** el registro y control de `obraxen.com` quedan
-> verificados mediante RDAP, sesión administrativa de Cloudflare y respuesta de
-> los DNS autoritativos. Google Workspace publica MX/SPF, autentica el envío con
-> DKIM y dispone de `info@obraxen.com`, `privacy@obraxen.com` y
-> `dmarc@obraxen.com`; DMARC queda inicialmente en observación. Dominio y correos
-> se integran en `brand.json`, sin conectar la web ni autorizar publicación.
+> **Actualización 2026-07-16:** el registro y control de `obraxen.com` quedaron
+> documentados mediante RDAP, sesión administrativa de Cloudflare y respuesta de
+> los DNS autoritativos. La configuración de Google Workspace quedó separada de
+> la integración de Resend; DMARC quedó inicialmente en observación. El dominio y
+> los canales no autorizaban conectar la web ni publicar.
+
+> **Actualización 2026-09-12:** por autorización de privacidad se retiraron del
+> árbol de trabajo los campos de identidad/contacto y las fotografías de casos.
+> La comprobación DNS actual observa MX/SPF de Google y DMARC con política de
+> observación. El dashboard autenticado de Resend muestra el DPA firmado por el
+> proveedor, cero dominios personalizados y cero envíos/recepciones; por tanto,
+> todavía no existe evidencia de dominio o buzón Resend de Obraxen configurado.
+> En Vercel Preview sí quedó publicada la regla WAF para `POST /api/contact` y
+> registrada la variable `CONTACT_RATE_LIMIT_MODE=vercel-waf`. El bootstrap
+> `production` autorizado dejó un único deployment en estado `ERROR`; el
+> reintento con Node 24.x fue rechazado antes de crear otro deployment y el
+> formulario continúa cerrado por el gate legal.
 
 **Decisión.** Aislar toda la identidad en un único punto de verdad,
 `data/brand.json` (`nombre`, `nombreLegal`, `claim`, `dominio`, `email`,
@@ -204,15 +215,15 @@ visual, responsive y accesible. `data/brand.json`, `data/proyectos.json` y
 El orden, las puertas de calidad y la estrategia de publicación se mantienen en
 [`ROADMAP.md`](ROADMAP.md), evitando duplicarlos en este ADR.
 
-**Actualización tras Fases 1–3.** La portada App Router queda prerenderizada y
-dividida en secciones servidoras. Solo `src/components/site-navigation.tsx` usa
-`use client`; gestiona menu, foco y navegacion sticky. Durante la convivencia se
-importa `css/home.css` en el bundle Next para garantizar paridad sin duplicar el
-sistema visual. Las imagenes usan props responsive de Next sin atributos de
-estilo inline, lo que permite retirar `unsafe-inline` de `style-src`. La excepcion
-permanece en `script-src` por los bloques de arranque RSC que genera el prerender
-de App Router; ADR-006 documenta por qué los nonces no compensan el render
-dinámico y por qué SRI debe esperar a dejar de ser experimental.
+**Actualización tras Fases 1–3.** La portada App Router queda dividida en
+secciones servidoras. Solo `src/components/site-navigation.tsx` usa `use client`;
+gestiona menú, foco y navegación sticky. Durante la convivencia se importa
+`css/home.css` en el bundle Next para garantizar paridad sin duplicar el sistema
+visual. Las imágenes usan props responsive de Next sin atributos de estilo
+inline. La CSP se genera en `src/proxy.ts` con un nonce por petición, se pasa al
+render mediante `x-nonce` y se devuelve en la cabecera de respuesta; por ello se
+retira `unsafe-inline` y el layout localizado declara `force-dynamic`. ADR-006
+documenta el coste aceptado de ese render dinámico.
 
 El hub y las seis fichas se mantienen como Server Components sin nuevas islas
 cliente. Metadata y Open Graph son propios de cada ruta; canonical, URL e imagen
@@ -234,10 +245,11 @@ caso. La preview Vercel vive en un job separado, dependiente del gate, y requier
 simultáneamente entorno `preview`, secretos y la variable explícita
 `ENABLE_VERCEL_PREVIEWS=true`. El valor por defecto es apagado.
 
-La CSP mantiene `unsafe-inline` solo en `script-src` mientras App Router sea
-prerenderizado. Los nonces documentados por Next.js fuerzan renderizado dinámico;
-adoptarlos ahora eliminaría la ventaja estática y no se justifica para una web
-sin scripts de terceros. `style-src` continúa cerrado.
+La CSP se genera por petición en `src/proxy.ts` con un nonce para scripts y
+estilos. Next.js 16 exige render dinámico para inyectar nonces; por eso
+`src/app/[lang]/layout.tsx` declara `force-dynamic` para el árbol localizado.
+`style-src` permanece cerrado a inline sin nonce y `script-src-attr` permanece en
+`none`.
 
 **Consecuencias.**
 
@@ -265,12 +277,13 @@ sin scripts de terceros. `style-src` continúa cerrado.
 **Contexto.** Portada, hub, seis casos, navegación, legal, robots, sitemap,
 metadata, tests y presupuestos ya tienen paridad en App Router. Mantener el
 generador Node duplicaría validaciones, copy, rutas y cualquier futura fase de
-consentimiento. La web necesita cabeceras CSP y de seguridad, prerenderizado y
-despliegue bloqueado por defecto.
+consentimiento. La web necesita cabeceras CSP y de seguridad, prerenderizado/SSG
+donde sea posible y despliegue bloqueado por defecto.
 
 **Decisión.** Next.js App Router es la única implementación. `npm run build`, CI
 y Vercel usan `next build`; el generador, checker y HTML legacy se eliminan.
-Vercel usa el runtime estándar de Next con rutas prerenderizadas y
+Vercel usa el runtime estándar de Next con una mezcla de rutas prerenderizadas,
+SSG y rutas localizadas dinámicas por CSP, además de
 `git.deploymentEnabled: false`.
 
 El preset remoto del proyecto se actualiza de `Other` a `Next.js`; build y
@@ -281,14 +294,15 @@ expectativa de una carpeta `public` sin crear un despliegue.
 
 | Opción | Evaluación |
 |---|---|
-| Next/Vercel con prerenderizado | Aceptada: una sola herramienta, cabeceras de Next y rutas estáticas/SSG |
+| Next/Vercel con prerenderizado/SSG y rutas dinámicas acotadas | Aceptada: una sola herramienta, cabeceras de Next y nonce CSP sin `unsafe-inline` |
 | `output: "export"` | Rechazada: la exportación pura no admite `headers` de Next |
 | Mantener legacy y Next | Rechazada: duplica código, pruebas y futuras integraciones |
-| Nonces con render dinámico | Rechazada ahora: desactiva optimización estática y CDN por defecto |
+| Nonces con render dinámico | Aceptada para el árbol HTML localizado: elimina `unsafe-inline` con un coste explícito de render por petición |
 
 **Trade-off.** Se acepta depender del runtime de despliegue de Next para aplicar
-cabeceras aunque las páginas se generen estáticamente. A cambio se evita mantener
-un servidor dinámico por petición y se conserva una única ruta de build.
+cabeceras y renderizar dinámicamente las rutas localizadas que necesitan nonce.
+Las demás rutas mantienen prerenderizado/SSG y no se conserva un servidor propio
+fuera del runtime de Next.
 
 **Consecuencias.**
 
@@ -296,7 +310,8 @@ un servidor dinámico por petición y se conserva una única ruta de build.
 - (+) 41 pruebas unitarias, 36 ejecuciones Playwright y Lighthouse protegen el
   cutover.
 - (+) La Fase 5 se implementará una sola vez.
-- (−) La CSP de scripts mantiene `unsafe-inline` para el bootstrap de App Router.
+- (−) El nonce de CSP fuerza render dinámico en portada y secciones localizadas,
+  con más coste de render que una página totalmente estática.
 - (−) Un hosting estático genérico requeriría reproducir las cabeceras fuera de
   Next; no es la plataforma objetivo actual.
 
@@ -371,8 +386,8 @@ autoriza preview, producción, indexación o publicación.
 GitHub Free, pero también exponía estrategia, coordinación y datos de casos que
 no son contenido publicable. En el plan gratuito, GitHub no ofrece ramas
 protegidas ni rulesets para repositorios privados. El repositorio tiene un único
-colaborador y la web continúa sin deployments, dominios, analítica real o
-autorización de publicación.
+colaborador y la web no mantiene un deployment operativo, dominio personalizado,
+analítica real o autorización de publicación.
 
 **Decisión.** Mantener GitHub Free y cambiar a privado el repositorio, entonces
 llamado `git5285/remainon-web` y actualmente `git5285/obraxen`. GitHub Actions
@@ -447,8 +462,9 @@ publicación falla cerrada mientras cualquier revisión siga pendiente.
 
 **Consecuencias.**
 
-- (+) 52 páginas se generan en build con `<html lang>` exacto y selector que
-  conserva la página equivalente.
+- (+) El build cerrado actual genera 29 páginas con `<html lang>` exacto y selector
+  que conserva la página equivalente; el diseño admite 52 páginas potenciales al
+  abrir las superficies condicionadas.
 - (+) Los datos desconocidos continúan como `null` u omitidos en cada idioma.
 - (+) Se conservan redirecciones permanentes para enlaces históricos españoles.
 - (−) Cada cambio público exige actualizar y revisar las cuatro versiones.

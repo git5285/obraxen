@@ -13,6 +13,9 @@ import {
 import { getLocalizedAlternates } from "@/lib/metadata";
 
 const requiredRouteFiles = [
+  "src/app/not-found.tsx",
+  "src/app/not-found.module.css",
+  "src/app/global-not-found.tsx",
   "src/app/[lang]/layout.tsx",
   "src/app/[lang]/page.tsx",
   "src/app/[lang]/[section]/page.tsx",
@@ -20,8 +23,10 @@ const requiredRouteFiles = [
   "src/app/robots.ts",
   "src/app/sitemap.ts",
   "src/app/api/analytics-config/route.ts",
+  "src/app/api/contact-config/route.ts",
   "src/app/api/contact/route.ts",
   "src/components/contact-form.tsx",
+  "src/components/contact-runtime-gate.tsx",
   "src/components/consent-manager.tsx",
   "src/components/language-switcher.tsx",
   "src/components/site-navigation.tsx",
@@ -52,6 +57,13 @@ describe("localized foundation routes", () => {
       .toBe("/fr/projets/blitz-bremen/");
   });
 
+  it("falls back to the target home while preserving valid hashes", () => {
+    expect(localizePath("/outside-route/#contact", "es")).toBe("/es/#contact");
+    expect(localizePath("/en/#content", "de")).toBe("/de/#content");
+    expect(localizePath("/pt/unknown/#hero", "fr")).toBe("/fr/#hero");
+    expect(localizePath("/en/unknown/#hero", "fr")).toBe("/fr/");
+  });
+
   it("builds absolute canonical and hreflang URLs when a candidate domain exists", () => {
     expect(getLocalizedAlternates("example.com", "de", "projects", "blitz-bremen"))
       .toEqual({
@@ -64,6 +76,10 @@ describe("localized foundation routes", () => {
           "x-default": "https://example.com/es/proyectos/blitz-bremen/",
         },
       });
+  });
+
+  it("does not emit absolute alternates without a verified domain", () => {
+    expect(getLocalizedAlternates(null, "en", "home")).toBeUndefined();
   });
 
   it("serves a closed robots and sitemap policy before publication", () => {

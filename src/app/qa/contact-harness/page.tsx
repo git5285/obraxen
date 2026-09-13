@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { ContactForm } from "@/components/contact-form";
 import { getDictionary, getPath } from "@/lib/i18n";
+import { isLocalQaRequest, QA_ACCESS_HEADER } from "@/lib/qa-access";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +11,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ContactHarnessPage() {
-  if (process.env.QA_CONTACT_HARNESS !== "local-playwright" || process.env.VERCEL) {
+export default async function ContactHarnessPage() {
+  const requestHeaders = await headers();
+  if (!isLocalQaRequest(process.env, {
+    host: requestHeaders.get("host"),
+    token: requestHeaders.get(QA_ACCESS_HEADER),
+  })) {
     notFound();
   }
 

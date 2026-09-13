@@ -1,5 +1,5 @@
 import type { Project } from "@/lib/schemas";
-import { getImageDimensions, getProjectImage } from "@/lib/homepage";
+import { getImageDimensions, getProjectImage } from "@/lib/media";
 import {
   getExecutionFacts,
   getProjectLocation,

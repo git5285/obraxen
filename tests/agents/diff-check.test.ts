@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -63,5 +63,24 @@ describe("committed diff check", () => {
     writeFileSync(join(repo, "untracked.txt"), "new file\n\n");
     expect(() => checkBranchDiff({ repo, baseSha, includeWorktree: true }))
       .toThrow("untracked.txt:2: new blank line at EOF");
+  });
+
+  it("does not treat coordination control-plane files as candidate files", () => {
+    const repo = repository();
+    const baseSha = git(repo, "rev-parse", "HEAD");
+    mkdirSync(join(repo, ".coordination", "claims"), { recursive: true });
+    writeFileSync(join(repo, ".coordination", "claims", "historical.md"), "control-plane\n\n");
+
+    expect(() => checkBranchDiff({ repo, baseSha, includeWorktree: true })).not.toThrow();
+  });
+
+  it("keeps generated Impeccable critiques out of the worktree check", () => {
+    const repo = repository();
+    const baseSha = git(repo, "rev-parse", "HEAD");
+    writeFileSync(join(repo, ".gitignore"), "/.impeccable/critique/\n");
+    mkdirSync(join(repo, ".impeccable", "critique"), { recursive: true });
+    writeFileSync(join(repo, ".impeccable", "critique", "report.md"), "generated report  \n");
+
+    expect(() => checkBranchDiff({ repo, baseSha, includeWorktree: true })).not.toThrow();
   });
 });

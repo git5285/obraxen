@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { internalProjects } from "@/lib/internal-projects";
 import { publicProjectImages, type PublicProjectImageMap } from "@/lib/public-project-assets";
 import { hasPublicProjectAuthorization, isPublicProject } from "@/lib/public-project-publication";
+import { getProjectPublicationIssues, hasProjectPublicationAuthorization } from "@/lib/publication";
 import { publicProjects } from "@/lib/projects";
 import type { Project } from "@/lib/schemas";
 
@@ -33,8 +34,15 @@ describe("public project selector", () => {
     const authorizedProject: Project = {
       ...project,
       autorizacionPublicacion: {
-        evidencias: [
-          {
+      evidencias: [
+        {
+          tipo: "documento_referenciado",
+          alcance: ["nombre_cliente", "fotografias_web"],
+          entidadAutorizante: "Cliente autorizado",
+          emitidoEl: "2026-08-01",
+          referenciaDocumento: "AUTH-STALE",
+        },
+        {
             tipo: "documento_referenciado",
             alcance: ["nombre_cliente", "fotografias_web"],
             entidadAutorizante: "Cliente autorizado",
@@ -60,6 +68,8 @@ describe("public project selector", () => {
 
     expect(hasPublicProjectAuthorization(project)).toBe(false);
     expect(hasPublicProjectAuthorization(authorizedProject)).toBe(true);
+    expect(hasProjectPublicationAuthorization(authorizedProject)).toBe(true);
+    expect(getProjectPublicationIssues([authorizedProject])).toEqual([]);
     expect(isPublicProject(authorizedProject, images)).toBe(true);
     expect(isPublicProject(authorizedProject, publicProjectImages)).toBe(false);
   });

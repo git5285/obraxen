@@ -1,13 +1,14 @@
 # Auditoría técnica
 
-Última verificación: 6 de septiembre de 2026. Stack: Next.js 16.3.4, React 19,
-TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
+Última verificación: 12 de septiembre de 2026. Stack: Next.js 16.3.5, React 19,
+TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.1.
 
 ## Estado
 
 - Implementación única: Next.js App Router.
-- 28 páginas estáticas en/de/es/fr: portadas, cuatro hubs sin expedientes
-  públicos, legales y contacto. Los slugs de casos no se generan ni se exponen
+- 29 páginas generadas en/de/es/fr: portadas, cuatro hubs sin expedientes
+  públicos, legales y contacto. Las portadas y hubs localizados son dinámicos
+  por el nonce CSP; los slugs de casos no se generan ni se exponen
   mientras no exista autorización, revisión legal y activo publicable por caso;
   no queda builder o plantilla HTML legacy.
 - Preview cerrada: `noindex,nofollow`, sitemap vacío, dominio configurado y sin
@@ -17,19 +18,22 @@ TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.0.
   credenciales en los archivos versionados.
 - La puerta pública falla por revisión registral/marcaria, revisión legal,
   revisión profesional de los cuatro idiomas, proveedor de captación y soporte
-  documental/revisión legal de los seis casos, como está previsto. La identidad,
-  sociedad, domicilio y teléfono temporal ya están declarados en `data/brand.json`;
-  los casos conservan declaraciones del responsable, no documentos o revisiones
-  profesionales.
+  documental/revisión legal de los seis casos, como está previsto. Los campos de
+  identidad y contacto de `data/brand.json` están redactados como `null`; los
+  casos conservan datos técnicos internos y declaraciones del responsable, no
+  documentos o revisiones profesionales.
 - Consentimiento básico implementado: configuración y etiquetas de GA4/Clarity
-  permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales.
+  permanecen inaccesibles hasta una aceptación expresa; no hay IDs reales. La
+  configuración de analítica usa el mismo snapshot de build que el layout;
+  el formulario lleva el snapshot inicial y revalida en runtime solo su booleano de
+  disponibilidad, sin exponer credenciales ni buzones.
 
 ## Resultados actuales
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `/en/` | 98 | 100 | 100 | 69 | 2.360 ms | 26 ms | 0 |
-| `/de/projekte/` | 99 | 100 | 100 | 66 | 2.210 ms | 51 ms | 0 |
+| `/en/` | 96 | 100 | 100 | 69 | 2.841 ms | 4 ms | 0 |
+| `/de/projekte/` | 98 | 100 | 100 | 66 | 2.314 ms | 6 ms | 0 |
 
 El SEO reducido es deliberado mientras la preview siga noindex. Los dos perfiles
 superan el presupuesto de rendimiento compuesto 90, accesibilidad y buenas
@@ -40,19 +44,26 @@ a 2,5 s.
 
 ## Verificación automatizada
 
-- `npm run check`: ESLint, TypeScript, 294 pruebas Vitest y build de producción.
-- Build: 28 páginas estáticas generadas; todas las rutas de contenido públicas
-  son estáticas o SSG.
-  `/api/analytics-config/` y `/api/contact/` son dinámicas y fallan cerradas.
-- Playwright estándar: 89 ejecuciones configuradas; 81 correctas y 8 omisiones
+- `npm run check:quality`: auditoría de producción más ESLint, TypeScript,
+  cobertura Vitest, build y los checks frescos de contacto, Playwright y Lighthouse.
+- Build: 29 páginas generadas; las fichas publicables mantienen SSG y las rutas
+  localizadas de portada/sección son dinámicas por el nonce CSP.
+  `/api/analytics-config/` es estática; `/api/contact/` y
+  `/api/contact-config/` son dinámicas y fallan cerradas.
+- Cobertura Vitest: 96,36 % de statements, 97,03 % de líneas, 97,67 % de
+  funciones y 87,31 % de ramas sobre 753 pruebas, en el alcance documentado en
+  `vitest.config.ts`.
+- Playwright estándar: 139 ejecuciones configuradas; 122 correctas y 17 omisiones
   intencionales en Chromium móvil/escritorio y smoke WebKit. El formulario
   habilitado añade 2 pruebas Chromium en un arnés local fail-closed.
-- 28 rutas de contenido representativas verificadas a 390 × 844 y 1.440 × 1.000,
+- 24 rutas de contenido localizadas verificadas a 390 × 844 y 1.440 × 1.000,
   más equivalencia de rutas en los cuatro idiomas y reflow de titulares en/de/es/fr
   a 320, 360, 375 y 390 px.
-- Cero errores de consola o red, imágenes rotas u overflow horizontal.
-- Axe sin hallazgos serios o críticos en las cuatro portadas y los cuatro hubs;
-  contraste del selector de idioma corregido a nivel AA.
+- Las aserciones del navegador no detectan errores de consola o red, imágenes
+  rotas u overflow horizontal; el servidor imprime `NoFallbackError` únicamente
+  al cubrir rutas 404 intencionadamente no publicables.
+- Axe sin hallazgos serios o críticos en las 24 rutas de contenido; contraste del
+  selector de idioma corregido a nivel AA.
 - WCAG 2.5.3 comprobado expresamente con `label-content-name-mismatch`: cero
   violaciones en los seis enlaces de casos de la portada.
 - Menú móvil con foco inicial, trampa de foco, cierre con `Escape`, restauración
@@ -64,10 +75,14 @@ a 2,5 s.
 - Aceptar carga únicamente los dos scripts simulados por el test; retirar envía
   denegación, elimina etiquetas y deja la visita siguiente sin requests externos.
 - `/soluciones/` y slugs desconocidos responden 404.
+- La página 404 propia no usa estilos inline, mantiene foco visible y ofrece un
+  enlace de retorno a la portada.
 - `robots.txt` bloquea rastreo y `sitemap.xml` no contiene URLs en preview.
 - `/` y las rutas españolas legacy redirigen a sus destinos canónicos localizados.
 - El formulario no se renderiza activo y `/api/contact/` responde 503 sin la
   identidad, aprobación y configuración reales.
+- `/api/contact-config/` solo devuelve `{ enabled: boolean }`, con `no-store` y
+  `noindex`; cualquier fallo de la comprobación runtime deja el formulario cerrado.
 - La ruta de contacto prueba 415, 403, 413, las tres causas de 400, 429, 502 y
   202, incluida la forma acotada del envío a Resend y las cabeceras no-cache.
 - Canonical y `hreflang` se resuelven contra el dominio configurado; las pruebas
@@ -76,10 +91,11 @@ a 2,5 s.
 
 ## Seguridad y privacidad
 
-- CSP: `style-src 'self'`, `script-src-attr 'none'`, bloqueo de objetos, frames y
-  orígenes no declarados. `script-src` mantiene `unsafe-inline` para el bootstrap
-  de App Router y permite solo los hosts técnicos de GA4 y Clarity; no se permiten
-  endpoints publicitarios.
+- CSP: `src/proxy.ts` crea un nonce por petición y lo entrega mediante `x-nonce`
+  al render y mediante `Content-Security-Policy` en la respuesta. `script-src`
+  y `style-src` no usan `unsafe-inline`; `script-src-attr 'none'`, bloqueo de
+  objetos, frames y orígenes no declarados permanecen activos. Solo se permiten
+  los hosts técnicos de GA4 y Clarity; no se permiten endpoints publicitarios.
 - HSTS de aplicación: `max-age=31536000`; Vercel añade su política de perímetro
   cuando existe una URL servida.
 - `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y
@@ -87,26 +103,37 @@ a 2,5 s.
 - Sin consentimiento no se cargan fuentes, analítica, publicidad o scripts de
   terceros. Los defaults de Consent Mode v2 mantienen siempre denegada la
   publicidad; Clarity usa ConsentV2 y el formulario queda enmascarado.
-- La fuente estructurada declara Calle Federico García Lorca 22 como domicilio
-  fiscal; esta declaración no equivale a revisión legal aprobada.
+- La fuente estructurada omite identidad legal, contacto y domicilio mientras la
+  información no esté validada y autorizada; no se publica una dirección por
+  defecto.
 - El plazo de respuesta inicial permanece `null`; no se muestra un SLA hasta que
   exista responsable, buzón y compromiso operativo verificable.
-- Los informes locales y auditorías externas están ignorados.
+- El informe generado de Impeccable se conserva en `.impeccable/critique/` y se
+  ignora por patrón; los artefactos de coordinación no se borran y quedan fuera
+  del escaneo de candidatos de `check:diff`.
 - La API de contacto limita JSON a 15 KB, valida mismo origen, honeypot y tiempo,
   aplica rate limit efímero sobre IP hasheada, no admite adjuntos y no registra PII.
-- `npm audit --omit=dev --audit-level=moderate` devuelve 0 vulnerabilidades de
-  producción.
+  En Vercel Preview está publicada una regla WAF para `POST /api/contact`, por IP,
+  con 100 solicitudes por ventana fija de 60 segundos y respuesta `429`; la
+  variable no sensible `CONTACT_RATE_LIMIT_MODE=vercel-waf` está registrada en
+  ese entorno. El límite en memoria sigue siendo la defensa secundaria y no
+  acredita por sí solo una protección distribuida para otros entornos.
+- `npm run check:security` devuelve 0 vulnerabilidades de producción. La auditoría
+  completa del árbol de desarrollo sigue mostrando 28 advisories transitivas del
+  CLI de Vercel 59.16.0. Quedan como excepción de tooling documentada: no hay una
+  actualización upstream compatible, `npm audit fix --force` propone degradar el
+  CLI a una versión incompatible y no se aplican overrides inválidos. Se revisarán
+  cuando exista un parche compatible o una sustitución aprobada.
 
-Los nonces no se adoptan: Next exige render dinámico por petición, desactiva la
-optimización estática y aumenta coste y latencia. La alternativa SRI continúa
-experimental. La decisión se revisará si el framework estabiliza ese soporte o
-si la aplicación llega a manejar datos sensibles en runtime.
+El nonce se adopta para las páginas localizadas: Next exige render dinámico por
+petición y el layout `[lang]` lo declara de forma explícita. El coste de render y
+CDN queda documentado; API, assets y metadata estática quedan fuera del matcher.
 
 ## Evidencia y autorización
 
-Las 18 fotografías WebP carecen de metadatos sensibles y usan dimensiones y
-`sizes` explícitos. La auditoría técnica de imágenes no constituye una licencia
-de publicación.
+Las 18 fotografías WebP que existían en el árbol fueron retiradas como medida
+preventiva de privacidad. No quedan assets de proyectos ni referencias públicas;
+la auditoría previa de imágenes no constituía una licencia de publicación.
 
 Cada caso registra evidencias discriminadas: `declaracion_responsable`,
 `documento_referenciado` y `revision_legal_verificada`. Los niveles no se
@@ -116,8 +143,11 @@ Los seis casos conservan únicamente la declaración expresa del responsable del
 17 de julio de 2026, con alcance para nombre del cliente y fotografías web y una
 referencia interna. No se ha registrado el documento ni una revisión legal
 profesional. Los originales se conservan fuera del repositorio. `publicar: true`
-sigue fallando cerrado por 19 entradas: 7 de naming, legal/proveedor e idiomas
-y 12 de documento/revisión de los casos.
+La ejecución actual de `npm run check:activation` devuelve 6 bloqueos globales
+verificables: revisión legal, proveedor de captación y las cuatro traducciones.
+La evaluación completa conserva además 19 advertencias, de las que 12
+corresponden a documentación/revisión de los casos; las advertencias de
+identidad y naming se mantienen separadas y no se convierten en aprobaciones.
 
 Las fechas de ejecución cuyo año no estaba confirmado se almacenan como `null`;
 ya no hay textos del tipo “año pendiente de confirmar” en los datos públicos.
@@ -126,14 +156,20 @@ pero las cuatro revisiones editoriales siguen `pendiente` y bloquean publicació
 
 ## Decisión de despliegue
 
-Se mantiene el runtime estándar de Next/Vercel con prerenderizado. No se usa
-`output: "export"` porque la exportación pura no admite las cabeceras definidas
-en `next.config.ts`. Esto no introduce SSR: las rutas actuales continúan
-generándose en build.
+Se mantiene el runtime estándar de Next/Vercel. No se usa `output: "export"`
+porque la exportación pura no admite las cabeceras definidas en `next.config.ts`.
+Las rutas localizadas de portada y sección se renderizan dinámicamente por el
+nonce CSP; las fichas que superen la puerta mantienen `generateStaticParams` y
+SSG.
 
 `vercel.json` conserva `git.deploymentEnabled: false`. El job remoto de preview
-requiere un interruptor explícito y continúa omitido. No se ha realizado ningún
-despliegue durante la consolidación. El proyecto remoto se corrigió de preset
+requiere un interruptor explícito y continúa omitido. El bootstrap `production`
+autorizado el 12 de septiembre de 2026 dejó un único deployment en estado
+`ERROR` (`dpl_EMaJWHNPHWmD91ZhC7JPRL2xjx4Y`) por la incompatibilidad de engines
+del primer intento; el reintento con `Node 24.x` y `npm ci --engine-strict=false`
+fue rechazado por el límite de contexto del conector antes de crear otro
+deployment. No existe un deployment operativo ni se ha promocionado alias o
+dominio. El proyecto remoto se corrigió de preset
 `Other` con salida `public` a preset `Next.js` con build y salida autodetectados;
 `vercel build` generó correctamente `.vercel/output` y el artefacto local se
 eliminó después de verificarlo.
@@ -141,9 +177,11 @@ eliminó después de verificarlo.
 La revisión externa posterior detectó siete deployments históricos marcados como
 `Production / Ready`, protegidos por Vercel Authentication pero con la antigua web
 estática y contacto ficticio. Se retiraron por sus siete IDs exactos el 15 de julio
-de 2026. La comprobación posterior devuelve cero deployments, cero dominios, ningún
-`Latest Production URL` y HTTP 404 en las siete URLs y los tres alias conocidos.
-El proyecto remoto se conserva para un futuro despliegue expresamente autorizado.
+de 2026. La comprobación actual del proyecto devuelve un único deployment
+`production` en estado `ERROR`, sin deployment `READY` ni URL de producción
+operativa. No hay dominio personalizado ni promoción de alias. El proyecto
+remoto se conserva para un futuro despliegue que pueda verificarse de extremo a
+extremo.
 
 La exposición del repositorio se cerró el 15 de julio mediante visibilidad
 privada. El plan gratuito no conserva la protección remota de ramas privadas, por
@@ -158,23 +196,25 @@ debe revisarse antes de conceder nuevos permisos de escritura.
 |---|---|---|
 | Consentimiento | Implementado y probado | Mantener antes de GA4 o Clarity |
 | IDs de GA4 y Clarity | Sin dato | Proveedores, textos y entornos aprobados |
-| CSP sin `unsafe-inline` de script | Aplazado | SRI estable o cambio justificado a render dinámico |
-| Permisos de clientes y fotografías | Declaración recibida | Recibir documento y revisión legal por caso |
-| Identidad declarada | Completa en datos | Validar registral, marcaria y legalmente |
+| CSP sin `unsafe-inline` de script | Implementado con nonce por petición | Mantener `src/proxy.ts` y revisar el coste dinámico en cada actualización de Next |
+| Permisos de clientes y fotografías | Assets retirados; declaración interna | Recibir documento y revisión legal antes de reincorporar cada caso |
+| Identidad declarada | Campos sensibles redactados | Validar registral, marcaria y legalmente antes de completar datos |
 | Aviso legal y privacidad | Borradores | Revisión profesional |
 | Traducciones en/de/es/fr | Borradores completos | Revisor profesional y fecha por idioma |
 | Captación Resend | Implementada y cerrada | DPA/subencargados, legal, dominio, buzones y aprobación explícita |
+| Tooling de desarrollo | Excepción documentada: 28 advisories transitivas en Vercel CLI | Parche upstream compatible o sustitución revisada; no usar `audit fix --force` |
 | Dominio y canonical | Configurados con `obraxen.com` | DNS, Search Console y activación autorizada |
-| Producción | Sin deployments ni dominios | Auditoría final y autorización expresa |
+| Producción | Bootstrap autorizado fallido; sin deployment operativo ni dominio personalizado | Reintento desde un contexto Vercel con capacidad suficiente, auditoría final y autorización expresa |
 
 ## Comandos de cierre
 
 ```sh
 npm run check
 npm run test:e2e
+npm run test:coverage
 npm run lighthouse:ci
 npm run check:quality
-npm audit --audit-level=moderate
+npm run check:security
 git diff --check
 ```
 

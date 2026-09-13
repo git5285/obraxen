@@ -21,6 +21,12 @@ export const en: Dictionary = {
     mobileMenu: "Mobile menu",
     breadcrumbs: "Breadcrumbs",
   },
+  notFound: {
+    code: "404 · Not found",
+    title: "This page is not available.",
+    body: "The requested address does not correspond to a published page. Return to the website and continue from the verified entry point.",
+    link: "Return to the website",
+  },
   navigation: {
     items: [
       { label: "Process", section: "process" },
@@ -95,6 +101,7 @@ export const en: Dictionary = {
     openCaseAria: "View full case:",
   },
   company: {
+    whyPrefix: "Why",
     title: "Site experience applied to every repair",
     intro: "More than ten years of combined execution and repair experience inform each intervention according to the substrate, the damage and the facility's activity.",
     diagnosisTitle: "Diagnosis informed by execution",
@@ -244,12 +251,13 @@ export const en: Dictionary = {
     backToSite: "Back to website",
     draftStatus: "Incomplete draft · not suitable for publication",
     lastReview: "Draft last reviewed: 6 September 2026",
+    resendDpa: "Resend DPA",
     notice: {
       title: "Legal notice",
       description: "Legal information about the operator of this website.",
-      intro: "This working draft records the declared details of the operator of a business website established in Spain. It still requires professional legal review and adaptation to the requirements that apply before publication is enabled.",
+      intro: "This working draft records the information currently available for the operator of a business website established in Spain. It still requires professional legal review and completion before publication is enabled.",
       alertTitle: "Professional review still required",
-      alertText: "The legal name, tax number and address are declared. Registration details, where applicable, and final legal validation remain pending. This draft does not authorise publication.",
+      alertText: "The legal identity, registration details and address remain unavailable. Final legal validation is also pending. This draft does not authorise publication.",
       relatedRoute: "privacy",
       relatedLabel: "Privacy policy",
       sections: [

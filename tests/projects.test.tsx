@@ -12,6 +12,7 @@ import ProjectPage, {
   generateStaticParams as generateProjectParams,
 } from "@/app/[lang]/[section]/[slug]/page";
 import { brand } from "@/lib/brand";
+import { ProjectJsonLd } from "@/components/project-json-ld";
 import { getDictionary, locales, routeSegments } from "@/lib/i18n";
 import { internalProjects } from "@/lib/internal-projects";
 import { publicProjects } from "@/lib/projects";
@@ -38,6 +39,20 @@ describe("localized project routes", () => {
   it("prerenders only authorized project slugs", () => {
     expect(generateSectionParams()).toHaveLength(locales.length * 5);
     expect(generateProjectParams()).toHaveLength(locales.length * publicProjects.length);
+  });
+
+  it("fails closed for unknown sections and non-project dynamic routes", async () => {
+    const unknownSection = Promise.resolve({ lang: "es", section: "no-existe" });
+    await expect(generateSectionMetadata({ params: unknownSection })).resolves.toEqual({});
+    await expect(SectionPage({ params: unknownSection })).rejects.toThrow();
+
+    const wrongProjectRoute = Promise.resolve({
+      lang: "es",
+      section: routeSegments.es.contact,
+      slug: "not-a-project",
+    });
+    await expect(generateProjectMetadata({ params: wrongProjectRoute })).resolves.toEqual({});
+    await expect(ProjectPage({ params: wrongProjectRoute })).rejects.toThrow();
   });
 
   it.each(locales)("renders only authorized project dossiers in %s", async (locale) => {
@@ -72,6 +87,28 @@ describe("localized project routes", () => {
     for (const project of internalProjects.filter((item) => !publicProjects.includes(item))) {
       expect(hubJsonLd).not.toContain(project.slug);
       expect(hubJsonLd).not.toContain(project.cliente);
+    }
+  });
+
+  it.each(locales)("connects the %s case schema to its evidence and breadcrumb", (locale) => {
+    for (const project of publicProjects) {
+      const value = getProjectJsonLd(project, locale);
+      expect(value).not.toBeNull();
+      const graph = JSON.parse(value!)["@graph"] as { [key: string]: unknown }[];
+      const work = graph.find((entry) => entry["@type"] === "CreativeWork");
+      const breadcrumb = graph.find((entry) => entry["@type"] === "BreadcrumbList");
+
+      expect(work).toMatchObject({
+        name: project.traducciones[locale].titulo,
+        inLanguage: locale,
+        image: expect.any(Array),
+      });
+      expect((work?.image as unknown[]).length).toBe(project.imagenes.length);
+      expect(breadcrumb).toMatchObject({
+        itemListElement: expect.arrayContaining([
+          expect.objectContaining({ position: 3, name: project.cliente }),
+        ]),
+      });
     }
   });
 
@@ -129,5 +166,16 @@ describe("solutions publication gate", () => {
   it("keeps solution routes absent while every offer is internal", () => {
     expect(publicableOffers).toHaveLength(0);
     expect(existsSync(resolve("src/app/[lang]/solutions/page.tsx"))).toBe(false);
+  });
+});
+
+describe("JSON-LD rendering", () => {
+  it("escapes closing-script markers at the component boundary", () => {
+    const html = renderToStaticMarkup(
+      <ProjectJsonLd value='{"name":"</script><script>alert(1)</script>"}' />,
+    );
+
+    expect(html).toContain("\\u003c/script>");
+    expect(html).not.toContain("</script><script>");
   });
 });

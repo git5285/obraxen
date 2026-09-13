@@ -9,6 +9,10 @@ import { ProjectsSection } from "@/components/projects-section";
 import { ServicesSection } from "@/components/services-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigation } from "@/components/site-navigation";
+import {
+  MobileNavigationContent,
+  StickyNavigationContent,
+} from "@/components/site-navigation-content";
 import { brand, getBrandTranslation } from "@/lib/brand";
 import { getHomepage, getHomepageJsonLd } from "@/lib/homepage";
 import {
@@ -20,7 +24,7 @@ import {
 } from "@/lib/i18n";
 import { absoluteSiteUrl, getLocalizedAlternates } from "@/lib/metadata";
 
-type HomePageProps = { params: Promise<{ lang: string }> };
+type HomePageProps = Pick<PageProps<"/[lang]">, "params">;
 
 export function getHomeMetadata(lang: Locale, domain = brand.dominio): Metadata {
   const homepage = getHomepage(lang);
@@ -65,17 +69,37 @@ export default async function HomePage({ params }: HomePageProps) {
   const { dictionary } = homepage;
   const homeHref = getPath(lang, "home");
   const languageLinks = getLanguageLinks(lang, "home");
+  const sectionIds = homepage.navigationItems.flatMap((item) => item.section ? [item.section] : []);
 
   return (
-    <SiteNavigation
-      brandName={homepage.brandName}
-      cta={homepage.cta}
-      items={homepage.navigationItems}
-      labels={dictionary.common}
-      languageLabel={dictionary.languageSwitcher.label}
-      languageLinks={languageLinks}
-      homeHref={homeHref}
-    >
+    <>
+      <SiteNavigation
+        sectionIds={sectionIds}
+        labels={{
+          mobileMenu: dictionary.common.mobileMenu,
+          menuClose: dictionary.common.menuClose,
+          mainNavigation: dictionary.common.mainNavigation,
+        }}
+        mobileContent={(
+          <MobileNavigationContent
+            items={homepage.navigationItems}
+            cta={homepage.cta}
+            languageLabel={dictionary.languageSwitcher.label}
+            languageLinks={languageLinks}
+          />
+        )}
+        stickyContent={(
+          <StickyNavigationContent
+            brandName={homepage.brandName}
+            cta={homepage.cta}
+            items={homepage.navigationItems}
+            labels={dictionary.common}
+            languageLabel={dictionary.languageSwitcher.label}
+            languageLinks={languageLinks}
+            homeHref={homeHref}
+          />
+        )}
+      />
       <a className="skip" href="#content">{dictionary.common.skipToContent}</a>
       <HeroSection
         brandName={homepage.brandName}
@@ -124,6 +148,6 @@ export default async function HomePage({ params }: HomePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: getHomepageJsonLd(lang) }}
       />
-    </SiteNavigation>
+    </>
   );
 }

@@ -1,21 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
-import { ConsentManager } from "@/components/consent-manager";
-import { resolveAnalyticsConfig } from "@/lib/analytics-config";
+import { ConsentManagerLoader } from "@/components/consent-manager-loader";
+import { resolveRuntimeConfig } from "@/lib/runtime-config";
 import { brand } from "@/lib/brand";
 import { getDictionary, getPath, isLocale, locales } from "@/lib/i18n";
 import { publicActivation } from "@/lib/public-activation";
 import { getPublicPublicationState } from "@/lib/publication";
 import "../globals.css";
 import "../../../css/consent.css";
-import "../../../css/projects.css";
-import "../../../css/case.css";
 import "../../../css/legal.css";
 
 const publication = getPublicPublicationState(brand, publicActivation);
 
 export const dynamicParams = false;
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -23,9 +21,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
+}: Pick<LayoutProps<"/[lang]">, "params">): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   return {
@@ -51,18 +47,18 @@ export const viewport: Viewport = {
 export default async function LocaleLayout({
   children,
   params,
-}: Readonly<{ children: ReactNode; params: Promise<{ lang: string }> }>) {
+}: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dictionary = getDictionary(lang);
-  const analytics = resolveAnalyticsConfig(process.env);
+  const analytics = resolveRuntimeConfig().analytics;
   const analyticsAvailable = Boolean(analytics.gaMeasurementId || analytics.clarityProjectId);
 
   return (
     <html lang={lang}>
       <body>
         {children}
-        <ConsentManager
+        <ConsentManagerLoader
           analyticsAvailable={analyticsAvailable}
           copy={dictionary.consent}
           cookieUrl={getPath(lang, "cookies")}

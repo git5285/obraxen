@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
 const securityHeaders = [
-  {
-    key: "Content-Security-Policy",
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://*.clarity.ms; script-src-attr 'none'; style-src 'self'; font-src 'self'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; frame-ancestors 'none'; manifest-src 'self'; upgrade-insecure-requests",
-  },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -18,6 +14,13 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
+  experimental: {
+    cssChunking: "graph",
+    globalNotFound: true,
+  },
+  images: {
+    qualities: [60, 75],
+  },
   async redirects() {
     return [
       { source: "/", destination: "/es/", permanent: true },

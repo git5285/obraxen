@@ -20,3 +20,6 @@ data/proyectos.borrador.json
 .env
 .env.*
 !.env.example
+
+# Informes generados localmente por Impeccable; se conservan fuera de Git
+/.impeccable/critique/
