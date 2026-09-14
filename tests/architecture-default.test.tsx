@@ -14,7 +14,8 @@ describe("architecture default home", () => {
     expect(spanish).toContain("Reparación de<br/>pavimentos industriales.");
     expect(spanish).not.toContain("Delticom");
     expect(spanish).toContain("No hay proyectos disponibles en esta selección.");
-    expect(spanish).toContain("Vista privada · Propuesta en revisión");
+    expect(spanish).not.toContain("Vista privada · Propuesta en revisión");
+    expect(spanish).not.toContain("Revisión editorial interna");
     expect(english).toContain('id="inicio"');
     expect(english).not.toContain("Delticom");
     expect(readFileSync(new URL("../next.config.ts", import.meta.url), "utf8"))
