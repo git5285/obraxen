@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 
 const hookDirectory = dirname(fileURLToPath(new URL("../../.githooks/pre-push", import.meta.url)));
+const repositoryRoot = dirname(hookDirectory);
 const helperPath = join(hookDirectory, "git-env.sh");
 const prePushPath = join(hookDirectory, "pre-push");
 const temporaryRoots: string[] = [];
@@ -88,5 +89,22 @@ describe("pre-push Git environment isolation", () => {
     expect(hook).toContain("run_without_local_git_env npm run check:diff");
     expect(hook).toContain("run_without_local_git_env npm run check:quality");
     expect(hook).not.toMatch(/^\s*npm run check:/mu);
+  });
+
+  it("limits hook bypasses to the disposable fixtures that require them", () => {
+    const bypass = ["core", "hooksPath=/dev/null"].join(".");
+    const matches = execFileSync("git", ["ls-files", "-z"], {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+      env: cleanGitEnvironment(),
+    }).split("\0").filter(Boolean).filter((path) => (
+      readFileSync(join(repositoryRoot, path), "utf8").includes(bypass)
+    )).sort();
+
+    expect(matches).toEqual([
+      "automation/agents/isolated-cycle.mjs",
+      "automation/agents/isolated-work.mjs",
+      "tests/agents/repository-work.test.ts",
+    ]);
   });
 });
