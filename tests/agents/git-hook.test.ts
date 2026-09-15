@@ -93,17 +93,13 @@ describe("pre-push Git environment isolation", () => {
 
   it("limits hook bypasses to the disposable fixtures that require them", () => {
     const bypass = ["core", "hooksPath=/dev/null"].join(".");
-    const matches = execFileSync("rg", [
-      "-l",
-      "--fixed-strings",
-      "--hidden",
-      "--glob", "!.git/**",
-      "--glob", "!node_modules/**",
-      "--glob", "!.vercel/**",
-      bypass,
-      ".",
-    ], { cwd: repositoryRoot, encoding: "utf8" }).trim().split("\n")
-      .filter(Boolean).map((path) => path.replace(/^\.\//, "")).sort();
+    const matches = execFileSync("git", ["ls-files", "-z"], {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+      env: cleanGitEnvironment(),
+    }).split("\0").filter(Boolean).filter((path) => (
+      readFileSync(join(repositoryRoot, path), "utf8").includes(bypass)
+    )).sort();
 
     expect(matches).toEqual([
       "automation/agents/isolated-cycle.mjs",
