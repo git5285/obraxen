@@ -82,6 +82,10 @@ function isArchitectureHome(locale: (typeof locales)[number], route: string) {
   return locale.locale === "es" && route === locale.home;
 }
 
+function architectureLogoWidth(viewportWidth: number) {
+  return viewportWidth <= 700 ? Math.min(168, Math.max(140, viewportWidth * 0.4)) : 184;
+}
+
 const contentRoutes = locales.flatMap((entry) => [
   { path: entry.home },
   { path: entry.projects },
@@ -92,12 +96,16 @@ const contentRoutes = locales.flatMap((entry) => [
   { path: entry.contact },
 ]);
 
+// Page assertions wait for the rendered document. The image optimizer can keep
+// secondary image requests alive after the page is ready for interaction.
+const navigationReady = "domcontentloaded" as const;
+
 test("mobile usability: short menus keep all links reachable", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Explicit mobile viewport matrix");
   for (const locale of locales) {
     for (const viewport of [{ width: 667, height: 375 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
-      await page.goto(locale.home, { waitUntil: "networkidle" });
+      await page.goto(locale.home, { waitUntil: navigationReady });
       const reject = page.locator(".consent-actions .consent-choice").first();
       if (await reject.isVisible()) await reject.click();
       const architecture = isArchitectureHome(locale, locale.home);
@@ -173,7 +181,7 @@ for (const locale of locales) {
     for (const width of [320, 390, 620, 621, 768, 1024, 1280]) {
       await page.setViewportSize({ width, height: width === 320 ? 667 : width === 390 ? 844 : 900 });
       for (const route of [locale.home, locale.projects, locale.notice, locale.contact]) {
-        await page.goto(route, { waitUntil: "networkidle" });
+        await page.goto(route, { waitUntil: navigationReady });
         const architecture = isArchitectureHome(locale, route);
         const marks = architecture ? page.locator(".ar-logo:visible .logo-wordmark") : page.locator(".logo:visible .logo-wordmark");
         await expect(marks).toHaveCount(route === locale.home ? 2 : route === locale.notice ? 0 : 1);
@@ -184,8 +192,11 @@ for (const locale of locales) {
           await expect.poll(() => mark.evaluate((svg: SVGSVGElement) => svg.getBBox().width)).toBe(828);
           expect(await mark.evaluate((svg: SVGSVGElement) => svg.getBBox().height)).toBe(118);
           const bounds = await mark.boundingBox();
-          expect(bounds?.width).toBeCloseTo(180, 1);
-          expect(bounds?.height).toBeCloseTo(180 * 166 / 876, 1);
+          const responsiveArchitectureHeader = architecture
+            && await mark.evaluate((svg: SVGSVGElement) => Boolean(svg.closest(".ar-header")));
+          const expectedWidth = responsiveArchitectureHeader ? architectureLogoWidth(width) : 180;
+          expect(bounds?.width).toBeCloseTo(expectedWidth, 1);
+          expect(bounds?.height).toBeCloseTo(expectedWidth * 166 / 876, 1);
           await expect(mark.locator("..")).toHaveAttribute("href", architecture ? "#architecture" : locale.home);
           await expect(mark.locator("..")).toHaveAttribute("aria-label", /^Obraxen, .+/);
         }
@@ -257,7 +268,7 @@ for (const route of contentRoutes) {
       if (!["127.0.0.1", "localhost"].includes(url.hostname)) thirdPartyRequests.push(request.url());
     });
 
-    const response = await page.goto(route.path, { waitUntil: "networkidle" });
+    const response = await page.goto(route.path, { waitUntil: navigationReady });
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("html")).toHaveAttribute("lang", route.path.slice(1, 3));
@@ -334,7 +345,7 @@ test("localized display headings reflow from 320 to 390 CSS pixels", async ({ pa
   for (const width of [320, 360, 375, 390]) {
     await page.setViewportSize({ width, height: 667 });
     for (const entry of locales) {
-      await page.goto(entry.home, { waitUntil: "networkidle" });
+      await page.goto(entry.home, { waitUntil: navigationReady });
       const state = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
@@ -394,7 +405,7 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
   });
 
   for (const entry of locales) {
-    await page.goto(entry.home, { waitUntil: "networkidle" });
+    await page.goto(entry.home, { waitUntil: navigationReady });
     const state = await page.evaluate(() => {
       const label = document.querySelector<HTMLElement>(document.documentElement.lang === "es" ? "#services .ar-section-heading h2" : ".intro .kicker");
       return {
@@ -413,13 +424,17 @@ test("short mobile hero keeps the next section visible with wider fallback fonts
 
 for (const entry of locales) {
   test(`${entry.locale} locale has coherent routes and language counterparts`, async ({ page }) => {
-    await page.goto(entry.home, { waitUntil: "networkidle" });
+    await page.goto(entry.home, { waitUntil: navigationReady });
     const heading = page.locator("h1");
     await expect(heading).toBeVisible();
     expect((await heading.innerText()).replace(/\s+/g, " ").trim()).toContain(entry.hero);
     for (const counterpart of locales) {
-      await expect(page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`).first())
-        .toBeAttached();
+      const counterpartLink = page.locator(`a[hreflang="${counterpart.locale}"][href="${counterpart.home}"]`);
+      if (isArchitectureHome(entry, entry.home) && counterpart.locale !== "es") {
+        await expect(counterpartLink).toHaveCount(0);
+      } else {
+        await expect(counterpartLink.first()).toBeAttached();
+      }
       const alternate = page.locator(`head link[rel="alternate"][hreflang="${counterpart.locale}"]`);
       if (isArchitectureHome(entry, entry.home)) {
         await expect(alternate).toHaveCount(0);
@@ -455,7 +470,7 @@ for (const entry of locales) {
 
 for (const path of contentRoutes.map(({ path }) => path)) {
   test(`${path} has no serious or critical accessibility violations`, async ({ page }) => {
-    await page.goto(path, { waitUntil: "networkidle" });
+    await page.goto(path, { waitUntil: navigationReady });
     const results = await new AxeBuilder({ page }).analyze();
     const blockingViolations = results.violations.filter(
       ({ impact }) => impact === "serious" || impact === "critical",
