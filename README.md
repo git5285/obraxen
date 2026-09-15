@@ -8,12 +8,12 @@
 > de diseño ni abrirlas cuando se solicite la Home actual.
 
 Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. El build cerrado actual genera 29 páginas en inglés, alemán, español
-y francés: cuatro portadas, cuatro hubs, rutas legales y contacto. Las portadas
-y hubs localizados se renderizan dinámicamente para poder aplicar la CSP nonce;
-los casos no generan fichas públicas mientras no superen su puerta de evidencia.
-Navegación, consentimiento y formulario son las únicas interacciones cliente
-propias.
+Components. El build cerrado actual incluye las rutas localizadas de portada,
+hubs, legales y contacto, además de los recorridos internos de preview y QA. Las
+portadas y hubs localizados se renderizan dinámicamente para poder aplicar la CSP
+nonce; los casos no generan fichas públicas mientras no superen su puerta de
+evidencia. Navegación, consentimiento y formulario son las únicas interacciones
+cliente propias.
 
 La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` declarado
 pero sin formulario habilitado ni despliegues Git de Vercel. El repositorio es
