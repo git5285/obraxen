@@ -13,6 +13,8 @@ const baseUrl = `http://127.0.0.1:${requestedPort}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  // Keep both legacy runs from removing the recovered Home's sibling reports.
+  outputDir: contactEnabled ? "test-results/legacy-contact" : "test-results/legacy",
   testMatch: contactEnabled ? "contact-enabled.spec.ts" : "quality.spec.ts",
   fullyParallel: false,
   forbidOnly: isCi,
