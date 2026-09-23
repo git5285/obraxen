@@ -1,5 +1,5 @@
 {
-  "description": "Deterministic least-authority guardrail for Obraxen custom agents.",
+  "description": "Deterministic least-authority guardrail and repository-manifest dispatcher for Obraxen custom agents.",
   "hooks": {
     "PostToolUse": [
       {

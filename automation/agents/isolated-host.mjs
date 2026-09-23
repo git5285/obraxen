@@ -18,6 +18,7 @@ const TOML_PARSER_CANDIDATES = Object.freeze([
   "/opt/homebrew/bin/python3",
   "/usr/local/bin/python3",
 ]);
+const MAX_HOST_OUTPUT_BYTES = 2 * 1024 * 1024;
 
 function expectedSandbox(role) {
   if (!Object.hasOwn(profiles, role)) throw new Error("unknown_role");
@@ -146,14 +147,14 @@ export async function inspectRoleHost({ cwd, role, codex = "codex", timeoutMs = 
   });
   let nextId = 0;
   let buffer = "";
-  const bufferParts = [];
+  let bufferParts = [];
   let receivedBytes = 0;
   let failed = null;
   const pending = new Map();
   const fail = (code) => {
     failed ??= new Error(code);
     buffer = "";
-    bufferParts.length = 0;
+    bufferParts = [];
     child.stdout.pause();
     for (const request of pending.values()) request.reject(failed);
     pending.clear();
@@ -165,13 +166,13 @@ export async function inspectRoleHost({ cwd, role, codex = "codex", timeoutMs = 
   child.stdout.on("data", (chunk) => {
     if (failed) return;
     receivedBytes += Buffer.byteLength(chunk);
-    if (receivedBytes > 2 * 1024 * 1024) return fail("host_output_limit");
+    if (receivedBytes > MAX_HOST_OUTPUT_BYTES) return fail("host_output_limit");
     // Do not repeatedly concatenate an unterminated hostile response: that
     // quadratic work could let the timeout win before the output cap fires.
     bufferParts.push(chunk);
     if (!chunk.includes("\n")) return;
     buffer += bufferParts.join("");
-    bufferParts.length = 0;
+    bufferParts = [];
     let newline;
     while ((newline = buffer.indexOf("\n")) >= 0) {
       const line = buffer.slice(0, newline);

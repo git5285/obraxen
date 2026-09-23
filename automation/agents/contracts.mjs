@@ -2,13 +2,13 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ATTENTION_CLASSES, classifyFindingAttention } from "./attention.mjs";
 import { loadPolicy } from "./policy.mjs";
-
-function object(value, label) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${label} must be an object`);
-  }
-  return value;
-}
+import {
+  exactKeys,
+  object,
+  safeIdentifier as validateSafeIdentifier,
+  sha,
+  sha256,
+} from "./validation.mjs";
 
 function string(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty string`);
@@ -32,23 +32,7 @@ function enumeration(value, label, allowed) {
   return value;
 }
 
-function exactKeys(value, label, allowed) {
-  const present = Object.keys(value);
-  const unexpected = present.filter((key) => !allowed.includes(key));
-  const missing = allowed.filter((key) => !Object.hasOwn(value, key));
-  if (unexpected.length > 0) throw new Error(`${label} has unexpected keys: ${unexpected.join(", ")}`);
-  if (missing.length > 0) throw new Error(`${label} is missing keys: ${missing.join(", ")}`);
-}
-
-function baseSha(value, label) {
-  if (!/^[0-9a-f]{40}$/.test(value ?? "")) throw new Error(`${label} must be a 40 character git SHA`);
-  return value;
-}
-
-function sha256(value, label) {
-  if (!/^[0-9a-f]{64}$/.test(value ?? "")) throw new Error(`${label} must be a SHA-256 digest`);
-  return value;
-}
+const baseSha = sha;
 
 function date(value, label) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value ?? "")) {
@@ -78,10 +62,7 @@ function common(value, label, schemaVersion = 1) {
 
 function safeIdentifier(value, label) {
   string(value, label);
-  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(value)) {
-    throw new Error(`${label} contains unsafe characters`);
-  }
-  return value;
+  return validateSafeIdentifier(value, label);
 }
 
 function nullablePullRequest(value, label) {

@@ -1,0 +1,989 @@
+{
+  "source": "Pre-refactor working tree at 60653d45 plus saved local changes; captured before memory/authorization edits",
+  "policy": {
+    "schemaVersion": 1,
+    "mode": "active",
+    "project": "obraxen",
+    "coordination": {
+      "stateHome": "~/.local/state"
+    },
+    "limits": {
+      "maxConcurrentWriters": 1,
+      "maxPendingLocalDiffs": 1,
+      "maxActiveSystemPullRequests": 1,
+      "maxFindingsPerRun": 3,
+      "maxChangedFiles": 8,
+      "maxDiffLines": 400,
+      "maxCorrectionIterations": 1,
+      "maxRunSeconds": 1800,
+      "leaseTtlSeconds": 2100
+    },
+    "memory": {
+      "schemaVersion": 1,
+      "maxEpisodicRuns": 120,
+      "maxOpenFindings": 200,
+      "maxProposedRules": 50,
+      "contextRecentRuns": 8,
+      "contextOpenFindings": 12,
+      "maxContextBytes": 32768
+    },
+    "attentionBudget": {
+      "schemaVersion": 1,
+      "sequence": [
+        "product",
+        "product",
+        "reliability",
+        "product",
+        "product",
+        "agent_maintenance",
+        "product",
+        "product",
+        "reliability",
+        "product"
+      ],
+      "productDomains": [
+        "evidence",
+        "ux",
+        "accessibility",
+        "seo",
+        "localization",
+        "performance"
+      ],
+      "reliabilityDomains": [
+        "security",
+        "testing",
+        "reliability",
+        "maintainability"
+      ],
+      "agentPathPatterns": [
+        ".agents/**",
+        ".codex/**",
+        ".coordination/**",
+        ".github/workflows/obraxen-continuous-improvement*",
+        "automation/agents/**",
+        "AGENTS.md",
+        "AUTONOMOUS_IMPROVEMENT.md",
+        "COORDINATION.md"
+      ]
+    },
+    "reconciliation": {
+      "defaultBranch": "main",
+      "requiredPullRequestChecks": [
+        "Quality gate"
+      ]
+    },
+    "groupedAuthorizations": {
+      "enabled": true,
+      "maxChangedFiles": 20,
+      "maxSteps": 3,
+      "maxLifetimeSeconds": 86400,
+      "reservationTtlSeconds": 600,
+      "allowedActions": [
+        "commit_candidate",
+        "push_branch",
+        "create_draft_pull_request"
+      ]
+    },
+    "authority": {
+      "allowScout": true,
+      "allowMemoryPersistence": true,
+      "allowLocalDiff": true,
+      "allowCommit": false,
+      "allowPush": false,
+      "allowDraftPullRequest": false,
+      "allowMerge": false,
+      "allowDeploy": false,
+      "allowPublish": false,
+      "allowNetwork": false,
+      "allowDependencyChanges": false
+    },
+    "protectedPaths": [
+      ".codex/**",
+      ".agents/**",
+      "automation/agents/**",
+      ".coordination/**",
+      "AGENTS.md",
+      "AUTONOMOUS_IMPROVEMENT.md",
+      "COORDINATION.md",
+      "DECISIONS.md",
+      "DEPLOYMENT_RUNBOOK.md",
+      "LEGAL_CHECKLIST.md",
+      "NAMING_CLEARANCE.md",
+      "REPOSITORY_EXPOSURE.md",
+      ".githooks/**",
+      ".github/**",
+      ".gitattributes",
+      ".gitignore",
+      "vercel.json",
+      ".env*",
+      ".nvmrc",
+      ".npmrc",
+      "package.json",
+      "package-lock.json",
+      "eslint.config.mjs",
+      "next.config.ts",
+      "playwright.config.ts",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "scripts/check-*",
+      "scripts/lighthouse-budgets.ts",
+      "scripts/qa-port.d.mts",
+      "scripts/qa-port.mjs",
+      "scripts/run-playwright.mjs",
+      "CLAUDE.md",
+      "ACTIVATION_GATE.md",
+      "data/brand.json",
+      "data/ofertas.schema.json",
+      "data/proyectos.json",
+      "data/proyectos.schema.json",
+      "src/app/api/**",
+      "src/app/qa/**",
+      "src/app/robots.ts",
+      "src/app/sitemap.ts",
+      "src/components/consent-manager.tsx",
+      "src/components/contact-form.tsx",
+      "src/lib/analytics-config.ts",
+      "src/lib/consent.ts",
+      "src/lib/contact.ts",
+      "src/lib/publication.ts",
+      "src/lib/schemas.ts",
+      "src/components/legal-page.tsx",
+      "tests/activation-gate.test.ts"
+    ],
+    "activationInvariant": {
+      "schemaVersion": 1,
+      "candidateAuditRequired": true,
+      "publicationAuthorized": false,
+      "publishSwitch": false,
+      "requireExactBeforeAfterMatch": true
+    },
+    "requiredChecks": [
+      "npm run check:diff -- --base-sha <reviewed-base-sha> --head HEAD",
+      "npm run check",
+      "npm run check:quality",
+      "npm run check:activation -- --json",
+      "remote Quality gate for the exact reviewed SHA"
+    ]
+  },
+  "reports": [
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-discovery",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-candidate",
+      "parentRunId": null,
+      "trigger": "scheduled_cycle",
+      "phase": "discovery",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Project cards repeat a label",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/components/project-card.tsx"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "Deterministic parity fixture"
+    },
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-implementation",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-candidate",
+      "parentRunId": "fixture-discovery",
+      "trigger": "candidate_follow_up",
+      "phase": "implementation",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Project cards repeat a label",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/components/project-card.tsx"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "Deterministic parity fixture"
+    },
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-second",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-second-candidate",
+      "parentRunId": null,
+      "trigger": "scheduled_cycle",
+      "phase": "discovery",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Navigation labels need review",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/components/site-navigation.tsx"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "Deterministic parity fixture"
+    }
+  ],
+  "times": [
+    "2026-09-01T10:00:00Z",
+    "2026-09-01T11:00:00Z",
+    "2026-09-01T12:00:00Z"
+  ],
+  "snapshots": [
+    {
+      "resultHash": "c061a677d379d7500f2a3c579c41ce06afe841b510adadc70356a5964461f773",
+      "files": {
+        "state.json": "8adc5a6f09d63fb905412aeb5ee0de12d54d5b2eea42696eeaa2db2f8bdefd08",
+        "runs/2026-09-01T10-00-00-000Z-fixture-discovery.json": "db6c8606711c484f2595079e7094d2d6531ba916093d8188752b2cc45abe1c8d"
+      }
+    },
+    {
+      "resultHash": "e1168c450ff452f9d93f56253e325ec1e50cd9e64a028db69a7247fff011e3b3",
+      "files": {
+        "state.json": "bd906fb80c35db541bcd284e6f0fd1ecc2a6007cdfccc3a0cb16a09795a2d0f4",
+        "runs/2026-09-01T10-00-00-000Z-fixture-discovery.json": "db6c8606711c484f2595079e7094d2d6531ba916093d8188752b2cc45abe1c8d",
+        "runs/2026-09-01T11-00-00-000Z-fixture-implementation.json": "36560bd33d3af58b5f81f793a99a3ce721407c0c135c50b27de298a580343397"
+      }
+    },
+    {
+      "resultHash": "8942206705095820d64a16559290c75049f4cde2593967ed36bc9bb5fae449b2",
+      "files": {
+        "state.json": "eae2384655ca5e8b4ef1964f5af030222bdf0004d9ff6eaf461c0ba05fa84479",
+        "runs/2026-09-01T10-00-00-000Z-fixture-discovery.json": "db6c8606711c484f2595079e7094d2d6531ba916093d8188752b2cc45abe1c8d",
+        "runs/2026-09-01T11-00-00-000Z-fixture-implementation.json": "36560bd33d3af58b5f81f793a99a3ce721407c0c135c50b27de298a580343397",
+        "runs/2026-09-01T12-00-00-000Z-fixture-second.json": "7b0012afb843d7e787c4615f1ae4d2aa9e98aff506e38902d86c677518843785"
+      }
+    }
+  ],
+  "duplicateHash": "3a260169ff78f0a107117f3a6bb729ce68626cefa39b4334c71bfee52622fc76",
+  "badReports": [
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-bad-parent",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-candidate",
+      "parentRunId": "fixture-discovery",
+      "trigger": "candidate_follow_up",
+      "phase": "implementation",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Project cards repeat a label",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/components/project-card.tsx"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "Deterministic parity fixture"
+    },
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-bad-scope",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-candidate",
+      "parentRunId": "fixture-implementation",
+      "trigger": "candidate_follow_up",
+      "phase": "implementation",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Project cards repeat a label",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/other.ts"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "Deterministic parity fixture"
+    },
+    {
+      "schemaVersion": 6,
+      "status": "shadow_finding",
+      "mode": "shadow",
+      "runOrigin": "scheduled_autonomous",
+      "attentionClass": "product",
+      "runId": "fixture-second",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "runtimeFingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "candidateId": "fixture-second-candidate",
+      "parentRunId": null,
+      "trigger": "scheduled_cycle",
+      "phase": "discovery",
+      "finalCommit": null,
+      "pullRequest": null,
+      "reviewDecision": null,
+      "selectedFinding": {
+        "id": "fixture-label",
+        "domain": "accessibility",
+        "summary": "Navigation labels need review",
+        "evidence": [
+          {
+            "kind": "repository_fact",
+            "source": "src/components/project-card.tsx:42",
+            "fact": "Fixture evidence"
+          }
+        ],
+        "impact": "medium",
+        "confidence": "high",
+        "risk": "low",
+        "candidatePaths": [
+          "src/components/site-navigation.tsx"
+        ],
+        "verification": [
+          "npm run test"
+        ],
+        "conflicts": []
+      },
+      "activeConflicts": [],
+      "policyBlockers": [
+        "policy_mode_shadow"
+      ],
+      "changedPaths": [],
+      "checks": [
+        {
+          "command": "npm run test",
+          "status": "passed",
+          "summary": "fixture"
+        }
+      ],
+      "auditorVerdict": null,
+      "externalAction": "none",
+      "learned_rules": [
+        {
+          "rule": "Review labels",
+          "source": "fixture",
+          "reason": "Repeated label",
+          "status": "proposed"
+        }
+      ],
+      "usage": {
+        "inputTokens": 100,
+        "outputTokens": 20,
+        "totalTokens": 120,
+        "costUsd": 0.001,
+        "durationMs": 1000
+      },
+      "traceId": null,
+      "reason": "changed content"
+    }
+  ],
+  "reportErrors": [
+    "candidate fixture-candidate requires parentRunId fixture-implementation",
+    "candidate fixture-candidate cannot change finding scope",
+    "runId already exists with different content"
+  ],
+  "reconciliation": {
+    "schemaVersion": 1,
+    "reconciliationId": "fixture-reconciliation",
+    "candidateId": "fixture-candidate",
+    "expectedCandidateLastRunId": "fixture-implementation",
+    "observedAt": "2026-09-01T13:00:00Z",
+    "outcome": "regressed",
+    "terminal": false,
+    "reasonCodes": [
+      "fixture_regression"
+    ],
+    "evidence": {
+      "z": "last inserted first",
+      "a": {
+        "second": 2,
+        "first": 1
+      }
+    },
+    "evidenceDigest": "0235ceb9a677c20099e7913ba1b3c5f1a311b26ac741716091af1eaeac53be2d"
+  },
+  "badReconciliations": [
+    {
+      "schemaVersion": 1,
+      "reconciliationId": "fixture-reconciliation",
+      "candidateId": "fixture-candidate",
+      "expectedCandidateLastRunId": "fixture-discovery",
+      "observedAt": "2026-09-01T13:00:00Z",
+      "outcome": "regressed",
+      "terminal": false,
+      "reasonCodes": [
+        "fixture_regression"
+      ],
+      "evidence": {
+        "z": "last inserted first",
+        "a": {
+          "second": 2,
+          "first": 1
+        }
+      },
+      "evidenceDigest": "0235ceb9a677c20099e7913ba1b3c5f1a311b26ac741716091af1eaeac53be2d"
+    },
+    {
+      "schemaVersion": 1,
+      "reconciliationId": "fixture-reconciliation",
+      "candidateId": "fixture-candidate",
+      "expectedCandidateLastRunId": "fixture-implementation",
+      "observedAt": "2026-09-01T13:00:00Z",
+      "outcome": "regressed",
+      "terminal": false,
+      "reasonCodes": [
+        "fixture_regression"
+      ],
+      "evidence": {
+        "z": "last inserted first",
+        "a": {
+          "second": 2,
+          "first": 1
+        }
+      },
+      "evidenceDigest": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "reconciliationErrors": [
+    "candidate fixture-candidate advanced after evidence was collected",
+    "reconciliation.evidenceDigest does not match evidence"
+  ],
+  "reconciliationSnapshot": {
+    "resultHash": "6455cca73a6baf90e0cf19befd0bad494fd752bbcc4f94ea82bd22a5c396b0e5",
+    "files": {
+      "state.json": "dba7a4f167a9515b71eb2a1002f80e5e4e23bbb6c70e145900af22000b2ddeff",
+      "runs/2026-09-01T10-00-00-000Z-fixture-discovery.json": "db6c8606711c484f2595079e7094d2d6531ba916093d8188752b2cc45abe1c8d",
+      "runs/2026-09-01T11-00-00-000Z-fixture-implementation.json": "36560bd33d3af58b5f81f793a99a3ce721407c0c135c50b27de298a580343397",
+      "runs/2026-09-01T12-00-00-000Z-fixture-second.json": "7b0012afb843d7e787c4615f1ae4d2aa9e98aff506e38902d86c677518843785",
+      "reconciliations/2026-09-01T13-00-00Z-fixture-reconciliation.json": "ede321f6529bf2c337efaa0c99273223a7c8c1080c55cc67cd45404ee28535bf"
+    }
+  },
+  "contexts": [
+    {
+      "query": "",
+      "budget": 20000,
+      "error": null,
+      "hash": "5423b20a549c057ea34f9fcab323491bc31b477450ad9be4a2d5a5fa23eb8304",
+      "truncated": false
+    },
+    {
+      "query": "",
+      "budget": 8000,
+      "error": null,
+      "hash": "90b62e5f03b719c75c030ca317a5de5351f682b25ffc95c9cfdfa7ac400fde1e",
+      "truncated": true
+    },
+    {
+      "query": "",
+      "budget": 6000,
+      "error": null,
+      "hash": "04b0bf391aaa18f389e67ea77e64bb3cd3c5f42bc4e85c9148c3b6e542acb0d8",
+      "truncated": true
+    },
+    {
+      "query": "",
+      "budget": 4096,
+      "error": "memory context cannot fit within maxContextBytes",
+      "hash": null,
+      "truncated": null
+    },
+    {
+      "query": "labels",
+      "budget": 20000,
+      "error": null,
+      "hash": "c77541f2643697bfbe25d641b0479b99b0ed69c19a5cb830d4fd78e51bf7249b",
+      "truncated": false
+    },
+    {
+      "query": "labels",
+      "budget": 8000,
+      "error": null,
+      "hash": "adfb1401999c484adc2d8aecf1ba5d7dfbc68415071ae4ade36d2b68a57ca898",
+      "truncated": true
+    },
+    {
+      "query": "labels",
+      "budget": 6000,
+      "error": null,
+      "hash": "448eeba685ffaa57f1cc1916b749fd029867d0234c92b8c9c7b6dba6910ec286",
+      "truncated": true
+    },
+    {
+      "query": "labels",
+      "budget": 4096,
+      "error": "memory context cannot fit within maxContextBytes",
+      "hash": null,
+      "truncated": null
+    },
+    {
+      "query": "unrelated",
+      "budget": 20000,
+      "error": null,
+      "hash": "5020f42ff823d5d3d214ce828de946ad5a686888e054b387b950f350af2523cc",
+      "truncated": false
+    },
+    {
+      "query": "unrelated",
+      "budget": 8000,
+      "error": null,
+      "hash": "5020f42ff823d5d3d214ce828de946ad5a686888e054b387b950f350af2523cc",
+      "truncated": false
+    },
+    {
+      "query": "unrelated",
+      "budget": 6000,
+      "error": null,
+      "hash": "a261569c046865b0c1909cbe623526e9e1c583efc3c6c156fdd86a20d333375a",
+      "truncated": true
+    },
+    {
+      "query": "unrelated",
+      "budget": 4096,
+      "error": "memory context cannot fit within maxContextBytes",
+      "hash": null,
+      "truncated": null
+    }
+  ],
+  "bundle": {
+    "schemaVersion": 1,
+    "authorizationId": "fixture-authorization",
+    "repositoryIdentity": "github.com/git5285/obraxen",
+    "humanDecision": {
+      "decisionId": "fixture-decision",
+      "source": "fixture only",
+      "statement": "Synthetic authorization; not actual permission."
+    },
+    "issuedAt": "2026-09-01T10:00:00Z",
+    "expiresAt": "2026-09-01T11:00:00Z",
+    "candidate": {
+      "candidateId": "fixture-candidate",
+      "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "branch": "codex/fixture",
+      "commitSha": null,
+      "allowedPaths": [
+        "src/example.ts"
+      ],
+      "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "steps": [
+      {
+        "stepId": "fixture-commit",
+        "action": "commit_candidate",
+        "requiredChecks": [
+          "local_quality",
+          "activation_unchanged"
+        ]
+      }
+    ]
+  },
+  "bundleHash": "fc31242647a0efec88c1d768d22c2ec53bff400bae919c931c73e4c0ac456fdd",
+  "badBundles": [
+    {
+      "schemaVersion": 1,
+      "authorizationId": "fixture-authorization",
+      "repositoryIdentity": "github.com/git5285/obraxen",
+      "humanDecision": {
+        "decisionId": "fixture-decision",
+        "source": "fixture only",
+        "statement": "Synthetic authorization; not actual permission."
+      },
+      "issuedAt": "2026-09-01T10:00:00Z",
+      "expiresAt": "2026-09-01T11:00:00Z",
+      "candidate": {
+        "candidateId": "fixture-candidate",
+        "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "branch": "codex/fixture",
+        "commitSha": null,
+        "allowedPaths": [
+          "src/example.ts"
+        ],
+        "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "steps": [
+        {
+          "stepId": "fixture-commit",
+          "action": "commit_candidate",
+          "requiredChecks": [
+            "local_quality",
+            "activation_unchanged"
+          ]
+        }
+      ],
+      "extra": true
+    },
+    {
+      "schemaVersion": 1,
+      "authorizationId": "fixture-authorization",
+      "repositoryIdentity": "github.com/git5285/obraxen",
+      "humanDecision": {
+        "decisionId": "fixture-decision",
+        "source": "fixture only",
+        "statement": "Synthetic authorization; not actual permission."
+      },
+      "expiresAt": "2026-09-01T11:00:00Z",
+      "candidate": {
+        "candidateId": "fixture-candidate",
+        "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "branch": "codex/fixture",
+        "commitSha": null,
+        "allowedPaths": [
+          "src/example.ts"
+        ],
+        "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "steps": [
+        {
+          "stepId": "fixture-commit",
+          "action": "commit_candidate",
+          "requiredChecks": [
+            "local_quality",
+            "activation_unchanged"
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "authorizationId": "fixture-authorization",
+      "repositoryIdentity": "github.com/git5285/obraxen",
+      "humanDecision": {
+        "decisionId": "fixture-decision",
+        "source": "fixture only",
+        "statement": "Synthetic authorization; not actual permission."
+      },
+      "issuedAt": "2026-09-01T10:00:00Z",
+      "expiresAt": "2026-09-01T10:00:00Z",
+      "candidate": {
+        "candidateId": "fixture-candidate",
+        "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "branch": "codex/fixture",
+        "commitSha": null,
+        "allowedPaths": [
+          "src/example.ts"
+        ],
+        "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "steps": [
+        {
+          "stepId": "fixture-commit",
+          "action": "commit_candidate",
+          "requiredChecks": [
+            "local_quality",
+            "activation_unchanged"
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "authorizationId": "fixture-authorization",
+      "repositoryIdentity": "github.com/git5285/obraxen",
+      "humanDecision": {
+        "decisionId": "fixture-decision",
+        "source": "fixture only",
+        "statement": "Synthetic authorization; not actual permission."
+      },
+      "issuedAt": "2026-09-01T10:00:00Z",
+      "expiresAt": "2026-09-01T11:00:00Z",
+      "candidate": {
+        "candidateId": "fixture-candidate",
+        "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "branch": "codex/fixture",
+        "commitSha": null,
+        "allowedPaths": [
+          "src/example.ts"
+        ],
+        "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "steps": [
+        {
+          "stepId": "fixture-commit",
+          "action": "commit_candidate",
+          "requiredChecks": []
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "authorizationId": "fixture-authorization",
+      "repositoryIdentity": "github.com/git5285/obraxen",
+      "humanDecision": {
+        "decisionId": "fixture-decision",
+        "source": "fixture only",
+        "statement": "Synthetic authorization; not actual permission."
+      },
+      "issuedAt": "2026-09-01T10:00:00Z",
+      "expiresAt": "2026-09-01T11:00:00Z",
+      "candidate": {
+        "candidateId": "fixture-candidate",
+        "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "branch": "codex/fixture",
+        "commitSha": null,
+        "allowedPaths": [
+          "src/example.ts"
+        ],
+        "activationDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "steps": [
+        {
+          "stepId": "fixture-commit",
+          "action": "create_draft_pull_request",
+          "requiredChecks": [
+            "remote_branch_matches_commit"
+          ]
+        }
+      ]
+    }
+  ],
+  "bundleErrors": [
+    "authorization has unexpected keys: extra",
+    "authorization is missing keys: issuedAt",
+    "authorization lifetime exceeds the governed limit",
+    "authorization.steps[0].requiredChecks must be exact for commit_candidate",
+    "a candidate without commitSha must begin with commit_candidate"
+  ]
+}

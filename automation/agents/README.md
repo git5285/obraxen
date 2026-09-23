@@ -272,6 +272,21 @@ invent or register a grant. A human-authorized controller must provide the
 typed gate evidence. Recoverability of an outcome does not itself authorize a
 rollback.
 
+### Auditor route for grouped human delivery
+
+The independent auditor has two explicit profiles. Autonomous repository-cycle
+reviews require the controller's manifest, scout and builder lineage, active
+claim and exclusive shared writer lease. A grouped human-delivery review uses
+the immutable authorization bundle and schema-v2 context instead: it does not
+require autonomous scout, builder or writer-lease artifacts. It must still
+verify the exact unexpired human decision, candidate id, base SHA, `codex/`
+branch, sorted paths, activation digest, candidate content digest, runtime,
+active-claim collision check and reproducible check evidence. The grouped
+reservation is the delivery authority; it never grants standing authority or
+relaxes protected paths, activation gates, quality checks or the prohibition on
+merge, deployment, publication and deletion. A controller must label the route
+explicitly so an auditor cannot silently substitute one profile for the other.
+
 Learned rules are retained only as quarantined proposals. They are not placed in
 the agent context and cannot edit prompts, policy or code. Promotion remains a
 separate human-reviewed repository change.
@@ -285,16 +300,49 @@ node automation/agents/runtime.mjs exec -- node automation/agents/memory.mjs rec
 node automation/agents/runtime.mjs exec -- node automation/agents/reconcile.mjs list
 node automation/agents/runtime.mjs exec -- node automation/agents/operations.mjs status
 node automation/agents/runtime.mjs exec -- node automation/agents/authorizations.mjs status
+node automation/agents/runtime.mjs exec -- node automation/agents/control-surface.mjs status --require-ready
 ```
+
+## Canonical review target and controller ownership
+
+`control-surface.mjs status` is the read-only reconciliation entrypoint for the
+control checkout, every registered clone and Git worktree, effective claims and local review
+target. It lists every changed path, marks whether an active claim owns it and
+preserves unassigned changes for human disposition. It never cleans a worktree,
+rewrites a claim, starts a server, changes a schedule or performs Git delivery.
+
+The canonical review target is ready only when exactly one non-control worktree
+has dirty paths and every one of those paths is covered by exact effective
+active-claim paths; renames require both source and destination ownership. The
+command derives its controller from the common parent task id of
+those claims and verifies the worktree branch, HEAD and application entry route.
+The known public-site development command selects `/` only when its launcher,
+root Route Handler and canonical HTML exist. The legacy Next command retains
+its verified root redirect; unknown launch commands fail closed. Zero or
+multiple matches, an unreadable registered clone, extra unowned changes, mixed owners or an unreadable redirect
+fail closed. `--port <port>` adds the exact loopback URL; `--pid <pid>` verifies
+with the process cwd that an existing server belongs to that worktree. A server
+that was merely already running is not reusable evidence.
+
+Scheduler state is intentionally reported as `external_uninspected`: repository
+files do not prove that an app automation exists, is connected or is active.
+The derived controller is the single owner for target selection, coordination
+handoffs and any later scheduler proposal. Activation still requires exact
+human approval. Any approved schedule must require an explicit schedule or human
+request, a ready target and current runtime/claim evidence; it must stop when
+claims, worktree, HEAD or owner change, when a human decision is needed, or on
+completion or failure. No second controller inbox or standing Director id is
+created by this contract.
 
 ## Current mode
 
-Policy eligibility is not executor availability. Before state-writing preflight,
-host probes or candidate preparation, read “Adaptador de repositorio:
-implementación local desactivada” below and check the selected route using
-read-only evidence. A known-disabled route stops before worktree, claim or lease
-creation. Do not enable it or substitute the parent as builder. Independent
-owner-requested local inspection and maintenance remain in their authorized scope.
+Policy eligibility is not executor authority. Before state-writing preflight,
+host probes or candidate preparation, read “Adaptador de repositorio: ejecución
+local vinculada” below and check the selected route using read-only evidence.
+The local executor requires one verified human decision in the immutable active
+claim, plus the exact worktree, lease, runtime, baseline and hook evidence; it
+never substitutes the parent as builder. Independent owner-requested local
+inspection and maintenance remain in their authorized scope.
 
 `policy.json` is currently `active` only for isolated local diffs after three
 reviewed shadow canaries converged safely. `allowLocalDiff` is true, while
@@ -325,8 +373,16 @@ or a comprehensive block on arbitrary external tools.
 
 For the isolated repository adapter, the controller supplies current preflight
 snapshots and owns coordination writes. Specialists use only bound immutable
-read/check commands. The legacy Desktop hook remains a separate boundary;
-this delivery does not change its existing command allowlist.
+read/check commands.
+
+For the Desktop hook, the controller runs the state-writing preflight and
+supplies current snapshots to read-only specialists. They independently verify Git and runtime identity without
+refreshing the registry. Their hook permits only `check:agent-runtime` among npm
+checks; generic tests may write fixtures and build artifacts. The controller
+supplies those results for independent inspection. The controller also owns artifact-writing and authorized
+network checks. `check:quality` starts with the network-dependent `check:security`;
+offline results alone never establish a full quality-gate pass. The remote Quality
+gate applies to the exact delivered SHA before merge.
 
 The full local entrypoint delegates to `scripts/quality-gate.mjs` after the
 explicit security step. Its local group is lint, types, tests with coverage and
@@ -570,14 +626,23 @@ Estado de entrega: implementación candidata para pruebas fixture. La
 habilitación del ejecutor para Obraxen y la activación autónoma requieren una
 revisión posterior de la evidencia real y autorización separada.
 
-# Adaptador de repositorio: implementación local desactivada
+# Adaptador de repositorio: ejecución local vinculada
 
 `repository-cycle.mjs` adapta el transporte aislado a candidatas manuales de
-Obraxen ya preparadas. `repository-work.mjs` mantiene
-`REPOSITORY_EXECUTION_ENABLED = false`: ni CLI, variables de entorno,
-manifiestos, prompts ni la bandera general `allowLocalDiff` lo habilitan.
-No se instala el hook, cambia confianza, adquiere/reclama un lease, crea
-worktrees, configura horarios, hace Git remoto ni despliega.
+Obraxen ya preparadas. `repository-work.mjs` mantiene un gate de fuente local
+para el executor, pero no existe una habilitación genérica: el manifiesto debe
+incluir un `humanDecision.decisionId` y el hook comprueba que ese valor consta
+como evidencia `human_decision` de la claim propia, activa e inmutable. También
+verifica lease, preflight, base, runtime, rutas, integridad del controlador y
+el dispatcher configurado. Variables de entorno, prompts o manifiestos sin esa
+evidencia no pueden sustituir la decisión humana.
+
+El único `PreToolUse` versionado continúa siendo
+`node .codex/hooks/pre-tool-policy.mjs`. Fuera del modo `repository` aplica la
+política normal de menor autoridad; dentro de un host ligado, delega en
+`repository-work.mjs` y mide tanto el dispatcher como su configuración. El
+executor no cambia confianza, adquiere/reclama un lease, crea worktrees,
+configura horarios, hace Git remoto ni despliega.
 
 ```sh
 node automation/agents/runtime.mjs exec -- node automation/agents/repository-cycle.mjs status
@@ -594,11 +659,12 @@ seleccionado a checks de aceptación idénticos para builder y auditor.
 No descarga dependencias ni sustituye el runtime de la candidata por el de
 la fixture. Las rutas Next.js con `[lang]` son literales, no comodines.
 
-Contrato de integración para una futura habilitación separada:
+Contrato de integración local:
 
 1. El controlador prepara el worktree limpio, documentos y scripts revisados,
-   manifiesto privado y registro de confianza exacta del hook. El adaptador
-   solo los valida; no infiere autorización de su existencia.
+   manifiesto privado y la transición operativa que aporta el identificador de
+   decisión humana exacto. El adaptador solo los valida; no infiere autorización
+   de su existencia.
 2. El controlador aporta evidencia scout válida y selecciona su finding antes
    de preparar la candidata. Este adaptador no ejecuta discovery ni scout:
    la preparación fija implementation y solo admite builder y auditor.
@@ -624,13 +690,7 @@ acotadas y los checks offline correspondientes. Seguridad con red, inspección
 visual cuando proceda y el Quality gate remoto del SHA siguen siendo gates
 separados del controlador. Ningún resultado local concede entrega.
 
-El 2026-09-08 se completó un ensayo humano acotado en una candidata Obraxen:
-preparación, builder y auditor reales, con recibos correlacionados, comprobación
-posterior al patch, runtime completo y activación invariante. La selección del
-hallazgo fue del controlador, no de un nuevo scout modelo. La habilitación
-temporal y el hook se restauraron; el test de dos líneas queda fuera de esta PR.
-El ensayo no valida autonomía productiva ni todos los escenarios de fallo.
-Esta candidata de entrega excluye cambios locales ajenos de perfiles y política;
-se valida por separado, sin presentar el ensayo como ejecución de ese snapshot.
-Una activación futura requiere revisión y autorización separadas; no basta con
-cambiar la constante. No se reclaman leases ni claims automáticamente.
+La integración no concede commit, push, PR, merge, despliegue, publicación ni
+ninguna acción externa. Esos pasos siguen requiriendo su autorización específica
+después de revisar evidencia local e independiente. No se reclaman leases ni
+claims automáticamente.

@@ -10,6 +10,11 @@ import { REPOSITORY_EXECUTION_ENABLED, REPOSITORY_ORIGIN, repositoryPath, valida
 
 const path="src/app/[lang]/page.tsx";
 let root:string, worktree:string, manifest:ReturnType<typeof createManifest>;
+type RepositoryHookOutput = (input:unknown, environment:NodeJS.ProcessEnv, options:{
+  validate:(candidate:ReturnType<typeof createManifest>)=>unknown;
+  verify:(candidate:ReturnType<typeof createManifest>)=>unknown;
+})=>{hookSpecificOutput:{permissionDecision?:string;additionalContext?:string}};
+let repositoryHookOutput:RepositoryHookOutput;
 const files={"package.json":"{}","package-lock.json":"{}",".nvmrc":"24.18.0",".npmrc":"ignore-scripts=true",
   "AGENTS.md":"Local test instructions","COORDINATION.md":"Local test coordination",[path]:"export default 'pending';\n"};
 let policy:ReturnType<typeof loadPolicy>;
@@ -23,7 +28,10 @@ function createManifest(baseSha:string) {
     runId:"run-local-test",candidateId:"candidate-local-test",threadId:"thread-local-test",baseSha,attentionClass:"product",
     runtimeFingerprint:"a".repeat(64),controllerRuntimeFingerprint:"b".repeat(64),controlRoot:join(root,"control"),worktree,
     stateHome:join(root,"state"),evidenceRoot:join(root,"evidence"),hookPath:resolve("automation/agents/repository-work.mjs"),
-    hookDigest:digest(readFileSync(resolve("automation/agents/repository-work.mjs"))),claimPath:".coordination/claims/thread-local-test.md",
+    hookDigest:digest(readFileSync(resolve("automation/agents/repository-work.mjs"))),
+    hookDispatcherPath:resolve(".codex/hooks/pre-tool-policy.mjs"),hookDispatcherDigest:digest(readFileSync(resolve(".codex/hooks/pre-tool-policy.mjs"))),
+    hookConfigPath:resolve(".codex/hooks.json"),hookConfigDigest:digest(readFileSync(resolve(".codex/hooks.json")),),
+    hookCommand:"node .codex/hooks/pre-tool-policy.mjs",humanDecision:{decisionId:"human-decision-local-test"},claimPath:".coordination/claims/thread-local-test.md",
     claimDigest:"c".repeat(64),leaseToken:"local-disposable-test-token",createdAt:new Date().toISOString(),
     expiresAt:new Date(Date.now()+600000).toISOString(),allowedPaths:[path],readPaths:[path,"AGENTS.md","COORDINATION.md"],
     selectedFinding:finding,scoutEvidence:{schemaVersion:4,status:"proposal",attentionClass:"product",baseSha,runtimeFingerprint:"a".repeat(64),
@@ -35,7 +43,10 @@ function createManifest(baseSha:string) {
       .map(n=>[n,digest(readFileSync(resolve("automation/agents",n)))])),
     commands:[command("builder","read"),command("builder","check"),command("auditor","read"),command("auditor","check")]};
 }
-beforeAll(()=>{
+beforeAll(async()=>{
+  ({repositoryHookOutput} = await import("../../automation/agents/repository-work.mjs") as unknown as {
+    repositoryHookOutput:RepositoryHookOutput;
+  });
   root=realpathSync(mkdtempSync(join(tmpdir(),"obraxen-repository-adapter-")));
   const control=join(root,"control"); worktree=join(root,"candidate");
   for(const p of [control,join(root,"state"),join(root,"evidence")])mkdirSync(p);
@@ -49,10 +60,11 @@ beforeAll(()=>{
 });
 const snapshot=()=>({baseSha:manifest.baseSha,runtime:{ok:true,fingerprint:manifest.runtimeFingerprint},
   blockers:["writer_lease_exists","active_writer_claim_limit"],activeClaims:[{threadId:manifest.threadId,files:[path]}],
-  operationalClaims:[{threadId:manifest.threadId,state:"en_curso",claim:{source:manifest.claimPath,contentDigest:manifest.claimDigest,files:[path]}}],
+  operationalClaims:[{threadId:manifest.threadId,state:"en_curso",claim:{source:manifest.claimPath,contentDigest:manifest.claimDigest,files:[path]},
+    latestEvidence:[{kind:"human_decision",decisionId:manifest.humanDecision.decisionId}]}],
   lease:{token:manifest.leaseToken,runId:manifest.runId,baseSha:manifest.baseSha,worktree,claimPath:manifest.claimPath,paths:[path]}});
 
-describe("disabled repository adapter",()=>{
+describe("local repository adapter",()=>{
   it("tells the model the same relative-only update contract enforced by the guard",()=>{
     const instructions=execFileSync(process.execPath,["--input-type=module","-e",
       "import {REPOSITORY_PATCH_INSTRUCTIONS} from './automation/agents/repository-cycle.mjs';console.log(REPOSITORY_PATCH_INSTRUCTIONS);"],{encoding:"utf8"});
@@ -66,36 +78,36 @@ describe("disabled repository adapter",()=>{
     const code=`import assert from 'node:assert/strict';import {readRepositoryActivation,repositoryAdapterStatus} from './automation/agents/repository-cycle.mjs';
       const report=readRepositoryActivation({worktree:process.cwd()});
       assert.equal(report.schemaVersion,1);assert.equal(report.publicationAuthorized,false);assert.equal(report.publishSwitch,false);
-      assert.ok(['NO-GO','READY_FOR_PROTECTED_CANDIDATE'].includes(report.decision));assert.equal(repositoryAdapterStatus().enabled,false);
+      assert.ok(['NO-GO','READY_FOR_PROTECTED_CANDIDATE'].includes(report.decision));assert.equal(repositoryAdapterStatus().enabled,true);
       console.log('real-activation-parsed');`;
     expect(execFileSync(process.execPath,["--input-type=module","-e",code],{encoding:"utf8"})).toContain("real-activation-parsed");
   });
-  it("does not enable repository execution",()=>expect(REPOSITORY_EXECUTION_ENABLED).toBe(false));
+  it("enables only the locally bound repository executor",()=>expect(REPOSITORY_EXECUTION_ENABLED).toBe(true));
   it("CLI status does not launch work",()=>{
     const result=JSON.parse(execFileSync(process.execPath,["automation/agents/repository-cycle.mjs","status"],{encoding:"utf8"}));
-    expect(result).toMatchObject({enabled:false,changesTrust:false,acquiresLease:false,productionValidated:false});
+    expect(result).toMatchObject({enabled:true,installsHook:false,changesTrust:false,acquiresLease:false,productionValidated:false});
   });
-  it("run API refuses before touching a supplied candidate or host",()=>{
-    // Fixture setup has already finished. Neither disabled API may add any
-    // worktree, claim, lease or other file during the attempted execution.
+  it("run APIs reject an incomplete binding before touching a candidate or host",()=>{
+    // Fixture setup has already finished. Invalid input may not add a worktree,
+    // claim, lease or host process.
     const beforeFiles=readdirSync(root,{recursive:true}).sort();
     const beforeWorktrees=git(join(root,"control"),["worktree","list","--porcelain"]);
-    const code=`import assert from 'node:assert/strict';import {runRepositoryRole,runRepositoryCandidate} from './automation/agents/repository-cycle.mjs';import {runBoundRole} from './automation/agents/isolated-transport.mjs';const trap=new Proxy({},{get(){throw Error('touched candidate')}});await assert.rejects(runRepositoryRole(trap,'builder','', {codex:'/never-run'}),/repository_execution_disabled/);await assert.rejects(runRepositoryCandidate(trap),/repository_execution_disabled/);await assert.rejects(runBoundRole(trap,'builder','',{mode:'repository'}),/repository_execution_disabled/);console.log('disabled-before-access');`;
-    expect(execFileSync(process.execPath,["--input-type=module","-e",code],{encoding:"utf8"})).toContain("disabled-before-access");
+    const code=`import assert from 'node:assert/strict';import {runRepositoryRole,runRepositoryCandidate} from './automation/agents/repository-cycle.mjs';import {runBoundRole} from './automation/agents/isolated-transport.mjs';const invalid={manifest:{scope:'repository'},root:'',hookCommand:''};await assert.rejects(runRepositoryRole(invalid,'builder','', {codex:'/never-run'}),/repository_role_phase/);await assert.rejects(runRepositoryCandidate(invalid),/repository_prepared_writer_required/);await assert.rejects(runBoundRole({manifest:{scope:'repository'}},'builder','',{mode:'fixture'}),/isolated_scope_mismatch/);console.log('invalid-before-host');`;
+    expect(execFileSync(process.execPath,["--input-type=module","-e",code],{encoding:"utf8"})).toContain("invalid-before-host");
     expect(readdirSync(root,{recursive:true}).sort()).toEqual(beforeFiles);
     expect(git(join(root,"control"),["worktree","list","--porcelain"])).toBe(beforeWorktrees);
   });
-  it("hook denies despite attempted environment activation and does not echo input",()=>{
+  it("hook denies an incomplete binding and does not echo input",()=>{
     const result=execFileSync(process.execPath,["automation/agents/repository-work.mjs"],{encoding:"utf8",input:"private-canary",
-      env:{...process.env,REPOSITORY_EXECUTION_ENABLED:"true",OBRAXEN_ISOLATED_MODE:"repository"}});
+      env:{...process.env,OBRAXEN_ISOLATED_MODE:"repository"}});
     expect(JSON.parse(result).hookSpecificOutput.permissionDecision).toBe("deny");expect(result).not.toContain("private-canary");
   });
   it("CLI refuses run without reading a manifest",()=>{
     const result=spawnSync(process.execPath,["automation/agents/repository-cycle.mjs","run","/does-not-exist"],{encoding:"utf8"});
-    expect(result.status).toBe(2);expect(result.stderr).toContain("repository_execution_disabled");
+    expect(result.status).toBe(2);expect(result.stderr).toContain("repository_cli_status_only");
   });
-  it("cannot disguise a repository candidate as fixture or replace its verifier",()=>{
-    const code=`import assert from 'node:assert/strict';import {runBoundRole} from './automation/agents/isolated-transport.mjs';await assert.rejects(runBoundRole({manifest:{scope:'repository'}},'builder','',{mode:'fixture',verify:()=>true}),/isolated_scope_mismatch/);await assert.rejects(runBoundRole({manifest:{scope:'fixture'}},'builder','',{mode:'fixture',verify:()=>true}),/fixture_only/);console.log('no-scope-bypass');`;
+  it("cannot disguise a repository candidate as a fixture",()=>{
+    const code=`import assert from 'node:assert/strict';import {runBoundRole} from './automation/agents/isolated-transport.mjs';await assert.rejects(runBoundRole({manifest:{scope:'repository'}},'builder','',{mode:'fixture'}),/isolated_scope_mismatch/);console.log('no-scope-bypass');`;
     expect(execFileSync(process.execPath,["--input-type=module","-e",code],{encoding:"utf8"})).toContain("no-scope-bypass");
   });
   it("derives both deadline timestamps from one instant",()=>{
@@ -124,7 +136,7 @@ describe("repository identity and bound paths (temporary Git only)",()=>{
     expect(()=>validateRepositoryManifest({...manifest,commands:[...manifest.commands,{...manifest.commands[0],role:"scout"}]},policy)).toThrow("repository_command_role");
     expect(()=>evaluateRepositoryTool({},"scout",{...manifest,phase:"discovery"},()=>true)).toThrow("repository_role_phase");
   });
-  it("validates an actual related worktree and bracketed Next.js path",()=>{
+  it("validates an actual related worktree, bracketed Next.js path and measured command paths",()=>{
     expect(validateRepositoryManifest(manifest,policy)).toBe(manifest);
     expect(repositoryPath(worktree,path)).toBe(join(worktree,path));
   });
@@ -157,6 +169,12 @@ describe("repository identity and bound paths (temporary Git only)",()=>{
 
 describe("fresh coordination observation",()=>{
   it("accepts only the owning claim and lease",()=>expect(assertRepositorySnapshot(manifest,snapshot())).toBe(true));
+  it("requires the manifest decision to match immutable evidence on the active claim",()=>{
+    const missing=snapshot();missing.operationalClaims[0].latestEvidence=[];
+    expect(()=>assertRepositorySnapshot(manifest,missing)).toThrow("repository_human_decision_mismatch");
+    const replaced={...manifest,humanDecision:{decisionId:"other-human-decision"}};
+    expect(()=>assertRepositorySnapshot(replaced,snapshot())).toThrow("repository_human_decision_mismatch");
+  });
   it.each(["unreadable_worktrees","legacy_writer_lease_exists","pending_local_diff_limit","active_claim_paths_unknown"])("rejects new blocker %s",blocker=>{
     const s=snapshot();s.blockers.push(blocker);expect(()=>assertRepositorySnapshot(manifest,s)).toThrow("repository_preflight_blocked");
   });
@@ -165,6 +183,23 @@ describe("fresh coordination observation",()=>{
     const l=snapshot();l.lease.token="other";expect(()=>assertRepositorySnapshot(manifest,l)).toThrow("repository_lease_mismatch");
     expect(()=>assertRepositorySnapshot(manifest,{...snapshot(),baseSha:"0".repeat(40)})).toThrow("repository_runtime_or_base_changed");
     expect(()=>assertRepositorySnapshot(manifest,snapshot(),Date.parse(manifest.expiresAt)+1)).toThrow("repository_manifest_expired");
+  });
+});
+
+describe("repository hook execution",()=>{
+  it("returns a receipt only when the measured manifest and human decision verify",()=>{
+    const manifestPath=join(root,"bound-manifest.json"),raw=JSON.stringify(manifest);
+    writeFileSync(manifestPath,raw);
+    const input={tool_use_id:"hook-call",turn_id:"hook-turn",tool_name:"Bash",tool_input:{command:manifest.commands[0].command}};
+    const environment={...process.env,OBRAXEN_ISOLATED_MODE:"repository",OBRAXEN_ISOLATED_ROLE:"builder",
+      OBRAXEN_WORK_MANIFEST:manifestPath,OBRAXEN_WORK_MANIFEST_DIGEST:digest(raw)};
+    const verify=(candidate:typeof manifest)=>assertRepositorySnapshot(candidate,snapshot());
+    const valid=repositoryHookOutput(input,environment,{validate:(candidate:typeof manifest)=>validateRepositoryManifest(candidate,policy),verify});
+    expect(valid.hookSpecificOutput.permissionDecision).toBeUndefined();
+    expect(valid.hookSpecificOutput.additionalContext).toContain('"callId":"hook-call"');
+    const denied=repositoryHookOutput(input,environment,{validate:(candidate:typeof manifest)=>validateRepositoryManifest(candidate,policy),
+      verify:(candidate:typeof manifest)=>assertRepositorySnapshot(candidate,{...snapshot(),operationalClaims:[{...snapshot().operationalClaims[0],latestEvidence:[]}]})});
+    expect(denied.hookSpecificOutput.permissionDecision).toBe("deny");
   });
 });
 

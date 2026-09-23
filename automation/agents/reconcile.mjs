@@ -8,6 +8,12 @@ import {
   writeMemoryReconciliation,
 } from "./memory.mjs";
 import { loadPolicy } from "./policy.mjs";
+import {
+  exactKeys,
+  object,
+  safeIdentifier as validateSafeIdentifier,
+  timestamp as validateTimestamp,
+} from "./validation.mjs";
 
 const OUTCOMES = new Set([
   "unreconciled",
@@ -29,21 +35,6 @@ const OUTCOMES = new Set([
   "local_state_stale",
 ]);
 
-function object(value, label) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${label} must be an object`);
-  }
-  return value;
-}
-
-function exactKeys(value, label, allowed) {
-  const present = Object.keys(value);
-  const unexpected = present.filter((key) => !allowed.includes(key));
-  const missing = allowed.filter((key) => !Object.hasOwn(value, key));
-  if (unexpected.length > 0) throw new Error(`${label} has unexpected keys: ${unexpected.join(", ")}`);
-  if (missing.length > 0) throw new Error(`${label} is missing keys: ${missing.join(", ")}`);
-}
-
 function nonEmptyString(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty string`);
   return value;
@@ -57,10 +48,7 @@ function nullableString(value, label) {
 
 function safeIdentifier(value, label) {
   nonEmptyString(value, label);
-  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(value)) {
-    throw new Error(`${label} contains unsafe characters`);
-  }
-  return value;
+  return validateSafeIdentifier(value, label);
 }
 
 function sha(value, label) {
@@ -70,13 +58,7 @@ function sha(value, label) {
 
 function timestamp(value, label) {
   nonEmptyString(value, label);
-  if (
-    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(value)
-    || Number.isNaN(Date.parse(value))
-  ) {
-    throw new Error(`${label} must be a UTC ISO timestamp`);
-  }
-  return value;
+  return validateTimestamp(value, label);
 }
 
 function nullableTimestamp(value, label) {

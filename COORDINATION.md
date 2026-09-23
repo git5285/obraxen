@@ -8,28 +8,13 @@ las claims; no repite el checklist de arranque. El estado efectivo procede del
 registro operativo. Claims cerradas, handoffs y Git conservan historial, pero no
 se convierten por sí solos en instrucciones nuevas.
 
-## Reglas vigentes
+## Reglas y calidad
 
-- Una sola tarea editora por archivo. Se preservan los cambios ajenos y no se
-  usan `git add .`, `git add -A` ni comandos destructivos para resolverlos.
-- Antes de editar, la tarea debe comprobar el estado Git y las claims activas,
-  revisar solo los handoffs relacionados, reservar rutas exactas y registrar
-  la claim antes del primer cambio. Una tarea de solo lectura no necesita crear
-  una claim.
-- Los marcadores registrados son inmutables. Cada hito se registra mediante
-  `operations.mjs transition` con evidencia verificable.
-- Si una decision debe acompañar a la candidata, se deja un handoff. La claim
-  se libera cuando no queda trabajo dentro de su alcance.
-- Los datos desconocidos se mantienen como tales. No se inventan identidad,
-  datos legales, permisos de casos, contratos ni evidencia profesional.
-
-## Git y calidad
-
-Configura `git config core.hooksPath .githooks` en cada clon antes del primer
-push. Cada candidata ejecuta `npm run check:quality`, se entrega mediante pull
-request y solo se fusiona con el `Quality gate` remoto verde para el SHA
-revisado. Nunca se hace push directo a `main` ni se omiten hooks con
-`--no-verify`.
+`AGENTS.md` define las reglas obligatorias de propiedad, preservación de
+cambios, evidencia, Git y calidad. `.coordination/README.md` define la mecánica
+de registro, transición y entrega. Una tarea de solo lectura no crea claim.
+El registro operativo es la fuente del estado efectivo; el historial no
+concede nueva autoridad.
 
 ## Limites de activacion
 

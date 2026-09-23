@@ -13,7 +13,8 @@ work; use the existing domain tools for design, SEO or testing only as needed.
 | --- | --- | --- |
 | Capability question or prompt draft | Only sources needed to answer | Requested answer; no cycle, claim or run record |
 | Explicit local skill or agent-system maintenance | [Maintenance](references/maintenance.md) | Scoped, backed-up, evaluated change; no autonomous authority expansion |
-| Website audit, improvement or requested agent cycle | [Cycle](references/cycle.md) | One complete bounded cycle; valid no-op is success |
+| Ordinary website audit or individual edit | Applicable domain workflow and repository coordination | Requested report or scoped change; no autonomous cycle |
+| Explicitly requested agent cycle | [Cycle](references/cycle.md) | One complete bounded cycle; valid no-op is success |
 | Scheduled wake-up | [Cycle](references/cycle.md), then [Reporting](references/reporting.md) | Exact scheduled class, policy gates and durable report |
 | Evaluate a proposed skill change | [Evaluation](references/evaluation.md) and [Prompt intake](references/prompt-intake.md) | Baseline/candidate evidence with explicit test limitations |
 

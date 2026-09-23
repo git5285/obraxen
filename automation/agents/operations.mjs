@@ -1,13 +1,9 @@
-import { createHash, randomUUID } from "node:crypto";
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
-  renameSync,
   rmSync,
-  writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,6 +18,16 @@ import {
   registerClone,
 } from "./lease.mjs";
 import { loadPolicy } from "./policy.mjs";
+import { ensurePrivateDirectory, writeJsonAtomically } from "./storage.mjs";
+import {
+  digest,
+  exactKeys,
+  object,
+  safeIdentifier,
+  sha,
+  sha256,
+  timestamp,
+} from "./validation.mjs";
 
 const TRANSITIONS = new Map([
   ["reservado", new Set(["en_curso", "bloqueado", "liberado"])],
@@ -46,67 +52,6 @@ const EVENT_BODY_KEYS = [
   "state",
   "threadId",
 ];
-
-function object(value, label) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${label} must be an object`);
-  }
-  return value;
-}
-
-function exactKeys(value, label, allowed) {
-  const present = Object.keys(value);
-  const unexpected = present.filter((key) => !allowed.includes(key));
-  const missing = allowed.filter((key) => !Object.hasOwn(value, key));
-  if (unexpected.length > 0) throw new Error(`${label} has unexpected keys: ${unexpected.join(", ")}`);
-  if (missing.length > 0) throw new Error(`${label} is missing keys: ${missing.join(", ")}`);
-}
-
-function safeIdentifier(value, label) {
-  if (typeof value !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(value)) {
-    throw new Error(`${label} contains unsafe characters`);
-  }
-  return value;
-}
-
-function timestamp(value, label) {
-  if (
-    typeof value !== "string"
-    || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(value)
-    || Number.isNaN(Date.parse(value))
-  ) {
-    throw new Error(`${label} must be a UTC ISO timestamp`);
-  }
-  return value;
-}
-
-function canonicalJson(value) {
-  if (Array.isArray(value)) return value.map(canonicalJson);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.keys(value).sort().map((key) => [key, canonicalJson(value[key])]),
-    );
-  }
-  return value;
-}
-
-function digest(value) {
-  return createHash("sha256").update(JSON.stringify(canonicalJson(value))).digest("hex");
-}
-
-function sha(value, label) {
-  if (typeof value !== "string" || !/^[0-9a-f]{40}$/.test(value)) {
-    throw new Error(`${label} must be a 40 character git SHA`);
-  }
-  return value;
-}
-
-function sha256(value, label) {
-  if (typeof value !== "string" || !/^[0-9a-f]{64}$/.test(value)) {
-    throw new Error(`${label} must be a SHA-256 digest`);
-  }
-  return value;
-}
 
 function claimSource(value) {
   if (
@@ -259,22 +204,6 @@ export function getOperationalPaths(repo = process.cwd(), stateHome = null) {
     events: join(coordination.root, "operational-events"),
     locks: join(coordination.root, "operational-event-locks"),
   };
-}
-
-function ensurePrivateDirectory(directory) {
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  chmodSync(directory, 0o700);
-}
-
-function atomicJson(path, value) {
-  const temporary = `${path}.${process.pid}.${randomUUID()}.tmp`;
-  try {
-    writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, { flag: "wx", mode: 0o600 });
-    renameSync(temporary, path);
-  } catch (error) {
-    rmSync(temporary, { force: true });
-    throw error;
-  }
 }
 
 export function readOperationalEvents(repo = process.cwd(), stateHome = null) {
@@ -467,7 +396,7 @@ export function appendOperationalEvent(rawEvent, {
       recordedAt: now.toISOString(),
       eventDigest,
     };
-    atomicJson(recordPath, stored);
+    writeJsonAtomically(recordPath, stored);
     return { duplicate: false, event: stored };
   });
 }

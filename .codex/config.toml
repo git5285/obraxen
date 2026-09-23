@@ -1,8 +1,10 @@
-# Safe project defaults. Scheduled tasks can only reduce these permissions.
+# Requested defaults, not proof of effective session permissions.
+# Verify autonomous role restrictions using the host evidence required by
+# automation/agents/README.md, "Current mode"; missing or broader permissions block launch.
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-model = "gpt-5.5"
-model_reasoning_effort = "high"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
 
 [sandbox_workspace_write]
 network_access = false
@@ -14,7 +16,7 @@ goals = true
 hooks = true
 
 [agents]
-max_threads = 4
+max_threads = 3
 max_depth = 1
 job_max_runtime_seconds = 1800
 

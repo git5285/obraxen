@@ -478,8 +478,15 @@ describe("custom-agent pre-tool hook", () => {
     }, activePolicy())).toBeNull();
   });
 
-  it("limits read-only specialists to read operations and versioned verification scripts", () => {
+  it("limits read-only specialists to read operations and exact runtime identity checks", () => {
     const denied = [
+      "node automation/agents/runtime.mjs exec -- node automation/agents/preflight.mjs --json",
+      ...["build", "check", "check:quality", "check:security", "test", "test:e2e", "test:e2e:contact", "lighthouse:ci", "typecheck", "lint", "check:activation", "check:diff"].map(
+        (script) => `node automation/agents/runtime.mjs exec -- npm run ${script}`,
+      ),
+      "node automation/agents/runtime.mjs exec -- npm run test -- tests/card.test.ts",
+      "node automation/agents/runtime.mjs exec -- npm run check:agent-runtime --prefix /tmp/other-project",
+      "node automation/agents/runtime.mjs exec -- npm run check:agent-runtime --workspace other",
       "node automation/agents/runtime.mjs exec -- node automation/agents/operations.mjs transition --thread-id task --state liberado",
       "node automation/agents/runtime.mjs exec -- node automation/agents/memory.mjs record --file report.json",
       "node automation/agents/runtime.mjs exec -- node automation/agents/reconcile.mjs apply --candidate-id candidate",
@@ -488,11 +495,13 @@ describe("custom-agent pre-tool hook", () => {
       "python3 scripts/mutate-worktree.py",
     ];
     const allowed = [
-      "node automation/agents/runtime.mjs exec -- node automation/agents/preflight.mjs --json",
+      "node automation/agents/runtime.mjs status",
+      "node automation/agents/runtime.mjs assert",
+      "node automation/agents/runtime.mjs exec -- node automation/agents/policy.mjs",
       "node automation/agents/runtime.mjs exec -- node automation/agents/operations.mjs status",
       "node automation/agents/runtime.mjs exec -- node automation/agents/memory.mjs context --base-sha abc",
       "node automation/agents/runtime.mjs exec -- node automation/agents/reconcile.mjs list",
-      "node automation/agents/runtime.mjs exec -- npm run test -- tests/card.test.ts",
+      "node automation/agents/runtime.mjs exec -- npm run check:agent-runtime",
     ];
 
     for (const role of ["scout", "auditor"]) {
