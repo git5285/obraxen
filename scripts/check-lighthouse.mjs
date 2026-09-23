@@ -6,6 +6,7 @@ import { chromium } from "@playwright/test";
 import { publicProjectImages } from "../src/lib/public-project-assets.ts";
 import { getLighthouseBudgets } from "./lighthouse-budgets.ts";
 import { resolveQaPort } from "./qa-port.mjs";
+import { isLighthouseProject } from "./lighthouse-projects.ts";
 
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
@@ -17,20 +18,7 @@ let serverExitResult = null;
 const projectsSource = JSON.parse(
   await fs.readFile(path.join(root, "data", "proyectos.json"), "utf8"),
 );
-const publicationScopes = ["nombre_cliente", "fotografias_web"];
-const isPublicProject = (project) => {
-  const documents = project.autorizacionPublicacion.evidencias.filter(
-    (evidence) => evidence.tipo === "documento_referenciado"
-      && publicationScopes.every((scope) => evidence.alcance.includes(scope)),
-  );
-  const hasVerifiedReview = documents.some((document) => project.autorizacionPublicacion.evidencias.some(
-    (evidence) => evidence.tipo === "revision_legal_verificada"
-      && evidence.documentoRevisado === document.referenciaDocumento
-      && evidence.resultado === "aprobada",
-  ));
-  return hasVerifiedReview && project.imagenes.every((image) => Boolean(publicProjectImages[image.src]));
-};
-const publicProject = projectsSource.find(isPublicProject);
+const publicProject = projectsSource.find((project) => isLighthouseProject(project, publicProjectImages));
 const routes = [
   { name: "home-en", path: "/en/" },
   { name: "projects-de", path: "/de/projekte/" },

@@ -9,6 +9,7 @@ import { resolveRuntimeConfig } from "./runtime-config";
 import { naturalList } from "./formatting";
 import { getDictionary, getPath, type Locale } from "./i18n";
 import { publicProjects } from "./projects";
+import type { ServiceId } from "./dictionaries/types";
 
 export type ServiceIcon = "joint" | "crack" | "level" | "surface";
 
@@ -18,8 +19,12 @@ export type NavigationItem = {
   section?: "process" | "services" | "company" | "faq";
 };
 
-const serviceImages = [juntasImage, fisurasImage, recrecidosImage, pulidoImage] as const;
-const serviceIcons: readonly ServiceIcon[] = ["joint", "crack", "level", "surface"];
+const serviceMedia = {
+  joint: { image: juntasImage, icon: "joint" },
+  crack: { image: fisurasImage, icon: "crack" },
+  level: { image: recrecidosImage, icon: "level" },
+  surface: { image: pulidoImage, icon: "surface" },
+} satisfies Record<ServiceId, { image: typeof juntasImage; icon: ServiceIcon }>;
 
 export function getHomepage(locale: Locale) {
   const dictionary = getDictionary(locale);
@@ -70,10 +75,9 @@ export function getHomepage(locale: Locale) {
     whyKicker: brand.nombre
       ? `${dictionary.company.whyPrefix} ${brand.nombre}`
       : dictionary.intro.whyFallbackKicker,
-    services: dictionary.services.items.map((service, index) => ({
+    services: dictionary.services.items.map(({ id, ...service }) => ({
       ...service,
-      image: serviceImages[index] ?? juntasImage,
-      icon: serviceIcons[index] ?? "joint",
+      ...serviceMedia[id],
     })),
     serviceAreaLabel: naturalList(brandCopy.areasServicio, locale),
     priorityMarketsLabel: naturalList(brandCopy.mercadosPrioritarios, locale),

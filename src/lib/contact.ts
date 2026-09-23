@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { locales } from "./locales";
 import { brand } from "./brand";
 import type { Brand } from "./schemas";
 
 const email = z.email().max(254);
 
 export const contactSubmissionSchema = z.object({
-  locale: z.enum(["en", "de", "es", "fr"]),
+  locale: z.enum(locales),
   name: z.string().trim().min(2).max(100),
   email,
   company: z.string().trim().min(2).max(160),

@@ -1,5 +1,11 @@
 import type { MetadataRoute } from "next";
 import type { Brand, Project } from "./schemas";
+// @ts-expect-error The activation CLI requires explicit TypeScript extensions.
+import { locales as publicationLocales } from "./locales.ts";
+// @ts-expect-error The activation CLI also imports this module with Node type stripping.
+import { getProjectPublicationDocuments, hasProjectPublicationAuthorization, requiredProjectPublicationScopes } from "./project-publication-authorization.ts";
+
+export { hasProjectPublicationAuthorization, requiredProjectPublicationScopes };
 
 const requiredPublicTextFields = [
   "nombre",
@@ -36,31 +42,6 @@ export class PublicationConfigurationError extends Error {
     this.name = "PublicationConfigurationError";
     this.issues = issues;
   }
-}
-
-export const requiredProjectPublicationScopes = ["nombre_cliente", "fotografias_web"] as const;
-const publicationLocales = ["en", "de", "es", "fr"] as const;
-
-function getProjectPublicationDocuments(project: Project) {
-  return project.autorizacionPublicacion.evidencias.filter(
-    (evidence) => evidence.tipo === "documento_referenciado",
-  ).filter((document) => requiredProjectPublicationScopes.every(
-    (scope) => document.alcance.includes(scope),
-  ));
-}
-
-function hasApprovedProjectPublicationReview(project: Project, documentReference: string) {
-  return project.autorizacionPublicacion.evidencias.some(
-    (evidence) => evidence.tipo === "revision_legal_verificada"
-      && evidence.documentoRevisado === documentReference
-      && evidence.resultado === "aprobada",
-  );
-}
-
-export function hasProjectPublicationAuthorization(project: Project): boolean {
-  return getProjectPublicationDocuments(project).some((document) =>
-    hasApprovedProjectPublicationReview(project, document.referenciaDocumento),
-  );
 }
 
 export function getProjectPublicationIssues(projects: readonly Project[]): string[] {
@@ -173,25 +154,17 @@ export function buildRobotsPolicy(
   brand: Brand,
   projects: readonly Project[],
 ): MetadataRoute.Robots {
-  const publication = getPublicationState(brand, projects);
-
-  if (!publication.isPublic) {
-    return {
-      rules: { userAgent: "*", disallow: "/" },
-    };
-  }
-
-  return {
-    rules: { userAgent: "*", allow: "/" },
-    sitemap: `https://${brand.dominio}/sitemap.xml`,
-  };
+  return robotsPolicy(brand, getPublicationState(brand, projects));
 }
 
 export function buildPublicRobotsPolicy(
   brand: Brand,
   approval: { readonly approved: boolean },
 ): MetadataRoute.Robots {
-  const publication = getPublicPublicationState(brand, approval);
+  return robotsPolicy(brand, getPublicPublicationState(brand, approval));
+}
+
+function robotsPolicy(brand: Brand, publication: PublicationState): MetadataRoute.Robots {
   return publication.isPublic
     ? { rules: { userAgent: "*", allow: "/" }, sitemap: `https://${brand.dominio}/sitemap.xml` }
     : { rules: { userAgent: "*", disallow: "/" } };

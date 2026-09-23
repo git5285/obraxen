@@ -1,8 +1,9 @@
 import { resolveRuntimeConfig } from "@/lib/runtime-config";
 
-// El layout localizado también es prerenderizado. Mantener este endpoint
-// estático hace que ambos consuman el mismo snapshot de build; cualquier cambio
-// de IDs exige reconstruir la candidata.
+// Este endpoint conserva los IDs del build, mientras el layout localizado
+// consulta disponibilidad en runtime (force-dynamic). No son el mismo snapshot:
+// cambiar IDs requiere reconstruir y mantener alineado el entorno de ejecución.
+// Unificar ambos tiempos de lectura sería un cambio funcional independiente.
 export const dynamic = "force-static";
 
 export function GET(): Response {

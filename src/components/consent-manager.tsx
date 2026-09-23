@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import type { Dictionary } from "@/lib/dictionaries/types";
+import { wrapTabFocus } from "@/lib/focus-navigation";
 import { useConsentController } from "@/lib/use-consent-controller";
 
 type ConsentManagerProps = {
@@ -74,17 +75,7 @@ function ActiveConsentManager({ copy, cookieUrl, privacyUrl }: ConsentManagerPro
     const focusable = [...settingsRef.current.querySelectorAll<HTMLElement>(
       "a[href],button:not([disabled]),input:not([disabled])",
     )];
-    const first = focusable[0];
-    const last = focusable.at(-1);
-    if (!first || !last) return;
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    wrapTabFocus(event, focusable, document.activeElement);
   }
 
   if (record === undefined) return null;

@@ -72,10 +72,10 @@ export const de: Dictionary = {
     title: "Betonsanierung nach Schadensbild, Verkehr und Nutzung",
     intro: "Schadensbild, Verkehrsbeanspruchung und vorgesehene Nutzung bestimmen die Maßnahme. Je nach Befund kann sie lokale Betonsanierung, Vorbereitung, Ausgleich oder Betonschleifen und -polieren umfassen.",
     items: [
-      { title: "Fugenreparatur", description: "Entfernung geschädigter Bereiche, Wiederherstellung und Abdichtung entsprechend Schadensbild und Verkehrsbeanspruchung." },
-      { title: "Rissbehandlung", description: "Oberflächenbehandlung oder mechanische Verstärkung je nach Ursache und Entwicklung des Risses." },
-      { title: "Estriche und Ausgleich", description: "Korrektur von Unebenheiten und Wiederherstellung von Höhen mit technischen Mörteln." },
-      { title: "Betonschleifen und -polieren", description: "Mechanische Bearbeitung der Betonoberfläche, wenn Untergrundzustand und vorgesehene Nutzung dies erfordern." },
+      { id: "joint", title: "Fugenreparatur", description: "Entfernung geschädigter Bereiche, Wiederherstellung und Abdichtung entsprechend Schadensbild und Verkehrsbeanspruchung." },
+      { id: "crack", title: "Rissbehandlung", description: "Oberflächenbehandlung oder mechanische Verstärkung je nach Ursache und Entwicklung des Risses." },
+      { id: "level", title: "Estriche und Ausgleich", description: "Korrektur von Unebenheiten und Wiederherstellung von Höhen mit technischen Mörteln." },
+      { id: "surface", title: "Betonschleifen und -polieren", description: "Mechanische Bearbeitung der Betonoberfläche, wenn Untergrundzustand und vorgesehene Nutzung dies erfordern." },
     ],
     otherTitle: "Weitere mögliche Arbeiten:",
     otherWorks: [

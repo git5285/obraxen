@@ -15,7 +15,7 @@ export default defineConfig({
   testDir: "./tests/e2e",
   // Keep both legacy runs from removing the recovered Home's sibling reports.
   outputDir: contactEnabled ? "test-results/legacy-contact" : "test-results/legacy",
-  testMatch: contactEnabled ? "contact-enabled.spec.ts" : "quality.spec.ts",
+  testMatch: contactEnabled ? "contact-enabled.spec.ts" : ["quality.spec.ts", "consent.spec.ts", "navigation.spec.ts"],
   fullyParallel: false,
   forbidOnly: isCi,
   retries: isCi ? 1 : 0,
