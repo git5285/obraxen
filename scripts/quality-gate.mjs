@@ -8,7 +8,7 @@ import { inspectRuntime } from "../automation/agents/runtime.mjs";
 
 // Security advisories and browser/runtime behavior require fresh evidence.
 export const LOCAL_CHECKS = ["lint", "typecheck", "test:coverage", "build"];
-export const FRESH_CHECKS = ["test:e2e:contact", "test:e2e", "lighthouse:ci"];
+export const FRESH_CHECKS = ["test:published", "test:e2e:contact", "test:e2e", "lighthouse:ci"];
 const MAX_AGE_MS = 60 * 60 * 1000;
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
@@ -49,7 +49,7 @@ export function candidateDigest(repo) {
   const paths = new Set(git(repo, ["ls-files", "-z", "--cached", "--others", "--exclude-standard"]).split("\0").filter(Boolean));
   const ignored = git(repo, ["ls-files", "-z", "--others", "--ignored", "--exclude-standard"]).split("\0").filter(Boolean);
   // Tool outputs are accounted for separately where they become compiler inputs.
-  const output = /^(?:node_modules|\.next|coverage|playwright-report|test-results|\.lighthouseci|\.vercel|\.impeccable)(?:\/|$)|(?:^|\/)tsconfig\.tsbuildinfo$/;
+  const output = /^(?:node_modules|\.next|coverage|playwright-report|test-results|\.lighthouseci|\.vercel|\.impeccable)(?:\/|$)|(?:^|\/)tsconfig\.tsbuildinfo$|^apps\/public-site\/(?:\.next\/|app\/generated-home-html\.js$)/;
   for (const path of ignored) if (!output.test(path)) paths.add(path);
   // Gitignored environment files are still build inputs.
   for (const path of readdirSync(repo)) if (path === ".npmrc" || path.startsWith(".env")) paths.add(path);

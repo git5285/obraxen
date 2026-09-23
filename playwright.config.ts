@@ -57,7 +57,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build && npm run start -- --hostname 127.0.0.1 --port ${requestedPort}`,
+    // These suites cover the preserved legacy application.
+    command: `npm run build:legacy && npm run start:legacy -- --hostname 127.0.0.1 --port ${requestedPort}`,
     env: {
       GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID ?? "G-TEST123456",
       CLARITY_PROJECT_ID: process.env.CLARITY_PROJECT_ID ?? "testclarity1",
