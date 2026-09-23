@@ -7,6 +7,7 @@
   // Spanish is the source language. Each entry is [English, German] so the
   // page can be maintained in one place without duplicating its markup.
   const messages = {
+    "Necesito orientación sobre mi pavimento": ["I need advice about my floor", "Ich benötige Beratung zu meinem Boden"],
     "Obraxen · Reparación de pavimentos industriales": ["Obraxen · Industrial floor repair", "Obraxen · Reparatur von Industrieböden"],
     "Reparación y rehabilitación de pavimentos industriales: juntas, fisuras, pulido, nivelación y preparación del soporte.": ["Industrial floor repair and refurbishment: joints, cracks, polishing, levelling and substrate preparation.", "Reparatur und Sanierung von Industrieböden: Fugen, Risse, Polieren, Nivellierung und Untergrundvorbereitung."],
     "Saltar al contenido": ["Skip to content", "Zum Inhalt springen"],
@@ -220,6 +221,29 @@
     "Pasillo logístico de Blitz tras la intervención": ["Blitz logistics aisle after the intervention", "Logistikgang bei Blitz nach der Maßnahme"],
   };
 
+  // Stable keys for maintained copy. Legacy exact-text entries migrate as edited.
+  const keyedMessages = {
+    "hero.title": ["Recuperamos tus pavimentos.", ...messages["Recuperamos tus pavimentos."]],
+    "hero.subtitle": ["Cuidamos tu actividad.", ...messages["Cuidamos tu actividad."]],
+    "nav.solutions": ["Soluciones", ...messages["Soluciones"]],
+    "nav.projects": ["Proyectos", ...messages["Proyectos"]],
+    "nav.sectors": ["Sectores", ...messages["Sectores"]],
+    "nav.contact": ["Contacto", ...messages["Contacto"]],
+    "meta.title": ["Obraxen · Reparación de pavimentos industriales", ...messages["Obraxen · Reparación de pavimentos industriales"]],
+    "meta.description": ["Reparación y rehabilitación de pavimentos industriales: juntas, fisuras, pulido, nivelación y preparación del soporte.", ...messages["Reparación y rehabilitación de pavimentos industriales: juntas, fisuras, pulido, nivelación y preparación del soporte."]],
+  };
+  const message = (key) => {
+    const value = keyedMessages[key]?.[index + 1];
+    if (typeof value !== "string" || !value) throw new Error("Missing Home translation: " + key + " (" + locale + ")");
+    return value;
+  };
+  const missing = new Set();
+  // Names and identifiers deliberately remain unchanged across languages.
+  const invariantText = new Set([
+    "OBRAXEN", "Obraxen", "ES", "© 2026 Obraxen", "Español",
+    "OBRAXEN SURFACE S.L.", "B93963841", "Calle Federico García Lorca, 22",
+    "info@obraxen.com", "obraxen.com", "Blitz", "Delticom", "Hologram Bâtiment", "L’Oréal", "TP-Link",
+  ]);
   const t = (value) => {
     if (index < 0 || typeof value !== "string") return value;
     if (messages[value]) return messages[value][index];
@@ -231,47 +255,55 @@
     for (const [prefix, translations] of prefixed) {
       if (value.startsWith(prefix)) return translations[index] + t(value.slice(prefix.length));
     }
-    const position = /^(\d+) de (\d+)$/.exec(value);
+    const position = /^(\d+(?:[–-]\d+)?) de (\d+)$/.exec(value);
     if (position) return index === 0 ? `${position[1]} of ${position[2]}` : `${position[1]} von ${position[2]}`;
     return value;
   };
-  window.obraxenI18n = { locale, translate: t };
+  const auditTranslation = (value) => {
+    if (typeof value !== "string" || !value.trim() || !/\p{L}/u.test(value)) return;
+    if (t(value) === value && !invariantText.has(value)) missing.add(value);
+  };
+  window.obraxenI18n = {
+    locale, message,
+    translate(value) { if (index >= 0) auditTranslation(value); return t(value); },
+    get missingTranslations() { return [...missing].sort(); },
+  };
 
-  const translateTextNode = (node) => {
+  const translateTextNode = (node, audit = false) => {
+    if (node.parentElement?.closest("script,style,noscript")) return;
     const value = node.nodeValue;
     const trimmed = value?.trim();
     if (!trimmed) return;
-    const translated = t(trimmed);
+    const key = node.parentElement?.getAttribute("data-i18n");
+    if (audit && !key) auditTranslation(trimmed);
+    const translated = key && index >= 0 ? message(key) : t(trimmed);
     if (translated !== trimmed) node.nodeValue = value.replace(trimmed, translated);
   };
-  const translateElement = (element) => {
+  const translateElement = (element, audit = false) => {
     ["alt", "title", "aria-label", "placeholder", "data-repair"].forEach((attribute) => {
       if (!element.hasAttribute(attribute)) return;
       const value = element.getAttribute(attribute);
+      if (audit) auditTranslation(value);
       const translated = t(value);
       if (translated !== value) element.setAttribute(attribute, translated);
     });
   };
-  const translateTree = (root) => {
-    if (root.nodeType === Node.TEXT_NODE) translateTextNode(root);
+  const translateTree = (root, audit = false) => {
+    if (root.nodeType === Node.TEXT_NODE) translateTextNode(root, audit);
     if (root.nodeType !== Node.ELEMENT_NODE && root.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) return;
-    if (root.nodeType === Node.ELEMENT_NODE) translateElement(root);
+    if (root.nodeType === Node.ELEMENT_NODE) translateElement(root, audit);
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     const textNodes = [];
     while (walker.nextNode()) textNodes.push(walker.currentNode);
-    textNodes.forEach(translateTextNode);
-    if (root.querySelectorAll) root.querySelectorAll("[alt],[title],[aria-label],[placeholder],[data-repair]").forEach(translateElement);
+    textNodes.forEach(node => translateTextNode(node, audit));
+    if (root.querySelectorAll) root.querySelectorAll("[alt],[title],[aria-label],[placeholder],[data-repair]").forEach(element => translateElement(element, audit));
   };
   const updateMetadata = () => {
-    const metadata = locale === "en"
-      ? { title: "Obraxen · Industrial floor repair", description: "Industrial floor repair and refurbishment: joints, cracks, polishing, levelling and substrate preparation." }
-      : locale === "de"
-        ? { title: "Obraxen · Reparatur von Industrieböden", description: "Reparatur und Sanierung von Industrieböden: Fugen, Risse, Polieren, Nivellierung und Untergrundvorbereitung." }
-        : null;
-    if (!metadata) return;
+    // The canonical HTML owns Spanish copy, including editorial changes.
+    if (index < 0) return;
     document.documentElement.lang = locale;
-    document.title = metadata.title;
-    document.querySelector('meta[name="description"]')?.setAttribute("content", metadata.description);
+    document.title = message("meta.title");
+    document.querySelector('meta[name="description"]')?.setAttribute("content", message("meta.description"));
   };
   const installLanguageSwitcher = () => {
     const indicator = document.querySelector("header .language");
@@ -297,7 +329,7 @@
   };
 
   updateMetadata();
-  translateTree(document.body);
+  translateTree(document.body, index >= 0);
   installLanguageSwitcher();
   if (index >= 0) {
     const observer = new MutationObserver((records) => {
@@ -305,7 +337,7 @@
       records.forEach((record) => {
         if (record.type === "characterData") translateTextNode(record.target);
         if (record.type === "attributes") translateElement(record.target);
-        record.addedNodes.forEach(translateTree);
+        record.addedNodes.forEach(node => translateTree(node));
       });
       observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["alt", "title", "aria-label", "placeholder", "data-repair"] });
     });

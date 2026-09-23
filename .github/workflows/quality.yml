@@ -40,27 +40,27 @@ jobs:
       - name: Install Chromium and WebKit
         run: npx playwright install --with-deps chromium webkit
 
-      - name: Lint and types
-        run: npm run lint && npm run typecheck
+      - name: Repository lint and legacy TypeScript
+        run: npm run lint && npm run typecheck:legacy
 
-      - name: Unit test coverage thresholds
+      - name: All unit tests and legacy library coverage thresholds
         run: npm run test:coverage
 
-      - name: Next.js build
+      - name: Approved Home build
         run: npm run build
 
       - name: Approved published Home browser checks
         run: npm run test:published
 
-      - name: Contact form browser tests with enabled UI
+      - name: Legacy contact form browser tests with enabled UI
         run: npm run test:e2e:contact
 
-      - name: Browser tests
+      - name: Legacy browser tests
         run: npm run test:e2e
 
-      - name: Lighthouse budgets
+      - name: Legacy build and Lighthouse budgets
         timeout-minutes: 5
-        run: npm run lighthouse:ci
+        run: npm run lighthouse:legacy
 
       - name: Store quality reports
         if: always()

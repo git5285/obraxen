@@ -12,6 +12,8 @@ const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const outputDirectory = path.join(root, ".lighthouseci");
 const nextCli = path.join(root, "node_modules", "next", "dist", "bin", "next");
+// This audit always targets the legacy app; the default build prepares another app.
+await execFileAsync(process.execPath, [nextCli, "build"], { cwd: root, env: process.env });
 const requestedPort = await resolveQaPort();
 const baseUrl = `http://127.0.0.1:${requestedPort}`;
 let serverExitResult = null;
