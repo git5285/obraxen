@@ -72,10 +72,10 @@ export const fr: Dictionary = {
     title: "Des solutions définies selon les désordres et l'exploitation",
     intro: "Une intervention peut associer préparation, réparations localisées, ragréage et traitement de surface. Le diagnostic détermine les opérations nécessaires.",
     items: [
-      { title: "Réparation de joints", description: "Purge, reconstruction et scellement selon le désordre et les sollicitations de circulation." },
-      { title: "Traitement des fissures", description: "Traitement de surface ou renforcement mécanique selon l'origine et l'évolution de la fissure." },
-      { title: "Chapes et ragréage", description: "Correction des irrégularités et reprise des niveaux à l'aide de mortiers techniques." },
-      { title: "Traitements de surface", description: "Polissage, durcissement et protection du béton lorsque le support et l'usage le justifient." },
+      { id: "joint", title: "Réparation de joints", description: "Purge, reconstruction et scellement selon le désordre et les sollicitations de circulation." },
+      { id: "crack", title: "Traitement des fissures", description: "Traitement de surface ou renforcement mécanique selon l'origine et l'évolution de la fissure." },
+      { id: "level", title: "Chapes et ragréage", description: "Correction des irrégularités et reprise des niveaux à l'aide de mortiers techniques." },
+      { id: "surface", title: "Traitements de surface", description: "Polissage, durcissement et protection du béton lorsque le support et l'usage le justifient." },
     ],
     otherTitle: "Autres travaux que nous pouvons réaliser :",
     otherWorks: [

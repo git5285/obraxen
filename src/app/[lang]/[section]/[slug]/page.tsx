@@ -2,13 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProjectCase } from "@/components/project-case";
 import { ProjectJsonLd } from "@/components/project-json-ld";
-import {
-  getProjectParams,
-  getRouteForSection,
-  isLocale,
-} from "@/lib/i18n";
+import { getProjectParams } from "@/lib/i18n";
 import { getProjectJsonLd, getProjectMetadata } from "@/lib/project-pages";
-import { publicProjects, publicProjectsBySlug } from "@/lib/projects";
+import { publicProjects } from "@/lib/projects";
+import { resolveProjectRoute } from "@/lib/project-route";
 import "../../../../../css/case.css";
 
 type ProjectPageProps = Pick<PageProps<"/[lang]/[section]/[slug]">, "params">;
@@ -20,22 +17,19 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
-  const { lang, section, slug } = await params;
-  if (!isLocale(lang) || getRouteForSection(lang, section) !== "projects") return {};
-  const project = publicProjectsBySlug.get(slug);
-  return project ? getProjectMetadata(project, lang) : {};
+  const resolved = resolveProjectRoute(await params);
+  return resolved ? getProjectMetadata(resolved.project, resolved.locale) : {};
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { lang, section, slug } = await params;
-  if (!isLocale(lang) || getRouteForSection(lang, section) !== "projects") notFound();
-  const project = publicProjectsBySlug.get(slug);
-  if (!project) notFound();
+  const resolved = resolveProjectRoute(await params);
+  if (!resolved) notFound();
+  const { project, locale } = resolved;
 
   return (
     <>
-      <ProjectCase project={project} locale={lang} />
-      <ProjectJsonLd value={getProjectJsonLd(project, lang)} />
+      <ProjectCase project={project} locale={locale} />
+      <ProjectJsonLd value={getProjectJsonLd(project, locale)} />
     </>
   );
 }

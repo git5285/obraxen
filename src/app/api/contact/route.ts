@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
+import { readBoundedBody } from "@/lib/contact-body";
+import { deliverContact } from "@/lib/contact-delivery";
 import {
-  buildContactEmail,
   contactSubmissionSchema,
 } from "@/lib/contact";
 import { resolveRuntimeConfig } from "@/lib/runtime-config";
@@ -62,35 +63,6 @@ function exceedsRateLimit(key: string, now = Date.now()): boolean {
   return false;
 }
 
-async function readBoundedBody(request: Request): Promise<string | null> {
-  if (!request.body) return "";
-
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > bodyLimit) {
-        await reader.cancel();
-        return null;
-      }
-      chunks.push(value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  const body = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    body.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return new TextDecoder().decode(body);
-}
 
 function isJsonContentType(value: string | null): boolean {
   return value?.split(";", 1)[0]?.trim().toLowerCase() === "application/json";
@@ -119,7 +91,7 @@ export async function POST(request: Request): Promise<Response> {
     });
   }
 
-  const body = await readBoundedBody(request);
+  const body = await readBoundedBody(request, bodyLimit);
   if (body === null) return response({ ok: false, code: "payload_too_large" }, 413);
 
   let raw: unknown;
@@ -136,26 +108,8 @@ export async function POST(request: Request): Promise<Response> {
     return response({ ok: false, code: "invalid_timing" }, 400);
   }
 
-  const providerResponse = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.apiKey}`,
-      "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey(request, parsed.data),
-    },
-    body: JSON.stringify({
-      from: config.fromEmail,
-      to: [config.toEmail],
-      reply_to: parsed.data.email,
-      subject: `Solicitud técnica · ${parsed.data.locale.toUpperCase()}`,
-      text: buildContactEmail(parsed.data),
-      tags: [{ name: "source", value: "website-contact" }],
-    }),
-    cache: "no-store",
-    signal: AbortSignal.timeout(8_000),
-  }).catch(() => null);
-
-  if (!providerResponse?.ok) return response({ ok: false, code: "delivery_failed" }, 502);
+  const delivered = await deliverContact(config, parsed.data, idempotencyKey(request, parsed.data));
+  if (!delivered) return response({ ok: false, code: "delivery_failed" }, 502);
   return response({ ok: true }, 202);
 }
 

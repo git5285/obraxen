@@ -4,8 +4,8 @@ import { es } from "./dictionaries/es";
 import { fr } from "./dictionaries/fr";
 import type { Dictionary } from "./dictionaries/types";
 
-export const locales = ["en", "de", "es", "fr"] as const;
-export type Locale = (typeof locales)[number];
+import { locales, type Locale } from "./locales";
+export { locales, type Locale } from "./locales";
 
 export const defaultLocale: Locale = "es";
 

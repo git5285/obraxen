@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const locales = new Set(["en", "de", "es", "fr"]);
+import { locales } from "./lib/locales";
+const localeSet = new Set<string>(locales);
 
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
@@ -28,7 +29,7 @@ export function proxy(request: NextRequest) {
   requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);
 
   const locale = request.nextUrl.pathname.split("/").filter(Boolean)[0];
-  if (locale && locales.has(locale)) {
+  if (locale && localeSet.has(locale)) {
     requestHeaders.set("x-obraxen-locale", locale);
   }
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { locales as siteLocales } from "./locales";
 
 const text = z.string().trim().min(1);
 const nullableText = text.nullable();
@@ -8,8 +9,6 @@ const uniqueTextList = z.array(text).min(1).refine(
   (items) => new Set(items).size === items.length,
   "La lista no puede contener duplicados",
 );
-
-const siteLocales = ["en", "de", "es", "fr"] as const;
 
 function localized<T extends z.ZodType>(schema: T) {
   return z.object({

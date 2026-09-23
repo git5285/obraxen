@@ -31,15 +31,31 @@ import HomePage, { generateMetadata, getHomeMetadata } from "@/app/[lang]/page";
 import { brand } from "@/lib/brand";
 import { getHomepage, getHomepageJsonLd } from "@/lib/homepage";
 import { getDictionary, getPath, locales } from "@/lib/i18n";
+import * as i18n from "@/lib/i18n";
+import juntasImage from "../img/juntas.jpg";
+import fisurasImage from "../img/fisuras.jpg";
+import recrecidosImage from "../img/recrecidos.jpg";
+import pulidoImage from "../img/pulido.jpg";
 import { internalProjects } from "@/lib/internal-projects";
 import { getProjectImage } from "@/lib/media";
 import { publicProjects } from "@/lib/projects";
 
 afterEach(() => {
+  vi.restoreAllMocks();
   contactMock.enabled = false;
 });
 
 describe("localized Next.js homepage", () => {
+  it.each(locales)("keeps service media attached to identity when %s copy is reordered", (locale) => {
+    const dictionary = getDictionary(locale);
+    const before = getHomepage(locale).services;
+    expect(before.map((service) => service.icon)).toEqual(["joint", "crack", "level", "surface"]);
+    expect(before.map((service) => service.image)).toEqual([juntasImage, fisurasImage, recrecidosImage, pulidoImage]);
+    vi.spyOn(i18n, "getDictionary").mockReturnValue({
+      ...dictionary, services: { ...dictionary.services, items: [...dictionary.services.items].reverse() },
+    });
+    expect(getHomepage(locale).services).toEqual([...before].reverse());
+  });
   it.each(locales)("renders only authorized project content on the %s homepage", async (locale) => {
     const dictionary = getDictionary(locale);
     const html = renderToStaticMarkup(

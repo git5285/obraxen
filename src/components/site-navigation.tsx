@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import type { Dictionary } from "@/lib/dictionaries/types";
+import { useSectionNavigation } from "@/lib/use-section-navigation";
+import { wrapTabFocus } from "@/lib/focus-navigation";
 
 type SiteNavigationProps = {
   sectionIds: readonly string[];
@@ -24,10 +26,7 @@ export function SiteNavigation({
   stickyContent,
 }: SiteNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [stickyVisible, setStickyVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
   const menuRef = useRef<HTMLElement>(null);
-  const stickyNavRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -71,17 +70,7 @@ export function SiteNavigation({
     const focusable = Array.from(
       menuRef.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled])"),
     );
-    const first = focusable[0];
-    const last = focusable.at(-1);
-    if (!first || !last) return;
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    wrapTabFocus(event, focusable, document.activeElement);
   }
 
   useEffect(() => {
@@ -90,45 +79,7 @@ export function SiteNavigation({
     return () => document.body.classList.remove("menu-abierto");
   }, [isOpen]);
 
-  useEffect(() => {
-    const hero = document.querySelector(".hero");
-    if (!hero) return;
-
-    const heroObserver = new IntersectionObserver(([entry]) => {
-      if (!entry) return;
-      setStickyVisible(!entry.isIntersecting && entry.boundingClientRect.bottom <= 0);
-    });
-    heroObserver.observe(hero);
-
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActiveSection(visible.target.id);
-      },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
-    );
-    for (const sectionId of sectionIds) {
-      const section = document.getElementById(sectionId);
-      if (section) sectionObserver.observe(section);
-    }
-
-    return () => {
-      heroObserver.disconnect();
-      sectionObserver.disconnect();
-    };
-  }, [sectionIds]);
-
-  useEffect(() => {
-    const navigation = stickyNavRef.current;
-    if (!navigation) return;
-
-    for (const link of navigation.querySelectorAll<HTMLAnchorElement>("[data-navigation-section]")) {
-      const active = link.dataset.navigationSection === activeSection;
-      link.classList.toggle("activo", active);
-      if (active) link.setAttribute("aria-current", "location");
-      else link.removeAttribute("aria-current");
-    }
-  }, [activeSection]);
+  const { stickyVisible, stickyNavRef } = useSectionNavigation(sectionIds);
 
   useEffect(() => {
     function handleMenuOpen(event: Event) {

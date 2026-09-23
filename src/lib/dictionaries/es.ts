@@ -75,10 +75,10 @@ export const es: Dictionary = {
     title: "Soluciones definidas según el daño y la operativa",
     intro: "Una intervención puede combinar preparación, reparaciones localizadas, nivelación y tratamiento superficial. El diagnóstico determina qué partidas hacen falta.",
     items: [
-      { title: "Reparación de juntas", description: "Saneado, reconstrucción y sellado según el daño y las exigencias de tráfico." },
-      { title: "Tratamiento de fisuras", description: "Tratamiento superficial o refuerzo mecánico según el origen y la evolución de la fisura." },
-      { title: "Recrecidos y nivelación", description: "Corrección de desniveles y recuperación de cotas con morteros técnicos." },
-      { title: "Tratamientos superficiales", description: "Pulido, endurecimiento y protección del hormigón cuando el soporte y el uso lo aconsejan." },
+      { id: "joint", title: "Reparación de juntas", description: "Saneado, reconstrucción y sellado según el daño y las exigencias de tráfico." },
+      { id: "crack", title: "Tratamiento de fisuras", description: "Tratamiento superficial o refuerzo mecánico según el origen y la evolución de la fisura." },
+      { id: "level", title: "Recrecidos y nivelación", description: "Corrección de desniveles y recuperación de cotas con morteros técnicos." },
+      { id: "surface", title: "Tratamientos superficiales", description: "Pulido, endurecimiento y protección del hormigón cuando el soporte y el uso lo aconsejan." },
     ],
     otherTitle: "Otros trabajos que podemos abordar:",
     otherWorks: [

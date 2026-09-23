@@ -1,3 +1,5 @@
+export type ServiceId = "joint" | "crack" | "level" | "surface";
+
 export type NavigationItemCopy =
   | {
       label: string;
@@ -90,7 +92,7 @@ export type Dictionary = {
     kicker: string;
     title: string;
     intro: string;
-    items: readonly { title: string; description: string }[];
+    items: readonly { id: ServiceId; title: string; description: string }[];
     otherTitle: string;
     otherWorks: readonly string[];
   };
