@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -91,6 +91,26 @@ describe("local quality evidence reuse", () => {
     expect(environmentDigest({ FEATURE: "one", npm_lifecycle_event: "check" }))
       .toBe(environmentDigest({ FEATURE: "one", npm_lifecycle_event: "push" }));
     expect(environmentDigest({ FEATURE: "one" })).not.toBe(environmentDigest({ FEATURE: "two" }));
+  });
+
+  it("binds recovered-site sources but excludes its generated build outputs", () => {
+    const { repo } = fixture();
+    execFileSync("git", ["init", "-q", repo]);
+    writeFileSync(join(repo, ".gitignore"), "apps/public-site/.next/\napps/public-site/app/generated-home-html.js\n");
+    for (const path of ["apps/public-site/.next", "apps/public-site/app", "apps/public-site/public/assets"]) {
+      mkdirSync(join(repo, path), { recursive: true });
+    }
+    writeFileSync(join(repo, "apps/public-site/public/index.html"), "canonical HTML");
+    writeFileSync(join(repo, "apps/public-site/public/assets/hero.mp4"), "original video");
+    const original = candidateDigest(repo);
+    writeFileSync(join(repo, "apps/public-site/.next/BUILD_ID"), "generated build");
+    writeFileSync(join(repo, "apps/public-site/app/generated-home-html.js"), "generated module");
+    expect(candidateDigest(repo)).toBe(original);
+    writeFileSync(join(repo, "apps/public-site/public/index.html"), "changed HTML");
+    const changedHtml = candidateDigest(repo);
+    expect(changedHtml).not.toBe(original);
+    writeFileSync(join(repo, "apps/public-site/public/assets/hero.mp4"), "changed video");
+    expect(candidateDigest(repo)).not.toBe(changedHtml);
   });
 
   it("detects installed dependency content changes with identical package versions", () => {

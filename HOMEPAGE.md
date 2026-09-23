@@ -1,47 +1,87 @@
-# Home oficial de Obraxen
+# Home oficial de OBRAXEN
 
-Decisión del usuario del 11 de septiembre de 2026 en «Iterar homepage», ratificada
-en «Optimizar la Home Page»: trabajar exclusivamente sobre esta Home y retirar
-las otras versiones y prototipos.
+La referencia aprobada por el usuario es la web publicada en https://obraxen.com.
+Desde el 23 de septiembre de 2026, su fuente recuperada vive dentro del repositorio
+en `apps/public-site/`. No usar `src/app/[lang]/page.tsx` como base de esa Home:
+pertenece a la implementación anterior, preservada para no perder trabajo ajeno.
 
-- Vista local: <http://127.0.0.1:4387/>.
-- Fuente: `/Users/danielgarcia/.codex/visualizations/2026/09/10/01a08c7f-30fb-7d60-bdc9-91197bde2666/home-refined.html`.
-- SHA-256 aprobado: `d6aa44ba659cbee61d25d3f2660ae393ee9ca660afa9154b846676fc36f89623`.
-- Documentación de diseño y producto: `DESIGN.md` y `PRODUCT.md` en esa misma carpeta.
+## Abrir y construir la Home aprobada
 
-Para abrir la Home, comprobar primero el puerto 4387. Si está apagado:
+Requiere las dependencias y el runtime fijados por el repositorio.
 
 ```sh
-node /Users/danielgarcia/.codex/visualizations/2026/09/10/01a08c7f-30fb-7d60-bdc9-91197bde2666/preview-server.mjs
+npm run dev
+# http://127.0.0.1:4387 — Home aprobada, modo desarrollo
+npm run build
+npm run start
+# mismo puerto, build optimizado
+npm run test:published
 ```
 
-El servidor utiliza imágenes y logo de
-`.vercel/candidates/architecture-gallery-contact-20260910/`. Esa carpeta también
-contiene trabajo de las páginas de secciones. Conservarla mientras existan estas
-dependencias. No sustituir la Home aprobada por la portada de `npm run dev`.
+No arrancar dos servidores en el mismo puerto. Los scripts aceptan
+`-- --port <puerto>`. El servidor escucha por defecto solo en 127.0.0.1.
+En desarrollo, el HTML se vuelve a empaquetar al guardarlo; recargar la página
+para ver el resultado. No es necesario editar el módulo generado.
 
-## Retirada y trabajo pendiente
+## Fuente única y límites
 
-Se eliminaron los prototipos `home-character.html` y
-`.impeccable/baselines/home-refined-before.html` de la carpeta de la Home.
-Las capturas y críticas antiguas quedan como evidencia histórica, no como
-versiones editables ni referencias vigentes.
+- `apps/public-site/public/index.html`: documento canónico con estructura,
+  estilos e interacciones de la Home publicada.
+- `apps/public-site/public/assets/`: imágenes, vídeo y `home-i18n.js` originales.
+- `apps/public-site/app/route.js`, `app/en/route.js` y `app/de/route.js`:
+  las tres rutas originales de Next.js.
+- `generate-route-content.mjs`: empaqueta el HTML canónico antes del desarrollo
+  o build. `app/generated-home-html.js` es generado e ignorado por Git; no editarlo.
+- `docs/published-site-source.json`: despliegue de origen y hashes de las fuentes.
 
-La implementación Next.js anterior aún existe y requiere sustitución e
-integración coordinada con las páginas de secciones antes de retirar sus fuentes.
-Los worktrees no son íntegramente prototipos desechables: contienen activos,
-otras páginas y cambios ajenos. La limpieza completa de esas implementaciones
-queda pendiente de resolver estas dependencias; no se ha borrado ese trabajo.
+Las rutas son `/` (español), `/en` (inglés) y `/de` (alemán); las barras finales
+redirigen como en el despliegue. El HTML inicial es español y el script aplica
+la traducción en el navegador. `/es` y `/fr` no son rutas de esta aplicación.
 
-Esta decisión no publica la web ni activa formulario, analítica o indexación.
+Se conservan navegación por anclas, cinco proyectos, seis sectores, selección
+de reparación, vídeo, contacto y desplegables legales. El formulario prepara
+un enlace `mailto:`; no envía consultas ni almacena sus datos en el servidor.
+Las Noticias y las páginas interiores permanecen ocultas/inactivas como en la
+versión publicada. No activar enlaces, APIs, analítica, indexación o nuevos idiomas
+como consecuencia implícita de esta recuperación.
 
-## Estado de la iteración 2026-09-12
+## Verificar y trabajar
 
-La fuente HTML de referencia mantiene los cinco proyectos documentados en el
-carrusel, muestra dos casos completos en escritorio y tablet y ofrece el enlace
-«Ver los 5 proyectos». La consulta valida los campos y prepara un borrador de
-correo `mailto:`; el visitante debe confirmar el envío en su aplicación de
-correo y no se guardan datos en la página. Las Noticias de trabajo se retiran de
-la Home hasta su aprobación editorial. El footer expone la identidad legal
-básica disponible y referencias separadas para aviso legal, privacidad y
-cookies, con la revisión profesional todavía señalada como pendiente.
+`npm run test:published` comprueba el build local en escritorio y móvil, tres
+idiomas, imágenes, navegación, vídeo, carrusel, sectores, diálogo, borrador de
+correo y textos legales. No contacta producción ni envía correos.
+
+La comparación explícita con producción se ejecuta con:
+
+```sh
+npm run test:published -- --compare-production
+```
+
+Esta variante lee la web pública y compara HTML, assets, contenido renderizado,
+geometría y capturas. Los informes y PNG se generan en
+`test-results/published-home/`. La comparación exige equivalencia exacta con
+la referencia; una mejora deliberada futura deberá revisarse como diferencia.
+
+Incidencia conocida y conservada de producción: al abrir el menú móvil se
+produce un error de foco en `setMenu`; no impide mostrar los enlaces. El test
+lo identifica por separado y rechaza errores nuevos. Véase la recuperación.
+
+Antes de editar, respetar las claims de `AGENTS.md` y reservar rutas exactas.
+Para la Home aprobada, trabajar en `apps/public-site/`; una prueba sobre el
+árbol legado no demuestra nada sobre la web publicada.
+
+## Implementación anterior preservada
+
+`src/`, `css/`, `data/`, `img/` y sus cambios existentes se conservan.
+Se pueden consultar mediante `npm run dev:legacy`, `build:legacy` y
+`start:legacy`. Sus pruebas anteriores continúan separadas. No se mezclan
+sus textos, imágenes, APIs o configuración de publicación con la Home recuperada.
+
+La ruta externa histórica `home-refined.html` documentada aquí antes de la
+recuperación ya no existe. Vercel conservaba las fuentes subidas del despliegue
+`dpl_8GnZiT4XQpcpssqysL4aWshmfB9t`; fueron recuperadas y verificadas por hash.
+No se ha identificado un commit Git original asociado a ese despliegue CLI.
+Véase [la trazabilidad de recuperación](docs/PUBLISHED_SITE_RECOVERY.md).
+
+Esta integración es local. No autoriza ni ejecuta un nuevo despliegue,
+publicación, cambio de dominio o eliminación del trabajo anterior.

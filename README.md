@@ -1,19 +1,21 @@
 # Web corporativa — reparación de pavimentos industriales
 
-> **Home oficial — 11 de septiembre de 2026:** la única referencia aprobada es
-> la de la tarea «Iterar homepage», disponible localmente en
-> <http://127.0.0.1:4387/>. Véase [HOMEPAGE.md](HOMEPAGE.md) para su archivo,
-> arranque y dependencias. Las portadas Next.js descritas abajo son la
-> implementación anterior, pendiente de sustitución; no usarlas como referencia
-> de diseño ni abrirlas cuando se solicite la Home actual.
+> **Web aprobada — recuperada el 23 de septiembre de 2026:** la referencia es
+> https://obraxen.com y su fuente vive en `apps/public-site/`. `npm run dev`
+> la abre en <http://127.0.0.1:4387/>; `npm run build` y `npm run start`
+> construyen y sirven esa misma aplicación. Véase [HOMEPAGE.md](HOMEPAGE.md)
+> para editarla y [la recuperación](docs/PUBLISHED_SITE_RECOVERY.md) para su origen.
+> El resto de este documento describe principalmente la implementación anterior
+> en `src/`, conservada con comandos `*:legacy`. Sus estados, rutas, datos y
+> afirmaciones históricas de publicación no describen el despliegue público actual.
 
-Sitio técnico construido con Next.js 16 App Router, TypeScript y React Server
-Components. El build cerrado actual incluye las rutas localizadas de portada,
+El legado es un sitio técnico construido con Next.js 16 App Router, TypeScript y
+React Server Components. Su build incluye las rutas localizadas de portada,
 hubs, legales y contacto, además de los recorridos internos de preview y QA. Las
 portadas y hubs localizados se renderizan dinámicamente para poder aplicar la CSP
 nonce; los casos no generan fichas públicas mientras no superen su puerta de
 evidencia. Navegación, consentimiento y formulario son las únicas interacciones
-cliente propias.
+cliente propias del legado.
 
 La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` declarado
 pero sin formulario habilitado ni despliegues Git de Vercel. El repositorio es
@@ -46,9 +48,10 @@ privado y esa privacidad tampoco autoriza publicar o desplegar el sitio.
 - `.github/workflows/quality.yml` — gate remoto de GitHub Actions para cada PR.
 - `.githooks/pre-push` — bloquea pushes directos a `main` y ejecuta el gate local.
 
-El generador Node y las plantillas HTML anteriores se retiraron tras alcanzar
-paridad. `npm run build`, CI y Vercel tienen ahora una sola implementación:
-Next.js.
+La Home pública recuperada también usa Next.js: tres Route Handlers sirven
+el documento canónico de `apps/public-site/public/index.html`. El build y
+arranque por defecto seleccionan esa aplicación; la versión anterior permanece
+aislada como legado. La configuración remota de Vercel no se ha modificado.
 
 Los layouts, páginas y metadata se mantienen en el servidor por defecto. Las
 directivas `"use client"` se limitan a controles que necesitan estado, eventos o
@@ -65,7 +68,7 @@ imagen de Next.js, con dimensiones y `sizes` explícitos; no hay patrones de
 imágenes remotas. La tipografía usa pilas del sistema y no descarga fuentes de
 terceros.
 
-## Rutas actuales
+## Rutas de la implementación anterior
 
 | Ruta | Estado |
 |---|---|
@@ -89,13 +92,18 @@ Requiere Node `24.18.0` y npm `11.16.0`, fijados en `.nvmrc` y
 herramientas; instala el árbol bloqueado con `npm ci` antes de usarlos.
 
 ```sh
+git lfs pull         # recupera el vídeo original antes de construir la Home
 npm ci
 npm run check:agent-runtime # comprueba Node, npm y el árbol bloqueado
 npm run lint          # ESLint con las reglas de Next.js
 npm run typecheck     # TypeScript sin emitir archivos
-npm run dev          # servidor de desarrollo
-npm run build        # build de producción Next.js
-npm run start        # sirve el build ya generado
+npm run dev          # Home aprobada en http://127.0.0.1:4387
+npm run build        # build de la Home aprobada en apps/public-site
+npm run start        # sirve ese build, mismo puerto
+npm run test:published # tres idiomas, escritorio/móvil e interacciones de la Home
+npm run dev:legacy   # implementación anterior conservada en src/
+npm run build:legacy # construcción explícita del legado
+npm run start:legacy # arranque explícito del legado
 npm run test         # pruebas unitarias y de render
 npm run test:coverage # cobertura Vitest con umbrales
 npm run check:diff   # valida el cambio y el worktree desde origin/main
@@ -109,7 +117,8 @@ npm run check:security # audit de dependencias de producción
 npm run check:quality # gate completo local
 ```
 
-El gate ejecuta Vitest, el formulario habilitado en un arnés que no existe en
+El gate comprueba primero la Home aprobada con `test:published`. Conserva
+también las comprobaciones del legado: Vitest, el formulario habilitado en un arnés que no existe en
 Vercel, la suite Playwright cerrada en Chromium móvil/escritorio y smoke WebKit,
 y Lighthouse sobre un build cerrado. Playwright y Lighthouse seleccionan puertos
 locales libres y no reutilizan servidores preexistentes. Incluye reflow
@@ -247,6 +256,8 @@ nuevas consultas, pero no revoca copias realizadas durante ese periodo.
 
 | Tema | Documento |
 |---|---|
+| Home publicada aprobada: fuente, arranque y límites | `HOMEPAGE.md` |
+| Recuperación del despliegue y trazabilidad por hash | `docs/PUBLISHED_SITE_RECOVERY.md` |
 | Empresa, mercado, oferta, copy y evidencia | `STRATEGY.md` |
 | Rutas | `SITE_ARCHITECTURE.md` |
 | Sistema visual | `DESIGN.md` |

@@ -1,0 +1,455 @@
+{
+  "schemaVersion": 1,
+  "deploymentId": "dpl_8GnZiT4XQpcpssqysL4aWshmfB9t",
+  "deploymentUrl": "https://obraxen-kmi22mk84-user89392.vercel.app",
+  "productionUrl": "https://obraxen.com",
+  "recoveredAt": "2026-09-23T20:44:43.374Z",
+  "source": "Authenticated Vercel deployment source API; every original file verified against its content SHA-1 UID.",
+  "gitCommit": null,
+  "files": [
+    {
+      "path": "app/de/route.js",
+      "uid": "bfcd045a88cd42fd29ce0601fd0cdb5a0b9fe40a",
+      "sha256": "8a61b54a634ae57bdb0a99b4fd292c5b93f411af491a534102e199691d4608eb",
+      "bytes": 215
+    },
+    {
+      "path": "app/en/route.js",
+      "uid": "bfcd045a88cd42fd29ce0601fd0cdb5a0b9fe40a",
+      "sha256": "8a61b54a634ae57bdb0a99b4fd292c5b93f411af491a534102e199691d4608eb",
+      "bytes": 215
+    },
+    {
+      "path": "app/generated-home-html.js",
+      "uid": "93b8d9f07aff8d5f2e4e63cf9d50415d257c7f00",
+      "sha256": "b5e06fafe6ed65d04ec73f633ef4296a1fe8b86694a63e6aad3a149991fc4077",
+      "bytes": 223561
+    },
+    {
+      "path": "app/route.js",
+      "uid": "459ae8d3650ecb424a50a83379db89d0f138fd05",
+      "sha256": "3813ab66966945050cd618d911be9243eb087ac7f480d9eb13c4df79b7c44cfc",
+      "bytes": 214
+    },
+    {
+      "path": "assets/anchors.jpg",
+      "uid": "c5b34efdfd8bcea7a088216d68c009404f8229c2",
+      "sha256": "bd72e3166011a173561a9a88b972cacfbd2d5667b5c76c5c3475c7f25d3e2b62",
+      "bytes": 568081
+    },
+    {
+      "path": "assets/crack.jpg",
+      "uid": "d8275750b43712f7533fd547e523e28735062ff2",
+      "sha256": "1da10bbfe45a23e36d03b1dce63cd96ea3dc55264523d595fbddf4830c086814",
+      "bytes": 428627
+    },
+    {
+      "path": "assets/hero-obraxen-20260911.mp4",
+      "uid": "2e9d83387ed8ac2a550cb67c896f9713b9819c09",
+      "sha256": "17809662b126ae58285e7e334dc41b0b30c0dab8d8c60e2966a06946f8ca3cde",
+      "bytes": 9302174
+    },
+    {
+      "path": "assets/hero-obraxen-20260911.webp",
+      "uid": "c210d1da45cbf177615049e6ad22818ce5233494",
+      "sha256": "1410dc692b936628d2069d98a7394e67d897cdb6ec39d6d879f78f32e9c9ba9c",
+      "bytes": 532788
+    },
+    {
+      "path": "assets/hero-work.webp",
+      "uid": "9e2f93d32e5ce71c230adac3a1d67c5fea20aa23",
+      "sha256": "e82894123661f306c6134128f16f98b25f4860700cf50b2f29b0046b1395fe3f",
+      "bytes": 106384
+    },
+    {
+      "path": "assets/hero.jpg",
+      "uid": "35f63f69727960e332d0105ce95c3dd2aac150de",
+      "sha256": "151de8c445d543bf6a3fdcc21928179cce64ed83426251565c1a86d41ef42df0",
+      "bytes": 555551
+    },
+    {
+      "path": "assets/hologram.webp",
+      "uid": "99de2944f483663d060d3fc78a00c9d3e17c0331",
+      "sha256": "45fbfe32e832013433a6a3efe4aea4a8d3779071c1a4c5ace5d5a8955c23621f",
+      "bytes": 102338
+    },
+    {
+      "path": "assets/home-i18n.js",
+      "uid": "cc732d9d768566728fb10b4f8d06c4738fd5afcd",
+      "sha256": "f489c52a18bc653081931cbda4476e859cf463cbe60e56a185309317223f47c2",
+      "bytes": 36263
+    },
+    {
+      "path": "assets/joint-reinforcement.webp",
+      "uid": "69b0cd17ed7db99e1207a3e8e5033b3dd63b0103",
+      "sha256": "22289c0cdee30f851535c46acbd8cf8f918695de20898243694f1a0d09dc3c6c",
+      "bytes": 138902
+    },
+    {
+      "path": "assets/joint.jpg",
+      "uid": "86574b3c2369b4d792c0dfa070fffaac81606295",
+      "sha256": "e4bdc347d988a4971d0d9855531901199a10a71cd35f5178e968bbe8abd9f9a0",
+      "bytes": 662960
+    },
+    {
+      "path": "assets/laser.jpg",
+      "uid": "730c54d995f31f152d03b5bbe7b388e0eb538ac2",
+      "sha256": "7b3092b2e85cd4b7a25bb892d9cbd1d7dbcd6fe5d03398bd5fb135248944f0f7",
+      "bytes": 100575
+    },
+    {
+      "path": "assets/level.jpg",
+      "uid": "0782405ebe62f4912e37c3792d33392385b3d10d",
+      "sha256": "9473b147f8bb9ed57ef6c9910a8bbe00874910d301a2b754e9d7b2f78766f01b",
+      "bytes": 145644
+    },
+    {
+      "path": "assets/polished.jpg",
+      "uid": "43b5a823034578a707f46e5fb804f24f44f5326b",
+      "sha256": "046bb809f235483e760c14e5c5c4d8c482d8b07e9756c59fa0895150eda30f06",
+      "bytes": 68555
+    },
+    {
+      "path": "assets/prepare.jpg",
+      "uid": "73052ee1a9eb98b4e2231cca96a50a8579fc2755",
+      "sha256": "ad045d8adb6722c9d8793490d8ffc0adb9a56fc87f916d25422190812b232f5d",
+      "bytes": 417559
+    },
+    {
+      "path": "assets/priming.jpg",
+      "uid": "d4a7856e4da0ca0e400b019a856e313e19e41494",
+      "sha256": "0928eb9b4d04e9ce836f7f432481108bd8d4f515fd06184e7d363ab6bee80395",
+      "bytes": 124494
+    },
+    {
+      "path": "assets/project-blitz.webp",
+      "uid": "659237c4e804e8dda6ee9e64ab7233e61124bef1",
+      "sha256": "e270e24ad0277b411bdbb494c00a3dff517f8150f01f62178459b7f33ec464f1",
+      "bytes": 81500
+    },
+    {
+      "path": "assets/project-loreal.webp",
+      "uid": "7aa2b9fbe1acd291848d77b3e96f843f15a8ab5c",
+      "sha256": "b02d25efe3fbdf9add1999640c0a378d50f5b70cc52049c82e26fff819d8d60a",
+      "bytes": 80310
+    },
+    {
+      "path": "assets/project-tplink.webp",
+      "uid": "0e48fadf3dd1f99d130127794e38be17dd3a0b6c",
+      "sha256": "92eca36615f94f6dc31ba88e6c76027fbc5736869f5ef401d21c88295572001f",
+      "bytes": 53230
+    },
+    {
+      "path": "assets/removals.webp",
+      "uid": "27e4a0b632e93de018f031b21c72b6a6c9070ee1",
+      "sha256": "735c8af5c81fd10b02c1b8085c0635cf63378a8faae9d646dee992f8835acfa4",
+      "bytes": 46564
+    },
+    {
+      "path": "assets/renew.jpg",
+      "uid": "83eda3523e332eff97658b7267c052479e6eedaf",
+      "sha256": "5c17e977e8ff7c6e30dc99de16d9755ecad0e4fcde8719dd29ec84d4ff6798b9",
+      "bytes": 98454
+    },
+    {
+      "path": "assets/repair-detail.webp",
+      "uid": "3802415e298a9d32abcf3e1e293931d0f9090765",
+      "sha256": "c0b6f9c9578b4f9e3eacb4913cc957eadafc3a4a5d5c99f20d12122922bdafcd",
+      "bytes": 68176
+    },
+    {
+      "path": "assets/sector-alimentacion.jpg",
+      "uid": "e3cb28f36c02311b9a9b5513228e775f1fe5d5bf",
+      "sha256": "7fd7595d1dfd1ed26e6a188b8ae88e0f5a08c94142adec00ea7d81489abdd921",
+      "bytes": 988418
+    },
+    {
+      "path": "assets/sector-aparcamientos.jpg",
+      "uid": "4bb2e8f0f07f58f1c2f337a1f56df631a487dfe8",
+      "sha256": "ee0f8b18cedba1d212409ee9dafab4f53ec34a286aeb9a47bebf8d67ada846cd",
+      "bytes": 630597
+    },
+    {
+      "path": "assets/sector-automocion.jpg",
+      "uid": "ece8463755a3f1ed38f8b20f5c22aa13025bc734",
+      "sha256": "2ae9f8d67fbae139f995f0243ffc447c3bba74e2726dcbca9cc4cd2e5fa786a3",
+      "bytes": 541832
+    },
+    {
+      "path": "assets/sector-distribucion.jpg",
+      "uid": "23e201bb73cdfce368e1cb2331c3c45eb859b79e",
+      "sha256": "794c06e5d653ffc4b95520f5c2d826f27d722907e1bd4661b602a3e1799d10c3",
+      "bytes": 1774258
+    },
+    {
+      "path": "assets/sector-industria.jpg",
+      "uid": "724f00cdece4f285c30eb117efe55e98ee1e0acc",
+      "sha256": "f525715d3fe43c2dc19acb07bec17c54922a94a9df34d4847c9d379a1947d941",
+      "bytes": 604277
+    },
+    {
+      "path": "assets/sector-logistica.jpg",
+      "uid": "903def4f9f17e0d341889d1a82aca653d3ebfc9c",
+      "sha256": "b4dbb819cfee1eeeeff05b2ee1f263c6e40eb6410db9fab6e3c9806b8d8bcb01",
+      "bytes": 1183546
+    },
+    {
+      "path": "assets/spreading.jpg",
+      "uid": "1c40c7ef20e9ff92aceaaf3544795022ccd6d75e",
+      "sha256": "6696c63badfe022a588827a311ae58f574ddb6cea371b2a6080524baf12f3db1",
+      "bytes": 327790
+    },
+    {
+      "path": "assets/trowel.jpg",
+      "uid": "238707de572454a4d6a3b7c2b07e57bde32f336f",
+      "sha256": "ff35001fbcc4308cec038b424bc3b5e6d8b92af1940a36f7fd72875dc9e1947e",
+      "bytes": 77657
+    },
+    {
+      "path": "assets/warehouse.webp",
+      "uid": "9ec1c2b80e5852cfeccaa1092c35ca10104539de",
+      "sha256": "53e798714e11af7f5bf172bfdb1dd2fa68b0d08e8b8bc71387247b70138c1e26",
+      "bytes": 91918
+    },
+    {
+      "path": "public/assets/anchors.jpg",
+      "uid": "c5b34efdfd8bcea7a088216d68c009404f8229c2",
+      "sha256": "bd72e3166011a173561a9a88b972cacfbd2d5667b5c76c5c3475c7f25d3e2b62",
+      "bytes": 568081
+    },
+    {
+      "path": "public/assets/crack.jpg",
+      "uid": "d8275750b43712f7533fd547e523e28735062ff2",
+      "sha256": "1da10bbfe45a23e36d03b1dce63cd96ea3dc55264523d595fbddf4830c086814",
+      "bytes": 428627
+    },
+    {
+      "path": "public/assets/hero-obraxen-20260911.mp4",
+      "uid": "2e9d83387ed8ac2a550cb67c896f9713b9819c09",
+      "sha256": "17809662b126ae58285e7e334dc41b0b30c0dab8d8c60e2966a06946f8ca3cde",
+      "bytes": 9302174
+    },
+    {
+      "path": "public/assets/hero-obraxen-20260911.webp",
+      "uid": "c210d1da45cbf177615049e6ad22818ce5233494",
+      "sha256": "1410dc692b936628d2069d98a7394e67d897cdb6ec39d6d879f78f32e9c9ba9c",
+      "bytes": 532788
+    },
+    {
+      "path": "public/assets/hero-work.webp",
+      "uid": "9e2f93d32e5ce71c230adac3a1d67c5fea20aa23",
+      "sha256": "e82894123661f306c6134128f16f98b25f4860700cf50b2f29b0046b1395fe3f",
+      "bytes": 106384
+    },
+    {
+      "path": "public/assets/hero.jpg",
+      "uid": "35f63f69727960e332d0105ce95c3dd2aac150de",
+      "sha256": "151de8c445d543bf6a3fdcc21928179cce64ed83426251565c1a86d41ef42df0",
+      "bytes": 555551
+    },
+    {
+      "path": "public/assets/hologram.webp",
+      "uid": "99de2944f483663d060d3fc78a00c9d3e17c0331",
+      "sha256": "45fbfe32e832013433a6a3efe4aea4a8d3779071c1a4c5ace5d5a8955c23621f",
+      "bytes": 102338
+    },
+    {
+      "path": "public/assets/home-i18n.js",
+      "uid": "cc732d9d768566728fb10b4f8d06c4738fd5afcd",
+      "sha256": "f489c52a18bc653081931cbda4476e859cf463cbe60e56a185309317223f47c2",
+      "bytes": 36263
+    },
+    {
+      "path": "public/assets/joint-reinforcement.webp",
+      "uid": "69b0cd17ed7db99e1207a3e8e5033b3dd63b0103",
+      "sha256": "22289c0cdee30f851535c46acbd8cf8f918695de20898243694f1a0d09dc3c6c",
+      "bytes": 138902
+    },
+    {
+      "path": "public/assets/joint.jpg",
+      "uid": "86574b3c2369b4d792c0dfa070fffaac81606295",
+      "sha256": "e4bdc347d988a4971d0d9855531901199a10a71cd35f5178e968bbe8abd9f9a0",
+      "bytes": 662960
+    },
+    {
+      "path": "public/assets/laser.jpg",
+      "uid": "730c54d995f31f152d03b5bbe7b388e0eb538ac2",
+      "sha256": "7b3092b2e85cd4b7a25bb892d9cbd1d7dbcd6fe5d03398bd5fb135248944f0f7",
+      "bytes": 100575
+    },
+    {
+      "path": "public/assets/level.jpg",
+      "uid": "0782405ebe62f4912e37c3792d33392385b3d10d",
+      "sha256": "9473b147f8bb9ed57ef6c9910a8bbe00874910d301a2b754e9d7b2f78766f01b",
+      "bytes": 145644
+    },
+    {
+      "path": "public/assets/polished.jpg",
+      "uid": "43b5a823034578a707f46e5fb804f24f44f5326b",
+      "sha256": "046bb809f235483e760c14e5c5c4d8c482d8b07e9756c59fa0895150eda30f06",
+      "bytes": 68555
+    },
+    {
+      "path": "public/assets/prepare.jpg",
+      "uid": "73052ee1a9eb98b4e2231cca96a50a8579fc2755",
+      "sha256": "ad045d8adb6722c9d8793490d8ffc0adb9a56fc87f916d25422190812b232f5d",
+      "bytes": 417559
+    },
+    {
+      "path": "public/assets/priming.jpg",
+      "uid": "d4a7856e4da0ca0e400b019a856e313e19e41494",
+      "sha256": "0928eb9b4d04e9ce836f7f432481108bd8d4f515fd06184e7d363ab6bee80395",
+      "bytes": 124494
+    },
+    {
+      "path": "public/assets/project-blitz.webp",
+      "uid": "659237c4e804e8dda6ee9e64ab7233e61124bef1",
+      "sha256": "e270e24ad0277b411bdbb494c00a3dff517f8150f01f62178459b7f33ec464f1",
+      "bytes": 81500
+    },
+    {
+      "path": "public/assets/project-loreal.webp",
+      "uid": "7aa2b9fbe1acd291848d77b3e96f843f15a8ab5c",
+      "sha256": "b02d25efe3fbdf9add1999640c0a378d50f5b70cc52049c82e26fff819d8d60a",
+      "bytes": 80310
+    },
+    {
+      "path": "public/assets/project-tplink.webp",
+      "uid": "0e48fadf3dd1f99d130127794e38be17dd3a0b6c",
+      "sha256": "92eca36615f94f6dc31ba88e6c76027fbc5736869f5ef401d21c88295572001f",
+      "bytes": 53230
+    },
+    {
+      "path": "public/assets/removals.webp",
+      "uid": "27e4a0b632e93de018f031b21c72b6a6c9070ee1",
+      "sha256": "735c8af5c81fd10b02c1b8085c0635cf63378a8faae9d646dee992f8835acfa4",
+      "bytes": 46564
+    },
+    {
+      "path": "public/assets/renew.jpg",
+      "uid": "83eda3523e332eff97658b7267c052479e6eedaf",
+      "sha256": "5c17e977e8ff7c6e30dc99de16d9755ecad0e4fcde8719dd29ec84d4ff6798b9",
+      "bytes": 98454
+    },
+    {
+      "path": "public/assets/repair-detail.webp",
+      "uid": "3802415e298a9d32abcf3e1e293931d0f9090765",
+      "sha256": "c0b6f9c9578b4f9e3eacb4913cc957eadafc3a4a5d5c99f20d12122922bdafcd",
+      "bytes": 68176
+    },
+    {
+      "path": "public/assets/sector-alimentacion.jpg",
+      "uid": "e3cb28f36c02311b9a9b5513228e775f1fe5d5bf",
+      "sha256": "7fd7595d1dfd1ed26e6a188b8ae88e0f5a08c94142adec00ea7d81489abdd921",
+      "bytes": 988418
+    },
+    {
+      "path": "public/assets/sector-aparcamientos.jpg",
+      "uid": "4bb2e8f0f07f58f1c2f337a1f56df631a487dfe8",
+      "sha256": "ee0f8b18cedba1d212409ee9dafab4f53ec34a286aeb9a47bebf8d67ada846cd",
+      "bytes": 630597
+    },
+    {
+      "path": "public/assets/sector-automocion.jpg",
+      "uid": "ece8463755a3f1ed38f8b20f5c22aa13025bc734",
+      "sha256": "2ae9f8d67fbae139f995f0243ffc447c3bba74e2726dcbca9cc4cd2e5fa786a3",
+      "bytes": 541832
+    },
+    {
+      "path": "public/assets/sector-distribucion.jpg",
+      "uid": "23e201bb73cdfce368e1cb2331c3c45eb859b79e",
+      "sha256": "794c06e5d653ffc4b95520f5c2d826f27d722907e1bd4661b602a3e1799d10c3",
+      "bytes": 1774258
+    },
+    {
+      "path": "public/assets/sector-industria.jpg",
+      "uid": "724f00cdece4f285c30eb117efe55e98ee1e0acc",
+      "sha256": "f525715d3fe43c2dc19acb07bec17c54922a94a9df34d4847c9d379a1947d941",
+      "bytes": 604277
+    },
+    {
+      "path": "public/assets/sector-logistica.jpg",
+      "uid": "903def4f9f17e0d341889d1a82aca653d3ebfc9c",
+      "sha256": "b4dbb819cfee1eeeeff05b2ee1f263c6e40eb6410db9fab6e3c9806b8d8bcb01",
+      "bytes": 1183546
+    },
+    {
+      "path": "public/assets/spreading.jpg",
+      "uid": "1c40c7ef20e9ff92aceaaf3544795022ccd6d75e",
+      "sha256": "6696c63badfe022a588827a311ae58f574ddb6cea371b2a6080524baf12f3db1",
+      "bytes": 327790
+    },
+    {
+      "path": "public/assets/trowel.jpg",
+      "uid": "238707de572454a4d6a3b7c2b07e57bde32f336f",
+      "sha256": "ff35001fbcc4308cec038b424bc3b5e6d8b92af1940a36f7fd72875dc9e1947e",
+      "bytes": 77657
+    },
+    {
+      "path": "public/assets/warehouse.webp",
+      "uid": "9ec1c2b80e5852cfeccaa1092c35ca10104539de",
+      "sha256": "53e798714e11af7f5bf172bfdb1dd2fa68b0d08e8b8bc71387247b70138c1e26",
+      "bytes": 91918
+    },
+    {
+      "path": "public/de/index.html",
+      "uid": "44336692a28f24b179eff7dcbc7e65c6d95e0514",
+      "sha256": "8c0a34892ce8d879920fcb19f8957bb5d230c02b129c30271f55f2560ef88e11",
+      "bytes": 219954
+    },
+    {
+      "path": "public/en/index.html",
+      "uid": "44336692a28f24b179eff7dcbc7e65c6d95e0514",
+      "sha256": "8c0a34892ce8d879920fcb19f8957bb5d230c02b129c30271f55f2560ef88e11",
+      "bytes": 219954
+    },
+    {
+      "path": "public/index.html",
+      "uid": "44336692a28f24b179eff7dcbc7e65c6d95e0514",
+      "sha256": "8c0a34892ce8d879920fcb19f8957bb5d230c02b129c30271f55f2560ef88e11",
+      "bytes": 219954
+    },
+    {
+      "path": "de/index.html",
+      "uid": "addd8447930ba11a963af6f760ee1b83836d1c3f",
+      "sha256": "7b25ec53261d2d1390ee2f113a969a755a0ff1ad67401a0220d093f8b61c1a6e",
+      "bytes": 218139
+    },
+    {
+      "path": "en/index.html",
+      "uid": "addd8447930ba11a963af6f760ee1b83836d1c3f",
+      "sha256": "7b25ec53261d2d1390ee2f113a969a755a0ff1ad67401a0220d093f8b61c1a6e",
+      "bytes": 218139
+    },
+    {
+      "path": "index.html",
+      "uid": "addd8447930ba11a963af6f760ee1b83836d1c3f",
+      "sha256": "7b25ec53261d2d1390ee2f113a969a755a0ff1ad67401a0220d093f8b61c1a6e",
+      "bytes": 218139
+    },
+    {
+      "path": "generate-route-content.mjs",
+      "uid": "f893e28e3950f292729747b2ca93810f1ca1eecb",
+      "sha256": "2a5fb17e89a0e72982ce01628e0c54ca55dae90f36761ec0197a219c92b13fa7",
+      "bytes": 405
+    },
+    {
+      "path": "package-lock.json",
+      "uid": "82cb14d69badbf94c4ecc5556cd4a1a34f559b26",
+      "sha256": "22769acd0b0686547229ab3d203548a712d9514b4f33208d7c8035cda9782c72",
+      "bytes": 31746
+    },
+    {
+      "path": "package.json",
+      "uid": "7c717e078596269587b96e0f184ee12d186b45ef",
+      "sha256": "f4ad566c8e14c904635c4d7e0704c15557d0d7536d4dad95060463ddcd112849",
+      "bytes": 236
+    },
+    {
+      "path": "vercel.json",
+      "uid": "4a9b05bb2f99074175a78ea22b6b51ab991edb69",
+      "sha256": "db840ffa646adbf80bc13275ab99dacf2a3f7bb9f70d4cd166b04bec95a51749",
+      "bytes": 70
+    }
+  ]
+}
