@@ -25,7 +25,8 @@ Una tarea de solo lectura no crea claim. `COORDINATION.md` es un resumen opciona
 
 - Un archivo solo puede tener una tarea editora.
 - No edites una reserva activa sin entrega secuencial o autorización expresa del
-  usuario registrada en ambas claims.
+  usuario registrada en las dos cadenas operativas. No reescribas marcadores
+  registrados para documentar una transferencia.
 - Los cambios staged o sin commit de otra tarea se preservan y se verifican por
   nombre o checksum antes y después del trabajo.
 - Un marcador registrado es inmutable. Sus cambios de estado se añaden al log
@@ -79,12 +80,20 @@ Una tarea de solo lectura no crea claim. `COORDINATION.md` es un resumen opciona
 - La investigación de naming no autoriza selección, compra ni integración.
 - Los datos desconocidos permanecen `null`, `sin dato` u omitidos.
 
-## Alcance de documentación
+## Alcance de herramientas y documentación
 
-Consulta las guías locales Next.js solo cuando el cambio afecte sus APIs,
-convenciones, renderizado, routing o configuración. Para código ajeno a Next.js
-no se exige una guía del framework: «relevant guide» en el bloque siguiente se
-refiere únicamente a los aspectos de Next.js afectados. Conserva el bloque generado.
+Obraxen usa su flujo existente de Next.js y Vercel. No selecciones Sites para
+ediciones ordinarias: solo corresponde a una petición explícita de usar Sites
+o a un proyecto identificado por `.openai/hosting.json`. La selección de una
+skill nunca autoriza migrar de proveedor, registrar, publicar ni desplegar.
+
+Consulta las guías locales Next.js cuando el cambio dependa de sus APIs,
+convenciones, renderizado, routing o configuración. En una corrección puramente
+textual o documentación ajena al framework no hay una guía Next.js pertinente
+que cargar. Conserva el bloque generado siguiente sin modificarlo.
+
+Para código ajeno a Next.js no se exige una guía del framework: «relevant guide»
+en el bloque siguiente se refiere únicamente a los aspectos de Next.js afectados.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

@@ -8,15 +8,31 @@ production state. No evaluation changes policy, hooks, schedules or permissions.
 From the repository root run:
 
 ```sh
-node automation/agents/runtime.mjs exec -- node .agents/skills/obraxen-continuous-improvement/scripts/evaluate.mjs
 node automation/agents/runtime.mjs exec -- npm run test -- tests/agents/skill-evaluation.test.ts
 ```
 
-The evaluator creates fresh temporary repositories and state with the existing
-module test APIs. It exercises real claim, lease, diff, contract and memory
-operations without registering fixtures in production state. Fixture files
-and state remain available at the output path printed in its JSON report.
-They are test evidence, never public evidence or production run reports.
+This test runs the evaluator internally, checks its measurements and failure
+cleanup, and removes its temporary fixtures. Do not also run the standalone
+evaluator by default on the same inputs. A complete successful `npm run test`
+or `check:quality` that includes this test supplies the same coverage; a failed
+or partial run does not. Required delivery hooks and CI remain mandatory.
+
+Run the standalone evaluator as well when changing its entrypoint, module
+loading, console output or exit-code handling; the imported test suite does not
+exercise that CLI boundary. It is also available when retained fixture files
+and a JSON integration report are needed for diagnosis or evidence:
+
+```sh
+node automation/agents/runtime.mjs exec -- node .agents/skills/obraxen-continuous-improvement/scripts/evaluate.mjs
+```
+
+Both routes create fresh temporary repositories and state with the existing
+module test APIs. They exercise real claim, lease, diff, contract and memory
+operations without registering fixtures in production state. Only the standalone
+route retains fixture files and state when it returns a JSON report; a global
+exception cleans its temporary root before rethrowing. The CLI does not replace
+the measurement and cleanup tests. These artifacts are test
+evidence, never public evidence or production run reports.
 
 ## Model tool canaries
 

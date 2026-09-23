@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { isolatedRoleEnvironment, type Role } from "../../automation/agents/isolated-host.mjs";
 
@@ -11,6 +12,35 @@ function invoke(env: NodeJS.ProcessEnv, input: string) {
 }
 
 describe("isolated diagnostic process-to-hook binding", () => {
+  it("dispatches only a repository-bound call to the configured executor", async() => {
+    const { evaluateBoundRepositoryTool } = await import("../../.codex/hooks/pre-tool-policy.mjs") as unknown as {
+      evaluateBoundRepositoryTool:(input:unknown, environment:NodeJS.ProcessEnv,
+        repositoryHook?:(value:unknown, environment:NodeJS.ProcessEnv)=>{hookSpecificOutput:{hookEventName:string;additionalContext:string}})
+        =>{hookSpecificOutput:{hookEventName:string;additionalContext:string}}|null;
+    };
+    const input = { tool_name: "Bash", tool_input: { command: "measured command" } };
+    let received: unknown;
+    const output = evaluateBoundRepositoryTool(input, { ...process.env, OBRAXEN_ISOLATED_MODE: "repository" }, (value:unknown, environment:NodeJS.ProcessEnv) => {
+      received = { value, environment };
+      return { hookSpecificOutput: { hookEventName: "PreToolUse", additionalContext: "repository-receipt" } };
+    });
+    expect(output?.hookSpecificOutput.additionalContext).toBe("repository-receipt");
+    expect(received).toMatchObject({ value: input, environment: { OBRAXEN_ISOLATED_MODE: "repository" } });
+    expect(evaluateBoundRepositoryTool(input, process.env)).toBeNull();
+    const definition = JSON.parse(readFileSync(".codex/hooks.json", "utf8"));
+    expect(definition.hooks.PreToolUse[0].hooks[0]).toMatchObject({
+      type: "command", command: "node .codex/hooks/pre-tool-policy.mjs", timeout: 5,
+    });
+  });
+  it("runs the configured dispatcher and fails closed for an invalid repository binding", () => {
+    const result = spawnSync(process.execPath, [".codex/hooks/pre-tool-policy.mjs"], {
+      cwd: process.cwd(), encoding: "utf8", input: "private-repository-canary",
+      env: { ...process.env, OBRAXEN_ISOLATED_MODE: "repository" },
+    });
+    expect(result.status).toBe(0);
+    expect(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision).toBe("deny");
+    expect(result.stdout).not.toContain("private-repository-canary");
+  });
   it.each(["scout", "builder", "auditor"] as const)("binds %s without agent_type and denies every tool", (role) => {
     const env = isolatedRoleEnvironment(role);
     for (const tool of ["Bash", "apply_patch", "mcp__external__send_message", "unknown"]) {

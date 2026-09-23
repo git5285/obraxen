@@ -67,6 +67,34 @@ afterEach(() => {
 });
 
 describe("append-only operational claim state", () => {
+  it("requires work to start before review and releases the unchanged registered marker", () => {
+    const repo = repository();
+    const state = stateHome();
+    const marker = readFileSync(join(repo, claimPath), "utf8").replace("estado: en_curso", "estado: reservado");
+    writeFileSync(join(repo, claimPath), marker);
+    registerOperationalClaim({ repo, stateHome: state, claimPath,
+      eventId: "lifecycle-register", occurredAt: "2026-07-18T12:00:00Z" });
+    expect(readOperationalClaims(repo, state)[0].state).toBe("reservado");
+    expect(() => transitionOperationalClaim({ repo, stateHome: state, threadId,
+      eventId: "invalid-review", occurredAt: "2026-07-18T12:00:01Z",
+      state: "esperando_revision", reason: "candidate_ready" })).toThrow(/transition/);
+    expect(readdirSync(getOperationalPaths(repo, state).events)).toHaveLength(1);
+    transitionOperationalClaim({ repo, stateHome: state, threadId,
+      eventId: "lifecycle-start", occurredAt: "2026-07-18T12:01:00Z",
+      state: "en_curso", reason: "work_started" });
+    transitionOperationalClaim({ repo, stateHome: state, threadId,
+      eventId: "lifecycle-review", occurredAt: "2026-07-18T12:02:00Z",
+      state: "esperando_revision", reason: "candidate_ready" });
+    expect(() => transitionOperationalClaim({ repo, stateHome: state, threadId,
+      eventId: "invalid-release", occurredAt: "2026-07-18T12:03:00Z",
+      state: "liberado", reason: "done" })).toThrow();
+    transitionOperationalClaim({ repo, stateHome: state, threadId,
+      eventId: "lifecycle-release", occurredAt: "2026-07-18T12:03:00Z",
+      state: "liberado", reason: "pull_request_merged", evidence: pullRequestEvidence() });
+    expect(readOperationalClaims(repo, state)[0]).toMatchObject({ state: "liberado", eventCount: 4 });
+    expect(readFileSync(join(repo, claimPath), "utf8")).toBe(marker);
+  });
+
   it("forbids per-run state-home overrides in the operations CLI", () => {
     expect(() => execFileSync(process.execPath, [
       operationsCli,

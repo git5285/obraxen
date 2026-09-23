@@ -1,43 +1,36 @@
-import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
-  renameSync,
   rmSync,
-  writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isClaimPath } from "./claims.mjs";
 import { getCoordinationPaths, registerClone } from "./lease.mjs";
 import { loadPolicy } from "./policy.mjs";
 import { validateAuditorOutput } from "./contracts.mjs";
+import {
+  BUNDLE_KEYS,
+  GROUPED_AUTHORIZATION_ACTIONS,
+  nonEmptyText,
+  validateDecision,
+  validateAuthorizationBundle as validateAuthorizationBundleSchema,
+} from "./authorization-schema.mjs";
 
-export const GROUPED_AUTHORIZATION_ACTIONS = [
-  "commit_candidate",
-  "push_branch",
-  "create_draft_pull_request",
-];
+export { GROUPED_AUTHORIZATION_ACTIONS, REQUIRED_ACTION_CHECKS } from "./authorization-schema.mjs";
+import { ensurePrivateDirectory, writeJsonAtomically } from "./storage.mjs";
+import {
+  digest,
+  exactKeys,
+  object,
+  safeIdentifier,
+  sha,
+  sha256,
+  timestamp,
+} from "./validation.mjs";
 
-export const REQUIRED_ACTION_CHECKS = Object.freeze({
-  commit_candidate: ["local_quality", "activation_unchanged"],
-  push_branch: ["committed_diff_policy", "local_quality", "activation_unchanged"],
-  create_draft_pull_request: ["remote_branch_matches_commit"],
-});
-
-const BUNDLE_KEYS = [
-  "authorizationId",
-  "candidate",
-  "expiresAt",
-  "humanDecision",
-  "issuedAt",
-  "repositoryIdentity",
-  "schemaVersion",
-  "steps",
-];
 const EVENT_COMMON_KEYS = [
   "action",
   "authorizationId",
@@ -48,200 +41,13 @@ const EVENT_COMMON_KEYS = [
   "stepId",
   "type",
 ];
-const NEXT_DYNAMIC_SEGMENT = /^(?:\[[A-Za-z_][A-Za-z0-9_]*\]|\[\.\.\.[A-Za-z_][A-Za-z0-9_]*\]|\[\[\.\.\.[A-Za-z_][A-Za-z0-9_]*\]\])(?:\.[A-Za-z0-9._-]+)?$/;
-
-function object(value, label) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${label} must be an object`);
-  }
-  return value;
-}
-
-function exactKeys(value, label, allowed) {
-  const present = Object.keys(value);
-  const unexpected = present.filter((key) => !allowed.includes(key));
-  const missing = allowed.filter((key) => !Object.hasOwn(value, key));
-  if (unexpected.length > 0) throw new Error(`${label} has unexpected keys: ${unexpected.join(", ")}`);
-  if (missing.length > 0) throw new Error(`${label} is missing keys: ${missing.join(", ")}`);
-}
-
-function safeIdentifier(value, label) {
-  if (typeof value !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$/.test(value)) {
-    throw new Error(`${label} contains unsafe characters`);
-  }
-  return value;
-}
-
-function timestamp(value, label) {
-  if (
-    typeof value !== "string"
-    || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(value)
-    || Number.isNaN(Date.parse(value))
-  ) {
-    throw new Error(`${label} must be a UTC ISO timestamp`);
-  }
-  return value;
-}
-
-function sha(value, label) {
-  if (typeof value !== "string" || !/^[0-9a-f]{40}$/.test(value)) {
-    throw new Error(`${label} must be a 40 character git SHA`);
-  }
-  return value;
-}
-
-function sha256(value, label) {
-  if (typeof value !== "string" || !/^[0-9a-f]{64}$/.test(value)) {
-    throw new Error(`${label} must be a SHA-256 digest`);
-  }
-  return value;
-}
-
-function nonEmptyText(value, label, maximum) {
-  if (typeof value !== "string" || !value.trim() || value !== value.trim() || value.length > maximum) {
-    throw new Error(`${label} must be trimmed non-empty text of at most ${maximum} characters`);
-  }
-  return value;
-}
-
-function canonicalJson(value) {
-  if (Array.isArray(value)) return value.map(canonicalJson);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.keys(value).sort().map((key) => [key, canonicalJson(value[key])]),
-    );
-  }
-  return value;
-}
-
-function digest(value) {
-  return createHash("sha256").update(JSON.stringify(canonicalJson(value))).digest("hex");
-}
 
 function sameArray(left, right) {
   return left.length === right.length && left.every((item, index) => item === right[index]);
 }
 
-function isExactAuthorizationPath(path) {
-  if (!isClaimPath(path) || /[*?{}]/.test(path)) return false;
-  return path.split("/").every((segment) => {
-    if (!/[\[\]]/.test(segment)) return true;
-    return NEXT_DYNAMIC_SEGMENT.test(segment);
-  });
-}
-
-function validateDecision(raw, label = "humanDecision") {
-  const decision = object(raw, label);
-  exactKeys(decision, label, ["decisionId", "source", "statement"]);
-  safeIdentifier(decision.decisionId, `${label}.decisionId`);
-  nonEmptyText(decision.source, `${label}.source`, 512);
-  nonEmptyText(decision.statement, `${label}.statement`, 2000);
-  return decision;
-}
-
-function validatePolicyCapability(policy) {
-  const config = object(policy?.groupedAuthorizations, "policy.groupedAuthorizations");
-  if (config.enabled !== true) throw new Error("grouped authorizations are disabled by policy");
-  if (policy.mode !== "active") throw new Error("grouped authorizations require active policy mode");
-  return config;
-}
-
-function validateBranch(value, policy) {
-  if (
-    typeof value !== "string"
-    || !/^codex\/[A-Za-z0-9][A-Za-z0-9._/-]{0,120}$/.test(value)
-    || value.includes("..")
-    || value.endsWith("/")
-  ) {
-    throw new Error("candidate.branch must be one safe codex/ branch");
-  }
-  if (value === policy.reconciliation.defaultBranch) {
-    throw new Error("candidate.branch cannot be the default branch");
-  }
-  return value;
-}
-
 export function validateAuthorizationBundle(raw, policy = loadPolicy()) {
-  const config = validatePolicyCapability(policy);
-  const bundle = object(raw, "authorization");
-  exactKeys(bundle, "authorization", BUNDLE_KEYS);
-  if (bundle.schemaVersion !== 1) throw new Error("authorization.schemaVersion must be 1");
-  safeIdentifier(bundle.authorizationId, "authorization.authorizationId");
-  nonEmptyText(bundle.repositoryIdentity, "authorization.repositoryIdentity", 512);
-  validateDecision(bundle.humanDecision);
-  timestamp(bundle.issuedAt, "authorization.issuedAt");
-  timestamp(bundle.expiresAt, "authorization.expiresAt");
-  const lifetime = Date.parse(bundle.expiresAt) - Date.parse(bundle.issuedAt);
-  if (lifetime <= 0 || lifetime > config.maxLifetimeSeconds * 1000) {
-    throw new Error("authorization lifetime exceeds the governed limit");
-  }
-
-  const candidate = object(bundle.candidate, "authorization.candidate");
-  exactKeys(candidate, "authorization.candidate", [
-    "activationDigest",
-    "allowedPaths",
-    "baseSha",
-    "branch",
-    "candidateId",
-    "commitSha",
-  ]);
-  safeIdentifier(candidate.candidateId, "candidate.candidateId");
-  sha(candidate.baseSha, "candidate.baseSha");
-  validateBranch(candidate.branch, policy);
-  if (candidate.commitSha !== null) sha(candidate.commitSha, "candidate.commitSha");
-  sha256(candidate.activationDigest, "candidate.activationDigest");
-  if (
-    !Array.isArray(candidate.allowedPaths)
-    || candidate.allowedPaths.length === 0
-    || candidate.allowedPaths.length > (config.maxChangedFiles ?? policy.limits.maxChangedFiles)
-    || candidate.allowedPaths.some((path) => !isExactAuthorizationPath(path))
-    || new Set(candidate.allowedPaths).size !== candidate.allowedPaths.length
-  ) {
-    throw new Error("candidate.allowedPaths must contain unique canonical repository paths");
-  }
-  if (!sameArray(candidate.allowedPaths, [...candidate.allowedPaths].sort())) {
-    throw new Error("candidate.allowedPaths must be sorted");
-  }
-
-  if (
-    !Array.isArray(bundle.steps)
-    || bundle.steps.length === 0
-    || bundle.steps.length > config.maxSteps
-  ) {
-    throw new Error("authorization.steps exceeds the governed sequence length");
-  }
-  const allowed = config.allowedActions;
-  const actions = bundle.steps.map((rawStep, index) => {
-    const step = object(rawStep, `authorization.steps[${index}]`);
-    exactKeys(step, `authorization.steps[${index}]`, ["action", "requiredChecks", "stepId"]);
-    safeIdentifier(step.stepId, `authorization.steps[${index}].stepId`);
-    if (!allowed.includes(step.action)) {
-      throw new Error(`authorization.steps[${index}].action is not policy-authorized`);
-    }
-    const required = REQUIRED_ACTION_CHECKS[step.action];
-    if (!Array.isArray(step.requiredChecks) || !sameArray(step.requiredChecks, required)) {
-      throw new Error(`authorization.steps[${index}].requiredChecks must be exact for ${step.action}`);
-    }
-    return step.action;
-  });
-  if (new Set(bundle.steps.map((step) => step.stepId)).size !== bundle.steps.length) {
-    throw new Error("authorization stepIds must be unique");
-  }
-  const firstActionIndex = GROUPED_AUTHORIZATION_ACTIONS.indexOf(actions[0]);
-  const expected = GROUPED_AUTHORIZATION_ACTIONS.slice(
-    firstActionIndex,
-    firstActionIndex + actions.length,
-  );
-  if (firstActionIndex < 0 || !sameArray(actions, expected)) {
-    throw new Error("authorization steps must be one contiguous delivery sequence");
-  }
-  if (candidate.commitSha === null && actions[0] !== "commit_candidate") {
-    throw new Error("a candidate without commitSha must begin with commit_candidate");
-  }
-  if (candidate.commitSha !== null && actions.includes("commit_candidate")) {
-    throw new Error("an already committed candidate cannot authorize another commit");
-  }
-  return structuredClone(bundle);
+  return validateAuthorizationBundleSchema(raw, policy);
 }
 
 export function getAuthorizationPaths(repo = process.cwd(), stateHome = null) {
@@ -253,22 +59,6 @@ export function getAuthorizationPaths(repo = process.cwd(), stateHome = null) {
     events: join(coordination.root, "authorization-events"),
     locks: join(coordination.root, "authorization-locks"),
   };
-}
-
-function ensurePrivateDirectory(directory) {
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  chmodSync(directory, 0o700);
-}
-
-function atomicJson(path, value) {
-  const temporary = `${path}.${process.pid}.${randomUUID()}.tmp`;
-  try {
-    writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, { flag: "wx", mode: 0o600 });
-    renameSync(temporary, path);
-  } catch (error) {
-    rmSync(temporary, { force: true });
-    throw error;
-  }
 }
 
 function withAuthorizationLock(paths, authorizationId, operation) {
@@ -358,7 +148,7 @@ export function registerAuthorizationBundle(raw, {
       recordedAt: now.toISOString(),
       bundleDigest: digest(bundle),
     };
-    atomicJson(target, stored);
+    writeJsonAtomically(target, stored);
     return { duplicate: false, authorization: stored };
   });
 }
@@ -489,7 +279,7 @@ export function readAuthorizationEvents(
     ));
 }
 
-function deriveAuthorizationState(bundle, events, now = new Date()) {
+function buildAuthorizationChain(bundle, events) {
   const byId = new Map(events.map((event) => [event.eventId, event]));
   if (byId.size !== events.length) throw new Error("authorization event ids are duplicated");
   const roots = events.filter((event) => event.previousEventId === null);
@@ -507,7 +297,28 @@ function deriveAuthorizationState(bundle, events, now = new Date()) {
     children.set(event.previousEventId, event);
   }
 
-  let current = roots[0] ?? null;
+  return { root: roots[0] ?? null, children };
+}
+
+function resolveAuthorizationStatus({ revoked, complete, reservation, expiresAt }, now) {
+  const expired = Date.parse(expiresAt) <= now.getTime();
+  const reservationExpired = reservation ? Date.parse(reservation.expiresAt) <= now.getTime() : false;
+  return revoked
+    ? "revoked"
+    : complete
+      ? "completed"
+      : reservationExpired
+        ? "reservation_expired"
+        : reservation
+          ? "reserved"
+          : expired
+            ? "expired"
+            : "pending";
+}
+
+function deriveAuthorizationState(bundle, events, now = new Date()) {
+  const { root, children } = buildAuthorizationChain(bundle, events);
+  let current = root;
   let visited = 0;
   let nextStepIndex = 0;
   let commitSha = bundle.candidate.commitSha;
@@ -568,21 +379,9 @@ function deriveAuthorizationState(bundle, events, now = new Date()) {
   }
   if (visited !== events.length) throw new Error("authorization event chain is disconnected");
   const complete = nextStepIndex === bundle.steps.length;
-  const expired = Date.parse(bundle.expiresAt) <= now.getTime();
-  const reservationExpired = reservation ? Date.parse(reservation.expiresAt) <= now.getTime() : false;
   return {
     authorizationId: bundle.authorizationId,
-    status: revoked
-      ? "revoked"
-      : complete
-        ? "completed"
-        : reservationExpired
-          ? "reservation_expired"
-          : reservation
-            ? "reserved"
-            : expired
-              ? "expired"
-              : "pending",
+    status: resolveAuthorizationStatus({ revoked, complete, reservation, expiresAt: bundle.expiresAt }, now),
     nextStep: complete || revoked ? null : bundle.steps[nextStepIndex],
     nextStepIndex,
     commitSha,
@@ -702,7 +501,7 @@ function appendAuthorizationEvent(event, paths, now) {
   ensurePrivateDirectory(directory);
   const path = join(directory, `${event.eventId}.json`);
   if (existsSync(path)) throw new Error("authorization eventId already exists");
-  atomicJson(path, {
+  writeJsonAtomically(path, {
     ...event,
     recordedAt: now.toISOString(),
     eventDigest: digest(event),

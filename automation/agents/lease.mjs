@@ -1,19 +1,18 @@
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
-  renameSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { createHash, randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadPolicy } from "./policy.mjs";
+import { ensurePrivateDirectory, writeJsonAtomically } from "./storage.mjs";
 
 const STATE_NAMESPACE = ["obraxen", "agent-coordination-v1"];
 const DEFAULT_REMOTE_PORTS = new Map([
@@ -197,25 +196,6 @@ export function getLeasePaths(repo, stateHome = null) {
   const coordination = getCoordinationPaths(repo, stateHome);
   const directory = coordination.leaseDirectory;
   return { directory, owner: join(directory, "owner.json") };
-}
-
-function ensurePrivateDirectory(directory) {
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  chmodSync(directory, 0o700);
-}
-
-function writeJsonAtomically(path, value) {
-  const temporary = `${path}.${process.pid}.${randomUUID()}.tmp`;
-  try {
-    writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, {
-      flag: "wx",
-      mode: 0o600,
-    });
-    renameSync(temporary, path);
-  } catch (error) {
-    rmSync(temporary, { force: true });
-    throw error;
-  }
 }
 
 function validateCloneRecord(record, repositoryIdentity) {

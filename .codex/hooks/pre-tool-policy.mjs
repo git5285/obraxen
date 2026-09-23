@@ -3,6 +3,7 @@ import { posix } from "node:path";
 import { fileURLToPath } from "node:url";
 import { globMatches, isDependencyManifest } from "../../automation/agents/diff-policy.mjs";
 import { loadPolicy } from "../../automation/agents/policy.mjs";
+import { repositoryHookOutput } from "../../automation/agents/repository-work.mjs";
 
 const autonomousRoles = new Set([
   "scout",
@@ -195,7 +196,7 @@ function readOnlyUsesApprovedRuntimeCommand(command) {
     return true;
   }
   if (
-    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/(?:policy|preflight)\.mjs(?:\s+--json)?\s*$/i
+    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+node\s+automation\/agents\/policy\.mjs(?:\s+--json)?\s*$/i
       .test(command)
   ) {
     return true;
@@ -218,10 +219,10 @@ function readOnlyUsesApprovedRuntimeCommand(command) {
   ) {
     return true;
   }
-  const npmRun = command.match(
-    /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+([A-Za-z0-9:_-]+)\b/i,
-  );
-  return npmRun ? builderVerificationScripts.has(npmRun[1]) : false;
+  // Tests and builds may write fixtures, caches or artifacts. The controller
+  // supplies that evidence; read-only specialists verify only runtime identity.
+  // Do not allow npm flags that could select another prefix/workspace/script.
+  return /^\s*node\s+automation\/agents\/runtime\.mjs\s+exec\s+--\s+npm\s+run\s+check:agent-runtime\s*$/i.test(command);
 }
 
 export function evaluateToolUse(input, policy = loadPolicy()) {
@@ -301,12 +302,27 @@ export function evaluateToolUse(input, policy = loadPolicy()) {
   return null;
 }
 
+// The versioned project hook stays the only configured PreToolUse entry. A
+// repository-bound host is dispatched to the measured executor; every other
+// invocation preserves the normal least-authority policy above.
+export function evaluateBoundRepositoryTool(input, environment = process.env,
+  repositoryHook = repositoryHookOutput) {
+  if (environment.OBRAXEN_ISOLATED_MODE !== "repository") return null;
+  return repositoryHook(input, environment);
+}
+
 function main() {
   // Bound by the controller's process environment, not model/tool arguments.
   // This is the diagnostic hook: every isolated tool remains blocked. Fail
   // closed on partial/unknown bindings instead of falling back to root policy.
   const boundRole = process.env.OBRAXEN_ISOLATED_ROLE;
   const boundMode = process.env.OBRAXEN_ISOLATED_MODE;
+  if (boundMode === "repository") {
+    let input;
+    try { input = JSON.parse(readFileSync(0, "utf8")); } catch { input = null; }
+    process.stdout.write(`${JSON.stringify(evaluateBoundRepositoryTool(input))}\n`);
+    return;
+  }
   if (boundRole !== undefined || boundMode !== undefined) {
     const reason = autonomousRoles.has(boundRole) && boundMode === "diagnostic"
       ? `Obraxen ${boundRole}: diagnóstico aislado; ninguna herramienta autorizada.`

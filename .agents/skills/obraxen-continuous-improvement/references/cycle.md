@@ -13,8 +13,14 @@ Read these files before acting:
 3. The coordination sections selected by `AGENTS.md`; load the exact operation
    and evidence procedure before registering, transitioning or closing a claim.
 4. `automation/agents/policy.json`
-5. `automation/agents/README.md`, including `Common runtime`, `Current mode` and
-   `Adaptador de repositorio: implementación local desactivada`.
+5. `Common runtime`, `Current mode` and `Adaptador de repositorio: ejecución
+   local vinculada` in `automation/agents/README.md`.
+   Load `Architecture` for delegation/model changes, operational closure and
+   lease sections for those operations, reconciliation and grouped authorization
+   for delivery, and migration/hosted sections only for those workflows.
+
+Read each selected section completely. Reuse unchanged instructions already
+present in context; historical architecture is not mandatory startup reading.
 
 Before state-writing preflight, host probes or candidate preparation, establish
 the selected executor's availability using read-only evidence. Policy mode and
@@ -60,6 +66,11 @@ the budget. Human-directed, maintenance and delivery runs declare their actual
 attention class but do not move the scheduled cursor.
 
 ## Roles
+
+Before launching an autonomous specialist, apply the effective-permission check
+in `automation/agents/README.md` (`Current mode`). A configured profile alone
+does not prove its runtime restrictions. Missing or broader effective permissions
+block that specialist launch; preserve independent authorized local work.
 
 The root session is the **director** and owns the final decision. Delegate only
 bounded work:
@@ -165,8 +176,9 @@ Only when `mode=active` and `allowLocalDiff=true`:
 2. Create one isolated worktree from the reviewed base.
 3. In the director's control worktree, create one immutable claim marker
    following `.coordination/README.md`, then register it once with
-   `operations.mjs register` before editing. Never add that marker to the
-   candidate branch or PR.
+   `operations.mjs register` before editing. The director then transitions its
+   claim from `reservado` to `en_curso` and verifies success before invoking
+   the builder. Never add that marker to the candidate branch or PR.
 4. Acquire the shared lease with `automation/agents/lease.mjs`.
 5. Capture `node automation/agents/runtime.mjs exec -- npm run check:activation -- --json`. Exit 1 is an expected NO-GO;
    only exit 0 or 1 with valid JSON is acceptable.
@@ -199,6 +211,14 @@ before/after activation reports and independent review.
 ### 7. Validate deterministically
 
 Before review:
+
+When acceptance depends on appearance or browser interaction, put the affected
+route, viewport, state and expected behavior in the manifest's acceptance checks.
+The controller inspects the rendered result and relevant browser errors and
+supplies that evidence to the auditor. A screenshot file alone is not visual
+verification. Reuse relevant current evidence; if inspection is unavailable,
+keep that criterion pending and report the blocker. Do not add visual checks to
+changes whose acceptance does not depend on the rendered UI.
 
 Classify required checks by execution environment before implementation. Local
 checks run with the pinned runtime; the dependency security audit requires an
@@ -251,8 +271,11 @@ visible as unresolved warnings until their own evidence exists.
 
 ### 8. Audit
 
-Invoke `auditor` with the manifest, diff, before/after activation reports and
-check results. Validate its returned text with
+The controller refreshes preflight before review and supplies its snapshot for
+the candidate checkout and base SHA. Read-only specialists must not refresh the
+private registry themselves; they independently verify Git and runtime identity.
+Invoke `auditor` with that snapshot, the manifest, diff, before/after activation
+reports and check results. Validate its returned text with
 `automation/agents/contracts.mjs` and require its runtime fingerprint to match
 the manifest, scout and builder exactly. A veto ends a scheduled run. For a
 human-directed repair, actionable in-scope findings return to the builder within

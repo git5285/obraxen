@@ -19,9 +19,13 @@ handoffs y claims cerrados son historial, no lectura obligatoria de arranque.
    sistema con worktrees, leases o concurrencia que deba reconciliarse.
 2. **Reservar:** crea `.coordination/claims/<thread-id>.md` antes de editar y
    registralo una vez con `operations.mjs register`.
-3. **Negociar:** si hay solape, envia un mensaje al propietario. Hasta que haya
-   acuerdo, el archivo queda bloqueado para la tarea nueva.
-4. **Trabajar:** limita cambios al alcance reservado; conserva trabajo ajeno.
+3. **Negociar:** si hay solape, identifica al propietario y la entrega o
+   transferencia necesaria. Contacta al propietario solo por un canal ya
+   autorizado; en otro caso, informa al usuario. El archivo permanece bloqueado
+   hasta una resolución válida.
+4. **Trabajar:** antes de la primera edición, registra la transición de tu claim
+   de `reservado` a `en_curso` y comprueba que terminó correctamente. Limita los
+   cambios al alcance reservado; conserva trabajo ajeno.
 5. **Publicar estado:** añade una transicion inmutable con
    `operations.mjs transition`; no modifiques el marcador registrado.
 6. **Entregar:** crea `.coordination/handoffs/<thread-id>.md` cuando existan
@@ -43,7 +47,7 @@ manifiesto antes y despues de la intervencion.
 - estado: reservado
 - objetivo: <una frase>
 - archivos:
-  - <ruta exacta o glob acotado>
+  - <ruta exacta; sin comodines para claims nuevas>
 - cambios_ajenos_detectados: <si/no y detalle>
 - consumidores: <otros chats afectados>
 - siguiente_paso: <una frase>
@@ -72,11 +76,23 @@ node automation/agents/operations.mjs register \
 
 node automation/agents/operations.mjs transition \
   --thread-id <thread-id> \
-  --event-id <id-unico> \
+  --event-id <id-inicio-unico> \
+  --occurred-at <fecha-utc> \
+  --state en_curso \
+  --reason work_started
+
+node automation/agents/operations.mjs transition \
+  --thread-id <thread-id> \
+  --event-id <id-revision-unico> \
   --occurred-at <fecha-utc> \
   --state esperando_revision \
   --reason candidate_ready
 ```
+
+El registro conserva el estado inicial `reservado`; no empieza el trabajo.
+El recorrido de una candidata es `reservado -> en_curso -> esperando_revision`.
+El salto directo `reservado -> esperando_revision` es inválido. Una tarea
+bloqueada puede pasar a `bloqueado`; no se fuerza una transición para cerrar.
 
 Una transicion a `liberado` exige `--evidence-file` con referencias tipadas:
 reconciliacion terminal, PR fusionada, informe `no_op`, handoff por checksum o
@@ -119,9 +135,8 @@ contigua y exacta de `commit_candidate`, `push_branch` y
 una vigencia maxima de 24 horas.
 
 Al preparar esta decisión, ofrece como item opcional separado la auditoría de
-dependencias. Presenta la orden exacta `npm audit --audit-level=moderate
---package-lock-only --ignore-scripts --include=dev --include=optional --include=peer`,
-con `npm_config_registry=https://registry.npmjs.org`, el
+dependencias. Presenta la orden exacta `npm audit --omit=dev --audit-level=moderate
+--package-lock-only --ignore-scripts`, con `npm_config_registry=https://registry.npmjs.org`, el
 repositorio, candidata, SHA-256 de package-lock.json, entorno controlador, registry
 y caducidad. Explica que envía información de dependencias al registry, sin
 instalar paquetes ni modificar datos remotos del proyecto. Registra la aprobación

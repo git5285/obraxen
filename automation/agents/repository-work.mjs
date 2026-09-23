@@ -11,10 +11,11 @@ import { loadPolicy } from "./policy.mjs";
 import { validateDiff } from "./diff-policy.mjs";
 import { validateActivationReport } from "./activation-policy.mjs";
 import { validateScoutOutput } from "./contracts.mjs";
+import { readOperationalClaims } from "./operations.mjs";
 
-// Deliberate source-level release gate. No environment/CLI/manifest override.
-// Enabling requires a separate reviewed owner change, not this implementation.
-export const REPOSITORY_EXECUTION_ENABLED = false;
+// Deliberate source-level release gate. The executor remains local-only: every
+// invocation must also bind an active claim, lease and immutable human decision.
+export const REPOSITORY_EXECUTION_ENABLED = true;
 export const REPOSITORY_ORIGIN = "https://github.com/git5285/obraxen.git";
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const roles = new Set(["builder", "auditor"]);
@@ -24,6 +25,7 @@ const git = (root, args) => execFileSync("git", ["-c", "core.fsmonitor=false", .
 }).trim();
 const same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 const outside = (root, path) => { const p = relative(root, path); return p === ".." || p.startsWith("../"); };
+const decisionId = (value) => typeof value === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{2,180}$/.test(value);
 
 export function repositoryPath(root, path, missing = false) {
   assert(typeof path === "string" && /^[A-Za-z0-9_.-][A-Za-z0-9_.\/[\]-]*$/.test(path)
@@ -47,6 +49,8 @@ export function validateRepositoryManifest(m, policy = loadPolicy()) {
     assert(typeof m[key] === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{2,180}$/.test(m[key]), "invalid_repository_identity");
   assert(/^[a-f0-9]{40}$/.test(m.baseSha), "invalid_repository_base");
   assert(m.trigger === "human_request" && m.parentRunId === null, "manual_candidate_only");
+  assert(m.humanDecision && Object.keys(m.humanDecision).length === 1 && decisionId(m.humanDecision.decisionId),
+    "repository_human_decision_required");
   for (const key of ["runtimeFingerprint", "controllerRuntimeFingerprint", "claimDigest", "hookDigest"])
     assert(sha.test(m[key]), "invalid_repository_digest");
   for (const key of ["controlRoot", "worktree", "stateHome", "evidenceRoot"])
@@ -56,6 +60,17 @@ export function validateRepositoryManifest(m, policy = loadPolicy()) {
   const expectedState = resolve(policy.coordination.stateHome.replace(/^~(?=\/|$)/, homedir()));
   assert(m.stateHome === realpathSync(expectedState), "repository_shared_state_mismatch");
   assert(m.hookPath === fileURLToPath(import.meta.url) && outside(m.worktree, m.hookPath), "repository_hook_source");
+  assert(m.hookDispatcherPath === resolve(sourceRoot, ".codex/hooks/pre-tool-policy.mjs")
+    && outside(m.worktree, m.hookDispatcherPath) && sha.test(m.hookDispatcherDigest)
+    && digest(readFileSync(m.hookDispatcherPath)) === m.hookDispatcherDigest, "repository_hook_dispatcher_changed");
+  assert(m.hookConfigPath === resolve(sourceRoot, ".codex/hooks.json")
+    && outside(m.worktree, m.hookConfigPath) && sha.test(m.hookConfigDigest)
+    && digest(readFileSync(m.hookConfigPath)) === m.hookConfigDigest, "repository_hook_config_changed");
+  assert(m.hookCommand === "node .codex/hooks/pre-tool-policy.mjs", "repository_hook_command");
+  const configuredHook = JSON.parse(readFileSync(m.hookConfigPath, "utf8"))?.hooks?.PreToolUse
+    ?.flatMap((entry) => entry?.hooks ?? [])
+    .find((entry) => entry?.type === "command" && entry.command === m.hookCommand);
+  assert(configuredHook?.timeout === 5, "repository_hook_not_configured");
   assert(git(m.controlRoot, ["remote", "get-url", "origin"]) === REPOSITORY_ORIGIN
     && git(m.worktree, ["remote", "get-url", "origin"]) === REPOSITORY_ORIGIN, "repository_origin_mismatch");
   assert(git(m.worktree, ["rev-parse", "--path-format=absolute", "--git-common-dir"])
@@ -100,7 +115,11 @@ export function validateRepositoryManifest(m, policy = loadPolicy()) {
     assert(roles.has(c.role) && ["read", "check"].includes(c.kind), "repository_command_role");
     assert(c.executable === process.execPath && isAbsolute(c.script) && outside(m.worktree, c.script)
       && realpathSync(c.script) === c.script && sha.test(c.digest), "repository_check_location");
-    assert(/^'[A-Za-z0-9_./ -]+' '[A-Za-z0-9_./ -]+'$/.test(c.command)
+    // The equality below is the security boundary: it binds the received
+    // command to the measured executable and immutable script. Do not restrict
+    // otherwise-valid absolute paths to a hand-maintained character allowlist;
+    // package-manager paths commonly include characters such as `@`.
+    assert(/^'[^'\r\n]+' '[^'\r\n]+'$/.test(c.command)
       && c.command === `'${c.executable}' '${c.script}'`, "repository_command_shape");
     assert(digest(readFileSync(c.script)) === c.digest, "repository_check_changed");
   }
@@ -125,6 +144,8 @@ export function assertRepositorySnapshot(m, snapshot, now = Date.now()) {
   const own = snapshot.operationalClaims.find((c) => c.threadId === m.threadId);
   assert(own?.state === "en_curso" && own.claim.source === m.claimPath && own.claim.contentDigest === m.claimDigest
     && same(own.claim.files, m.allowedPaths), "repository_claim_mismatch");
+  assert(own.latestEvidence?.some((item) => item.kind === "human_decision"
+    && item.decisionId === m.humanDecision.decisionId), "repository_human_decision_mismatch");
   assert(snapshot.activeClaims[0].threadId === m.threadId && same(snapshot.activeClaims[0].files, m.allowedPaths), "repository_observed_claim_mismatch");
   const lease = snapshot.lease;
   assert(lease && lease.token === m.leaseToken && lease.runId === m.runId && lease.baseSha === m.baseSha
@@ -140,6 +161,10 @@ export function assertRepositoryOwnership(m) {
   assert(controllerRuntime.ok && controllerRuntime.fingerprint === m.controllerRuntimeFingerprint, "repository_controller_runtime_changed");
   assert(git(m.worktree, ["rev-parse", "HEAD"]) === m.baseSha, "repository_candidate_base_changed");
   const snapshot = buildPreflight(m.controlRoot, policy, { stateHome: m.stateHome, runtime });
+  const operational = readOperationalClaims(m.controlRoot, m.stateHome);
+  assert(operational.some((claim) => claim.threadId === m.threadId
+    && claim.latestEvidence?.some((item) => item.kind === "human_decision"
+      && item.decisionId === m.humanDecision.decisionId)), "repository_human_decision_mismatch");
   assertRepositorySnapshot(m, snapshot);
   if (m.phase !== "discovery") assert(digest(readFileSync(resolve(m.controlRoot, m.claimPath))) === m.claimDigest, "repository_claim_changed");
   return snapshot;
@@ -174,28 +199,35 @@ export function evaluateRepositoryTool(input, role, m, verify = assertRepository
   return true;
 }
 
-// Not installed in .codex/hooks.json. Even direct invocation is deny-only until
-// a separately reviewed release changes the source-level gate above.
-function main() {
+export function repositoryHookOutput(input, environment = process.env, {
+  validate = validateRepositoryManifest,
+  verify = assertRepositoryOwnership,
+} = {}) {
   let receipt;
   try {
     assert(REPOSITORY_EXECUTION_ENABLED, "repository_execution_disabled");
-    assert(process.env.OBRAXEN_ISOLATED_MODE === "repository", "repository_mode_required");
-    const path = process.env.OBRAXEN_WORK_MANIFEST;
+    assert(environment.OBRAXEN_ISOLATED_MODE === "repository", "repository_mode_required");
+    const path = environment.OBRAXEN_WORK_MANIFEST;
     assert(isAbsolute(path), "repository_binding_required");
     const raw = readFileSync(path);
-    assert(digest(raw) === process.env.OBRAXEN_WORK_MANIFEST_DIGEST, "repository_binding_changed");
+    assert(digest(raw) === environment.OBRAXEN_WORK_MANIFEST_DIGEST, "repository_binding_changed");
     const m = JSON.parse(raw);
     assert(outside(m.worktree, path), "writable_repository_manifest");
-    const input = JSON.parse(readFileSync(0, "utf8"));
     assert(typeof input.tool_use_id === "string" && typeof input.turn_id === "string", "repository_call_identity");
-    const role = process.env.OBRAXEN_ISOLATED_ROLE;
-    evaluateRepositoryTool(input, role, m);
+    validate(m);
+    const role = environment.OBRAXEN_ISOLATED_ROLE;
+    evaluateRepositoryTool(input, role, m, verify);
     receipt = {callId:input.tool_use_id,turnId:input.turn_id,role,tool:input.tool_name,inputDigest:digest(JSON.stringify(input.tool_input)),
       ...(input.tool_name === "apply_patch" ? {paths:inspectRepositoryPatch(typeof input.tool_input === "string" ? input.tool_input : input.tool_input.command,m)}
         : {command:input.tool_input.command ?? input.tool_input.cmd})};
   } catch { /* No private state, payload or credentials in diagnostics. */ }
-  process.stdout.write(JSON.stringify({hookSpecificOutput:{hookEventName:"PreToolUse",
-    ...(receipt ? {additionalContext:`OBRAXEN_RECEIPT:${JSON.stringify(receipt)}`} : {permissionDecision:"deny",permissionDecisionReason:"Obraxen repository executor is disabled or its evidence is invalid."})}})+"\n");
+  return {hookSpecificOutput:{hookEventName:"PreToolUse",
+    ...(receipt ? {additionalContext:`OBRAXEN_RECEIPT:${JSON.stringify(receipt)}`} : {permissionDecision:"deny",permissionDecisionReason:"Obraxen repository executor is disabled or its evidence is invalid."})}};
+}
+
+function main() {
+  let input;
+  try { input = JSON.parse(readFileSync(0, "utf8")); } catch { input = null; }
+  process.stdout.write(`${JSON.stringify(repositoryHookOutput(input))}\n`);
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

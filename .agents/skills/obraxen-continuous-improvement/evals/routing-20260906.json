@@ -41,7 +41,17 @@
     {
       "id": "website-improvement",
       "prompt": "Mejora la accesibilidad de la web de Obraxen; implementa una mejora comprobada.",
-      "assertions": ["Uses the complete bounded website improvement cycle", "Requires runtime, ownership, lease and writer gates", "Retains full validation and independent audit", "Grants no publication or delivery authority"]
+      "assertions": ["Uses the applicable accessibility workflow and repository coordination without starting an autonomous cycle", "Claims only the exact edited paths and preserves other candidates", "Runs validation proportional to the scoped change", "Grants no publication or delivery authority"]
+    },
+    {
+      "id": "explicit-agent-cycle",
+      "prompt": "Ejecuta un ciclo completo y acotado de mejora continua de Obraxen. Un no-op valido es aceptable.",
+      "assertions": ["Uses the complete bounded improvement cycle", "Requires runtime, ownership, lease and writer gates", "Retains full validation and independent audit", "Grants no publication or delivery authority"]
+    },
+    {
+      "id": "ambiguous-review-target",
+      "prompt": "Abre el prototipo correcto. Dos worktrees distintos coinciden por completo con las claims activas y no hay seleccion humana registrada.",
+      "assertions": ["Does not guess which worktree is canonical", "Does not reuse a server whose working directory is unverified", "Requests one bounded target selection", "Makes no scheduling or external change"]
     }
   ]
 }
