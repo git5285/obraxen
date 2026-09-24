@@ -52,7 +52,7 @@ de calidad, pero sus fuentes HTML, JS y assets siguen incluidas.
 ## Equivalencia y comprobaciones
 
 `npm run test:published -- --compare-production` compara las rutas `/`, `/en` y
-`/de`, todos los recursos publicados recuperados y seis vistas (tres idiomas
+`/de`, todos los recursos públicos actuales de la candidata y seis vistas (tres idiomas
 en 1440×1000 y 390×844). Comprueba el HTML servido, contenido renderizado,
 geometría y estilo de elementos principales, enlaces, imágenes y capturas.
 Para hacer reproducibles las capturas se cargan las imágenes y se pausa el
@@ -64,6 +64,14 @@ correo, cambio de idioma y desplegables legales. Nunca se pulsa el enlace que
 abre el correo ni se envían consultas. Los errores de consola y solicitudes
 fallidas se recogen desde antes de navegar. Los resultados se guardan en
 `test-results/published-home/`; una comparación exacta fallida no acredita paridad.
+
+Desde la separación de evidencias, la paridad usa el inventario actual,
+no los hashes de la recuperación. Los archivos nuevos también se comprueban.
+La integridad histórica se verifica por separado y sin red:
+`npm run check:home:recovery -- --recovery-root=/ruta/absoluta/a/original`.
+Ese comando valida los 74 archivos contra SHA-256, tamaño y UID SHA-1, sin
+modificar el inventario. La comparación con una web remota requiere su permiso;
+el chequeo local ordinario no consulta producción.
 
 La ruta `/en` traduce su HTML inicial español mediante JavaScript: un GET de
 texto no representa el idioma final que ve el visitante. Esta recuperación
@@ -119,6 +127,12 @@ El contacto está separado en `public/assets/home-contact.js`; la traducción
 comprueba ausencias y admite claves estables y posiciones expresadas como rangos.
 Estos cambios locales son posteriores a la recuperación exacta: no alteran
 su inventario ni sus hashes y no acreditan una nueva equivalencia con producción.
+
+La preparación local está versionada en `scripts/prepare-home-candidate.mjs`;
+ya no depende de reconstruir una receta guardada en `.vercel/`. El resultado
+distingue inputs confirmados en Git y worktree, e incluye solo la Home y las
+herramientas mínimas para construirla. No importa legado, secretos ni asociación
+de proyecto Vercel, y no crea por sí mismo una URL o un deployment.
 
 Se conserva lo publicado, incluidos textos, identidad, teléfono y correo,
 noindex, enlace mailto y páginas interiores ocultas. No se modifican ni se

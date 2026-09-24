@@ -297,19 +297,36 @@ describe("autonomous-agent policy", () => {
     expect(result.violations).toContain("policy does not authorize local diffs");
   });
 
-  it("enforces dependency authority independently from the protected path list", () => {
+  it.each(["package.json", "apps/public-site/package.json", "apps/another/package-lock.json",
+    "tools/example/pnpm-lock.yaml", "tools/example/yarn.lock", "tools/example/npm-shrinkwrap.json",
+  ])("enforces dependency authority independently from protected paths: %s", (path) => {
     const policy = activePolicy();
-    policy.protectedPaths = policy.protectedPaths.filter((path) => !path.startsWith("package"));
+    policy.protectedPaths = [];
     const result = validateDiff({
-      changedPaths: ["package.json"],
-      allowedPaths: ["package.json"],
+      changedPaths: [path],
+      allowedPaths: [path],
       addedLines: 1,
       deletedLines: 1,
     }, policy);
-    expect(result.violations).toContain("package.json changes dependencies without authority");
+    expect(result.violations).toContain(`${path} changes dependencies without authority`);
+  });
+
+  it.each(["apps/public-site/public/index.html", "apps/public-site/public/assets/home-i18n.js",
+    "apps/public-site/public/assets/new-image.webp",
+  ])("retains ordinary editorial scope: %s", path => {
+    expect(validateDiff({changedPaths: [path], allowedPaths: [path], addedLines: 1, deletedLines: 1}, activePolicy()).ok).toBe(true);
   });
 
   it.each([
+    "apps/public-site/next.config.mjs",
+    "apps/public-site/app/en/route.js",
+    "apps/public-site/generate-route-content.mjs",
+    "apps/public-site/public/assets/home-contact.js",
+    "scripts/home-contract.mjs",
+    "scripts/public-site-evidence.mjs",
+    "scripts/prepare-home-candidate.mjs",
+    "scripts/verify-public-site.mjs",
+    "docs/published-site-source.json",
     ".gitattributes",
     ".gitignore",
     ".npmrc",

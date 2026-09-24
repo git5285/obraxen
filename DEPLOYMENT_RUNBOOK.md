@@ -1,15 +1,57 @@
 # Runbook de cutover y publicación
 
-Este documento describe exclusivamente el proceso técnico para construir,
-auditar, publicar y revertir una candidata. No mantiene el estado de identidad,
-legal, proveedor, idiomas o casos: ese inventario vive en
-`ACTIVATION_INPUTS.md` y la decisión ejecutable procede de
-`npm run check:activation`.
+Este documento separa dos aplicaciones Next.js y su entrega. La Home actual
+vive en `apps/public-site/`; `src/` conserva el legado. La automatización de
+`automation/agents/` prepara y verifica trabajo, pero no es una aplicación pública.
+No hay que unificar esos árboles para preparar una candidata.
 
-El runbook no autoriza preview, despliegue, dominio, indexación, analítica ni
-formulario. Next.js es la única implementación. El bootstrap `production`
-autorizado dejó un deployment fallido y requiere un reintento verificable antes
-de poder auditar una URL candidata; no hay un deployment operativo que revertir.
+El runbook no autoriza preview, despliegue, dominio, indexación, analítica,
+formulario ni rollback. El estado remoto debe comprobarse con evidencia fechada
+cuando se autorice esa inspección; este documento no afirma cuál es el deployment
+activo ni qué rollback está disponible.
+
+## A. Home: preparación local y frontera de entrega
+
+1. Trabajar en `apps/public-site/`, revisar `HOMEPAGE.md` y reservar las rutas
+   exactas antes de editar. Conservar el legado y sus banderas.
+2. Ejecutar `npm run check:home`. El build comprueba el contrato Home y el
+   navegador verifica seis vistas, contacto sin envío y rutas excluidas.
+3. Ejecutar `npm run prepare:home -- --output=/ruta/nueva/fuera-del-checkout`.
+   La receta exporta entradas inventariadas, construye solo Home y verifica
+   rutas/cuerpos. No descarga, conecta servicios ni publica. Con cambios pendientes,
+   `--allow-worktree` produce evidencia local con `exactCommit: null`.
+4. Revisar `home-candidate.json`: inputs/hashes, SHA base, estado local, salida,
+   runtime, rutas y exclusiones. Comparar los assets actuales, no los originales
+   recuperados. La recuperación tiene su propio `check:home:recovery`.
+5. Antes de una entrega Git, obtener su autorización exacta y ejecutar el gate
+   completo, incluida seguridad con permiso para consultar el registry. No
+   sustituir ese gate por `check:home`. Solo el SHA revisado y su CI verde pueden
+   avanzar por el flujo de `AGENTS.md`.
+6. Antes de crear o publicar una candidata remota, obtener aprobación específica
+   para acción, SHA, proyecto, entorno, dominio y acceso. Verificar raíz/build y
+   asociación de proyecto sin copiar secretos a las fuentes. La receta produce
+   `apps/public-site/.next`, no Vercel Build Output: no usarla directamente con
+   `deploy --prebuilt`. La construcción de plataforma y su auditoría son pasos
+   posteriores autorizados.
+7. Auditar únicamente `/`, `/en`, `/de` y sus recursos, con APIs/legado/rutas
+   interiores excluidas, noindex y contacto mailto. Una aprobación Home limitada
+   no autoriza APIs, Resend, analítica, indexación, idiomas del legado, cambios de
+   protección global ni una candidata distinta.
+8. Si procede publicar, registrar el deployment anterior como referencia y
+   comprobar el alias real después. Un build listo no prueba que el dominio
+   cambió. Cualquier rollback necesita su autorización; no se ejecuta por inferencia.
+
+El gate `check:activation` evalúa el legado y sigue siendo obligatorio en su
+flujo. Una excepción humana Home debe estar documentada para la candidata exacta;
+no se obtiene poniendo sus banderas en verde ni cambiando datos legales.
+La receta local no presupone que exista una excepción vigente.
+
+## B. Legado: activación, preview y publicación
+
+Los apartados siguientes son del legado en `src/`, con cuatro idiomas y APIs.
+Usar `build:legacy` y las entradas `*:legacy` cuando corresponda, no el build
+raíz de Home. El inventario de identidad, legal, proveedor, idiomas y casos vive
+en `ACTIVATION_INPUTS.md`; `npm run check:activation` produce su decisión.
 
 ## 1. Condiciones de entrada
 

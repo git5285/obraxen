@@ -2,7 +2,7 @@
 (() => {
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const enquiryForm = document.getElementById('enquiry-form');
-const translateCopy = value => window.obraxenI18n?.translate(value) ?? value;
+const message = (key, params) => window.obraxenI18n.message(key, params);
 const enquiryButton = document.getElementById('enquiry-review');
 const enquiryStatus = document.getElementById('enquiry-status');
 const enquiryFields = [...enquiryForm.querySelectorAll('input, textarea')];
@@ -11,19 +11,19 @@ const enquiryDestination = enquiryChannel?.getAttribute('href')?.replace(/^mailt
 enquiryButton.disabled = false;
 function fieldMessage(field) {
  const value = field.value.trim();
- if (!value && field.required) return translateCopy({
-  'enquiry-name':'Indica tu nombre.',
-  'enquiry-contact':'Indica un correo electrónico o un teléfono.',
-  'enquiry-message':'Describe qué necesita tu pavimento.'
- }[field.id] || 'Completa este campo.');
- if (field.maxLength > 0 && value.length > field.maxLength) return translateCopy('Utiliza como máximo ') + field.maxLength + translateCopy(' caracteres.');
+ if (!value && field.required) return message({
+  'enquiry-name':'contact.required.name',
+  'enquiry-contact':'contact.required.contact',
+  'enquiry-message':'contact.required.message'
+ }[field.id] || 'contact.required.field');
+ if (field.maxLength > 0 && value.length > field.maxLength) return message('contact.maxLength', { count: field.maxLength });
  if (value && field.id === 'enquiry-contact') {
   const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const digits = value.replace(/\D/g, '');
   const phone = /^\+?[\d\s().-]+$/.test(value) && digits.length >= 7 && digits.length <= 15;
-  if (!email && !phone) return translateCopy('Introduce un correo válido o un teléfono con prefijo si es internacional.');
+  if (!email && !phone) return message('contact.invalidContact');
  }
- if (value && field.minLength > 0 && value.length < field.minLength) return translateCopy('Escribe al menos ') + field.minLength + translateCopy(' caracteres.');
+ if (value && field.minLength > 0 && value.length < field.minLength) return message('contact.minLength', { count: field.minLength });
  return '';
 }
 function showFieldError(field) {
@@ -38,10 +38,10 @@ function clearEnquiryStatus() {
  enquiryStatus.replaceChildren();
  enquiryStatus.hidden = true;
 }
-function setEnquiryStatus(message, channel) {
+function setEnquiryStatus(text, channel) {
  enquiryStatus.replaceChildren();
  const copy = document.createElement('p');
- copy.textContent = message;
+ copy.textContent = text;
  enquiryStatus.append(copy);
  if (channel?.href) {
   const link = document.createElement('a');
@@ -51,7 +51,7 @@ function setEnquiryStatus(message, channel) {
   enquiryStatus.append(link);
   const note = document.createElement('span');
   note.className = 'enquiry-channel-note';
-  note.textContent = translateCopy('Se abrirá tu aplicación de correo. El envío requiere tu confirmación.');
+  note.textContent = message('contact.confirmation');
   enquiryStatus.append(note);
  }
  enquiryStatus.hidden = false;
@@ -67,20 +67,20 @@ function reviewEnquiry() {
  enquiryFields.forEach(showFieldError);
  const invalid = enquiryFields.find(field => fieldMessage(field));
  if (invalid) {
-  setEnquiryStatus(translateCopy('Revisa los campos indicados. La consulta todavía no se ha preparado.'));
+  setEnquiryStatus(message('contact.review'));
   invalid.focus();
   return;
  }
  if (!enquiryDestination) {
-  setEnquiryStatus(translateCopy('La consulta está validada, pero el canal de recepción aún no está configurado.'));
+  setEnquiryStatus(message('contact.unconfigured'));
   enquiryStatus.focus();
   return;
  }
  const context = enquiryContext.hidden ? '' : '\n\n' + enquiryContext.textContent;
- const subject = translateCopy('Consulta sobre pavimento');
- const body = [translateCopy('Nombre: ') + document.getElementById('enquiry-name').value.trim(), translateCopy('Contacto: ') + document.getElementById('enquiry-contact').value.trim(), '', document.getElementById('enquiry-message').value.trim() + context].join('\n');
+ const subject = message('contact.subject');
+ const body = [message('contact.nameLabel') + document.getElementById('enquiry-name').value.trim(), message('contact.contactLabel') + document.getElementById('enquiry-contact').value.trim(), '', document.getElementById('enquiry-message').value.trim() + context].join('\n');
  const href = 'mailto:' + enquiryDestination + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
- setEnquiryStatus(translateCopy('Consulta preparada. Revisa el contenido y decide si quieres enviarla.'), {href, label:translateCopy('Abrir borrador de correo')});
+ setEnquiryStatus(message('contact.prepared'), {href, label:message('contact.open')});
  enquiryStatus.focus();
 }
 enquiryForm.addEventListener('submit', event => { event.preventDefault(); reviewEnquiry(); });
@@ -93,7 +93,7 @@ const enquiryContextClear = document.getElementById('enquiry-context-clear');
 enquiryContextClear.addEventListener('click',()=>{
  enquiryContext.hidden=true;enquiryContext.textContent='';
  enquiryContextClear.hidden=true;enquiryMessage.placeholder='';
- setEnquiryStatus(translateCopy('Selección eliminada. El texto de tu consulta se conserva.'));
+ setEnquiryStatus(message('contact.cleared'));
  enquiryMessage.focus({preventScroll:true});
 });
 function setEnquiryContext(label,placeholder) {
@@ -103,18 +103,10 @@ function setEnquiryContext(label,placeholder) {
  enquiryMessage.placeholder=placeholder;
  clearEnquiryStatus();
 }
-const sectorPrompts = {
- logistica:'Describe juntas, fisuras o desgaste en zonas de carga y paso de carretillas.',
- industria:'Describe el daño y el uso de la zona: maquinaria, circulación o almacenamiento.',
- automocion:'Describe el estado del suelo en la zona de trabajo o paso de vehículos.',
- distribucion:'Describe el daño en pasillos, zonas de reposición o carga de mercancías.',
- alimentacion:'Describe el daño y si la zona está expuesta a humedad o limpieza frecuente.',
- aparcamientos:'Describe daños en plazas, rampas o zonas de circulación.'
-};
 document.querySelectorAll('.sector-card').forEach(link => link.addEventListener('click', () => {
  const panel=link.closest('.sector-panel');
  const sector=panel.id.replace('panel-','');
- setEnquiryContext(translateCopy('Sector: ')+panel.querySelector('h3').textContent+'.',translateCopy(sectorPrompts[sector] || ''));
+ setEnquiryContext(message('contact.sector', { name: panel.querySelector('h3').textContent }), message('contact.prompt.' + sector));
 }));
 
 /* Native dialog provides focus containment and Escape dismissal. */
@@ -138,7 +130,7 @@ repairMenu.addEventListener('click', event => {
 repairMenu.querySelectorAll('[data-repair]').forEach(option => option.addEventListener('click', () => {
  repairSelectionMade=true;
  repairMenu.close();
- setEnquiryContext(translateCopy('Necesidad: ')+option.dataset.repair+'.',translateCopy('Cuéntanos qué observas, en qué zona ocurre y cómo se utiliza ese espacio.'));
+ setEnquiryContext(message('contact.need', { name: option.dataset.repair }), message('contact.prompt.repair'));
  document.getElementById('contact').scrollIntoView({behavior:reducedMotion.matches ? 'instant' : 'smooth',block:'start'});
  document.getElementById('enquiry-name').focus({preventScroll:true});
 }));

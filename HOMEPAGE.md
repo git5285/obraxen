@@ -38,7 +38,8 @@ para ver el resultado. No es necesario editar el módulo generado.
   las tres rutas originales de Next.js.
 - `generate-route-content.mjs`: empaqueta el HTML canónico antes del desarrollo
   o build. `app/generated-home-html.js` es generado e ignorado por Git; no editarlo.
-- `docs/published-site-source.json`: despliegue de origen y hashes de las fuentes.
+- `docs/published-site-source.json`: despliegue de recuperación y hashes históricos,
+  no el inventario vigente ni una prueba del estado publicado hoy.
 
 Las rutas son `/` (español), `/en` (inglés) y `/de` (alemán); las barras finales
 redirigen como en el despliegue. El HTML inicial es español y el script aplica
@@ -57,13 +58,14 @@ como consecuencia implícita de esta recuperación.
 idiomas, imágenes, navegación, vídeo, carrusel, sectores, diálogo, borrador de
 correo y textos legales. No contacta producción ni envía correos.
 
-La comparación explícita con producción se ejecuta con:
+Solo con autorización para esa lectura remota, la comparación explícita con producción se ejecuta con:
 
 ```sh
 npm run test:published -- --compare-production
 ```
 
-Esta variante lee la web pública y compara HTML, assets, contenido renderizado,
+Esta variante lee la web pública y compara HTML, todos los archivos públicos de
+la candidata actual (incluidos los nuevos), contenido renderizado,
 geometría y capturas. Los informes y PNG se generan en
 `test-results/published-home/`. La comparación exige equivalencia exacta con
 la referencia; una mejora deliberada futura deberá revisarse como diferencia.
@@ -78,6 +80,20 @@ La incidencia de foco de la recuperación está corregida en la fuente local.
 Los hashes originales siguen siendo evidencia histórica, no una excepción
 para admitir errores. `--compare-production` conserva su exigencia de igualdad
 exacta y detectará las diferencias deliberadas mientras producción no cambie.
+No compara los assets actuales con los hashes históricos. Para una URL candidata
+explícita existe `--compare-url=<origen>`; exige la autorización remota aplicable,
+salvo cuando ambas direcciones son servidores locales. El informe distingue
+`recoverySourceDeploymentId` de `comparisonDestination`: no infiere qué deployment
+sirve un alias.
+
+La integridad de la recuperación original es otra comprobación, solo local:
+
+```sh
+npm run check:home:recovery -- --recovery-root=/ruta/absoluta/a/original
+```
+
+Si esa copia no está disponible, la comprobación histórica queda pendiente;
+no se sustituye por la fuente mantenida ni se actualiza el inventario original.
 
 ## Mantener traducciones
 
@@ -90,7 +106,66 @@ Al editar esas zonas, actualizar las traducciones o introducir una clave estable
 `test:published` falla si la lista no está vacía. Los nombres propios e
 identificadores invariables se enumeran explícitamente, no mediante una exclusión
 genérica de textos desconocidos. `npm run test:home` comprueba el traductor,
-las claves del HTML y los rangos de carruseles.
+las claves del HTML y los rangos de carruseles. Los mensajes de contacto usan
+`message("contact.…", { count, name })`: las traducciones y sus parámetros
+pertenecen al catálogo de claves, no a concatenaciones de frases en el formulario.
+El observador audita nodos añadidos, cambios de texto y atributos; reconoce las
+salidas traducidas conocidas para no denunciarlas como ausencias.
+
+## Tres recorridos de mantenimiento
+
+1. **Contenido:** editar `public/index.html` o el asset correspondiente. Para
+   una zona con `data-i18n`, mantener su clave y revisar las variantes EN/DE en
+   el catálogo; para una zona aún exact-text, actualizar su correspondencia o
+   migrar solo esa zona. Ejecutar `check:home`; no tocar el módulo generado.
+2. **Interacción:** contacto en `home-contact.js`; textos en las claves
+   `contact.*` de `home-i18n.js`; navegación/vídeo/carruseles en el HTML.
+   Añadir regresión al traductor o al recorrido de `verify-public-site.mjs`,
+   según el comportamiento. Conservar foco, teclado, borrador sin envío y texto
+   del visitante. Un cambio de API, almacenamiento o activación es otro alcance.
+3. **Candidata local:** ejecutar la receta siguiente después de comprobar Home.
+   No copiar manualmente el repositorio ni usar el árbol `src/` como entrada.
+
+## Preparar una candidata Home sin publicar
+
+```sh
+npm run prepare:home -- --output=/ruta/absoluta/nueva/fuera-del-checkout
+# Para evidencia local de cambios todavía sin commit:
+npm run prepare:home -- --output=/ruta/absoluta/nueva/local --allow-worktree
+```
+
+El directorio padre debe existir; el destino no debe existir. La receta nunca
+sobrescribe ni elimina archivos. Requiere el runtime y las dependencias locales
+fijadas; no instala, no descarga LFS ni ejecuta comandos Vercel. Copia las fuentes
+canónicas, las herramientas mínimas y las dependencias existentes para construir
+desde cero, sin reutilizar `.next`. Rechaza enlaces simbólicos en fuentes y
+punteros LFS sin resolver.
+
+`home-candidate.json` registra inputs/hashes, SHA base, estado local, fingerprint
+del runtime, rutas y resultado. Solo atribuye un `exactCommit` si el checkout y
+sus inputs coinciden con Git. `--allow-worktree` no convierte cambios pendientes
+en un commit ni en una publicación. `--source-only` prepara fuentes sin build y
+lo declara como tal, nunca como comprobación aprobada.
+
+El build se limita a `/`, `/en`, `/de` y verifica que sus cuerpos corresponden
+al HTML canónico. Se excluyen legado, datos internos, coordinación, configuración
+de proyecto Vercel y archivos de entorno. Se conserva el lockfile compartido:
+separar dependencias es una decisión futura, no un requisito de esta receta.
+El `vercel.json` generado describe raíz/build para una revisión posterior;
+la salida local es `apps/public-site/.next`, **no** `.vercel/output` ni un
+artefacto listo para `vercel deploy --prebuilt`.
+
+`check:home:contract` y el prebuild comprueban noindex/nofollow, bloqueo del envío
+nativo, recursos locales, ausencia de primitivas de envío/analítica/almacenamiento
+y alcance de rutas. Son guardas de regresión estática, no un analizador completo
+de JavaScript ni autorización legal. El navegador añade comprobaciones de
+solicitudes, cookies, almacenamiento y rutas excluidas. El gate del legado sigue
+siendo independiente y no se debilita por estos checks.
+
+La receta y sus pruebas se incluyen en `test:home`; la automatización no puede
+modificar sus protecciones, rutas, configuración o manifiestos de dependencias
+sin la autoridad correspondiente. HTML editorial y assets ordinarios conservan
+su flujo habitual.
 
 La cobertura porcentual de `test:coverage` corresponde a bibliotecas del legado,
 no al HTML o JavaScript de esta Home. Para esta aplicación, la evidencia de
