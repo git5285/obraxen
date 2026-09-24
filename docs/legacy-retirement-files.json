@@ -1,0 +1,617 @@
+{
+  "schemaVersion": 1,
+  "kind": "authorized-local-legacy-retirement",
+  "sourceCommit": "308ed7aecd105223383c7c3dd8341af059a4b078",
+  "checkout": "/Users/danielgarcia/Projects/Obraxen/.vercel/candidates/architecture-boundaries-20260924",
+  "authorization": "explicit-user-approval-local-only-2026-09-24",
+  "status": "144-inventoried-files-deleted-locally",
+  "localRecoveryArchive": "/private/tmp/obraxen-retirement.tA0wpa/legacy-before-retirement.tar",
+  "rollback": "Restore reviewed deleted files from sourceCommit, then reapply retained domain adapters if required; no production rollback involved.",
+  "deleteAfterApproval": [
+    {
+      "path": "next.config.ts",
+      "sha256": "2141106887b8a23b7a5763327366132a5b4d9cdad91cd57f6e0028a522cb9fdd"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "2256bb14395d1a8a92f2ebce26e8244b75205e427f52c285b5a4cedb5cad97fb"
+    },
+    {
+      "path": "scripts/check-lighthouse.mjs",
+      "sha256": "0d114d64a22e2ce86651179a9cca2ef8080649f5b49ed3cf3c0c6ae26bd5bfe9"
+    },
+    {
+      "path": "scripts/lighthouse-budgets.ts",
+      "sha256": "2b729b83cbe76a28b554a1bb8cf09d68685b056f13e9d12a60134405fa2154b2"
+    },
+    {
+      "path": "scripts/lighthouse-projects.ts",
+      "sha256": "fd949e4c87786e7c5f9dae8f24bee4b23885a56fcfe5304bd8b7eceafa50b3ca"
+    },
+    {
+      "path": "scripts/run-playwright.mjs",
+      "sha256": "9e65e5d730df9e872e19b9917d751338102917ccc1f6bd0ebac36cd132e00d28"
+    },
+    {
+      "path": "src/app/[lang]/[section]/[slug]/page.tsx",
+      "sha256": "c4f8e5cd5ed9ff4adbcf01bf41ecfbb131211ec2f3ee52d4ad4ced60281d4591"
+    },
+    {
+      "path": "src/app/[lang]/[section]/page.tsx",
+      "sha256": "4feda2afb0bf36ad20fbe89624f77e976ebbfc8dc4d970bbf9ae63da6792a70a"
+    },
+    {
+      "path": "src/app/[lang]/architecture-preview/media/[project]/[stage]/route.ts",
+      "sha256": "0fe8779f6105a72da621a41c4bc1be319086a750ae19047427574d55ca8937b8"
+    },
+    {
+      "path": "src/app/[lang]/architecture-preview/page.tsx",
+      "sha256": "53acb63d851e2dbe379f14efeef9119e33f3268ab917b4b3f62bfe28eecfde15"
+    },
+    {
+      "path": "src/app/[lang]/architecture-preview/precision/page.tsx",
+      "sha256": "aa662918ba246399c40fa720ee469f60fefbf82342a8466a7ea277fa0265e45d"
+    },
+    {
+      "path": "src/app/[lang]/layout.tsx",
+      "sha256": "60f7285f430c66a36419a58cf7a758fadef19d6cfb7951c2ccb6e478b8215808"
+    },
+    {
+      "path": "src/app/[lang]/not-found.tsx",
+      "sha256": "ff998ea6dc0bf239553a360db74f7ab97337123ba7f52a442f43a129dfdf0080"
+    },
+    {
+      "path": "src/app/[lang]/page.tsx",
+      "sha256": "99a539359a4aa073f535fa5aa65ca299860dabd164ff0b1ef3bd4a0d0baa9413"
+    },
+    {
+      "path": "src/app/api/analytics-config/route.ts",
+      "sha256": "e675abe891920e331aac0392735d6d8e1dbc2322811f499cc339c6dcf79d314f"
+    },
+    {
+      "path": "src/app/api/contact-config/route.ts",
+      "sha256": "05336b32d95d616c586cf1180757b41c5ff288d790c08ec409d4f47eafcea939"
+    },
+    {
+      "path": "src/app/api/contact/route.ts",
+      "sha256": "4fa9497ede1eb6a02778be81793e8bd0ae031804a1640df745f638f203baa4b8"
+    },
+    {
+      "path": "src/app/es/layout.tsx",
+      "sha256": "8f95882d2d530a61676824aa6dab0fbcf86e4b1e93d58cf49dbc86c96a280d54"
+    },
+    {
+      "path": "src/app/es/page.tsx",
+      "sha256": "1fd7e0de538a94d3c1dcaae8b63cc6265bce56389a4aa63ccbe47b9f789ebada"
+    },
+    {
+      "path": "src/app/es/soluciones/page.tsx",
+      "sha256": "ee4d74f0bf706d3ae97e3528926afdde1b3cf458cb5d9bddd61a5988fed61c0f"
+    },
+    {
+      "path": "src/app/global-not-found.tsx",
+      "sha256": "d73fd4b88ea89a156af1c1c3d6a6635906b7e439d3a21932573109c6674c8beb"
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha256": "697711ddca825cf8506584f1a3317b9d019f056801722cd69d3e0bbdc2b8716b"
+    },
+    {
+      "path": "src/app/not-found.module.css",
+      "sha256": "0f0156a1a071fc1fd53ad6a76a69e111972e540d90b24954851a551bbf8cf288"
+    },
+    {
+      "path": "src/app/not-found.tsx",
+      "sha256": "857bee0a7da392eb68e3990f1681a3c1390ff81956ba6704534bcc506b5371a8"
+    },
+    {
+      "path": "src/app/qa/contact-harness/page.tsx",
+      "sha256": "f7b8ad2914f8966b735f5e22f230b64254d17de56fbf456d94b55d221ca26d82"
+    },
+    {
+      "path": "src/app/qa/layout.tsx",
+      "sha256": "5ab332349a272105c5b541cab83fa3a822ef7955421c3cc12b42001c49ece6d0"
+    },
+    {
+      "path": "src/app/robots.ts",
+      "sha256": "29b571c942bad1f34273bba4c40e4c806cd4583c9e84773807b8b7453c8742bb"
+    },
+    {
+      "path": "src/app/sitemap.ts",
+      "sha256": "5265ebd0dba18ccfa1be12a42a62c0450b4af25518ae29538baa362f72416718"
+    },
+    {
+      "path": "src/components/architecture-controls.tsx",
+      "sha256": "b5ce44612d51df8b6b72618b4ed68e339d69434fdaa04d25475b9ee739b51411"
+    },
+    {
+      "path": "src/components/architecture-home.tsx",
+      "sha256": "8c5554b4b7337a5f4f169ad173481b2c1125a84995420f8ed32e4ed94b6d0924"
+    },
+    {
+      "path": "src/components/architecture-interactions.tsx",
+      "sha256": "9e2f413fa3b870592198873155c28bbdc8365b71b5af2c0d039648da422a4ab6"
+    },
+    {
+      "path": "src/components/architecture-precision.tsx",
+      "sha256": "24871c75e243d09c492acd39e7db1f21ee9f5fcc9071aa1609bf5565140d60a4"
+    },
+    {
+      "path": "src/components/architecture-solutions-page.tsx",
+      "sha256": "4834f112f606173ea05f987a06f1039e999ff1353b22e00122c0a6c4b62131cf"
+    },
+    {
+      "path": "src/components/company-section.tsx",
+      "sha256": "868870c36962e948a1ac070e701cd79296d76c4e89f64c2edba06eab065e1bf4"
+    },
+    {
+      "path": "src/components/consent-manager-loader.tsx",
+      "sha256": "2f34748e8ddc5ef7ee244633f9d9c711e51b5f79c25a1c8afe0a205c35441e5d"
+    },
+    {
+      "path": "src/components/consent-manager.tsx",
+      "sha256": "29aac289b86acde1c5bfc71733c9be4db8e170c780f48138eb25cb88a352aaf3"
+    },
+    {
+      "path": "src/components/contact-form.tsx",
+      "sha256": "3c32eb2109564a5a0aac17c5947cad20d748ba8d8dd654af2dcafcb19bd0c6bc"
+    },
+    {
+      "path": "src/components/contact-runtime-gate.tsx",
+      "sha256": "0336d1a8bbe2a55320771cc547e955b6826990b505af66c9caba3bd3e507b465"
+    },
+    {
+      "path": "src/components/contact-unavailable.tsx",
+      "sha256": "16c725d9a80d5d3918a2fb6c736f25213807b134ef5b621fe715e1f561b93a74"
+    },
+    {
+      "path": "src/components/cta-link.tsx",
+      "sha256": "05ebc4c31b41f00bf857ce02b8a1350fb1940c574544c5c4c1d34da6ebb18bed"
+    },
+    {
+      "path": "src/components/faq-section.tsx",
+      "sha256": "d867ecec4548da502260b64ab742f992530caa7a1193454bf84c8bb24cac9831"
+    },
+    {
+      "path": "src/components/hero-section.tsx",
+      "sha256": "9340375a316a3b20a79355c49560de83fe2528a2478a0fb4904c10476a553a65"
+    },
+    {
+      "path": "src/components/intro-section.tsx",
+      "sha256": "728e33be0a094aac425eecd172a9267683e74ecd36521d888408037b36e297fa"
+    },
+    {
+      "path": "src/components/language-switcher.tsx",
+      "sha256": "c88f4cadaad87f4c4ea32bf05d0cbfd44f43ab8c4eca1dd944d271779a392ca6"
+    },
+    {
+      "path": "src/components/legal-page.tsx",
+      "sha256": "8bb44d2b815aa86602516d8a0f7943b98498e0c97b0778a0219b5491cd9801bc"
+    },
+    {
+      "path": "src/components/logo-mark.tsx",
+      "sha256": "8f8441d4ae61686fc09ffec5cccc0bb9b9bcb3f9d86c8dc9edc8476fb5ee2c90"
+    },
+    {
+      "path": "src/components/menu-button.tsx",
+      "sha256": "c33aab229813fafe12ead9931cc44a7c822845400933b1875e7ec35d659955d0"
+    },
+    {
+      "path": "src/components/not-found-content.tsx",
+      "sha256": "c3414ce5bb15736077a5436ed3b09c539bfc7cdf93f033ac38e47afb06467e89"
+    },
+    {
+      "path": "src/components/process-section.tsx",
+      "sha256": "dff1d56029303a09de316e7bd4c84309761fadac3ef8730781225ab395d4c6be"
+    },
+    {
+      "path": "src/components/project-card.tsx",
+      "sha256": "e6d3b07d58d8ba6a4f58f662bdaea64b9b378cdf04bd9c0c059ae4812017f146"
+    },
+    {
+      "path": "src/components/project-case.tsx",
+      "sha256": "c77990b2dcd4380794d69831520fff01c8bec0052240bb65aebabccfc2ccacb1"
+    },
+    {
+      "path": "src/components/project-footer.tsx",
+      "sha256": "b46a338e94616cb1920554962870c494f4b7d4cb94cba7ba23cc6cbd5bb934e5"
+    },
+    {
+      "path": "src/components/project-header.tsx",
+      "sha256": "5ba3554f5fc01059935776d90c4f8accc82cbefb5204262dded79b39b5494cc7"
+    },
+    {
+      "path": "src/components/project-json-ld.tsx",
+      "sha256": "be747afd73b63237fbf0b29d1e42cc787416c7a5f38f149bb6c92c1062503bd0"
+    },
+    {
+      "path": "src/components/projects-section.tsx",
+      "sha256": "edbb84b0a9f349a6480f11288d82bfe24879ca4bf7844b0fbf868227b01a8b8d"
+    },
+    {
+      "path": "src/components/responsive-image.tsx",
+      "sha256": "7a54a804284ef59932da3e34b2fe13118014951b6d59050eceed0b856b9b9479"
+    },
+    {
+      "path": "src/components/section-contact-page.tsx",
+      "sha256": "0b74531c0980c23479f9a023ff8b023e1fcd9a6e98b4d7d1281d798ba39ab628"
+    },
+    {
+      "path": "src/components/section-legal-page.tsx",
+      "sha256": "9615b553733a3427e96c9286fde77bb7347e9267a5980940b5a20f447dc1a656"
+    },
+    {
+      "path": "src/components/section-projects-page.tsx",
+      "sha256": "b4bbb7ebff6cff42c6cd74d36574aa67ef1940a12ac4c2879667c0f1a9fcf562"
+    },
+    {
+      "path": "src/components/service-icon.tsx",
+      "sha256": "1940585c2df016c48492de1cb9956fc22a99ce14bdc64462c597b879b0f0256b"
+    },
+    {
+      "path": "src/components/services-section.tsx",
+      "sha256": "3f055c245df33c9d2d2c08f5e3bd30fd193327b1f1ccee3532437776d541a3d6"
+    },
+    {
+      "path": "src/components/site-footer.tsx",
+      "sha256": "bf953db165524cf279b59dfe97454e85f3308bb620c851099057cff2bf7d922b"
+    },
+    {
+      "path": "src/components/site-navigation-content.tsx",
+      "sha256": "ca39b4e7ffe884fb4960f55ffc11a6dadd19ce0ba57080ad57b13ca74512d1ef"
+    },
+    {
+      "path": "src/components/site-navigation.tsx",
+      "sha256": "93a78cbf43eaf85ffef19e61dfa252c1c25a0018dea30e49e853a058adc24ff8"
+    },
+    {
+      "path": "src/lib/analytics-config.ts",
+      "sha256": "5fddd5ebaa66c32d13777160d33587fc682bb946a76436691008ad5014600a06"
+    },
+    {
+      "path": "src/lib/architecture-content.ts",
+      "sha256": "e93dd7af5878fc9aa888354c3b7734a26b9d735978007cfbcdd0d9253ebab0fc"
+    },
+    {
+      "path": "src/lib/brand.ts",
+      "sha256": "865284b39cd8ab5633acd5b6873e99a3b57c46ae51bf8298597ec4b35d0037a2"
+    },
+    {
+      "path": "src/lib/consent-providers.ts",
+      "sha256": "ce40da51fb16fdc387b67671b16f26f5769583fadb7275e813956779628222e6"
+    },
+    {
+      "path": "src/lib/consent-storage.ts",
+      "sha256": "d2faa4a78bf56db5f8bf99384a39545266dbff2cffd4a767c3c60e091738a66e"
+    },
+    {
+      "path": "src/lib/consent.ts",
+      "sha256": "82c2dd66d750a48f99df8421abefea3c7f92ffacfb11800d404538d9267da996"
+    },
+    {
+      "path": "src/lib/contact-body.ts",
+      "sha256": "4459cae1f7fb25036b54d329697e84a9f4699055b8c10c46b6022220b12e858d"
+    },
+    {
+      "path": "src/lib/contact-delivery.ts",
+      "sha256": "4c4dc5ab672587f1b56e3df57b486a505bcac4b8014767864edd2af9c3714def"
+    },
+    {
+      "path": "src/lib/contact.ts",
+      "sha256": "d17e205848c322c6a1e6b1fa73157809523c70da33266711616a631dc22dc4f9"
+    },
+    {
+      "path": "src/lib/dictionaries/de.ts",
+      "sha256": "835ef5d8c71981c5c5f2886d7ed082963e67e3195dac7e57520a61ad25ad2f99"
+    },
+    {
+      "path": "src/lib/dictionaries/en.ts",
+      "sha256": "de66c11ab1d91e32cf3df28e734aa6429bc7ee6c03d1cb20a81e270b01fd3e5b"
+    },
+    {
+      "path": "src/lib/dictionaries/es.ts",
+      "sha256": "87ec68b2b9fa49f16fbe06485fec45c903fc25be488dda6bc93e95d09340785a"
+    },
+    {
+      "path": "src/lib/dictionaries/fr.ts",
+      "sha256": "e54e46dd3b9133573ebae5c75e252b0a0a0999abdb3c3c2b2a598b4491897520"
+    },
+    {
+      "path": "src/lib/dictionaries/types.ts",
+      "sha256": "8008904fb08727bd84a2c7e902426bb08c4f365d747eff20c314832a3113475d"
+    },
+    {
+      "path": "src/lib/focus-navigation.ts",
+      "sha256": "cf1c44df11a0a5f9e4e0848cd71e51766499b9362d5ab3a2dc90ee4bebb11a9e"
+    },
+    {
+      "path": "src/lib/formatting.ts",
+      "sha256": "70f253ea55297d24870fed375c00a5557397c3ade50b58cde3cbe6a3f40deb77"
+    },
+    {
+      "path": "src/lib/homepage.ts",
+      "sha256": "8a53efac8eeda931a84316dbc6ec7103d97f72128236bfe8c500710fab72e9a7"
+    },
+    {
+      "path": "src/lib/i18n.ts",
+      "sha256": "9fa140a73d04273f1d0f338a910702636c76554ef82c11613c86df449141d2c4"
+    },
+    {
+      "path": "src/lib/internal-projects.ts",
+      "sha256": "eba34559871da5c10f1630368579d7dec40152afed06ce54892039f8a50ab059"
+    },
+    {
+      "path": "src/lib/locales.ts",
+      "sha256": "9c4d2f41b937c3fd5dde9b40fcd201a16fe76bbdf5bf9a1998cfd8407ee3f899"
+    },
+    {
+      "path": "src/lib/media.ts",
+      "sha256": "490399aded9dcb9894b887745c17771b14a63f6e8ad363a3372982990e72b791"
+    },
+    {
+      "path": "src/lib/metadata.ts",
+      "sha256": "3f341cd2a54879eb00e65b5d5aeb524602a6baae1f9a50b98a57efc8e644f27d"
+    },
+    {
+      "path": "src/lib/offers.ts",
+      "sha256": "f286c0c481c4646df2ea50b203f015007a491344dfcbd045bc268fa57a0d6c85"
+    },
+    {
+      "path": "src/lib/project-jsonld.ts",
+      "sha256": "d166e1ed49f0fb1661672f2c2518f2b3f68a64b19ae059f479a778858f0351a4"
+    },
+    {
+      "path": "src/lib/project-metadata.ts",
+      "sha256": "f997700553a600a56b9447da4c4c5dcc24f82367f2e22ceb6e7c5f806fc4dbd5"
+    },
+    {
+      "path": "src/lib/project-pages.ts",
+      "sha256": "d0b97fa03c9c04123dc0a3521cec99edbcb862287ba7f0c70d9e41d006c779d9"
+    },
+    {
+      "path": "src/lib/project-presenters.ts",
+      "sha256": "dcf60149b14520314b80c765b9c84d6838aeb15051770713b998be5d0bf56a1f"
+    },
+    {
+      "path": "src/lib/project-publication-authorization.ts",
+      "sha256": "3e5359906c0d1f59e29a00a51b0a70f80051d74c651cfd6f5aba6de1b533a2ad"
+    },
+    {
+      "path": "src/lib/project-route.ts",
+      "sha256": "474e69dc44fcf79999530a320ddf2ae746146392dc127e136e5e960d6f25441d"
+    },
+    {
+      "path": "src/lib/projects.ts",
+      "sha256": "3fd6df43866aa0e06ddf7cd9f0874a52b00106412c388df140e31ad20cfe9f7b"
+    },
+    {
+      "path": "src/lib/public-activation.ts",
+      "sha256": "a80c35104e1cb7dc0f2038bbf5bae19d5cd5aab995b7f830f6b826b4a128f73e"
+    },
+    {
+      "path": "src/lib/public-project-assets.ts",
+      "sha256": "a080e3de93fdb7fccf29731feae223f67583d98c20122aa2f5917d2e5fca233e"
+    },
+    {
+      "path": "src/lib/public-project-publication.ts",
+      "sha256": "b087f20b34e3ae793277bb1a04658c1dc49cbeae9e8f6b16b27e744ae7c70185"
+    },
+    {
+      "path": "src/lib/publication.ts",
+      "sha256": "f6ee708f1adefb79a21bd9e5ba9f7a6fa7f98f538590faf65e943929ba32178a"
+    },
+    {
+      "path": "src/lib/qa-access.ts",
+      "sha256": "2040bbdc606f9391e638f209778e93172fe468138f6d510bdfeef09e6e1edec9"
+    },
+    {
+      "path": "src/lib/runtime-config.ts",
+      "sha256": "a5018cda31f3158ff7b3a4a575b2251bde1a679d7efe7c16501d5f66b7e4c1c7"
+    },
+    {
+      "path": "src/lib/schemas.ts",
+      "sha256": "7fdfa38bb6db36e8f55fbcbe86be50ccccfd0ad9a4ae534a277454f25f10965d"
+    },
+    {
+      "path": "src/lib/seo-indexability.ts",
+      "sha256": "3a30ba819bef29b95f9810a994f8bd164cf8836449c1177160dc80add6c452db"
+    },
+    {
+      "path": "src/lib/solutions.ts",
+      "sha256": "97d4ff38399dee73acd6bc549beefe530c29a9d7cfe95902dc61497fd043b95c"
+    },
+    {
+      "path": "src/lib/use-consent-controller.ts",
+      "sha256": "443f614ce8e1e410296e3888bb4553750f11c580d630c0d97d635caef0dadcdc"
+    },
+    {
+      "path": "src/lib/use-section-navigation.ts",
+      "sha256": "c904bb9f521e2844208303bf29bc4439d581407c46339e5915c2d88538dd985a"
+    },
+    {
+      "path": "src/proxy.ts",
+      "sha256": "46a1c4082697726e30961b68a7cbcf3ad6698d69152d553c776efa4863301cd2"
+    },
+    {
+      "path": "tests/activation-gate.test.ts",
+      "sha256": "5a7eb466d8c619524fe106e4795b68977451df1dc7751a1675d6fab962337061"
+    },
+    {
+      "path": "tests/analytics-rendering.test.ts",
+      "sha256": "0e7a471134f76f959c943603fddf6e4b07e5695ebaac7e50e1b1a48c7ec2c08c"
+    },
+    {
+      "path": "tests/analytics.test.ts",
+      "sha256": "ba7dfa4c47b63af286abfde5fd749dc5adc07adcc7419024f48c3f9f45c2ec39"
+    },
+    {
+      "path": "tests/architecture-contact.test.ts",
+      "sha256": "d21c5fa2db15f5e969bb1769c693149b7636a965c16398b53ea5e47397fb2e80"
+    },
+    {
+      "path": "tests/architecture-default.test.tsx",
+      "sha256": "fa5325eca65eecc9b0a042063544a86d605d0daf26ee5b570da6e8e0e221eb8b"
+    },
+    {
+      "path": "tests/architecture-interaction.spec.ts",
+      "sha256": "2d13333bdf5ad4011b53c79aaf448f090cc70210f06cd9637d0fc1fdb702829f"
+    },
+    {
+      "path": "tests/architecture-local.config.ts",
+      "sha256": "56459092446a290eb5016f0df9a8272f8018536adf1c394eb1bbdc31547c64b3"
+    },
+    {
+      "path": "tests/architecture-media.test.ts",
+      "sha256": "ee8b1c1b3b74338abc63de4e54db3e771dd3c120a287146cf0defd03bd124508"
+    },
+    {
+      "path": "tests/architecture-precision.test.tsx",
+      "sha256": "ca445064a518de91dd91f49ceda0df747913a8cfa84082483d0dedf4b71ba27d"
+    },
+    {
+      "path": "tests/architecture-preview.test.tsx",
+      "sha256": "e793c2da3f7b6e79f734a938ccf979769231f431b2c40c786d9aa9a2f607192a"
+    },
+    {
+      "path": "tests/architecture-priorities.spec.ts",
+      "sha256": "55838ca086c84e37f24a42beb386c3996dc008abd04e41e62f08dd43cc45d018"
+    },
+    {
+      "path": "tests/architecture-solutions.test.tsx",
+      "sha256": "9a4f98c43d6a91b3e0eaa9137c1054a4309ae7af0248d756175e0af45646f1a5"
+    },
+    {
+      "path": "tests/contact-body.test.ts",
+      "sha256": "9ff0100469dec8f16c39fbafc6d84da3cf269bad267971cc13a8712cb24d0dfb"
+    },
+    {
+      "path": "tests/contact-delivery.test.ts",
+      "sha256": "85c127237c076d09163326d540d7d13d5de56640481cd5cdf8ad320878afd695"
+    },
+    {
+      "path": "tests/contact-route.test.ts",
+      "sha256": "121ac791ec1ca0aa0f594c896140dff2288679805312bbc911ac0921370add13"
+    },
+    {
+      "path": "tests/contact.test.ts",
+      "sha256": "12e7031c912dcc8aeb0c4de2ff9e2e4fae005878e5affbb095928f2f5ac274fe"
+    },
+    {
+      "path": "tests/e2e/consent.spec.ts",
+      "sha256": "6e2440c521a8da7285ed753f0599509778bb0770985437835a4590c6bfc85724"
+    },
+    {
+      "path": "tests/e2e/contact-enabled.spec.ts",
+      "sha256": "1985b98b51595050c64120e1300019ba32f1b2c258cfdb53c8f82fa76abe34b8"
+    },
+    {
+      "path": "tests/e2e/navigation.spec.ts",
+      "sha256": "d2431e99aae78e1964a69edeb504a243547246c2b59b53cb1f810d43f095342f"
+    },
+    {
+      "path": "tests/e2e/quality.spec.ts",
+      "sha256": "bcb00a02f0915125df06f1200348cf413ccadf5f1578e2ded933213fa5501b79"
+    },
+    {
+      "path": "tests/focus-navigation.test.ts",
+      "sha256": "c7c0e4bcbf4ee307ddeeedd8417e80594f8d84556cdd80275b7857102ecfd0a6"
+    },
+    {
+      "path": "tests/homepage.test.tsx",
+      "sha256": "121c579104162d22740dd6ce7c0b541dd7c780ec603d9b647f2caa9ed0aa4a40"
+    },
+    {
+      "path": "tests/legal.test.tsx",
+      "sha256": "31c602213fc7d97e58c4ebadbb5736f50e9c406995b6fad27471d71ba55a25da"
+    },
+    {
+      "path": "tests/lighthouse-budgets.test.ts",
+      "sha256": "9bd720090cea0ed16fac8b7436f75ed76b32ad341d5a6519d8ed2b8316b1948d"
+    },
+    {
+      "path": "tests/logo-mark.test.tsx",
+      "sha256": "59261eb07b3c0ff2764677ca8cef97a3fd3cdb4c94cae3aed6afb555fdf04bd5"
+    },
+    {
+      "path": "tests/media.test.ts",
+      "sha256": "4b61f9780fe84875a8e9c02269910d06a11b6e09780b218817ed626d41c5de29"
+    },
+    {
+      "path": "tests/not-found-parity.test.tsx",
+      "sha256": "67780ca47deeecc21c59ed9cf20e5e838913faf5c6fcbb9176b28d0c37e509ea"
+    },
+    {
+      "path": "tests/project-assets.test.ts",
+      "sha256": "2e39f9a0300e76f0bad22b378a5ab90f0c76b4a247fb09d54b1dd6af30910500"
+    },
+    {
+      "path": "tests/project-publication.test.ts",
+      "sha256": "88cfbd41635bcdf4e9cb880f2da6d8b91cb943780f983116cf8eae8535aa4047"
+    },
+    {
+      "path": "tests/project-route.test.tsx",
+      "sha256": "20a72a9e68ba5bd6783cb726370c5cedb810ff8a541424ab976c4b039016e4fe"
+    },
+    {
+      "path": "tests/projects.test.tsx",
+      "sha256": "e559625bc5f56ae4dac96ffbb13f1dc1db3cfcab5eb84db09fb50b3b7eb69066"
+    },
+    {
+      "path": "tests/public-activation.test.ts",
+      "sha256": "ef7e761a5a718478b411a6903a5009b3ba5499850a7102e91de53b401827621c"
+    },
+    {
+      "path": "tests/public-project-artifacts.test.ts",
+      "sha256": "f2d9b53e0dc5f002327d8b337260445df2f14fbb25e888b14c301b69e29b9975"
+    },
+    {
+      "path": "tests/publication-parity.test.ts",
+      "sha256": "a33121e1b6325812291a8caaa1752f5c31b44ed2ba15969a3fc6249cba9cf95e"
+    },
+    {
+      "path": "tests/publication.test.ts",
+      "sha256": "e9d7513f3097a5008f70782e0a1d49d3c3218561fa514c1fd8f5685e0574bb74"
+    },
+    {
+      "path": "tests/qa-access.test.ts",
+      "sha256": "c8a6bed5a1530dcf669a2d681b0d1a3b5c6cdb091c327e4640f3bde65dedc665"
+    },
+    {
+      "path": "tests/routes.test.ts",
+      "sha256": "0733e636076cbe08fc4159eb2f5072e9c8a7f857256a7700403dd709427444a4"
+    },
+    {
+      "path": "tests/seo-indexability.test.ts",
+      "sha256": "0fca0bd38326657800287b99a46267d4c87191917dd75f7d80fe11600797eebc"
+    }
+  ],
+  "preserve": [
+    "apps/public-site/",
+    "domain/publication/",
+    "data/",
+    "img/",
+    "css/",
+    "public/",
+    "automation/",
+    ".coordination/",
+    "docs/"
+  ],
+  "adaptBeforeDeletion": [
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "vitest.config.ts",
+    "tests/unit-test-groups.json",
+    "scripts/quality-gate.mjs",
+    "tests/agents/quality-gate.test.ts",
+    ".github/workflows/quality.yml",
+    "tests/security-policy.test.ts",
+    "automation/agents/policy.json"
+  ],
+  "limitations": [
+    "Historical URL usage not verified; no redirect or deployment authorization.",
+    "Preserved paths describe scope, not a claim that every historical asset is needed.",
+    "Quality gate must remain complete until its legacy steps are replaced or retired explicitly.",
+    "Other active tasks own Home and documentation paths; coordinate before changing their files."
+  ]
+}

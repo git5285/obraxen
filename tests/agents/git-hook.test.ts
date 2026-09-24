@@ -93,11 +93,11 @@ describe("pre-push Git environment isolation", () => {
 
   it("limits hook bypasses to the disposable fixtures that require them", () => {
     const bypass = ["core", "hooksPath=/dev/null"].join(".");
-    const matches = execFileSync("git", ["ls-files", "-z"], {
+    const matches = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], {
       cwd: repositoryRoot,
       encoding: "utf8",
       env: cleanGitEnvironment(),
-    }).split("\0").filter(Boolean).filter((path) => (
+    }).split("\0").filter(Boolean).filter((path) => existsSync(join(repositoryRoot, path))).filter((path) => (
       readFileSync(join(repositoryRoot, path), "utf8").includes(bypass)
     )).sort();
 

@@ -1,38 +1,58 @@
-# OBRAXEN — Home actual y aplicación anterior
+# OBRAXEN — Home y herramientas internas
 
-> **Web aprobada — recuperada el 23 de septiembre de 2026:** la referencia es
-> https://obraxen.com y su fuente vive en `apps/public-site/`. `npm run dev`
-> la abre en <http://127.0.0.1:4387/>; `npm run build` y `npm run start`
-> construyen y sirven esa misma aplicación. Véase [HOMEPAGE.md](HOMEPAGE.md)
-> para editarla y [la recuperación](docs/PUBLISHED_SITE_RECOVERY.md) para su origen.
-> El resto de este documento describe principalmente la implementación anterior
-> en `src/`, conservada con comandos `*:legacy`. Sus estados, rutas, datos y
-> afirmaciones históricas de publicación no describen el despliegue público actual.
+La Home actual vive en `apps/public-site/`. La antigua aplicación `src/`
+fue retirada de esta candidata; los datos y contratos útiles permanecen en
+`data/` y `domain/publication/`. La automatización `automation/agents/`
+no es una aplicación pública. Ningún estado local acredita producción.
 
-## Aplicación actual: apps/public-site
+## Empezar y elegir el checkout
 
-La fuente de la Home es `apps/public-site/public/index.html`. El generador la
-empaqueta para tres Route Handlers de Next.js: `/` (ES), `/en` y `/de`.
-El HTML inicial es español; `home-i18n.js` aplica la traducción en el navegador.
-`home-contact.js` valida la consulta y prepara un enlace de correo sin enviarlo.
-La Home no consume `src/`, `data/brand.json` ni las APIs del legado.
-Los recursos binarios y el inventario de recuperación conservan su procedencia.
+Ejecutar `node scripts/checkout-context.mjs` desde la raíz elegida. Registrar
+root, controlRoot, checkoutRole, HEAD y cambios reales; consultar designationFile
+si existe. `--expected-root=<ruta>` y `--expected-head=<SHA>` comprueban la
+expectativa, no sincronizan Git. legacy es null cuando falta la entrada retirada.
+Leer [AGENTS.md](AGENTS.md) y comprobar reservas antes de editar.
 
-| Tarea | Comando y alcance |
+## Fuentes y recorridos
+
+- [HOMEPAGE.md](HOMEPAGE.md): contenido, interacción, fuentes y pruebas Home.
+- [SITE_ARCHITECTURE.md](SITE_ARCHITECTURE.md): mapa actual y planificación histórica.
+- [docs/LEGACY_RETIREMENT.md](docs/LEGACY_RETIREMENT.md): inventario y recuperación.
+- [docs/COGNITIVE_DEBT.md](docs/COGNITIVE_DEBT.md): cinco mejoras integradas.
+- [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md), apartado A: entrega Home.
+- [ACTIVATION_GATE.md](ACTIVATION_GATE.md): contrato interno; no autoriza Home.
+- [TECHNICAL_AUDIT.md](TECHNICAL_AUDIT.md) y [ROADMAP.md](ROADMAP.md): historial.
+
+## Comandos vigentes
+
+Node 24.18.0 y npm 11.16.0 están fijados. Instalar con `npm ci` cuando esté
+autorizado; los assets LFS deben estar materializados antes de construir.
+No descargar ni activar servicios por inferencia.
+
+| Trabajo | Comando |
 |---|---|
-| Desarrollar / construir / servir la Home | `npm run dev` / `build` / `start` |
-| Comprobar la Home desde sus fuentes | `npm run check:home`: lint, unitarias de traducción, build y navegador |
-| Comprobar un build de Home ya preparado | `npm run test:published`: tres idiomas, móvil/escritorio y cero errores |
-| Comprobar el legado | `npm run check:legacy`: tipos, unitarias del legado, build, E2E y Lighthouse |
-| Pruebas unitarias completas | `npm run test`: Home, legado y automatización |
-| Comprobación local general | `npm run check`: lint, tipos, unitarias, build de Home y navegador de Home |
-| Gate obligatorio de entrega | `npm run check:quality`: seguridad y todas las suites; requiere autorización para la auditoría externa |
+| Desarrollar, construir, servir Home | `npm run dev:home`, `build:home`, `start:home` |
+| Validar Home y su navegador | `npm run check:home`; `test:e2e:home` requiere build |
+| Unitarias por ámbito | `test:home`, `test:tooling`, `test:publication` |
+| Todas las unitarias / cobertura | `npm test` / `npm run test:coverage` |
+| Lint y tipos internos | `npm run lint` / `npm run typecheck` |
+| Gate de entrega | `npm run check:quality`, incluida auditoría externa autorizada |
+| Reservas activas registradas | `node automation/agents/operations.mjs status --active` |
 
-`typecheck` es un alias compatible de `typecheck:legacy`.
-`lighthouse:ci` es un alias de `lighthouse:legacy`, que construye el legado antes
-de medirlo; el build por defecto no prepara esa aplicación. El porcentaje de
-cobertura se refiere a `src/lib/`, no a la Home actual. CI mantiene las pruebas
-de ambas aplicaciones y el gate conserva su política de recibos y checks frescos.
+`dev`, `build`, `start` y `test:published` son aliases compatibles que
+anuncian Home y conservan argumentos y errores. No existen comandos `*:legacy`.
+El inventario positivo de unitarias rechaza suites nuevas sin clasificar,
+duplicadas u obsoletas. `npm run test:home -- --list` permite consultar su ámbito.
+La cobertura mide el dominio interno, no el HTML Home. Seguridad, hooks, CI,
+autorizaciones y checks frescos no se sustituyen por una selección parcial.
+
+## Archivo histórico de la implementación retirada
+
+Lo que sigue conserva la descripción anterior para trazabilidad. Sus rutas,
+comandos, estado de servicios y cifras no son instrucciones ni evidencia vigente.
+Para ejecutar o entregar esta candidata usar exclusivamente las secciones
+anteriores y el apartado A del runbook. No se reintroduce ninguna función por
+estar descrita aquí.
 
 ## Referencia de la implementación anterior
 

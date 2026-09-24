@@ -7,36 +7,39 @@
   },
   "packageManager": "npm@11.16.0",
   "scripts": {
+    "postinstall": "node scripts/patch-vercel-bundles.mjs apply",
+    "prepare:toolchain": "node scripts/patch-vercel-bundles.mjs apply",
+    "check:security:embedded": "node scripts/patch-vercel-bundles.mjs check",
+    "check:checkout": "node scripts/checkout-context.mjs",
+    "home:platform": "node automation/agents/runtime.mjs exec -- node scripts/home-platform-artifact.mjs",
     "check:agent-runtime": "node automation/agents/runtime.mjs exec -- node automation/agents/runtime.mjs assert --json",
     "check:activation": "node automation/agents/runtime.mjs exec -- node --experimental-strip-types scripts/check-activation.mjs",
     "check:diff": "node automation/agents/runtime.mjs exec -- node scripts/check-branch-diff.mjs",
-    "build": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs build",
-    "build:legacy": "node automation/agents/runtime.mjs exec -- next build",
+    "build": "node automation/agents/runtime.mjs exec -- node scripts/scoped-command.mjs build",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run test:published",
-    "check:quality": "node automation/agents/runtime.mjs exec -- npm run check:security && node automation/agents/runtime.mjs exec -- node scripts/quality-gate.mjs",
+    "check:quality": "node scripts/patch-vercel-bundles.mjs check && node automation/agents/runtime.mjs exec -- npm run check:security && node automation/agents/runtime.mjs exec -- node scripts/quality-gate.mjs",
+    "precheck:security": "node scripts/patch-vercel-bundles.mjs check",
     "check:security": "npm audit --omit=dev --audit-level=moderate --package-lock-only --ignore-scripts",
-    "dev": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs dev",
-    "dev:legacy": "node automation/agents/runtime.mjs exec -- next dev",
-    "lighthouse:ci": "npm run lighthouse:legacy",
+    "check:security:all": "npm audit --include=dev --audit-level=low --package-lock-only --ignore-scripts",
+    "dev": "node automation/agents/runtime.mjs exec -- node scripts/scoped-command.mjs dev",
     "lint": "node automation/agents/runtime.mjs exec -- eslint .",
-    "start": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs start",
-    "start:legacy": "node automation/agents/runtime.mjs exec -- next start",
-    "test:published": "node automation/agents/runtime.mjs exec -- node scripts/verify-public-site.mjs",
+    "start": "node automation/agents/runtime.mjs exec -- node scripts/scoped-command.mjs start",
+    "test:published": "node automation/agents/runtime.mjs exec -- node scripts/scoped-command.mjs test:published",
     "test": "node automation/agents/runtime.mjs exec -- vitest run",
     "test:coverage": "node automation/agents/runtime.mjs exec -- vitest run --coverage",
-    "test:e2e": "node automation/agents/runtime.mjs exec -- node scripts/run-playwright.mjs",
-    "test:e2e:contact": "node automation/agents/runtime.mjs exec -- node scripts/run-playwright.mjs --contact-enabled",
-    "typecheck": "npm run typecheck:legacy",
+    "typecheck": "node automation/agents/runtime.mjs exec -- tsc --noEmit",
     "check:home": "npm run lint:home && npm run test:home && npm run build && npm run test:published",
     "check:home:contract": "node automation/agents/runtime.mjs exec -- node scripts/home-contract.mjs",
     "check:home:recovery": "node automation/agents/runtime.mjs exec -- node scripts/public-site-evidence.mjs",
     "prepare:home": "node automation/agents/runtime.mjs exec -- node scripts/prepare-home-candidate.mjs",
-    "check:legacy": "npm run typecheck:legacy && npm run test:legacy && npm run build:legacy && npm run test:e2e:contact && npm run test:e2e && npm run lighthouse:legacy",
-    "lint:home": "node automation/agents/runtime.mjs exec -- eslint apps/public-site scripts/public-site.mjs scripts/verify-public-site.mjs scripts/home-contract.mjs scripts/public-site-evidence.mjs scripts/prepare-home-candidate.mjs tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts",
-    "test:home": "node automation/agents/runtime.mjs exec -- vitest run tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts",
-    "test:legacy": "node automation/agents/runtime.mjs exec -- vitest run --exclude 'tests/agents/**' --exclude tests/public-home.test.ts --exclude tests/home-contract.test.ts --exclude tests/public-site-evidence.test.ts --exclude tests/prepare-home-candidate.test.ts",
-    "typecheck:legacy": "node automation/agents/runtime.mjs exec -- sh -c 'next typegen && tsc --noEmit'",
-    "lighthouse:legacy": "node automation/agents/runtime.mjs exec -- node scripts/check-lighthouse.mjs"
+    "lint:home": "node automation/agents/runtime.mjs exec -- eslint apps/public-site scripts/public-site.mjs scripts/verify-public-site.mjs scripts/home-contract.mjs scripts/public-site-evidence.mjs scripts/prepare-home-candidate.mjs scripts/checkout-context.mjs scripts/home-platform-artifact.mjs tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts tests/checkout-context.test.ts tests/home-platform-artifact.test.ts",
+    "test:home": "node automation/agents/runtime.mjs exec -- node scripts/unit-test-group.mjs home",
+    "test:tooling": "node automation/agents/runtime.mjs exec -- node scripts/unit-test-group.mjs tooling",
+    "test:publication": "node automation/agents/runtime.mjs exec -- node scripts/unit-test-group.mjs publication",
+    "build:home": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs build",
+    "dev:home": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs dev",
+    "start:home": "node automation/agents/runtime.mjs exec -- node scripts/public-site.mjs start",
+    "test:e2e:home": "node automation/agents/runtime.mjs exec -- node scripts/verify-public-site.mjs"
   },
   "dependencies": {
     "next": "16.3.5",
@@ -45,7 +48,6 @@
     "zod": "4.6.2"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.63.0",
     "@types/node": "24.13.3",
     "@types/react": "19.3.0",
@@ -54,13 +56,30 @@
     "ajv": "8.20.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.5",
-    "lighthouse": "13.4.1",
+    "path-to-regexp": "6.3.0",
     "typescript": "6.0.3",
     "vercel": "59.16.0",
     "vitest": "5.0.0"
   },
   "overrides": {
     "postcss": "8.5.23",
-    "nanoid": "3.3.18"
+    "nanoid": "3.3.18",
+    "vercel": {
+      "@tootallnate/once@2": "2.0.1",
+      "minimatch@10": "10.2.6",
+      "path-to-regexp@6": "6.3.0",
+      "path-to-regexp@8": "8.4.2",
+      "smol-toml": "1.9.0",
+      "tar@7": "7.5.22"
+    },
+    "@vercel/static-config": {
+      "ajv": "$ajv"
+    },
+    "@vercel/python-analysis": {
+      "js-yaml": "4.3.2",
+      "minimatch": "10.2.6",
+      "smol-toml": "1.9.0"
+    },
+    "undici@5": "6.28.1"
   }
 }

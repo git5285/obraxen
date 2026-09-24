@@ -12,9 +12,9 @@ describe("ESLint generated Next output isolation", () => {
   }, 10_000);
 
   it("keeps canonical and candidate source files in lint scope", async () => {
-    await expect(eslint.isPathIgnored("src/lib/dictionaries/en.ts")).resolves.toBe(false);
+    await expect(eslint.isPathIgnored("domain/publication/schemas.ts")).resolves.toBe(false);
     await expect(eslint.isPathIgnored(
-      ".vercel/candidates/example/src/lib/dictionaries/en.ts",
+      ".vercel/candidates/example/domain/publication/schemas.ts",
     )).resolves.toBe(false);
   });
 

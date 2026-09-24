@@ -1,9 +1,9 @@
 # Runbook de cutover y publicación
 
-Este documento separa dos aplicaciones Next.js y su entrega. La Home actual
-vive en `apps/public-site/`; `src/` conserva el legado. La automatización de
+Este documento describe la entrega de la Home actual en `apps/public-site/`.
+`src/` fue retirado; el apartado B conserva únicamente su procedimiento histórico. La automatización de
 `automation/agents/` prepara y verifica trabajo, pero no es una aplicación pública.
-No hay que unificar esos árboles para preparar una candidata.
+El dominio interno `domain/publication/` no forma parte del artefacto Home.
 
 El runbook no autoriza preview, despliegue, dominio, indexación, analítica,
 formulario ni rollback. El estado remoto debe comprobarse con evidencia fechada
@@ -13,7 +13,7 @@ activo ni qué rollback está disponible.
 ## A. Home: preparación local y frontera de entrega
 
 1. Trabajar en `apps/public-site/`, revisar `HOMEPAGE.md` y reservar las rutas
-   exactas antes de editar. Conservar el legado y sus banderas.
+   exactas antes de editar. Conservar los datos internos y las banderas de autoridad.
 2. Ejecutar `npm run check:home`. El build comprueba el contrato Home y el
    navegador verifica seis vistas, contacto sin envío y rutas excluidas.
 3. Ejecutar `npm run prepare:home -- --output=/ruta/nueva/fuera-del-checkout`.
@@ -41,16 +41,66 @@ activo ni qué rollback está disponible.
    comprobar el alias real después. Un build listo no prueba que el dominio
    cambió. Cualquier rollback necesita su autorización; no se ejecuta por inferencia.
 
-El gate `check:activation` evalúa el legado y sigue siendo obligatorio en su
-flujo. Una excepción humana Home debe estar documentada para la candidata exacta;
+El gate `check:activation` evalúa el contrato interno heredado, no el build Home. Una excepción humana Home debe estar documentada para la candidata exacta;
 no se obtiene poniendo sus banderas en verde ni cambiando datos legales.
 La receta local no presupone que exista una excepción vigente.
 
-## B. Legado: activación, preview y publicación
+### A.1 Receta local de plataforma y auditoría repetible
 
-Los apartados siguientes son del legado en `src/`, con cuatro idiomas y APIs.
-Usar `build:legacy` y las entradas `*:legacy` cuando corresponda, no el build
-raíz de Home. El inventario de identidad, legal, proveedor, idiomas y casos vive
+Desde el checkout seleccionado (`npm run check:checkout`), preparar primero una
+exportación nueva con `prepare:home`. Revisar su `home-candidate.json` y conservar
+el `source.inputsSha256` fuera de la exportación como expectativa de auditoría.
+Un export con `--allow-worktree` sigue siendo solo evidencia local: no tiene
+`exactCommit`. No se infiere aprobación de estos pasos.
+
+```sh
+npm run home:platform -- prepare --root=/ruta/export \
+  --inputs-sha256=<SHA256 revisado> --project-id=<prj_ID verificado> \
+  --org-id=<team_ID verificado> --target=production
+```
+
+Este comando comprueba las fuentes, exige destino sin `.vercel` y rechaza un
+checkout Git. Escribe únicamente en la exportación: asociación local explícita,
+`home-platform.json` y configuración de build. Usa `npm ls --omit=dev --depth=0`
+para validar las dependencias ya copiadas, sin reinstalación. Registra hashes de
+configuración, pero **no** comprueba la asociación remota ni ejecuta build Vercel.
+No sobrescribe un estado de plataforma existente: preparar otra exportación.
+
+Con la autorización que corresponda, un operador construye después el Build
+Output desde esa exportación usando la CLI fijada en el lockfile:
+`vercel build --prod --non-interactive` para production, o sin `--prod` para
+preview. Utilizar un entorno limpio, sin variables de aplicación heredadas;
+no hacer `vercel pull`, instalar paquetes ni recuperar secretos por inferencia.
+La receta local no cambia la configuración compartida de Vercel.
+
+El operador autorizado obtiene y conserva el inventario JSON con la CLI fijada:
+`vercel deploy --prebuilt --prod --skip-domain --dry --non-interactive --json`
+(omitir `--prod` para preview). **No quitar `--dry`**: este paso no publica.
+Los comandos de plataforma no son invocados por la herramienta local.
+
+```sh
+npm run home:platform -- audit --root=/ruta/export \
+  --inputs-sha256=<SHA256 revisado> --dry-run=/ruta/inventario.json
+```
+
+La auditoría es de lectura y emite JSON por stdout para conservar como evidencia.
+Vincula inputs, HTML servido, assets, funciones, entorno embebido, destinos de
+routing y el inventario de subida por hash/tamaño. Rechaza archivos fuera del
+alcance, enlaces fuera de la exportación, outputs ausentes del inventario y
+rutas/funciones inesperadas. Permite enlaces internos generados por Vercel y
+verifica sus bytes de enlace. Es un contrato del adaptador actual, no una prueba
+de todo comportamiento posible del JavaScript compilado. Un cambio de formato
+Vercel puede bloquearlo y requiere revisión y fixtures, no relajar el check.
+
+Un informe `passed` no consulta producción, no prueba CI ni autoriza publicación.
+Antes de publicar hay que revalidar SHA/inputs, configuración, CI, proyecto,
+entorno y permiso exactos; cualquier cambio del artefacto invalida su evidencia.
+
+## B. Archivo histórico del legado — no ejecutar en esta candidata
+
+Los apartados siguientes describen la aplicación retirada `src/`, con cuatro
+idiomas y APIs. Sus comandos `*:legacy` ya no existen. No seguir este
+procedimiento para entregar Home ni tomar sus afirmaciones remotas como actuales. El inventario de identidad, legal, proveedor, idiomas y casos vive
 en `ACTIVATION_INPUTS.md`; `npm run check:activation` produce su decisión.
 
 ## 1. Condiciones de entrada

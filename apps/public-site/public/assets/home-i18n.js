@@ -37,13 +37,9 @@
     "Pulido y rehabilitación": ["Polishing and refurbishment", "Polieren und Sanieren"],
     "Nivelación y recrecidos": ["Levelling and screeds", "Nivellierung und Estriche"],
     "Retirada y preparación": ["Removal and preparation", "Entfernung und Vorbereitung"],
-    "Juntas, fisuras y daños localizados.": ["Joints, cracks and localised damage.", "Fugen, Risse und lokale Schäden."],
     "Revisamos el origen y la extensión del daño para definir una reparación localizada.": ["We assess the cause and extent of the damage to define a targeted repair.", "Wir prüfen Ursache und Ausmaß des Schadens, um eine gezielte Reparatur festzulegen."],
-    "Recuperación de superficies desgastadas.": ["Restoration of worn surfaces.", "Sanierung verschlissener Oberflächen."],
     "Valoramos el desgaste y el estado del soporte antes de elegir el tratamiento superficial.": ["We assess wear and substrate condition before selecting the surface treatment.", "Wir bewerten Verschleiß und Untergrundzustand, bevor wir die Oberflächenbehandlung auswählen."],
-    "Corrección de desniveles y recuperación de cotas.": ["Correction of uneven levels and restoration of floor heights.", "Korrektur von Unebenheiten und Wiederherstellung der Höhen."],
     "Comprobamos las cotas y el uso de la zona para plantear la corrección del pavimento.": ["We check floor heights and how the area is used to plan the correction.", "Wir prüfen Höhen und Nutzung des Bereichs, um die Bodenkorrektur zu planen."],
-    "Revestimientos, anclajes y preparación del soporte.": ["Coatings, anchors and substrate preparation.", "Beschichtungen, Anker und Untergrundvorbereitung."],
     "Evaluamos qué debe retirarse y cómo preparar el soporte para la siguiente intervención.": ["We assess what must be removed and how to prepare the substrate for the next intervention.", "Wir bewerten, was entfernt werden muss und wie der Untergrund für die nächste Maßnahme vorzubereiten ist."],
     "1 de 4": ["1 of 4", "1 von 4"],
     "Ver los 5 proyectos": ["View all 5 projects", "Alle 5 Projekte ansehen"],
@@ -94,7 +90,6 @@
     "Ver menos borradores": ["View fewer drafts", "Weniger Entwürfe anzeigen"],
     "Cuéntanos": ["Tell us about", "Schildern Sie uns"],
     "tu caso": ["your project", "Ihr Projekt"],
-    "Describe el estado del pavimento y el uso de tu instalación para que podamos valorar tu consulta.": ["Describe the floor condition and how your facility operates so we can assess your enquiry.", "Beschreiben Sie den Zustand des Bodens und die Nutzung Ihrer Anlage, damit wir Ihre Anfrage bewerten können."],
     "¿Prefieres hablar directamente?": ["Would you prefer to speak directly?", "Möchten Sie lieber direkt sprechen?"],
     "Tu consulta": ["Your enquiry", "Ihre Anfrage"],
     "Los tres campos son obligatorios. Basta con un correo o un teléfono.": ["All three fields are required. An email address or phone number is enough.", "Alle drei Felder sind erforderlich. Eine E-Mail-Adresse oder Telefonnummer genügt."],
@@ -197,6 +192,11 @@
 
   // Stable keys for maintained copy. Legacy exact-text entries migrate as edited.
   const keyedMessages = {
+    "solution.repair.summary": ["Juntas, fisuras y daños localizados.","Joints, cracks and localised damage.","Fugen, Risse und lokale Schäden."],
+    "solution.polish.summary": ["Recuperación de superficies desgastadas.","Restoration of worn surfaces.","Sanierung verschlissener Oberflächen."],
+    "solution.level.summary": ["Corrección de desniveles y recuperación de cotas.","Correction of uneven levels and restoration of floor heights.","Korrektur von Unebenheiten und Wiederherstellung der Höhen."],
+    "solution.prepare.summary": ["Revestimientos, anclajes y preparación del soporte.","Coatings, anchors and substrate preparation.","Beschichtungen, Anker und Untergrundvorbereitung."],
+    "contact.intro": ["Describe el estado del pavimento y el uso de tu instalación para que podamos valorar tu consulta.", "Describe the floor condition and how your facility operates so we can assess your enquiry.", "Beschreiben Sie den Zustand des Bodens und die Nutzung Ihrer Anlage, damit wir Ihre Anfrage bewerten können."],
     "contact.required.name": ["Indica tu nombre.","Enter your name.","Geben Sie Ihren Namen an."],
     "contact.required.contact": ["Indica un correo electrónico o un teléfono.","Enter an email address or phone number.","Geben Sie eine E-Mail-Adresse oder Telefonnummer an."],
     "contact.required.message": ["Describe qué necesita tu pavimento.","Describe what your floor needs.","Beschreiben Sie, was Ihr Boden braucht."],

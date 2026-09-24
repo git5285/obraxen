@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { brand } from "@/lib/brand";
-import { internalProjects, internalProjectsBySlug } from "@/lib/internal-projects";
-import { offers } from "@/lib/offers";
-import { locales } from "@/lib/i18n";
-import { projectSchema } from "@/lib/schemas";
+import { brand } from "../domain/publication/brand";
+import { internalProjects, internalProjectsBySlug } from "../domain/publication/internal-projects";
+import { offers } from "../domain/publication/offers";
+import { locales } from "../domain/publication/activation.mjs";
+import { projectSchema } from "../domain/publication/schemas";
 
 describe("structured data", () => {
   it("keeps project and offer slugs unique", () => {

@@ -14,9 +14,9 @@ function fixture() {
 afterEach(() => roots.splice(0).forEach((path) => rmSync(path, { recursive: true, force: true })));
 
 describe("local quality evidence reuse", () => {
-  it("keeps both applications in the mandatory gate", () => {
+  it("keeps Home, tooling and domain in the mandatory gate", () => {
     expect(LOCAL_CHECKS).toEqual(["lint", "typecheck", "test:coverage", "build"]);
-    expect(FRESH_CHECKS).toEqual(["test:published", "test:e2e:contact", "test:e2e", "lighthouse:legacy"]);
+    expect(FRESH_CHECKS).toEqual(["test:published"]);
   });
   it("runs unit tests once with coverage and keeps browsers fresh", () => {
     const options = { ...fixture(), snapshot: () => "same-inputs", now: () => 1000 };
@@ -166,7 +166,9 @@ describe("local quality evidence reuse", () => {
   it("uses the local check start time rather than the end of slow browser checks", () => {
     const options = fixture();
     let time = 1000;
-    runQuality({ ...options, snapshot: () => "same", now: () => time, run: () => { time += 600000; } });
+    runQuality({ ...options, snapshot: () => "same", now: () => time, run: () => {
+      time += Math.ceil(3600001 / (LOCAL_CHECKS.length + FRESH_CHECKS.length));
+    } });
     const receipt = JSON.parse(readFileSync(options.receiptPath, "utf8"));
     expect(receipt.checkedAt).toBe(1000);
     expect(reusableReceipt(receipt, "same", time)).toBe(false);
@@ -186,14 +188,14 @@ describe("local quality evidence reuse", () => {
     expect(existsSync(options.receiptPath)).toBe(false);
   });
 
-  it.each([false, true])("checks generated inputs changed by Lighthouse (reuse=%s)", (reuse) => {
+  it.each([false, true])("checks generated inputs changed by fresh checks (reuse=%s)", (reuse) => {
     const options = { ...fixture(), snapshot: () => "same", now: () => 1000 };
     let generated = "verified";
     if (reuse) runQuality({ ...options, generatedSnapshot: () => generated, run: () => {} });
     const calls: string[] = [];
     runQuality({ ...options, reuse, generatedSnapshot: () => generated, run: (check: string) => {
       calls.push(check);
-      if (check === "lighthouse:legacy") generated = "new inputs";
+      if (check === "test:published") generated = "new inputs";
     } });
     expect(calls.at(-1)).toBe("typecheck");
   });
@@ -203,7 +205,7 @@ describe("local quality evidence reuse", () => {
     let generated = "verified";
     runQuality({ ...options, generatedSnapshot: () => generated, run: () => {} });
     expect(() => runQuality({ ...options, reuse: true, generatedSnapshot: () => generated, run: (check: string) => {
-      if (check === "lighthouse:legacy") generated = "invalid";
+      if (check === "test:published") generated = "invalid";
       if (check === "typecheck") throw new Error("invalid generated input");
     } })).toThrow("invalid generated input");
     expect(JSON.parse(readFileSync(options.receiptPath, "utf8")).result).toBe("invalid");

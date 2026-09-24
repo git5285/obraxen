@@ -31,15 +31,6 @@ describe("repository security policy", () => {
     expect(workflow).toMatch(/name: Audit production dependencies\s+run: npm run check:security/);
   });
 
-  it("uses a request nonce so script-src does not need unsafe-inline", () => {
-    const nextConfig = readFileSync("next.config.ts", "utf8");
-    const proxy = readFileSync("src/proxy.ts", "utf8");
-    expect(nextConfig).not.toContain("unsafe-inline");
-    expect(proxy).toContain("crypto.randomUUID()");
-    expect(proxy).toContain('requestHeaders.set("x-nonce", nonce)');
-    expect(proxy).toContain("'nonce-${nonce}'");
-    expect(proxy).not.toContain("script-src 'self' 'unsafe-inline'");
-  });
 
   it("makes the production-only audit scope explicit when npm is configured for production", () => {
     const manifest = JSON.parse(readFileSync("package.json", "utf8"));

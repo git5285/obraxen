@@ -14,6 +14,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   getOperationalPaths,
   readOperationalClaims,
+  readOperationalStatus,
   registerOperationalClaim,
   transitionOperationalClaim,
 } from "../../automation/agents/operations.mjs";
@@ -67,6 +68,46 @@ afterEach(() => {
 });
 
 describe("append-only operational claim state", () => {
+  it("shows all active states compactly, preserves the full view and never writes on status", () => {
+    const repo = repository();
+    const state = stateHome();
+    for (const initial of ["reservado", "en_curso", "bloqueado", "esperando_revision", "liberado"]) {
+      const claim = `.coordination/claims/status-${initial}.md`;
+      writeFileSync(join(repo, claim), `# Status fixture\n- thread_id: status-${initial}\n- estado: ${initial === "liberado" ? "en_curso" : initial}\n- archivos:\n  - src/${initial}.ts\n`);
+      registerOperationalClaim({repo, stateHome: state, claimPath: claim,
+        eventId: `status-${initial}-register`, occurredAt: "2026-07-18T12:00:00Z"});
+      if (initial === "liberado") transitionOperationalClaim({repo, stateHome: state,
+        threadId: "status-liberado", eventId: "status-liberado-release", occurredAt: "2026-07-18T12:01:00Z",
+        state: "liberado", reason: "fixture_release", evidence: [{kind: "human_decision", decisionId: "fixture-status-release"}]});
+    }
+    const events = getOperationalPaths(repo, state).events;
+    const before = readdirSync(events).map(name => [name, readFileSync(join(events, name), "utf8")]);
+    const full = readOperationalStatus(repo, state);
+    const active = readOperationalStatus(repo, state, {activeOnly: true});
+    expect(full.claims).toHaveLength(5);
+    expect(full).not.toHaveProperty("summary");
+    expect(active.summary).toEqual({total: 5, active: 4});
+    expect(active.claims.map(claim => claim.state).sort()).toEqual(["bloqueado", "en_curso", "esperando_revision", "reservado"]);
+    expect(active.claims.every(claim => claim.claim.files.length === 1)).toBe(true);
+    expect(readdirSync(events).map(name => [name, readFileSync(join(events, name), "utf8")])).toEqual(before);
+    const released = join(events, "status-liberado-register.json");
+    const corrupt = JSON.parse(readFileSync(released, "utf8"));
+    corrupt.reason = "tampered";
+    writeFileSync(released, JSON.stringify(corrupt));
+    expect(() => readOperationalStatus(repo, state, {activeOnly: true})).toThrow(/digest mismatch/);
+  });
+
+  it("returns an empty active view without inventing a reservation", () => {
+    const repo = repository();
+    expect(readOperationalStatus(repo, stateHome(), {activeOnly: true})).toMatchObject({summary: {total: 0, active: 0}, claims: []});
+  });
+
+  it("rejects misspelled or repeated status filters instead of dumping history", () => {
+    for (const args of [["--actve"], ["--active", "--active"], ["--repo"]]) {
+      expect(() => execFileSync(process.execPath, [operationsCli, "status", ...args], {stdio: "pipe"})).toThrow();
+    }
+  });
+
   it("requires work to start before review and releases the unchanged registered marker", () => {
     const repo = repository();
     const state = stateHome();

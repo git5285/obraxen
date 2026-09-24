@@ -1,19 +1,24 @@
-# Arquitectura del sitio
+# Arquitectura actual y planificación histórica
 
-Estado documentado: 6 de septiembre de 2026. La web continúa en preview
-`noindex,nofollow`; `Obraxen`, `obraxen.com` y los correos público/privacidad
-están integrados. Razón social, NIF, domicilio y teléfono temporal están
-declarados; formulario y publicación siguen bloqueados. La integración no
-modifica rutas ni autoriza una salida pública.
+La única aplicación web de esta candidata es `apps/public-site/`: rutas
+`/`, `/en`, `/de`, HTML canónico y assets empaquetados por
+`scripts/public-site.mjs`. Véase [HOMEPAGE.md](HOMEPAGE.md).
 
-Next.js App Router es la única implementación desde la Fase 4.5. Todas las rutas
-actuales se prerenderizan en inglés, alemán, español y francés; los borradores
-legales ya no dependen de plantillas legacy y el sitemap permanece vacío mientras
-la publicación esté bloqueada.
+`domain/publication/` conserva los contratos y lectores de `data/`.
+La Home no importa esos datos. `automation/agents/` es automatización interna;
+scripts y tests consumen sus contratos, no generan rutas públicas.
 
-Este documento distingue la estructura que ya existe de la arquitectura futura.
-Una ruta planificada no se construye ni se publica hasta superar su puerta de
-contenido, evidencia y capacidad.
+La aplicación `src/` y su configuración raíz fueron retiradas.
+[Inventario, evidencia y recuperación](docs/LEGACY_RETIREMENT.md).
+No se trasladaron francés, APIs, analítica ni páginas interiores a Home.
+La retirada local no acredita una publicación o cambio remoto.
+
+## Referencia histórica — no ejecutable en esta candidata
+
+Los apartados siguientes conservan la arquitectura y planificación de la antigua
+aplicación. Sus rutas y futuros proyectos no existen por esta documentación;
+requieren decisiones propias. Los nombres de archivos retirados son referencias
+al historial Git, no instrucciones actuales.
 
 ## 1. Principio de navegación
 
@@ -25,10 +30,10 @@ La estructura será plana: las páginas principales estarán a un clic del inici
 los detalles a un segundo nivel. Los slugs internos de proyecto se conservan,
 pero no generan rutas públicas hasta superar su puerta de evidencia.
 
-## 2. Estructura actual multilingüe
+## 2. Estructura multilingüe del legado
 
 ```text
-Raíz (/) → 308 /en/
+Raíz (/) → 308 /es/
 ├── English (/en/)
 │   ├── Projects (/en/projects/) → hub sin casos públicos
 │   ├── Legal notice (/en/legal-notice/)

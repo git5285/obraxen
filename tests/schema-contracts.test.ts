@@ -6,7 +6,7 @@ import offersSource from "../data/ofertas.json";
 import offersJsonSchema from "../data/ofertas.schema.json";
 import projectsSource from "../data/proyectos.json";
 import projectsJsonSchema from "../data/proyectos.schema.json";
-import { brandSchema, offersSchema, projectsSchema } from "@/lib/schemas";
+import { brandSchema, offersSchema, projectsSchema } from "../domain/publication/schemas";
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 const calendarDate = z.iso.date();

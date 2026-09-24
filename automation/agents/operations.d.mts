@@ -52,6 +52,11 @@ export function getOperationalPaths(repo?: string, stateHome?: string | null): {
 export function readOperationalEvents(repo?: string, stateHome?: string | null): OperationalEvent[];
 export function deriveOperationalClaims(events: OperationalEvent[]): OperationalClaimState[];
 export function readOperationalClaims(repo?: string, stateHome?: string | null): OperationalClaimState[];
+export function readOperationalStatus(repo?: string, stateHome?: string | null, options?: {activeOnly?: boolean}): {
+  paths: ReturnType<typeof getOperationalPaths>;
+  summary?: {total: number; active: number};
+  claims: OperationalClaimState[];
+};
 export function appendOperationalEvent(
   event: OperationalEvent,
   options?: OperationalOptions,
