@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readArgumentValue as argument } from "./cli-arguments.mjs";
 import {
   ACTIVE_CLAIM_STATES,
   canonicalClaimState,
@@ -295,14 +296,6 @@ export function buildPreflight(repo = process.cwd(), policy = loadPolicy(), opti
     eligibility: gating.eligibility,
     blockers: gating.blockers,
   };
-}
-
-function argument(name) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return null;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
-  return value;
 }
 
 function main() {

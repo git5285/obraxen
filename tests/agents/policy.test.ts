@@ -14,7 +14,7 @@ import {
   validateBuilderOutput,
   validateScoutOutput,
 } from "../../automation/agents/contracts.mjs";
-import type { ScoutOutput } from "../../automation/agents/contracts.mjs";
+import type { BuilderOutput, ScoutOutput } from "../../automation/agents/contracts.mjs";
 
 const runtimeFingerprint = "f".repeat(64);
 
@@ -45,6 +45,64 @@ function activationReport() {
 }
 
 describe("autonomous-agent policy", () => {
+  it("returns the original policy without normalizing accepted boundary values or extra fields", () => {
+    const policy = { ...loadPolicy(), extension: { retained: true } };
+    policy.memory.maxContextBytes = 4096;
+    policy.groupedAuthorizations.maxChangedFiles = 20;
+    policy.groupedAuthorizations.maxSteps = 3;
+    policy.groupedAuthorizations.reservationTtlSeconds = 900;
+    policy.groupedAuthorizations.maxLifetimeSeconds = 86400;
+    const before = structuredClone(policy);
+    expect(validatePolicy(policy)).toBe(policy);
+    expect(policy).toEqual(before);
+  });
+
+  it.each([
+    ["coordination.stateHome", " relative", "limits.maxConcurrentWriters", 2,
+      "policy.coordination.stateHome must not contain surrounding whitespace"],
+    ["limits.maxConcurrentWriters", 2, "memory.schemaVersion", 0,
+      "Obraxen permits exactly one autonomous writer"],
+    ["memory.maxContextBytes", 4095, "attentionBudget.schemaVersion", 0,
+      "policy.memory.maxContextBytes must be at least 4096"],
+    ["attentionBudget.schemaVersion", 0, "reconciliation.defaultBranch", " main",
+      "policy.attentionBudget.schemaVersion must be 1"],
+    ["reconciliation.defaultBranch", " main", "groupedAuthorizations.enabled", null,
+      "policy.reconciliation.defaultBranch must be a safe branch name"],
+    ["groupedAuthorizations.maxChangedFiles", 21, "authority.allowScout", null,
+      "policy.groupedAuthorizations.maxChangedFiles exceeds twenty exact human-approved paths"],
+    ["authority.allowScout", null, "authority.allowPublish", true,
+      "policy.allowScout must be boolean"],
+    ["authority.allowPublish", true, "authority.allowPush", true,
+      "merge, deploy, and publish are permanently human-gated"],
+  ])("keeps the first error when %s and a later block are invalid", (first, firstValue, second, secondValue, message) => {
+    const policy = loadPolicy();
+    for (const [path, value] of [[first, firstValue], [second, secondValue]]) {
+      const [section, key] = String(path).split(".");
+      (policy as unknown as Record<string, Record<string, unknown>>)[section][key] = value;
+    }
+    expect(() => validatePolicy(policy)).toThrow(new Error(String(message)));
+  });
+
+  it.each(["", " \t\n", null, undefined, 42, {}, []])("rejects invalid builder reasons without changing the error: %j", (reason) => {
+    expect(() => validateBuilderOutput({
+      schemaVersion: 4, status: "no_op", attentionClass: "product",
+      runId: "run-validation", candidateId: "candidate-validation",
+      baseSha: "a".repeat(40), runtimeFingerprint,
+      changedPaths: [], checksRun: [], residualRisks: [], reason,
+    } as unknown as BuilderOutput)).toThrow(new Error("builder output.reason must be a non-empty string"));
+  });
+
+  it("preserves whitespace and object identity in a valid builder output", () => {
+    const output: BuilderOutput = {
+      schemaVersion: 4, status: "no_op", attentionClass: "product",
+      runId: "run-validation", candidateId: "candidate-validation",
+      baseSha: "a".repeat(40), runtimeFingerprint,
+      changedPaths: [], checksRun: [], residualRisks: [], reason: "  No change needed.\n",
+    };
+    expect(validateBuilderOutput(output)).toBe(output);
+    expect(output.reason).toBe("  No change needed.\n");
+  });
+
   it("starts in active local-diff mode with one writer and no external authority", () => {
     const policy = loadPolicy();
     expect(policy.mode).toBe("active");

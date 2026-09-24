@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readArgumentValue as argument } from "./cli-arguments.mjs";
 import ts from "typescript";
 import { ACTIVE_CLAIM_STATES, canonicalClaimState, readClaims } from "./claims.mjs";
 import { readRegisteredClones, verifyRegisteredClone } from "./lease.mjs";
@@ -449,14 +450,6 @@ export function buildControlSurface(repo = process.cwd(), options = {}) {
     server: inspectServer(options.pid ?? null, target.worktree),
     automationOwnership: deriveAutomationOwnership(target, controllerOwner),
   };
-}
-
-function argument(name) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return null;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
-  return value;
 }
 
 function integerArgument(name, maximum) {
