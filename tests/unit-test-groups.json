@@ -1,0 +1,51 @@
+{
+  "home": [
+    "tests/public-home.test.ts",
+    "tests/home-contract.test.ts",
+    "tests/home-platform-artifact.test.ts",
+    "tests/prepare-home-candidate.test.ts",
+    "tests/public-site-evidence.test.ts",
+    "tests/checkout-context.test.ts"
+  ],
+  "tooling": [
+    "tests/agents/attention.test.ts",
+    "tests/agents/authorization-chain-parity.test.ts",
+    "tests/agents/authorizations.test.ts",
+    "tests/agents/cli-arguments.test.ts",
+    "tests/agents/control-surface.test.ts",
+    "tests/agents/diff-check.test.ts",
+    "tests/agents/git-hook.test.ts",
+    "tests/agents/hook-binding.test.ts",
+    "tests/agents/isolated-host.test.ts",
+    "tests/agents/isolated-work.test.ts",
+    "tests/agents/lease.test.ts",
+    "tests/agents/local-completion.test.ts",
+    "tests/agents/memory.test.ts",
+    "tests/agents/operations.test.ts",
+    "tests/agents/policy.test.ts",
+    "tests/agents/preflight.test.ts",
+    "tests/agents/quality-gate.test.ts",
+    "tests/agents/reconcile.test.ts",
+    "tests/agents/refactor-protocol.test.ts",
+    "tests/agents/repository-work.test.ts",
+    "tests/agents/runtime.test.ts",
+    "tests/agents/skill-claim.test.ts",
+    "tests/agents/skill-evaluation.test.ts",
+    "tests/agents/storage.test.ts",
+    "tests/dev-dependencies.test.ts",
+    "tests/eslint-config.test.ts",
+    "tests/qa-port.test.ts",
+    "tests/unit-test-groups.test.ts",
+    "tests/vercel-bundles.test.ts",
+    "tests/security-policy.test.ts",
+    "tests/retirement-boundary.test.ts",
+    "tests/scoped-command.test.ts"
+  ],
+  "publication": [
+    "tests/activation-policy.test.ts",
+    "tests/data.test.ts",
+    "tests/schema-contracts.test.ts",
+    "tests/schema-dates.test.ts",
+    "tests/project-authorization.test.ts"
+  ]
+}

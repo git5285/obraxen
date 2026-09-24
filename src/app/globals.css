@@ -1,6 +1,0 @@
-@import "../../css/tokens.css";
-@import "../../css/home.css";
-
-.inline-block { display: inline-block; }
-.logo-footer { color: var(--brand-ink); }
-.legal-details { margin-top: 18px; font-size: .75rem; line-height: 1.7; }

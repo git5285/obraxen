@@ -1,11 +1,13 @@
-# Roadmap para una web ejemplar
+# Roadmap histórico del legado
 
 Fecha de referencia: 12 de septiembre de 2026.
 
-Este plan parte de la evidencia real y del cutover ya completado a Next.js. Los
-siguientes hitos deben conservar contenido, datos, rutas, dirección industrial,
-controles de publicación y rendimiento sin volver a introducir una segunda
-implementación.
+Este plan describe la antigua aplicación `src/`, retirada, y sus hitos históricos; no es el estado vigente de la
+Home en `apps/public-site/`. Para contenido, idiomas y pruebas de Home consultar
+[HOMEPAGE.md](HOMEPAGE.md); para entregar la Home,
+[DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md). La automatización interna tiene
+su propio flujo en `automation/agents/`. No se infiere trabajo pendiente actual
+ni autorización a partir de las fases o mediciones históricas de este documento.
 
 ## Stack objetivo
 
@@ -35,7 +37,7 @@ implementación.
 6. Cada ruta nueva se valida contra las puertas actuales de contenido, datos,
    accesibilidad, seguridad y rendimiento.
 
-## Arquitectura actual
+## Arquitectura de referencia del legado
 
 ```text
 src/
@@ -80,7 +82,7 @@ tests/
 - El enrutado admite 52 páginas localizadas potenciales bajo `/en/`, `/de/`,
   `/es/` y `/fr/`; el build cerrado actual genera 29 mientras los expedientes
   de casos siguen excluidos por su puerta de evidencia. Todos los idiomas llevan
-  prefijo y `/` redirige a inglés.
+  prefijo; el routing histórico del legado en `next.config.ts` redirigía `/` a `/es/`.
 - `data/brand.json` sigue siendo la puerta de identidad y publicacion.
 - Los proyectos conservan una unica fuente de datos y generan tanto el hub como
   las rutas dinamicas mediante `generateStaticParams`.

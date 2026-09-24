@@ -1,16 +1,15 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { getPublicationIssues } from "../src/lib/publication.ts";
+import { getActivationIssues } from "../domain/publication/activation.mjs";
 
 const brandUrl = new URL("../data/brand.json", import.meta.url);
-const projectsUrl = new URL("../data/proyectos.json", import.meta.url);
 
 function readJson(url) {
   return JSON.parse(readFileSync(url, "utf8"));
 }
 
-export function buildActivationReport(brand, projects) {
-  const blockers = getPublicationIssues(brand, projects);
+export function buildActivationReport(brand) {
+  const blockers = getActivationIssues(brand);
 
   return {
     schemaVersion: 1,
@@ -45,7 +44,7 @@ function formatHumanReport(report) {
 }
 
 function main() {
-  const report = buildActivationReport(readJson(brandUrl), readJson(projectsUrl));
+  const report = buildActivationReport(readJson(brandUrl));
   const asJson = process.argv.includes("--json");
 
   process.stdout.write(`${asJson ? JSON.stringify(report, null, 2) : formatHumanReport(report)}\n`);

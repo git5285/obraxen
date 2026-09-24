@@ -3,7 +3,7 @@
 La referencia aprobada por el usuario es la web publicada en https://obraxen.com.
 Desde el 23 de septiembre de 2026, su fuente recuperada vive dentro del repositorio
 en `apps/public-site/`. No usar `src/app/[lang]/page.tsx` como base de esa Home:
-pertenece a la implementación anterior, preservada para no perder trabajo ajeno.
+pertenecía a la implementación anterior, ahora retirada de esta candidata.
 
 ## Abrir y construir la Home aprobada
 
@@ -97,6 +97,26 @@ no se sustituye por la fuente mantenida ni se actualiza el inventario original.
 
 ## Mantener traducciones
 
+Los comandos explícitos de esta aplicación son `dev:home`, `build:home`,
+`start:home` y `test:e2e:home`; sus aliases históricos anuncian el mismo destino.
+`test:home` selecciona su inventario positivo; `test:home -- --list` permite
+consultarlo. `test:e2e` y los comandos del legado ya no existen en esta candidata.
+
+Para un cambio de texto: localizar el nodo en `public/index.html`, conservar su
+`data-i18n` y revisar la entrada con esa clave en `keyedMessages` de
+`public/assets/home-i18n.js` (orden ES, EN, DE). El HTML gobierna el español
+renderizado; las variantes EN/DE requieren revisión editorial propia. Nunca
+editar `app/generated-home-html.js` ni `src/lib/dictionaries/` para esta Home.
+
+Los cuatro resúmenes de soluciones usan `solution.{repair,polish,level,prepare}.summary`.
+Una corrección española de puntuación ya no cambia su identificador. La prueba
+`public-home.test.ts` modifica esa puntuación en memoria en los tres idiomas.
+Al tocar otra zona sin clave, migrar solo esa zona con traducciones completas;
+el resto conserva detección de ausencias y compatibilidad por texto exacto.
+`test:home` comprueba el contrato; `check:home` añade build y navegador. Si cambia
+un titular o metadata comprobados literalmente, revisar también las expectativas
+editoriales de `verify-public-site.mjs`, sin relajar navegación ni errores.
+
 Las claves `data-i18n` de navegación y titular se resuelven con `message(key)`
 en `home-i18n.js`; pueden cambiarse sus textos españoles sin perder EN/DE.
 La clave del titular traduce solo su nodo de texto directo y conserva el `span`.
@@ -171,7 +191,7 @@ del runbook. No ejecutan Vercel, no leen credenciales y no conceden autorizació
 nativo, recursos locales, ausencia de primitivas de envío/analítica/almacenamiento
 y alcance de rutas. Son guardas de regresión estática, no un analizador completo
 de JavaScript ni autorización legal. El navegador añade comprobaciones de
-solicitudes, cookies, almacenamiento y rutas excluidas. El gate del legado sigue
+solicitudes, cookies, almacenamiento y rutas excluidas. El contrato interno de activación sigue
 siendo independiente y no se debilita por estos checks.
 
 La receta y sus pruebas se incluyen en `test:home`; la automatización no puede
@@ -179,7 +199,7 @@ modificar sus protecciones, rutas, configuración o manifiestos de dependencias
 sin la autoridad correspondiente. HTML editorial y assets ordinarios conservan
 su flujo habitual.
 
-La cobertura porcentual de `test:coverage` corresponde a bibliotecas del legado,
+La cobertura porcentual de `test:coverage` corresponde a `domain/publication/`,
 no al HTML o JavaScript de esta Home. Para esta aplicación, la evidencia de
 comportamiento procede de `test:home` y `test:published`.
 
@@ -187,12 +207,12 @@ Antes de editar, respetar las claims de `AGENTS.md` y reservar rutas exactas.
 Para la Home aprobada, trabajar en `apps/public-site/`; una prueba sobre el
 árbol legado no demuestra nada sobre la web publicada.
 
-## Implementación anterior preservada
+## Implementación anterior retirada
 
-`src/`, `css/`, `data/`, `img/` y sus cambios existentes se conservan.
-Se pueden consultar mediante `npm run dev:legacy`, `build:legacy` y
-`start:legacy`. Sus pruebas anteriores continúan separadas. No se mezclan
-sus textos, imágenes, APIs o configuración de publicación con la Home recuperada.
+`src/`, sus comandos y herramientas exclusivas se retiraron con autorización.
+Se conservan `css/`, `data/`, `img/`, `public/` y los contratos internos en
+`domain/publication/`. No se trasladan sus textos, imágenes, APIs o configuración
+a Home. Véase [inventario y recuperación](docs/LEGACY_RETIREMENT.md).
 
 La ruta externa histórica `home-refined.html` documentada aquí antes de la
 recuperación ya no existe. Vercel conservaba las fuentes subidas del despliegue

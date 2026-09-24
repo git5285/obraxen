@@ -7,13 +7,16 @@ archivos ni repetir decisiones.
 
 `AGENTS.md` es la entrada del repositorio y `COORDINATION.md` resume las reglas
 vigentes. Este documento define solo la mecánica de claims, handoffs y
-transiciones. Consulta `operations.mjs status` para el estado vivo; los
+transiciones. Consulta `operations.mjs status --active` para las reservas registradas
+activas y sus rutas; valida toda la cadena antes de filtrar. `status` sin filtro
+conserva el JSON completo para diagnóstico. Esta vista no sustituye al preflight
+ni a las claims legacy sin registro operativo. Los
 handoffs y claims cerrados son historial, no lectura obligatoria de arranque.
 
 ## Ciclo obligatorio por tarea
 
 1. **Sincronizar:** comprueba `git status --short` y las reservas activas.
-   Usa `operations.mjs status` como fuente de estado. Consulta handoffs solo
+   Usa `operations.mjs status --active` como fuente de estado registrado. Consulta handoffs solo
    cuando debas resolver propiedad, decisiones vigentes o dependencias del cambio.
    Ejecuta `preflight.mjs` cuando la tarea vaya a editar dentro de un
    sistema con worktrees, leases o concurrencia que deba reconciliarse.

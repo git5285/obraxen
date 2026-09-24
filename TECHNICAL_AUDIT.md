@@ -1,16 +1,23 @@
-# Auditoría técnica
+# Auditoría técnica histórica del legado
+
+Alcance: mediciones y observaciones de `src/` (aplicación retirada) en la fecha indicada, conservadas
+como evidencia histórica; no se han vuelto a ejecutar al delimitar este documento.
+No describen la Home actual en `apps/public-site/`, sus rutas ni su cobertura.
+Para Home consultar [HOMEPAGE.md](HOMEPAGE.md). Para estado vigente usar checks
+del checkout/SHA elegido; CI y producción requieren evidencia independiente.
+La automatización interna tampoco queda certificada por estas métricas.
 
 Última verificación: 12 de septiembre de 2026. Stack: Next.js 16.3.5, React 19,
 TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.1.
 
-## Estado
+## Estado histórico evaluado
 
-- Implementación única: Next.js App Router.
+- Implementación evaluada: legado Next.js App Router.
 - 29 páginas generadas en/de/es/fr: portadas, cuatro hubs sin expedientes
   públicos, legales y contacto. Las portadas y hubs localizados son dinámicos
   por el nonce CSP; los slugs de casos no se generan ni se exponen
   mientras no exista autorización, revisión legal y activo publicable por caso;
-  no queda builder o plantilla HTML legacy.
+  esa medición no incluyó el HTML canónico de la Home recuperada posteriormente.
 - Preview cerrada: `noindex,nofollow`, sitemap vacío, dominio configurado y sin
   despliegues Git automáticos.
 - Repositorio privado en GitHub Free; `Quality gate` continúa en cada PR y el
@@ -28,7 +35,7 @@ TypeScript 6, Node 24.18.0, npm 11.16.0, Vitest, Playwright y Lighthouse 13.4.1.
   el formulario lleva el snapshot inicial y revalida en runtime solo su booleano de
   disponibilidad, sin exponer credenciales ni buzones.
 
-## Resultados actuales
+## Resultados históricos
 
 | Ruta móvil | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | TBT | CLS |
 |---|---:|---:|---:|---:|---:|---:|---:|

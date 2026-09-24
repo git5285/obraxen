@@ -1,5 +1,10 @@
 # Expediente de activación · Fase 6.7
 
+Alcance: contrato interno conservado en `domain/publication/` tras retirar `src/`. Su resultado
+no valida el contenido, build ni publicación de la Home en `apps/public-site/`.
+Para Home consultar [HOMEPAGE.md](HOMEPAGE.md) y el apartado A del runbook.
+La automatización puede comprobar evidencia, pero no conceder autorización.
+
 Contrato vigente: 6 de septiembre de 2026.
 
 Este expediente convierte la activación externa en una puerta reproducible. No
@@ -12,8 +17,8 @@ preview, despliegue, conexión web del dominio, indexación, formulario ni anal�
 npm run check:activation
 ```
 
-El comando deriva el resultado de `data/brand.json`, `data/proyectos.json` y la
-misma función que bloquea la publicación. Un resultado sin bloqueos significa
+El comando deriva el resultado de `data/brand.json` y
+`domain/publication/activation.mjs`; no lee el catálogo de proyectos. Un resultado sin bloqueos significa
 únicamente `READY_FOR_PROTECTED_CANDIDATE`: todavía exige preview protegida del
 SHA exacto, auditoría completa y decisión humana `GO/NO-GO`.
 
@@ -23,10 +28,9 @@ web y del tratamiento con Resend, y por revisión profesional de ES, EN, DE y FR
 Los demás faltantes permanecen como advertencias de negocio y no se convierten
 en aprobaciones por dejar de bloquear.
 
-La puerta global no autoriza casos individuales: `publicProjects` solo expone un
-caso cuando sus evidencias documentales, revisión legal aprobada y activos
-públicos cumplen el contrato correspondiente. Los casos que no lo cumplen
-quedan fuera de Home, hubs, rutas, sitemap y JSON-LD aunque `publicar` sea `true`.
+La puerta global no autoriza casos individuales. Los contratos y evidencias
+se conservan en `domain/publication/`; el renderizador `publicProjects`, sus
+rutas y APIs se retiraron. Ningún dato interno se publica por superar este check.
 
 El resultado actual no se copia en este documento. Debe consultarse con el
 comando anterior: cualquier bloqueo produce `NO-GO`, y un resultado sin bloqueos
@@ -71,8 +75,10 @@ responsable no se convierte en ninguna de esas dos evidencias. Su ausencia se
 informa como advertencia, no como bloqueo. El inventario vigente por caso se
 mantiene en `ACTIVATION_INPUTS.md`.
 
-## Diligencia pública sobre Resend
+## Diligencia histórica sobre Resend
 
+Referencia histórica, no verificada de nuevo: la integración Resend se retiró.
+Estos apuntes no describen servicios activos ni una comprobación remota actual.
 La revisión documental pública no constituye aceptación contractual:
 
 - el DPA de Plus Five Five, Inc. es un documento mutable, se incorpora al
@@ -114,7 +120,7 @@ garantía entre instancias. Esta precondición de entorno no forma parte del
 recuento documental: la puerta de datos y la de entorno deben estar verdes de
 forma independiente.
 
-## Secuencia de cierre
+## Secuencia histórica de cierre del legado — no ejecutar
 
 1. Recibir y verificar el expediente anterior.
 2. Actualizar datos y textos mediante PR; ejecutar `npm run check:quality` y
@@ -129,7 +135,7 @@ forma independiente.
 6. Publicar únicamente tras un `GO` expreso. Cualquier otro resultado mantiene
    todas las superficies apagadas.
 
-## Rollback preacordado
+## Referencia histórica de rollback — requiere nueva autorización
 
 Se retira inmediatamente alias/dominio o se desactiva formulario/analítica ante
 exposición sin control, identidad o permiso incorrectos, entrega de correo

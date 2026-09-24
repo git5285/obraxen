@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import brandSource from "../data/brand.json";
 import projectsSource from "../data/proyectos.json";
-import { brandSchema, projectSchema } from "@/lib/schemas";
+import { brandSchema, projectSchema } from "../domain/publication/schemas";
 
 const locales = ["en", "de", "es", "fr"] as const;
 const dates = [

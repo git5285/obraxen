@@ -1,12 +1,6 @@
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
   test: {
     environment: "node",
     include: ["tests/**/*.test.{ts,tsx}"],
@@ -14,15 +8,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json-summary"],
       reportsDirectory: "./coverage",
-      include: ["src/lib/**/*.ts"],
+      include: ["domain/publication/**/*.ts", "domain/publication/**/*.mjs"],
       exclude: [
-        "src/lib/internal-projects.ts",
-        "src/lib/consent-providers.ts",
-        "src/lib/consent-storage.ts",
-        "src/lib/use-consent-controller.ts",
-        "src/lib/project-jsonld.ts",
-        "src/lib/project-metadata.ts",
-        "src/lib/project-presenters.ts",
+        "domain/publication/internal-projects.ts",
+        "domain/publication/**/*.d.mts",
       ],
       thresholds: {
         lines: 70,

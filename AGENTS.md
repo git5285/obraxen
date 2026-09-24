@@ -1,9 +1,16 @@
 # Coordinación obligatoria
 
-Antes de trabajar, ejecutar `npm run check:checkout` desde la raíz elegida y
-registrar ruta, HEAD y cambios pendientes. El informe no acredita estado remoto.
-Si existe `WORKING_CHECKOUT.md` en el control, consultar su designación local;
-no confundir un checkout preservado con la candidata ni sincronizarlo automáticamente.
+Antes de trabajar, ejecutar `node scripts/checkout-context.mjs` desde la raíz
+elegida (también disponible como `npm run check:checkout`). Registrar ruta, HEAD,
+rol control/worktree y cambios pendientes. Consultar `designationFile` si existe
+para elegir la candidata de la tarea; el diagnóstico no la selecciona ni acredita
+estado remoto. Se puede exigir `--expected-root=<ruta>` y `--expected-head=<SHA>`.
+No sincronizar automáticamente un control preservado.
+
+Home actual: `apps/public-site/` y `HOMEPAGE.md`. `src/` fue retirado de esta
+candidata; historial y recuperación en `docs/LEGACY_RETIREMENT.md`.
+Dominio interno conservado: `domain/publication/` y `data/`.
+Automatización interna: `automation/agents/`; no es una aplicación pública.
 
 Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
 
@@ -16,7 +23,8 @@ Una tarea de solo lectura no crea claim. `COORDINATION.md` es un resumen opciona
    Consulta «Registro operativo» antes de registrar o cerrar una claim;
    «Plantilla de handoff» antes de entregar y «Autorizacion agrupada de entrega»
    solo para esa vía. No releas contenido vigente ya disponible en el contexto.
-2. Revisa `git status --short` y las claims activas.
+2. Revisa `git status --short` y las claims activas con
+   `node automation/agents/operations.mjs status --active` (solo lectura).
 3. Consulta handoffs relacionados solo cuando sean necesarios para resolver
    propiedad, una decisión vigente o una dependencia del cambio. No recorras
    historial cerrado como requisito general de arranque.

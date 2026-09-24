@@ -1,5 +1,13 @@
 # Entradas pendientes para activar Obraxen
 
+Alcance: inventario interno heredado del legado retirado, fechado abajo.
+El contrato ejecutable permanece en `domain/publication/`. Las afirmaciones sobre
+proveedores y entornos son evidencia histórica, no revalidada en esta integración. No describe
+el estado publicado de la Home (`apps/public-site/`) ni sustituye sus revisiones.
+Para la entrega Home consultar [HOMEPAGE.md](HOMEPAGE.md) y el apartado A de
+[DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md). No trasladar estos datos a Home
+ni activar servicios desde la automatización por inferencia.
+
 Actualizado: 12 de septiembre de 2026. Estado: **NO-GO**.
 
 Esta es la única hoja documental que mantiene las entradas externas vigentes y

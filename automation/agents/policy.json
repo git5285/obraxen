@@ -137,6 +137,13 @@
     "apps/public-site/public/assets/home-contact.js",
     "scripts/public-site.mjs",
     "scripts/patch-vercel-bundles*",
+    "domain/publication/**",
+    "scripts/unit-test-group*",
+    "tests/unit-test-groups*",
+    "tests/activation-policy.test.ts",
+    "tests/project-authorization.test.ts",
+    "docs/LEGACY_RETIREMENT.md",
+    "docs/legacy-retirement-files.json",
     "scripts/home-contract*",
     "scripts/checkout-context*",
     "scripts/home-platform-artifact*",
@@ -177,7 +184,9 @@
     "src/lib/publication.ts",
     "src/lib/schemas.ts",
     "src/components/legal-page.tsx",
-    "tests/activation-gate.test.ts"
+    "tests/activation-gate.test.ts",
+    "scripts/scoped-command*",
+    "tests/scoped-command.test.ts"
   ],
   "activationInvariant": {
     "schemaVersion": 1,

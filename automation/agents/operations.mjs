@@ -302,6 +302,16 @@ export function readOperationalClaims(repo = process.cwd(), stateHome = null) {
   return deriveOperationalClaims(readOperationalEvents(repo, stateHome));
 }
 
+// Validate the complete history before selecting a view: even a corrupt released
+// claim must block this read. The view never registers clones or changes events.
+export function readOperationalStatus(repo = process.cwd(), stateHome = null, { activeOnly = false } = {}) {
+  const claims = readOperationalClaims(repo, stateHome);
+  const paths = getOperationalPaths(repo, stateHome);
+  if (!activeOnly) return { paths, claims };
+  const active = claims.filter(claim => ACTIVE_CLAIM_STATES.has(claim.state));
+  return { paths, summary: { total: claims.length, active: active.length }, claims: active };
+}
+
 function marker(repo, claim) {
   const absolute = resolve(repo, claim.source);
   const text = readFileSync(absolute, "utf8");
@@ -501,10 +511,17 @@ function main() {
   const stateHome = loadPolicy().coordination.stateHome;
   let result;
   if (operation === "status") {
-    result = {
-      paths: getOperationalPaths(repo, stateHome),
-      claims: readOperationalClaims(repo, stateHome),
-    };
+    const args = process.argv.slice(3);
+    const seen = new Set();
+    for (let i = 0; i < args.length; i += 1) {
+      const option = args[i];
+      if (!["--active", "--repo"].includes(option) || seen.has(option)) {
+        throw new Error("usage: operations.mjs status [--active] [--repo <root>]");
+      }
+      seen.add(option);
+      if (option === "--repo") { argument("--repo"); i += 1; }
+    }
+    result = readOperationalStatus(repo, stateHome, { activeOnly: seen.has("--active") });
   } else if (operation === "register") {
     result = registerOperationalClaim({
       repo,

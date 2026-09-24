@@ -44,6 +44,7 @@ describe("Home-only preparation recipe", () => {
     const files = candidateInputs(repo).map(file => file.path);
     expect(files).toContain("apps/public-site/public/assets/home-contact.js");
     expect(files).toContain("scripts/home-contract.mjs");
+    expect(files).toContain("scripts/scoped-command.mjs");
     expect(files.some(path => /^(src|data|\.coordination|\.github|\.vercel)\//.test(path))).toBe(false);
     expect(files.some(path => path.includes("generated-home-html") || path.includes(".next/") || path.includes(".env"))).toBe(false);
   });
@@ -60,6 +61,10 @@ describe("Home-only preparation recipe", () => {
     expect(first.publicationAuthorized).toBe(false);
     expect(candidateInputs(join(parent, "first"))).toEqual(first.inputs);
     expect(existsSync(join(parent, "first", "src"))).toBe(false);
+    const exported = JSON.parse(readFileSync(join(parent, "first", "package.json"), "utf8"));
+    expect(exported.scripts.build).toContain("scripts/scoped-command.mjs build");
+    expect(exported.scripts["build:home"]).toContain("scripts/public-site.mjs build");
+    expect(readFileSync(join(parent, "first", "scripts/scoped-command.mjs"), "utf8")).toContain('"build": "build:home"');
     expect(existsSync(join(parent, "first", ".vercel/project.json"))).toBe(false);
   });
   it.each([[" M package.json", false], ["", true]])("requires explicit local-worktree mode for unconfirmed inputs", (status, mismatch) => {

@@ -8,8 +8,9 @@ la coordinación y los límites de `../../AGENTS.md` antes de editar.
   `app/generated-home-html.js`, que se regenera desde el HTML.
 - Ejecutar los comandos desde la raíz del repositorio: `npm run dev`,
   `npm run build`, `npm run start` y `npm run test:published`.
-- La implementación anterior en `../../src/` está preservada como legado;
-  no copiar automáticamente su diseño, datos, APIs ni rutas a esta Home.
+- La implementación anterior `../../src/` fue retirada; su recuperación está en
+  `../../docs/LEGACY_RETIREMENT.md`. No copiar automáticamente sus datos internos,
+  diseño, APIs o rutas a esta Home.
 - El inventario original está en `../../docs/published-site-source.json` y
   las decisiones de integración en `../../docs/PUBLISHED_SITE_RECOVERY.md`.
 - Conservar el diseño, textos, imágenes, traducción ES/EN/DE y comportamiento

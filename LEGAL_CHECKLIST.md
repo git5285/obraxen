@@ -1,5 +1,13 @@
 # Requisitos legales antes de producción
 
+Alcance operativo: datos y contrato interno en `domain/publication/`, heredados del
+legado retirado. Las referencias a formulario, cuatro idiomas y límites de API
+son requisitos para una eventual reintroducción, no funciones actuales de Home. Para la Home
+actual (`apps/public-site/`) revisar sus fuentes y el apartado A de
+[DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md). Separar aplicaciones no exime de
+revisar los requisitos legales aplicables, no acredita datos ni concede permisos.
+La automatización interna no puede suplir las revisiones profesionales.
+
 Este documento define requisitos y evidencias de aprobación. No mantiene el
 estado cambiante de identidad, contacto o expedientes: consúltese
 `ACTIVATION_INPUTS.md`. El resultado ejecutable procede de

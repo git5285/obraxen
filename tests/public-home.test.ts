@@ -36,6 +36,21 @@ function translator(locale: string, captureObserver?: (callback: (records: objec
 }
 
 describe("published Home translations", () => {
+  it.each(["es", "en", "de"])("keeps the four solution summaries translated after punctuation edits in %s", locale => {
+    const keys = ["solution.repair.summary", "solution.polish.summary", "solution.level.summary", "solution.prepare.summary"];
+    const client = translator(locale);
+    for (let i = 0; i < keys.length; i += 1) {
+      const key = keys[i];
+      expect(html).toContain(`id="solution-summary-${i + 1}" data-i18n="${key}"`);
+      const spanish = translator("es").message(key);
+      const edited = spanish.replace(/\.$/, "");
+      const node = {nodeValue: edited, parentElement: {closest: () => null, getAttribute: () => key}};
+      const rendered = translator(locale, undefined, [node]);
+      expect(node.nodeValue).toBe(locale === "es" ? edited : client.message(key));
+      expect(rendered.missingTranslations).toEqual([]);
+    }
+  });
+
   it.each(["es", "en", "de"])("keeps contact intro translation stable after a Spanish editorial edit in %s", locale => {
     expect(html).toContain('data-i18n="contact.intro"');
     const edited = "Explica el estado de tu pavimento y el uso de tu instalación.";

@@ -37,13 +37,13 @@ jobs:
       - name: Audit production dependencies
         run: npm run check:security
 
-      - name: Install Chromium and WebKit
-        run: npx playwright install --with-deps chromium webkit
+      - name: Install Chromium for Home
+        run: npx playwright install --with-deps chromium
 
-      - name: Repository lint and legacy TypeScript
-        run: npm run lint && npm run typecheck:legacy
+      - name: Repository lint and internal TypeScript
+        run: npm run lint && npm run typecheck
 
-      - name: All unit tests and legacy library coverage thresholds
+      - name: All unit tests and internal domain coverage thresholds
         run: npm run test:coverage
 
       - name: Approved Home build
@@ -52,25 +52,14 @@ jobs:
       - name: Approved published Home browser checks
         run: npm run test:published
 
-      - name: Legacy contact form browser tests with enabled UI
-        run: npm run test:e2e:contact
-
-      - name: Legacy browser tests
-        run: npm run test:e2e
-
-      - name: Legacy build and Lighthouse budgets
-        timeout-minutes: 5
-        run: npm run lighthouse:legacy
-
       - name: Store quality reports
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: quality-reports-${{ github.run_attempt }}
           path: |
-            playwright-report/
             test-results/
-            .lighthouseci/
+            coverage/
           if-no-files-found: ignore
           retention-days: 14
 

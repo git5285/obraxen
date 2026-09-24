@@ -1,9 +1,9 @@
 # Runbook de cutover y publicación
 
-Este documento separa dos aplicaciones Next.js y su entrega. La Home actual
-vive en `apps/public-site/`; `src/` conserva el legado. La automatización de
+Este documento describe la entrega de la Home actual en `apps/public-site/`.
+`src/` fue retirado; el apartado B conserva únicamente su procedimiento histórico. La automatización de
 `automation/agents/` prepara y verifica trabajo, pero no es una aplicación pública.
-No hay que unificar esos árboles para preparar una candidata.
+El dominio interno `domain/publication/` no forma parte del artefacto Home.
 
 El runbook no autoriza preview, despliegue, dominio, indexación, analítica,
 formulario ni rollback. El estado remoto debe comprobarse con evidencia fechada
@@ -13,7 +13,7 @@ activo ni qué rollback está disponible.
 ## A. Home: preparación local y frontera de entrega
 
 1. Trabajar en `apps/public-site/`, revisar `HOMEPAGE.md` y reservar las rutas
-   exactas antes de editar. Conservar el legado y sus banderas.
+   exactas antes de editar. Conservar los datos internos y las banderas de autoridad.
 2. Ejecutar `npm run check:home`. El build comprueba el contrato Home y el
    navegador verifica seis vistas, contacto sin envío y rutas excluidas.
 3. Ejecutar `npm run prepare:home -- --output=/ruta/nueva/fuera-del-checkout`.
@@ -41,8 +41,7 @@ activo ni qué rollback está disponible.
    comprobar el alias real después. Un build listo no prueba que el dominio
    cambió. Cualquier rollback necesita su autorización; no se ejecuta por inferencia.
 
-El gate `check:activation` evalúa el legado y sigue siendo obligatorio en su
-flujo. Una excepción humana Home debe estar documentada para la candidata exacta;
+El gate `check:activation` evalúa el contrato interno heredado, no el build Home. Una excepción humana Home debe estar documentada para la candidata exacta;
 no se obtiene poniendo sus banderas en verde ni cambiando datos legales.
 La receta local no presupone que exista una excepción vigente.
 
@@ -97,11 +96,11 @@ Un informe `passed` no consulta producción, no prueba CI ni autoriza publicaci�
 Antes de publicar hay que revalidar SHA/inputs, configuración, CI, proyecto,
 entorno y permiso exactos; cualquier cambio del artefacto invalida su evidencia.
 
-## B. Legado: activación, preview y publicación
+## B. Archivo histórico del legado — no ejecutar en esta candidata
 
-Los apartados siguientes son del legado en `src/`, con cuatro idiomas y APIs.
-Usar `build:legacy` y las entradas `*:legacy` cuando corresponda, no el build
-raíz de Home. El inventario de identidad, legal, proveedor, idiomas y casos vive
+Los apartados siguientes describen la aplicación retirada `src/`, con cuatro
+idiomas y APIs. Sus comandos `*:legacy` ya no existen. No seguir este
+procedimiento para entregar Home ni tomar sus afirmaciones remotas como actuales. El inventario de identidad, legal, proveedor, idiomas y casos vive
 en `ACTIVATION_INPUTS.md`; `npm run check:activation` produce su decisión.
 
 ## 1. Condiciones de entrada

@@ -8,7 +8,7 @@ import { inspectRuntime } from "../automation/agents/runtime.mjs";
 
 // Security advisories and browser/runtime behavior require fresh evidence.
 export const LOCAL_CHECKS = ["lint", "typecheck", "test:coverage", "build"];
-export const FRESH_CHECKS = ["test:published", "test:e2e:contact", "test:e2e", "lighthouse:legacy"];
+export const FRESH_CHECKS = ["test:published"];
 const MAX_AGE_MS = 60 * 60 * 1000;
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
@@ -76,7 +76,7 @@ export function qualityFingerprint(repo) {
 }
 
 export function generatedInputsDigest(repo) {
-  return hash(JSON.stringify([".next/types", ".next/dev/types", "tsconfig.tsbuildinfo"].map((path) => {
+  return hash(JSON.stringify(["tsconfig.tsbuildinfo"].map((path) => {
     const full = join(repo, path);
     return [path, existsSync(full) ? treeDigest(full) : null];
   })));
@@ -131,7 +131,7 @@ export function runQuality({ repo, reuse = false, head = null, receiptPath,
     }
     let verifiedGenerated = reused ? generatedBefore : generatedSnapshot();
     for (const check of FRESH_CHECKS) run(check);
-    // Browser runners rebuild. Verify their resulting compiler inputs if changed.
+    // Recheck compiler inputs if a fresh check changed them.
     if (generatedSnapshot() !== verifiedGenerated) {
       run("typecheck");
       verifiedGenerated = generatedSnapshot();
