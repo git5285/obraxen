@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -16,7 +17,7 @@ function fixture() {
   const inputs = inventory(join(root, 'apps')).map(file => ({...file, path: 'apps/' + file.path}));
   const digest = sha256(JSON.stringify(inputs));
   const manifest = {kind: 'home-only-local-candidate', result: 'built-local', build: {result: 'passed'}, inputs,
-    source: {inputsSha256: digest, exactCommit: null}};
+    source: {inputsSha256: digest, baseCommit: 'b'.repeat(40), exactCommit: null, dirty: true, inputsMatchCommit: true}};
   put('home-candidate.json', manifest);
   put('vercel.json', {'$schema': 'https://openapi.vercel.sh/vercel.json', framework: 'nextjs', buildCommand: 'npm run build',
     outputDirectory: 'apps/public-site/.next', installCommand: 'npm ci --ignore-scripts', git: {deploymentEnabled: false}});
@@ -33,8 +34,42 @@ function fixture() {
       sha: createHash('sha1').update(readFileSync(join(root, output, file.path))).digest('hex')}));
     return {framework: {slug: 'nextjs'}, files, totalSize: files.reduce((n, file) => n + file.size, 0)};
   };
-  return {root, put, digest, manifest, config, dry, options: {root, expectedInputsSha256: digest}};
+  return {root, put, digest, manifest, config, dry,
+    options: {root, expectedInputsSha256: digest, expectedCandidateSha256: sha256(JSON.stringify(manifest))}};
 }
+it('requires independently reviewed candidate metadata, not just unchanged input hashes', () => {
+  const f = fixture();
+  f.put('home-candidate.json', {...f.manifest, source: {...f.manifest.source,
+    exactCommit: 'b'.repeat(40), dirty: false}});
+  expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Unexpected candidate manifest');
+  expect(() => preparePlatform({...f.options, projectId: 'prj_fixture', orgId: 'team_fixture', target: 'preview'})).toThrow('Unexpected candidate manifest');
+});
+it('fails closed when the reviewed candidate digest is absent', () => {
+  const f = fixture();
+  expect(() => auditPlatform({...f.options, expectedCandidateSha256: undefined, dryRun: f.dry()})).toThrow('Explicit reviewed candidate SHA-256');
+});
+it.each([
+  {exactCommit: 'not-a-git-sha', dirty: false, inputsMatchCommit: true},
+  {exactCommit: 'b'.repeat(40), dirty: true, inputsMatchCommit: true},
+  {exactCommit: 'b'.repeat(40), dirty: false, inputsMatchCommit: false},
+  {exactCommit: 'c'.repeat(40), dirty: false, inputsMatchCommit: true},
+  {exactCommit: null, dirty: false, inputsMatchCommit: true},
+])('rejects invalid or contradictory provenance even when its manifest digest matches: %j', source => {
+  const f = fixture();
+  const manifest = {...f.manifest, source: {...f.manifest.source, ...source}};
+  f.put('home-candidate.json', manifest);
+  expect(() => auditPlatform({...f.options, expectedCandidateSha256: sha256(JSON.stringify(manifest)), dryRun: f.dry()})).toThrow(/Invalid candidate|Inconsistent candidate/);
+});
+it('preserves a reviewed clean commit through the versioned CLI contract', () => {
+  const f = fixture();
+  const manifest = {...f.manifest, source: {...f.manifest.source, exactCommit: 'b'.repeat(40), dirty: false}};
+  f.put('home-candidate.json', manifest);
+  f.put('dry-run.json', f.dry());
+  const report = JSON.parse(execFileSync(process.execPath, ['scripts/home-platform-artifact.mjs', 'audit',
+    '--root=' + f.root, '--inputs-sha256=' + f.digest,
+    '--candidate-sha256=' + sha256(JSON.stringify(manifest)), '--dry-run=' + join(f.root, 'dry-run.json')], {encoding: 'utf8'}));
+  expect(report).toMatchObject({contractVersion: '2.0.0', exactCommit: 'b'.repeat(40), localOnly: false, publicationAuthorized: false});
+});
 it('audits a complete local artifact without claiming publication or an exact commit', () => {
   const f = fixture(); expect(auditPlatform({...f.options, dryRun: f.dry()})).toMatchObject({result: 'passed', localOnly: true, publicationAuthorized: false});
 });
@@ -87,8 +122,9 @@ it('rejects missing identity, unexpected inputs and source-only exports', () => 
   const f = fixture();
   expect(() => preparePlatform({...f.options, projectId: '', orgId: '', target: 'production'})).toThrow('IDs required');
   expect(() => auditPlatform({...f.options, expectedInputsSha256: 'a'.repeat(64), dryRun: f.dry()})).toThrow('Unexpected candidate');
-  f.put('home-candidate.json', {...f.manifest, result: 'source-only'});
-  expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('source-only');
+  const sourceOnly = {...f.manifest, result: 'source-only'};
+  f.put('home-candidate.json', sourceOnly);
+  expect(() => auditPlatform({...f.options, expectedCandidateSha256: sha256(JSON.stringify(sourceOnly)), dryRun: f.dry()})).toThrow('source-only');
 });
 it.each(['source', 'rendered', 'upload', 'missing', 'extra-static', 'route', 'alias', 'environment', 'function', 'nested-function', 'escape', 'configuration'])(
   'rejects %s drift', kind => {

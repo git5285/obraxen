@@ -13,14 +13,24 @@ const allowedUpload = path => safePath(path)
   && /^(?:\.vercel\/output\/|node_modules\/|apps\/public-site\/\.next\/)/.test(path)
   && !/(?:^|\/)\.env(?:\.|$)/.test(path);
 
-function candidate(root, expectedInputsSha256) {
+function candidate(root, expectedInputsSha256, expectedCandidateSha256) {
   assert(/^[a-f0-9]{64}$/.test(expectedInputsSha256 ?? ''), 'Explicit reviewed inputs SHA-256 required');
-  const manifest = readJson(sourceFile(root, 'home-candidate.json'));
+  assert(/^[a-f0-9]{64}$/.test(expectedCandidateSha256 ?? ''), 'Explicit reviewed candidate SHA-256 required');
+  const bytes = readFileSync(sourceFile(root, 'home-candidate.json'));
+  assert.equal(sha256(bytes), expectedCandidateSha256, 'Unexpected candidate manifest');
+  const manifest = JSON.parse(bytes);
   assert.equal(manifest.kind, 'home-only-local-candidate');
   assert.equal(manifest.result, 'built-local', 'A source-only export is not a platform candidate');
   assert.equal(manifest.build.result, 'passed');
   assert.equal(sha256(JSON.stringify(manifest.inputs)), expectedInputsSha256, 'Unexpected candidate inputs');
   assert.equal(manifest.source.inputsSha256, expectedInputsSha256);
+  const source = manifest.source;
+  assert(/^[a-f0-9]{40}$/.test(source.baseCommit ?? ''), 'Invalid candidate base commit');
+  assert(source.exactCommit === null || /^[a-f0-9]{40}$/.test(source.exactCommit ?? ''), 'Invalid candidate exact commit');
+  assert(typeof source.dirty === 'boolean' && typeof source.inputsMatchCommit === 'boolean', 'Invalid candidate source state');
+  assert(source.dirty === (source.exactCommit === null)
+    && (source.dirty || source.inputsMatchCommit)
+    && (source.exactCommit === null || source.exactCommit === source.baseCommit), 'Inconsistent candidate provenance');
   const seen = new Set();
   for (const file of manifest.inputs) {
     assert(!seen.has(file.path), 'Duplicate input'); seen.add(file.path);
@@ -35,12 +45,12 @@ function candidate(root, expectedInputsSha256) {
 }
 
 // Local export only. No CLI, network, credentials, installation or publication.
-export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, target }) {
+export function preparePlatform({ root, expectedInputsSha256, expectedCandidateSha256, projectId, orgId, target }) {
   root = realpathSync(root);
   assert(/^prj_[a-zA-Z0-9]+$/.test(projectId ?? '') && /^team_[a-zA-Z0-9]+$/.test(orgId ?? ''), 'Explicit project/team IDs required');
   assert(['preview', 'production'].includes(target), 'Explicit target required');
   assert(!existsSync(join(root, '.git')), 'Use an isolated export, not a checkout');
-  const manifest = candidate(root, expectedInputsSha256);
+  const manifest = candidate(root, expectedInputsSha256, expectedCandidateSha256);
   assert(!existsSync(join(root, '.vercel')), 'Existing platform state is never overwritten');
   assert(!existsSync(join(root, 'home-platform.json')), 'Existing preparation evidence is never overwritten');
   const previous = readJson(sourceFile(root, 'vercel.json'));
@@ -54,7 +64,7 @@ export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, 
   mkdirSync(join(root, '.vercel'));
   writeFileSync(join(root, '.vercel/project.json'), JSON.stringify(project, null, 2) + '\n', { flag: 'wx' });
   writeFileSync(join(root, 'vercel.json'), JSON.stringify(configuration, null, 2) + '\n');
-  const report = { kind: 'home-platform-preparation', expectedInputsSha256, projectId, orgId, target,
+  const report = { schemaVersion: 2, contractVersion: '2.0.0', kind: 'home-platform-preparation', expectedInputsSha256, expectedCandidateSha256, projectId, orgId, target,
     exactCommit: manifest.source.exactCommit, configurationSha256: sha256(readFileSync(join(root, 'vercel.json'))),
     projectConfigurationSha256: sha256(readFileSync(join(root, '.vercel/project.json'))),
     buildExecuted: false, publicationAuthorized: false };
@@ -62,13 +72,14 @@ export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, 
   return report;
 }
 
-export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
+export function auditPlatform({ root, expectedInputsSha256, expectedCandidateSha256, dryRun }) {
   root = realpathSync(root);
-  const manifest = candidate(root, expectedInputsSha256);
+  const manifest = candidate(root, expectedInputsSha256, expectedCandidateSha256);
   let association = null;
   if (existsSync(join(root, 'home-platform.json'))) {
     association = readJson(sourceFile(root, 'home-platform.json'));
     assert.equal(association.expectedInputsSha256, expectedInputsSha256, 'Preparation inputs changed');
+    assert.equal(association.expectedCandidateSha256, expectedCandidateSha256, 'Preparation candidate changed');
     assert.equal(association.configurationSha256, sha256(readFileSync(sourceFile(root, 'vercel.json'))), 'Platform configuration drift');
     assert.equal(association.projectConfigurationSha256, sha256(readFileSync(sourceFile(root, '.vercel/project.json'))), 'Project configuration drift');
   }
@@ -165,7 +176,7 @@ export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
   }
   inspect('.vercel/output');
   assert.equal(dryRun.totalSize, bytes, 'Upload total differs');
-  return { kind: 'home-platform-audit', result: 'passed', expectedInputsSha256,
+  return { schemaVersion: 2, contractVersion: '2.0.0', kind: 'home-platform-audit', result: 'passed', expectedInputsSha256, expectedCandidateSha256,
     exactCommit: manifest.source.exactCommit, localOnly: !manifest.source.exactCommit,
     uploadFiles: names.size, uploadBytes: bytes, artifactManifestSha256: sha256(JSON.stringify(dryRun.files)),
     configurationSha256: sha256(readFileSync(sourceFile(root, 'vercel.json'))),
@@ -177,11 +188,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const [operation, ...args] = process.argv.slice(2);
   const options = {};
   for (const arg of args) {
-    const match = /^--(root|inputs-sha256|project-id|org-id|target|dry-run)=(.+)$/.exec(arg);
+    const match = /^--(root|inputs-sha256|candidate-sha256|project-id|org-id|target|dry-run)=(.+)$/.exec(arg);
     assert(match && !Object.hasOwn(options, match[1]), 'Unknown or duplicate option'); options[match[1]] = match[2];
   }
   assert(options.root, 'Explicit export root required');
-  const base = {root: options.root, expectedInputsSha256: options['inputs-sha256']};
+  const base = {root: options.root, expectedInputsSha256: options['inputs-sha256'], expectedCandidateSha256: options['candidate-sha256']};
   assert(['prepare', 'audit'].includes(operation), 'Use prepare|audit');
   const report = operation === 'prepare' ? preparePlatform({...base, projectId: options['project-id'], orgId: options['org-id'], target: options.target})
     : auditPlatform({...base, dryRun: readJson(options['dry-run'])});
