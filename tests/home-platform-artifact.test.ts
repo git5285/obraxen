@@ -46,6 +46,7 @@ it('requires independently reviewed candidate metadata, not just unchanged input
 });
 it('fails closed when the reviewed candidate digest is absent', () => {
   const f = fixture();
+  // @ts-expect-error Exercise an untyped caller omitting the required proof.
   expect(() => auditPlatform({...f.options, expectedCandidateSha256: undefined, dryRun: f.dry()})).toThrow('Explicit reviewed candidate SHA-256');
 });
 it.each([
