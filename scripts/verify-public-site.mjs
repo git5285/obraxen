@@ -5,20 +5,29 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { chromium, expect } from '@playwright/test';
+import { assertHomeContract } from './home-contract.mjs';
+import { inventory, verifyServedInventory } from './public-site-evidence.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const args = process.argv.slice(2);
-const compare = args.includes('--compare-production');
+assert(args.every(arg => arg === '--compare-production' || arg.startsWith('--url=') || arg.startsWith('--compare-url=')), 'unknown Home verification option');
+const targetArgument = args.find(arg => arg.startsWith('--compare-url='))?.slice(14);
+assert(!(targetArgument && args.includes('--compare-production')), 'choose one comparison destination');
+const compare = args.includes('--compare-production') || Boolean(targetArgument);
 const suppliedUrl = args.find(arg => arg.startsWith('--url='))?.slice(6);
 const output = new URL('../test-results/published-home/', import.meta.url);
 await mkdir(output, { recursive: true });
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const source = await readFile(new URL('../apps/public-site/public/index.html', import.meta.url));
 const provenance = JSON.parse(await readFile(new URL('../docs/published-site-source.json', import.meta.url), 'utf8'));
+const destination = compare ? new URL(targetArgument || provenance.productionUrl).origin : null;
+const contract = assertHomeContract(fileURLToPath(new URL('../apps/public-site', import.meta.url)));
+const currentFiles = inventory(fileURLToPath(new URL('../apps/public-site/public', import.meta.url)));
 let server;
 let browser;
 let serverLog = '';
-const report = { checkedAt: new Date().toISOString(), comparison: compare, deploymentId: provenance.deploymentId, routes: [], assets: [], browser: [] };
+const report = { checkedAt: new Date().toISOString(), comparison: compare, comparisonDestination: destination,
+  recoverySourceDeploymentId: provenance.deploymentId, contract, routes: [], assets: [], browser: [] };
 
 async function localServer() {
   if (suppliedUrl) {
@@ -142,11 +151,33 @@ async function inspectEnquiry(page, variant, label) {
   await page.locator('#enquiry-context-clear').click();
   await expect(page.locator('#enquiry-message')).toHaveValue('Comprobación local de paridad, sin envío.');
   await expect(page.locator('#enquiry-context')).toBeHidden();
-  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing dynamic translations`);
   if (variant.lang !== 'es') {
     await expect(page.locator('#enquiry-status')).not.toContainText('Selección eliminada');
     assert.notEqual(draft.searchParams.get('subject'), 'Consulta sobre pavimento');
   }
+  // Every migrated sector prompt and both length branches must remain translated.
+  for (const sector of ['logistica', 'industria', 'automocion', 'distribucion', 'alimentacion', 'aparcamientos']) {
+    const mobile = (await page.viewportSize()).width < 700;
+    if (mobile) await page.locator('#sector-select').selectOption(sector);
+    else await page.locator('#tab-' + sector).click();
+    await page.locator('#panel-' + sector + ' .sector-card').first().click();
+    await expect(page.locator('#enquiry-message')).toHaveAttribute('placeholder',
+      await page.evaluate(key => window.obraxenI18n.message(key), 'contact.prompt.' + sector));
+  }
+  await page.locator('#enquiry-message').fill('X');
+  await page.locator('#enquiry-review').click();
+  await expect(page.locator('#enquiry-message')).toHaveAttribute('aria-invalid', 'true');
+  await page.locator('#enquiry-message').fill('Comprobación local de paridad, sin envío.');
+  await page.locator('#enquiry-name').evaluate(field => {
+    field.value = 'X'.repeat(field.maxLength + 1);
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await expect(page.locator('#enquiry-name')).toHaveAttribute('aria-invalid', 'true');
+  await page.locator('#enquiry-name').fill('Prueba local');
+  await page.locator('#enquiry-contact').fill('+34 600 000 000');
+  await page.locator('#enquiry-review').click();
+  await expect(page.locator('#enquiry-status a')).toHaveAttribute('href', /^mailto:info@obraxen\.com\?/);
+  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing dynamic translations`);
 }
 
 async function inspectDisclosuresAndLanguage(page, variant) {
@@ -159,12 +190,21 @@ async function inspectDisclosuresAndLanguage(page, variant) {
 }
 
 async function inspect(origin, variant, viewport, label, htmlOverride) {
-  const context = await browser.newContext({ viewport, colorScheme: 'light', reducedMotion: 'reduce' });
+  const context = await browser.newContext({ viewport, colorScheme: 'light', reducedMotion: 'reduce', serviceWorkers: 'block' });
   const page = await context.newPage();
   const errors = [];
   const errorStacks = [];
   const failedRequests = [];
   const externalRequests = [];
+  const forbiddenRequests = [];
+  await context.route('**/*', async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (url.origin !== origin || !['GET', 'HEAD'].includes(request.method()) || url.pathname.startsWith('/api/')) {
+      forbiddenRequests.push({ url: request.url(), method: request.method() });
+      await route.abort();
+    } else await route.continue();
+  });
   page.on('pageerror', error => { errors.push(error.message); errorStacks.push(error.stack); });
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('requestfailed', request => {
@@ -179,6 +219,7 @@ async function inspect(origin, variant, viewport, label, htmlOverride) {
   await page.goto(origin + variant.path, { waitUntil: 'load' });
   await expect(page.locator('html')).toHaveAttribute('lang', variant.lang);
   await expect(page).toHaveTitle(variant.title);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow');
   await expect(page.locator('h1')).toContainText(htmlOverride && variant.lang === 'es'
     ? /Recuperamos tus pavimentos industriales/ : variant.h1);
   await expect(page.locator('#enquiry-review')).toBeEnabled();
@@ -188,10 +229,14 @@ async function inspect(origin, variant, viewport, label, htmlOverride) {
   // Landing navigation, mobile menu, repair dialog, carousel, sectors, local-only enquiry and legal disclosures.
   await inspectNavigation(page, viewport);
   await inspectEnquiry(page, variant, label);
+  const storage = await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }));
+  assert.deepEqual(storage, { local: 0, session: 0 }, `${label}: visitor data stored`);
+  assert.deepEqual(await context.cookies(), [], `${label}: cookies created`);
   await inspectDisclosuresAndLanguage(page, variant);
   assert.deepEqual(errors, [], `${label}: unexpected browser errors`);
   assert.deepEqual(failedRequests, [], `${label}: failed requests`);
   assert.deepEqual(externalRequests, [], `${label}: external request`);
+  assert.deepEqual(forbiddenRequests, [], `${label}: API, sending or external request`);
   await context.close();
   return { snapshot, screenshot: sha(screenshot), errors, errorStacks, failedRequests, interactions: 'passed' };
 }
@@ -206,24 +251,17 @@ try {
     assert.equal(sha(html), sha(source), `local ${variant.path}: served HTML differs from canonical source`);
     const entry = { path: variant.path, localHtmlSha256: sha(html) };
     if (compare) {
-      const remote = await fetch(provenance.productionUrl + variant.path);
+      const remote = await fetch(destination + variant.path, { redirect: 'error' });
       assert.equal(remote.status, 200);
-      entry.productionHtmlSha256 = sha(Buffer.from(await remote.arrayBuffer()));
-      assert.equal(entry.productionHtmlSha256, entry.localHtmlSha256, `production drift at ${variant.path}`);
+      entry.destinationHtmlSha256 = sha(Buffer.from(await remote.arrayBuffer()));
+      assert.equal(entry.destinationHtmlSha256, entry.localHtmlSha256, `destination drift at ${variant.path}`);
     }
     report.routes.push(entry);
   }
-  if (compare) {
-    for (const file of provenance.files.filter(file => file.path.startsWith('public/assets/'))) {
-      const path = file.path.slice('public'.length);
-      const remote = await fetch(provenance.productionUrl + path);
-      assert.equal(remote.status, 200);
-      const digest = sha(Buffer.from(await remote.arrayBuffer()));
-      const localBytes = await readFile(new URL('../apps/public-site/' + file.path, import.meta.url));
-      assert.equal(digest, sha(localBytes), `asset differs: ${path}`);
-      assert.equal(digest, file.sha256, `original asset differs: ${path}`);
-      report.assets.push({ path, sha256: digest });
-    }
+  report.assets = await verifyServedInventory(local, currentFiles);
+  if (compare) report.destinationAssets = await verifyServedInventory(destination, currentFiles);
+  for (const path of ['/es', '/fr', '/api/contact', '/api/analytics-config', '/robots.txt', '/sitemap.xml']) {
+    assert.equal((await fetch(local + path, { redirect: 'manual' })).status, 404, `Home exposes excluded route: ${path}`);
   }
   browser = await chromium.launch({ headless: true });
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
@@ -232,13 +270,13 @@ try {
       const localResult = await inspect(local, variant, viewport, `local-${label}`);
       const entry = { lang: variant.lang, viewport, local: localResult };
       if (compare) {
-        entry.production = await inspect(provenance.productionUrl, variant, viewport, `production-${label}`);
-        assert.deepEqual(localResult.errors, entry.production.errors, `new browser error: ${label}`);
-        assert.deepEqual(localResult.snapshot, entry.production.snapshot, `rendered DOM differs: ${label}`);
-        assert.equal(localResult.screenshot, entry.production.screenshot, `screenshot differs: ${label}`);
+        entry.destination = await inspect(destination, variant, viewport, `destination-${label}`);
+        assert.deepEqual(localResult.errors, entry.destination.errors, `new browser error: ${label}`);
+        assert.deepEqual(localResult.snapshot, entry.destination.snapshot, `rendered DOM differs: ${label}`);
+        assert.equal(localResult.screenshot, entry.destination.screenshot, `screenshot differs: ${label}`);
       }
       report.browser.push(entry);
-      console.log(`PASS ${label}: content, images, navigation, video, carousel, sectors, dialog, enquiry, languages, legal${compare ? ', production parity' : ''}`);
+      console.log(`PASS ${label}: content, images, navigation, video, carousel, sectors, dialog, enquiry, languages, legal${compare ? ', destination parity' : ''}`);
     }
   }
   // Editorial edits must not change the error contract or lose keyed translations.
@@ -258,6 +296,28 @@ try {
   assert((await missingPage.evaluate(() => window.obraxenI18n.missingTranslations))
     .includes('Soluciones pendientes de traducir'), 'unknown editorial copy must be reported');
   await missingTranslationContext.close();
+  for (const lang of ['en', 'de']) {
+    const dynamicContext = await browser.newContext();
+    const dynamicPage = await dynamicContext.newPage();
+    await dynamicPage.goto(local + '/' + lang);
+    await dynamicPage.waitForFunction(() => window.obraxenI18n);
+    await dynamicPage.evaluate(() => {
+      const text = document.createElement('p');
+      text.id = 'translation-probe';
+      text.textContent = 'Mensaje dinámico pendiente';
+      document.body.append(text);
+    });
+    await expect.poll(() => dynamicPage.evaluate(() => window.obraxenI18n.missingTranslations))
+      .toContain('Mensaje dinámico pendiente');
+    await dynamicPage.locator('#translation-probe').evaluate(element => {
+      element.firstChild.nodeValue = 'Mensaje dinámico modificado';
+      element.setAttribute('title', 'Atributo dinámico pendiente');
+    });
+    await expect.poll(() => dynamicPage.evaluate(() => window.obraxenI18n.missingTranslations))
+      .toEqual(['Atributo dinámico pendiente', 'Mensaje dinámico modificado', 'Mensaje dinámico pendiente']);
+    await dynamicContext.close();
+  }
+  report.dynamicTranslationAudit = 'passed';
   const noScript = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await noScript.newPage();
   await page.goto(local);

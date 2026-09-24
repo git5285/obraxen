@@ -15,7 +15,7 @@ export function isDependencyManifest(path) {
     "npm-shrinkwrap.json",
     "pnpm-lock.yaml",
     "yarn.lock",
-  ]).has(path);
+  ]).has(typeof path === "string" ? posix.basename(path) : path);
 }
 
 export function validateDiff({ changedPaths, allowedPaths, addedLines, deletedLines }, policy = loadPolicy()) {

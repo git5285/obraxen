@@ -146,32 +146,6 @@
     "Revestimientos o anclajes antes de preparar el soporte.": ["Coatings or anchors before preparing the substrate.", "Beschichtungen oder Anker vor der Untergrundvorbereitung."],
     "¿Tu caso es diferente?": ["Is your situation different?", "Ist Ihr Fall anders gelagert?"],
     "No lo tengo claro": ["I am not sure", "Ich bin mir nicht sicher"],
-    "Indica tu nombre.": ["Enter your name.", "Geben Sie Ihren Namen an."],
-    "Indica un correo electrónico o un teléfono.": ["Enter an email address or phone number.", "Geben Sie eine E-Mail-Adresse oder Telefonnummer an."],
-    "Describe qué necesita tu pavimento.": ["Describe what your floor needs.", "Beschreiben Sie, was Ihr Boden braucht."],
-    "Completa este campo.": ["Complete this field.", "Füllen Sie dieses Feld aus."],
-    "Utiliza como máximo ": ["Use no more than ", "Verwenden Sie höchstens "],
-    "Escribe al menos ": ["Enter at least ", "Geben Sie mindestens "],
-    " caracteres.": [" characters.", " Zeichen ein."],
-    "Introduce un correo válido o un teléfono con prefijo si es internacional.": ["Enter a valid email address or a phone number with country code if international.", "Geben Sie eine gültige E-Mail-Adresse oder bei internationalen Nummern eine Telefonnummer mit Ländervorwahl ein."],
-    "Revisa los campos indicados. La consulta todavía no se ha preparado.": ["Review the indicated fields. The enquiry has not been prepared yet.", "Prüfen Sie die markierten Felder. Die Anfrage wurde noch nicht vorbereitet."],
-    "La consulta está validada, pero el canal de recepción aún no está configurado.": ["The enquiry is valid, but the receiving channel is not configured yet.", "Die Anfrage ist gültig, aber der Empfangskanal ist noch nicht eingerichtet."],
-    "Consulta preparada. Revisa el contenido y decide si quieres enviarla.": ["Enquiry prepared. Review the content and decide whether you want to send it.", "Anfrage vorbereitet. Prüfen Sie den Inhalt und entscheiden Sie, ob Sie sie senden möchten."],
-    "Abrir borrador de correo": ["Open email draft", "E-Mail-Entwurf öffnen"],
-    "Se abrirá tu aplicación de correo. El envío requiere tu confirmación.": ["Your email application will open. Sending requires your confirmation.", "Ihre E-Mail-Anwendung wird geöffnet. Der Versand erfordert Ihre Bestätigung."],
-    "Selección eliminada. El texto de tu consulta se conserva.": ["Selection cleared. Your enquiry text has been kept.", "Auswahl entfernt. Der Text Ihrer Anfrage bleibt erhalten."],
-    "Describe juntas, fisuras o desgaste en zonas de carga y paso de carretillas.": ["Describe joints, cracks or wear in loading areas and forklift routes.", "Beschreiben Sie Fugen, Risse oder Verschleiß in Ladebereichen und auf Staplerwegen."],
-    "Describe el daño y el uso de la zona: maquinaria, circulación o almacenamiento.": ["Describe the damage and how the area is used: machinery, traffic or storage.", "Beschreiben Sie den Schaden und die Nutzung des Bereichs: Maschinen, Verkehr oder Lagerung."],
-    "Describe el estado del suelo en la zona de trabajo o paso de vehículos.": ["Describe the floor condition in the work area or vehicle routes.", "Beschreiben Sie den Bodenzustand im Arbeitsbereich oder auf Fahrzeugwegen."],
-    "Describe el daño en pasillos, zonas de reposición o carga de mercancías.": ["Describe the damage in aisles, replenishment areas or goods loading zones.", "Beschreiben Sie den Schaden in Gängen, Nachschubbereichen oder Warenladezonen."],
-    "Describe el daño y si la zona está expuesta a humedad o limpieza frecuente.": ["Describe the damage and whether the area is exposed to moisture or frequent cleaning.", "Beschreiben Sie den Schaden und ob der Bereich Feuchtigkeit oder häufiger Reinigung ausgesetzt ist."],
-    "Describe daños en plazas, rampas o zonas de circulación.": ["Describe damage to parking spaces, ramps or traffic lanes.", "Beschreiben Sie Schäden an Stellplätzen, Rampen oder Fahrspuren."],
-    "Cuéntanos qué observas, en qué zona ocurre y cómo se utiliza ese espacio.": ["Tell us what you observe, where it occurs and how that space is used.", "Schildern Sie, was Sie beobachten, wo es auftritt und wie dieser Bereich genutzt wird."],
-    "Sector: ": ["Sector: ", "Branche: "],
-    "Necesidad: ": ["Need: ", "Bedarf: "],
-    "Consulta sobre pavimento": ["Floor enquiry", "Bodenanfrage"],
-    "Nombre: ": ["Name: ", "Name: "],
-    "Contacto: ": ["Contact: ", "Kontakt: "],
     "Desplazamiento de ": ["Scroll position for ", "Scrollposition für "],
     "Ver los cinco proyectos documentados": ["View the five documented projects", "Die fünf dokumentierten Projekte ansehen"],
     "Proyectos anteriores": ["Previous projects", "Vorherige Projekte"],
@@ -223,6 +197,31 @@
 
   // Stable keys for maintained copy. Legacy exact-text entries migrate as edited.
   const keyedMessages = {
+    "contact.required.name": ["Indica tu nombre.","Enter your name.","Geben Sie Ihren Namen an."],
+    "contact.required.contact": ["Indica un correo electrónico o un teléfono.","Enter an email address or phone number.","Geben Sie eine E-Mail-Adresse oder Telefonnummer an."],
+    "contact.required.message": ["Describe qué necesita tu pavimento.","Describe what your floor needs.","Beschreiben Sie, was Ihr Boden braucht."],
+    "contact.required.field": ["Completa este campo.","Complete this field.","Füllen Sie dieses Feld aus."],
+    "contact.invalidContact": ["Introduce un correo válido o un teléfono con prefijo si es internacional.","Enter a valid email address or a phone number with country code if international.","Geben Sie eine gültige E-Mail-Adresse oder bei internationalen Nummern eine Telefonnummer mit Ländervorwahl ein."],
+    "contact.review": ["Revisa los campos indicados. La consulta todavía no se ha preparado.","Review the indicated fields. The enquiry has not been prepared yet.","Prüfen Sie die markierten Felder. Die Anfrage wurde noch nicht vorbereitet."],
+    "contact.unconfigured": ["La consulta está validada, pero el canal de recepción aún no está configurado.","The enquiry is valid, but the receiving channel is not configured yet.","Die Anfrage ist gültig, aber der Empfangskanal ist noch nicht eingerichtet."],
+    "contact.prepared": ["Consulta preparada. Revisa el contenido y decide si quieres enviarla.","Enquiry prepared. Review the content and decide whether you want to send it.","Anfrage vorbereitet. Prüfen Sie den Inhalt und entscheiden Sie, ob Sie sie senden möchten."],
+    "contact.open": ["Abrir borrador de correo","Open email draft","E-Mail-Entwurf öffnen"],
+    "contact.confirmation": ["Se abrirá tu aplicación de correo. El envío requiere tu confirmación.","Your email application will open. Sending requires your confirmation.","Ihre E-Mail-Anwendung wird geöffnet. Der Versand erfordert Ihre Bestätigung."],
+    "contact.cleared": ["Selección eliminada. El texto de tu consulta se conserva.","Selection cleared. Your enquiry text has been kept.","Auswahl entfernt. Der Text Ihrer Anfrage bleibt erhalten."],
+    "contact.prompt.logistica": ["Describe juntas, fisuras o desgaste en zonas de carga y paso de carretillas.","Describe joints, cracks or wear in loading areas and forklift routes.","Beschreiben Sie Fugen, Risse oder Verschleiß in Ladebereichen und auf Staplerwegen."],
+    "contact.prompt.industria": ["Describe el daño y el uso de la zona: maquinaria, circulación o almacenamiento.","Describe the damage and how the area is used: machinery, traffic or storage.","Beschreiben Sie den Schaden und die Nutzung des Bereichs: Maschinen, Verkehr oder Lagerung."],
+    "contact.prompt.automocion": ["Describe el estado del suelo en la zona de trabajo o paso de vehículos.","Describe the floor condition in the work area or vehicle routes.","Beschreiben Sie den Bodenzustand im Arbeitsbereich oder auf Fahrzeugwegen."],
+    "contact.prompt.distribucion": ["Describe el daño en pasillos, zonas de reposición o carga de mercancías.","Describe the damage in aisles, replenishment areas or goods loading zones.","Beschreiben Sie den Schaden in Gängen, Nachschubbereichen oder Warenladezonen."],
+    "contact.prompt.alimentacion": ["Describe el daño y si la zona está expuesta a humedad o limpieza frecuente.","Describe the damage and whether the area is exposed to moisture or frequent cleaning.","Beschreiben Sie den Schaden und ob der Bereich Feuchtigkeit oder häufiger Reinigung ausgesetzt ist."],
+    "contact.prompt.aparcamientos": ["Describe daños en plazas, rampas o zonas de circulación.","Describe damage to parking spaces, ramps or traffic lanes.","Beschreiben Sie Schäden an Stellplätzen, Rampen oder Fahrspuren."],
+    "contact.prompt.repair": ["Cuéntanos qué observas, en qué zona ocurre y cómo se utiliza ese espacio.","Tell us what you observe, where it occurs and how that space is used.","Schildern Sie, was Sie beobachten, wo es auftritt und wie dieser Bereich genutzt wird."],
+    "contact.subject": ["Consulta sobre pavimento","Floor enquiry","Bodenanfrage"],
+    "contact.nameLabel": ["Nombre: ","Name: ","Name: "],
+    "contact.contactLabel": ["Contacto: ","Contact: ","Kontakt: "],
+    "contact.maxLength": ["Utiliza como máximo {count} caracteres.","Use no more than {count} characters.","Verwenden Sie höchstens {count} Zeichen ein."],
+    "contact.minLength": ["Escribe al menos {count} caracteres.","Enter at least {count} characters.","Geben Sie mindestens {count} Zeichen ein."],
+    "contact.sector": ["Sector: {name}.","Sector: {name}.","Branche: {name}."],
+    "contact.need": ["Necesidad: {name}.","Need: {name}.","Bedarf: {name}."],
     "hero.title": ["Recuperamos tus pavimentos.", ...messages["Recuperamos tus pavimentos."]],
     "hero.subtitle": ["Cuidamos tu actividad.", ...messages["Cuidamos tu actividad."]],
     "nav.solutions": ["Soluciones", ...messages["Soluciones"]],
@@ -232,10 +231,19 @@
     "meta.title": ["Obraxen · Reparación de pavimentos industriales", ...messages["Obraxen · Reparación de pavimentos industriales"]],
     "meta.description": ["Reparación y rehabilitación de pavimentos industriales: juntas, fisuras, pulido, nivelación y preparación del soporte.", ...messages["Reparación y rehabilitación de pavimentos industriales: juntas, fisuras, pulido, nivelación y preparación del soporte."]],
   };
-  const message = (key) => {
+  // Keep exact-text compatibility while keyed messages become the maintained source.
+  Object.values(keyedMessages).forEach(values => { messages[values[0]] = values.slice(1); });
+  const rendered = new Set(Object.values(messages).map(values => values[index]?.trim()).filter(Boolean));
+  const remember = value => { if (index >= 0 && typeof value === "string") rendered.add(value.trim()); return value; };
+  const message = (key, params = {}) => {
     const value = keyedMessages[key]?.[index + 1];
     if (typeof value !== "string" || !value) throw new Error("Missing Home translation: " + key + " (" + locale + ")");
-    return value;
+    return remember(value.replace(/\{(\w+)\}/g, (_, name) => {
+      if (!Object.hasOwn(params, name) || !["string", "number"].includes(typeof params[name])) {
+        throw new Error("Missing Home parameter: " + key + "." + name);
+      }
+      return String(params[name]);
+    }));
   };
   const missing = new Set();
   // Names and identifiers deliberately remain unchanged across languages.
@@ -244,24 +252,27 @@
     "OBRAXEN SURFACE S.L.", "B93963841", "Calle Federico García Lorca, 22",
     "info@obraxen.com", "obraxen.com", "Blitz", "Delticom", "Hologram Bâtiment", "L’Oréal", "TP-Link",
   ]);
-  const t = (value) => {
-    if (index < 0 || typeof value !== "string") return value;
-    if (messages[value]) return messages[value][index];
-    const prefixed = [
+  const prefixed = [
       ["Desplazamiento de ", ["Scroll position for ", "Scrollposition für "]],
       ["Ver proyecto: ", ["View project: ", "Projekt ansehen: "]],
       ["Ver sector: ", ["View sector: ", "Branche ansehen: "]],
-    ];
+  ];
+  const t = (value) => {
+    if (index < 0 || typeof value !== "string") return value;
+    if (messages[value]) return remember(messages[value][index]);
     for (const [prefix, translations] of prefixed) {
-      if (value.startsWith(prefix)) return translations[index] + t(value.slice(prefix.length));
+      if (value.startsWith(prefix)) return remember(translations[index] + t(value.slice(prefix.length)));
     }
     const position = /^(\d+(?:[–-]\d+)?) de (\d+)$/.exec(value);
-    if (position) return index === 0 ? `${position[1]} of ${position[2]}` : `${position[1]} von ${position[2]}`;
+    if (position) return remember(index === 0 ? `${position[1]} of ${position[2]}` : `${position[1]} von ${position[2]}`);
     return value;
   };
   const auditTranslation = (value) => {
     if (typeof value !== "string" || !value.trim() || !/\p{L}/u.test(value)) return;
-    if (t(value) === value && !invariantText.has(value)) missing.add(value);
+    for (const [prefix] of prefixed) {
+      if (value.startsWith(prefix)) auditTranslation(value.slice(prefix.length));
+    }
+    if (!rendered.has(value.trim()) && t(value) === value && !invariantText.has(value.trim())) missing.add(value);
   };
   window.obraxenI18n = {
     locale, message,
@@ -335,9 +346,9 @@
     const observer = new MutationObserver((records) => {
       observer.disconnect();
       records.forEach((record) => {
-        if (record.type === "characterData") translateTextNode(record.target);
-        if (record.type === "attributes") translateElement(record.target);
-        record.addedNodes.forEach(node => translateTree(node));
+        if (record.type === "characterData") translateTextNode(record.target, true);
+        if (record.type === "attributes") translateElement(record.target, true);
+        record.addedNodes.forEach(node => translateTree(node, true));
       });
       observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["alt", "title", "aria-label", "placeholder", "data-repair"] });
     });

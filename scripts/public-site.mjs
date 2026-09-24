@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { watchFile, unwatchFile } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { assertHomeContract } from './home-contract.mjs';
 
 const app = fileURLToPath(new URL('../apps/public-site/', import.meta.url));
 const next = fileURLToPath(new URL('../node_modules/next/dist/bin/next', import.meta.url));
@@ -9,6 +10,7 @@ if (!['dev', 'build', 'start'].includes(command)) {
   throw new Error('Use public-site.mjs dev|build|start');
 }
 function generate() {
+  assertHomeContract(app);
   const result = spawnSync(process.execPath, ['generate-route-content.mjs'], { cwd: app, stdio: 'inherit' });
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status ?? 1);
