@@ -328,7 +328,6 @@
       ["de", "DE", "Deutsch"],
     ].forEach(([code, label, name]) => {
       const link = document.createElement("a");
-      link.href = code === "es" ? `/${location.hash}` : `/${code}/${location.hash}`;
       link.lang = code;
       link.textContent = label;
       link.title = name;
@@ -337,6 +336,14 @@
       nav.append(link);
     });
     indicator.replaceWith(nav);
+    const updateLinks = () => nav.querySelectorAll("a").forEach(link => {
+      link.href = link.lang === "es" ? `/${location.hash}` : `/${link.lang}/${location.hash}`;
+    });
+    updateLinks();
+    // pushState does not emit hashchange; the Home navigation announces it.
+    for (const event of ["hashchange", "popstate", "obraxen:sectionchange"]) {
+      window.addEventListener(event, updateLinks);
+    }
   };
 
   updateMetadata();

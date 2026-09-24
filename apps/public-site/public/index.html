@@ -2095,7 +2095,10 @@ document.addEventListener('click',event=>{
  const target=document.getElementById(link.hash.slice(1));
  if (!target || event.button !== 0) return;
  event.preventDefault();
- if (location.hash !== link.hash) history.pushState(null,'',link.hash);
+ if (location.hash !== link.hash) {
+  history.pushState(null,'',link.hash);
+  window.dispatchEvent(new Event('obraxen:sectionchange'));
+ }
  focusDestination(target);
  // Animate deliberate navigation only; reload/back restoration stays native and immediate.
  target.scrollIntoView({behavior:reducedMotion.matches?'instant':'smooth',block:'start'});
