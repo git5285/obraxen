@@ -103,6 +103,8 @@ verifica sus bytes de enlace.
 Los assets de `_next/static/` deben coincidir por ruta y bytes con `.next/static/`
 del build local; no se acepta HTML en ese inventario. La única respuesta
 sintética admitida en ese namespace es `not-found.txt` con el texto `Not Found`.
+En `_next/__private/` solo se admiten `trace` y `stats.json`, si coinciden con
+`.next/trace` y `.next/next-stats.json` respectivamente, como los copia el adaptador.
 Cada alias se valida por su ruta pública aunque comparta un destino físico.
 Es un contrato del adaptador actual, no una prueba
 de todo comportamiento posible del JavaScript compilado. Un cambio de formato

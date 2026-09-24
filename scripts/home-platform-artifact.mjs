@@ -150,6 +150,12 @@ export function auditPlatform({ root, expectedInputsSha256, expectedCandidateSha
     generatedStatic.set('_next/static/' + file.path, file.sha256);
   }
   generatedStatic.set('_next/static/not-found.txt', sha256('Not Found'));
+  for (const [source, target] of [['trace', 'trace'], ['next-stats.json', 'stats.json']]) {
+    const path = 'apps/public-site/.next/' + source;
+    if (existsSync(join(root, path))) {
+      generatedStatic.set('_next/__private/' + target, sha256(readFileSync(sourceFile(root, path))));
+    }
+  }
   function inspect(path) {
     const actual = realFile(path);
     if (path.startsWith(output + 'functions/') && path.endsWith('.func')) {

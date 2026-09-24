@@ -110,6 +110,16 @@ it('rejects HTML smuggled into both framework inventories', () => {
   f.put('.vercel/output/static/_next/static/extra.html', html);
   expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Unexpected HTML');
 });
+it('accepts only the exact build trace and stats files copied by the pinned adapter', () => {
+  const f = fixture();
+  for (const [source, target] of [['trace', 'trace'], ['next-stats.json', 'stats.json']]) {
+    f.put('apps/public-site/.next/' + source, '{"fixture":true}');
+    f.put('.vercel/output/static/_next/__private/' + target, '{"fixture":true}');
+  }
+  expect(auditPlatform({...f.options, dryRun: f.dry()}).result).toBe('passed');
+  f.put('.vercel/output/static/_next/__private/trace', 'changed trace');
+  expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Generated static asset differs');
+});
 it('prepares only a fresh export and records explicit settings without building', () => {
   const f = fixture();
   // Use a fresh export fixture without generated platform output.
