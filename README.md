@@ -1,4 +1,4 @@
-# Web corporativa — reparación de pavimentos industriales
+# OBRAXEN — Home actual y aplicación anterior
 
 > **Web aprobada — recuperada el 23 de septiembre de 2026:** la referencia es
 > https://obraxen.com y su fuente vive en `apps/public-site/`. `npm run dev`
@@ -9,6 +9,36 @@
 > en `src/`, conservada con comandos `*:legacy`. Sus estados, rutas, datos y
 > afirmaciones históricas de publicación no describen el despliegue público actual.
 
+## Aplicación actual: apps/public-site
+
+La fuente de la Home es `apps/public-site/public/index.html`. El generador la
+empaqueta para tres Route Handlers de Next.js: `/` (ES), `/en` y `/de`.
+El HTML inicial es español; `home-i18n.js` aplica la traducción en el navegador.
+`home-contact.js` valida la consulta y prepara un enlace de correo sin enviarlo.
+La Home no consume `src/`, `data/brand.json` ni las APIs del legado.
+Los recursos binarios y el inventario de recuperación conservan su procedencia.
+
+| Tarea | Comando y alcance |
+|---|---|
+| Desarrollar / construir / servir la Home | `npm run dev` / `build` / `start` |
+| Comprobar la Home desde sus fuentes | `npm run check:home`: lint, unitarias de traducción, build y navegador |
+| Comprobar un build de Home ya preparado | `npm run test:published`: tres idiomas, móvil/escritorio y cero errores |
+| Comprobar el legado | `npm run check:legacy`: tipos, unitarias del legado, build, E2E y Lighthouse |
+| Pruebas unitarias completas | `npm run test`: Home, legado y automatización |
+| Comprobación local general | `npm run check`: lint, tipos, unitarias, build de Home y navegador de Home |
+| Gate obligatorio de entrega | `npm run check:quality`: seguridad y todas las suites; requiere autorización para la auditoría externa |
+
+`typecheck` es un alias compatible de `typecheck:legacy`.
+`lighthouse:ci` es un alias de `lighthouse:legacy`, que construye el legado antes
+de medirlo; el build por defecto no prepara esa aplicación. El porcentaje de
+cobertura se refiere a `src/lib/`, no a la Home actual. CI mantiene las pruebas
+de ambas aplicaciones y el gate conserva su política de recibos y checks frescos.
+
+## Referencia de la implementación anterior
+
+Los apartados marcados «Legado» describen exclusivamente `src/` y sus datos.
+Sus estados de publicación, identidad y contacto no representan la Home actual.
+
 El legado es un sitio técnico construido con Next.js 16 App Router, TypeScript y
 React Server Components. Su build incluye las rutas localizadas de portada,
 hubs, legales y contacto, además de los recorridos internos de preview y QA. Las
@@ -17,7 +47,7 @@ nonce; los casos no generan fichas públicas mientras no superen su puerta de
 evidencia. Navegación, consentimiento y formulario son las únicas interacciones
 cliente propias del legado.
 
-La web sigue en preview cerrada: `noindex,nofollow`, con `obraxen.com` declarado
+El legado sigue configurado como preview cerrada: `noindex,nofollow`, con `obraxen.com` declarado
 pero sin formulario habilitado ni despliegues Git de Vercel. El repositorio es
 privado y esa privacidad tampoco autoriza publicar o desplegar el sitio.
 
@@ -29,14 +59,14 @@ privado y esa privacidad tampoco autoriza publicar o desplegar el sitio.
 > NO-GO. Véase
 > `NAMING_CLEARANCE.md`.
 
-## Arquitectura
+## Legado: arquitectura
 
 - `src/app/` — rutas App Router, metadata, robots y sitemap.
 - `src/components/` — secciones de portada, proyectos, navegación, consentimiento
   y páginas legales.
 - `src/lib/` — carga tipada de identidad, proyectos y ofertas, diccionarios
   en/de/es/fr, rutas localizadas, imports de imágenes y puertas de publicación.
-- `data/brand.json` — única fuente de identidad y estado de publicación.
+- `data/brand.json` — fuente de identidad y publicación del legado.
 - `data/proyectos.json` — casos ejecutados, evidencia, datos confirmados y
   trazabilidad de autorización.
 - `data/proyectos.schema.json` — contrato JSON equivalente para los casos.
@@ -72,7 +102,7 @@ terceros.
 
 | Ruta | Estado |
 |---|---|
-| `/` | Redirección permanente a `/en/` |
+| `/` | Redirección permanente a `/es/` |
 | `/en/`, `/de/`, `/es/`, `/fr/` | Cuatro portadas renderizadas en servidor con CSP nonce |
 | `/{lang}/{projects}/` | Cuatro hubs sin expedientes públicos mientras la puerta siga cerrada |
 | `/{lang}/{projects}/{slug}/` | No se generan fichas; las rutas devuelven 404 hasta que cada caso sea publicable |
@@ -96,7 +126,7 @@ git lfs pull         # recupera el vídeo original antes de construir la Home
 npm ci
 npm run check:agent-runtime # comprueba Node, npm y el árbol bloqueado
 npm run lint          # ESLint con las reglas de Next.js
-npm run typecheck     # TypeScript sin emitir archivos
+npm run typecheck:legacy # genera tipos Next del legado y comprueba TypeScript
 npm run dev          # Home aprobada en http://127.0.0.1:4387
 npm run build        # build de la Home aprobada en apps/public-site
 npm run start        # sirve ese build, mismo puerto
@@ -105,19 +135,19 @@ npm run dev:legacy   # implementación anterior conservada en src/
 npm run build:legacy # construcción explícita del legado
 npm run start:legacy # arranque explícito del legado
 npm run test         # pruebas unitarias y de render
-npm run test:coverage # cobertura Vitest con umbrales
+npm run test:coverage # todas las unitarias; umbrales solo sobre src/lib
 npm run check:diff   # valida el cambio y el worktree desde origin/main
 npm run check:diff -- --base-ref origin/main --head HEAD # valida solo el commit
-npm run check:activation # evalúa la puerta de publicación
+npm run check:activation # evalúa la puerta de publicación basada en datos del legado
 npm run test:e2e:contact # formulario real habilitado en arnés local seguro
 npm run test:e2e     # rutas, responsive, accesibilidad, foco y cabeceras
-npm run lighthouse:ci
-npm run check        # lint + tipos + unitarias + build
+npm run lighthouse:legacy # construye y mide el legado
+npm run check        # lint + tipos + unitarias + build y navegador de Home
 npm run check:security # audit de dependencias de producción
 npm run check:quality # gate completo local
 ```
 
-El gate comprueba primero la Home aprobada con `test:published`. Conserva
+Tras lint, tipos, cobertura y build, el gate comprueba la Home aprobada con `test:published`. Conserva
 también las comprobaciones del legado: Vitest, el formulario habilitado en un arnés que no existe en
 Vercel, la suite Playwright cerrada en Chromium móvil/escritorio y smoke WebKit,
 y Lighthouse sobre un build cerrado. Playwright y Lighthouse seleccionan puertos
@@ -131,7 +161,7 @@ pueden formar parte de la candidata. Excluye el plano de control de
 conservan fuera de la candidata; los diffs rastreados siguen pasando la
 comprobación de whitespace. Para una revisión de commit usa la variante
 explícita con `--head`.
-`check:activation` devuelve `NO-GO` y código distinto de cero mientras falte una
+En el legado, `check:activation` devuelve `NO-GO` y código distinto de cero mientras falte una
 aprobación de publicación; ese resultado es el comportamiento esperado del gate
 cerrado, no un fallo de compilación.
 
@@ -152,7 +182,7 @@ SHA actual esté verde; `--no-verify` no forma parte del flujo permitido. Si se
 incorporan más colaboradores, se reevaluará GitHub Pro o un forge que imponga la
 misma política en servidor.
 
-## Renderizado y Vercel
+## Legado: renderizado y Vercel
 
 Se usa el runtime estándar de Next/Vercel; no se usa `output: "export"`. La
 exportación pura no admite `headers`, mientras que esta arquitectura conserva
@@ -176,7 +206,7 @@ Los orígenes de GA4 y Clarity están declarados de forma explícita en `script-
 `connect-src` e `img-src`; la allowlist no carga recursos por sí sola y excluye
 los endpoints publicitarios de Google.
 
-## Consentimiento y analítica
+## Legado: consentimiento y analítica
 
 La web usa consentimiento básico: no descarga GA4 o Clarity, no consulta sus IDs
 y no envía pings cookieless antes de aceptar. La preferencia se guarda durante
@@ -194,10 +224,11 @@ personalizados y los formularios quedan enmascarados. Al retirar una aceptación
 se deniega el estado, se limpian cookies detectables y se reinicia la página si
 las etiquetas ya estaban ejecutándose.
 
-## Idiomas y captación
+## Legado: idiomas y captación
 
-ADR-010 fija inglés como entrada y prefijo para todos los idiomas. Los segmentos
-de proyectos, legal y contacto se localizan; los slugs de casos permanecen
+ADR-010 documenta la decisión histórica de usar inglés como entrada. La
+configuración vigente del legado redirige `/` a `/es/` en `next.config.ts`.
+Los segmentos de proyectos, legal y contacto se localizan; los slugs de casos permanecen
 estables. El selector conserva la página equivalente. Canonical, `hreflang`,
 `x-default` ya se resuelven contra `obraxen.com`; el sitemap público espera a la
 apertura formal.
@@ -213,7 +244,7 @@ resto de variables reales. Las traducciones
 actuales también requieren revisor profesional y fecha por cada idioma antes de
 publicar.
 
-## Datos y puerta de publicación
+## Legado: datos y puerta de publicación
 
 Los valores desconocidos se representan como `null` y no se completan con
 estimaciones. `publicar: true` bloquea la activación global si falta cualquiera
@@ -271,7 +302,7 @@ nuevas consultas, pero no revoca copias realizadas durante ese periodo.
 `AGENTS.md`, `COORDINATION.md` y `.coordination/` gobiernan la colaboración entre
 tareas; no son contenido público del sitio.
 
-## Próximo hito
+## Legado: próximo hito
 
 Las fases técnicas 6.1–6.6 están terminadas. Solo queda 6.7: dictamen registral y
 marcario, revisión profesional de en/de/es/fr, documentos y revisión legal de los

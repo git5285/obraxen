@@ -8,7 +8,7 @@ import { inspectRuntime } from "../automation/agents/runtime.mjs";
 
 // Security advisories and browser/runtime behavior require fresh evidence.
 export const LOCAL_CHECKS = ["lint", "typecheck", "test:coverage", "build"];
-export const FRESH_CHECKS = ["test:published", "test:e2e:contact", "test:e2e", "lighthouse:ci"];
+export const FRESH_CHECKS = ["test:published", "test:e2e:contact", "test:e2e", "lighthouse:legacy"];
 const MAX_AGE_MS = 60 * 60 * 1000;
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 

@@ -15,11 +15,10 @@ await mkdir(output, { recursive: true });
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const source = await readFile(new URL('../apps/public-site/public/index.html', import.meta.url));
 const provenance = JSON.parse(await readFile(new URL('../docs/published-site-source.json', import.meta.url), 'utf8'));
-const recoveredHtmlHash = provenance.files.find(file => file.path === 'public/index.html').sha256;
 let server;
 let browser;
 let serverLog = '';
-const report = { checkedAt: new Date().toISOString(), comparison: compare, deploymentId: provenance.deploymentId, routes: [], assets: [], browser: [], knownIssues: [] };
+const report = { checkedAt: new Date().toISOString(), comparison: compare, deploymentId: provenance.deploymentId, routes: [], assets: [], browser: [] };
 
 async function localServer() {
   if (suppliedUrl) {
@@ -48,7 +47,7 @@ const variants = [
   { path: '/de', lang: 'de', title: 'Obraxen · Reparatur von Industrieböden', h1: /Wir/ },
 ];
 
-async function inspect(origin, variant, viewport, label) {
+async function inspect(origin, variant, viewport, label, htmlOverride) {
   const context = await browser.newContext({ viewport, colorScheme: 'light', reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
@@ -63,11 +62,16 @@ async function inspect(origin, variant, viewport, label) {
   page.on('request', request => {
     if (!request.url().startsWith(origin + '/') && /^https?:/.test(request.url())) externalRequests.push(request.url());
   });
+  if (htmlOverride) await page.route(origin + variant.path, route => route.fulfill({
+    status: 200, contentType: 'text/html; charset=utf-8', body: htmlOverride,
+  }));
   await page.goto(origin + variant.path, { waitUntil: 'load' });
   await expect(page.locator('html')).toHaveAttribute('lang', variant.lang);
   await expect(page).toHaveTitle(variant.title);
-  await expect(page.locator('h1')).toContainText(variant.h1);
+  await expect(page.locator('h1')).toContainText(htmlOverride && variant.lang === 'es'
+    ? /Recuperamos tus pavimentos industriales/ : variant.h1);
   await expect(page.locator('#enquiry-review')).toBeEnabled();
+  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing initial translations`);
   await page.evaluate(async () => {
     for (const image of document.images) image.loading = 'eager';
     await Promise.all([...document.images].map(image => image.decode().catch(() => {})));
@@ -108,10 +112,22 @@ async function inspect(origin, variant, viewport, label) {
   if (viewport.width < 700) {
     await page.locator('#menu-toggle').click();
     await expect(page.locator('#mobile-nav')).toBeVisible();
+    await expect(page.locator('#mobile-nav a').first()).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#menu-toggle')).toBeFocused();
+    await expect(page.locator('#mobile-nav')).toBeHidden();
+    await page.locator('#menu-toggle').click();
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await expect(page.locator('header .nav a').first()).toBeFocused();
+    await expect(page.locator('#mobile-nav')).toBeHidden();
+    await page.setViewportSize(viewport);
+    await expect(page.locator('#menu-toggle')).toBeFocused();
+    await page.locator('#menu-toggle').click();
     await page.locator('#mobile-nav a[href="#projects"]').click();
     await expect(page.locator('#mobile-nav')).toBeHidden();
   } else await page.locator('header .nav a[href="#projects"]').click();
   await expect(page).toHaveURL(/#projects$/);
+  await expect(page.locator('#projects')).toBeFocused();
   await page.locator('#project-next').click();
   await expect.poll(() => page.locator('#project-rail').evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   if (viewport.width < 700) await page.locator('#sector-select').selectOption('industria');
@@ -129,26 +145,34 @@ async function inspect(origin, variant, viewport, label) {
   await page.locator('#enquiry-review').click();
   await expect(page.locator('#enquiry-name')).toHaveAttribute('aria-invalid', 'true');
   await page.locator('#enquiry-name').fill('Prueba local');
+  await page.locator('#enquiry-contact').fill('invalid');
+  await page.locator('#enquiry-review').click();
+  await expect(page.locator('#enquiry-contact')).toHaveAttribute('aria-invalid', 'true');
   await page.locator('#enquiry-contact').fill('prueba@example.invalid');
   await page.locator('#enquiry-message').fill('Comprobación local de paridad, sin envío.');
   await page.locator('#enquiry-review').click();
   await expect(page.locator('#enquiry-status a')).toHaveAttribute('href', /^mailto:info@obraxen\.com\?/);
+  const draft = new URL(await page.locator('#enquiry-status a').getAttribute('href'));
+  assert(draft.searchParams.get('body').includes('Prueba local'));
+  assert(draft.searchParams.get('body').includes('prueba@example.invalid'));
+  assert(draft.searchParams.get('body').includes('Comprobación local de paridad, sin envío.'));
+  const selectedContext = await page.locator('#enquiry-context').textContent();
+  assert(draft.searchParams.get('body').includes(selectedContext));
+  await page.locator('#enquiry-context-clear').click();
+  await expect(page.locator('#enquiry-message')).toHaveValue('Comprobación local de paridad, sin envío.');
+  await expect(page.locator('#enquiry-context')).toBeHidden();
+  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing dynamic translations`);
+  if (variant.lang !== 'es') {
+    await expect(page.locator('#enquiry-status')).not.toContainText('Selección eliminada');
+    assert.notEqual(draft.searchParams.get('subject'), 'Consulta sobre pavimento');
+  }
   const details = page.locator('.footer-legal-disclosure').first();
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open', '');
   const otherLocale = variant.lang === 'en' ? 'de' : 'en';
   await page.locator(`.language-switcher a[href="/${otherLocale}/"]`).click();
   await expect(page.locator('html')).toHaveAttribute('lang', otherLocale);
-  // Characterized against the deployed original in all three mobile locales.
-  // The source removes submenu buttons, but setMenu still tries to focus one.
-  // Permit only this precise inherited error while the recovered HTML is unchanged.
-  const inheritedFocusError = viewport.width < 700 && sha(source) === recoveredHtmlHash;
-  const expectedErrors = inheritedFocusError ? ["Cannot read properties of null (reading 'focus')"] : [];
-  assert.deepEqual(errors, expectedErrors, `${label}: unexpected browser errors`);
-  if (inheritedFocusError) {
-    assert.match(errorStacks[0], /at setMenu /, `${label}: error must be the characterized menu focus issue`);
-    report.knownIssues.push({ view: label, issue: 'inherited-mobile-menu-focus', message: errors[0] });
-  }
+  assert.deepEqual(errors, [], `${label}: unexpected browser errors`);
   assert.deepEqual(failedRequests, [], `${label}: failed requests`);
   assert.deepEqual(externalRequests, [], `${label}: external request`);
   await context.close();
@@ -197,10 +221,38 @@ try {
         assert.equal(localResult.screenshot, entry.production.screenshot, `screenshot differs: ${label}`);
       }
       report.browser.push(entry);
-      console.log(`PASS ${label}: content, images, navigation, video, carousel, sectors, dialog, enquiry, languages, legal${compare ? ', production parity' : ''}${localResult.errors.length ? ' (known production menu-focus error preserved)' : ''}`);
+      console.log(`PASS ${label}: content, images, navigation, video, carousel, sectors, dialog, enquiry, languages, legal${compare ? ', production parity' : ''}`);
     }
   }
-  report.result = report.knownIssues.length ? 'passed_with_known_production_issue' : 'passed';
+  // Editorial edits must not change the error contract or lose keyed translations.
+  const editorialHtml = source.toString().replace('Recuperamos tus pavimentos. ', 'Recuperamos tus pavimentos industriales. ')
+    + '\n<!-- harmless editorial change -->';
+  for (const variant of variants.slice(0, 2)) {
+    await inspect(local, variant, { width: 390, height: 844 }, `local-copy-edit-${variant.lang}`, editorialHtml);
+  }
+  const missingTranslationContext = await browser.newContext();
+  const missingPage = await missingTranslationContext.newPage();
+  await missingPage.route(local + '/en', route => route.fulfill({
+    status: 200, contentType: 'text/html; charset=utf-8',
+    body: source.toString().replace('id="services-title">Soluciones', 'id="services-title">Soluciones pendientes de traducir'),
+  }));
+  await missingPage.goto(local + '/en');
+  await missingPage.waitForFunction(() => window.obraxenI18n);
+  assert((await missingPage.evaluate(() => window.obraxenI18n.missingTranslations))
+    .includes('Soluciones pendientes de traducir'), 'unknown editorial copy must be reported');
+  await missingTranslationContext.close();
+  const noScript = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const page = await noScript.newPage();
+  await page.goto(local);
+  await expect(page.locator('h1')).toContainText('Recuperamos tus pavimentos.');
+  await expect(page.locator('header .nav a[href="#projects"]')).toBeVisible();
+  await expect(page.locator('.contact-direct a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:info@obraxen.com');
+  assert.deepEqual(await page.locator('a[href]').evaluateAll(links => links.map(a => a.getAttribute('href'))
+    .filter(href => !/^(#|tel:|mailto:)/.test(href))), [], 'no-script: inactive interior links');
+  await noScript.close();
+  report.editorialChange = 'passed';
+  report.noScript = 'passed';
+  report.result = 'passed';
 } catch (error) {
   report.result = 'failed';
   report.error = error.stack;

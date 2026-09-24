@@ -16,6 +16,9 @@ npm run build
 npm run start
 # mismo puerto, build optimizado
 npm run test:published
+# requiere el build anterior; verifica comportamiento, sin consultar producción
+npm run check:home
+# lint y pruebas de Home + build + navegador, en un solo comando
 ```
 
 No arrancar dos servidores en el mismo puerto. Los scripts aceptan
@@ -26,8 +29,11 @@ para ver el resultado. No es necesario editar el módulo generado.
 ## Fuente única y límites
 
 - `apps/public-site/public/index.html`: documento canónico con estructura,
-  estilos e interacciones de la Home publicada.
-- `apps/public-site/public/assets/`: imágenes, vídeo y `home-i18n.js` originales.
+  estilos e interacciones generales. La navegación y los enlaces inactivos se
+  declaran directamente; no se sustituyen al terminar de cargar.
+- `apps/public-site/public/assets/`: imágenes y vídeo recuperados,
+  `home-i18n.js` para traducción y `home-contact.js` para validación,
+  selección de reparación y preparación del borrador de correo.
 - `apps/public-site/app/route.js`, `app/en/route.js` y `app/de/route.js`:
   las tres rutas originales de Next.js.
 - `generate-route-content.mjs`: empaqueta el HTML canónico antes del desarrollo
@@ -62,9 +68,33 @@ geometría y capturas. Los informes y PNG se generan en
 `test-results/published-home/`. La comparación exige equivalencia exacta con
 la referencia; una mejora deliberada futura deberá revisarse como diferencia.
 
-Incidencia conocida y conservada de producción: al abrir el menú móvil se
-produce un error de foco en `setMenu`; no impide mostrar los enlaces. El test
-lo identifica por separado y rechaza errores nuevos. Véase la recuperación.
+El verificador exige cero errores de navegador. Comprueba foco al abrir/cerrar
+el menú y al cambiar entre móvil y escritorio, navegación sin JavaScript y
+conservación del texto de consulta al borrar su contexto. También sirve una
+variante editorial en memoria para comprobar que un cambio de texto no rompe
+el contrato de navegación ni las traducciones con clave estable.
+
+La incidencia de foco de la recuperación está corregida en la fuente local.
+Los hashes originales siguen siendo evidencia histórica, no una excepción
+para admitir errores. `--compare-production` conserva su exigencia de igualdad
+exacta y detectará las diferencias deliberadas mientras producción no cambie.
+
+## Mantener traducciones
+
+Las claves `data-i18n` de navegación y titular se resuelven con `message(key)`
+en `home-i18n.js`; pueden cambiarse sus textos españoles sin perder EN/DE.
+La clave del titular traduce solo su nodo de texto directo y conserva el `span`.
+El catálogo conserva las coincidencias de texto para las zonas aún no migradas.
+Al editar esas zonas, actualizar las traducciones o introducir una clave estable.
+`missingTranslations` enumera texto inicial y mensajes dinámicos sin traducción;
+`test:published` falla si la lista no está vacía. Los nombres propios e
+identificadores invariables se enumeran explícitamente, no mediante una exclusión
+genérica de textos desconocidos. `npm run test:home` comprueba el traductor,
+las claves del HTML y los rangos de carruseles.
+
+La cobertura porcentual de `test:coverage` corresponde a bibliotecas del legado,
+no al HTML o JavaScript de esta Home. Para esta aplicación, la evidencia de
+comportamiento procede de `test:home` y `test:published`.
 
 Antes de editar, respetar las claims de `AGENTS.md` y reservar rutas exactas.
 Para la Home aprobada, trabajar en `apps/public-site/`; una prueba sobre el

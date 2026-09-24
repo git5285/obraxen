@@ -104,10 +104,21 @@ La recuperación comprobó una incidencia heredada: al abrir el menú móvil,
 landing ha eliminado. Produce `Cannot read properties of null (reading 'focus')`
 en producción y en local, en ES/EN/DE; el menú se abre y permite navegar, pero
 no recibe el foco inicial previsto. No se corrigió durante la recuperación exacta.
-El verificador admite exclusivamente ese error, en móvil, procedente de
-`setMenu` y solo mientras el HTML conserve el hash original; cualquier otro error
-falla. El informe diferencia paridad aprobada de ausencia de errores y enumera
-esta incidencia. Su reparación será una mejora explícita posterior.
+En la recuperación, el verificador admitía exclusivamente ese error, en móvil, procedente de
+`setMenu` y solo mientras el HTML conservaba el hash original; cualquier otro error
+fallaba. El informe histórico diferenciaba paridad aprobada de ausencia de errores
+y enumeraba esta incidencia.
+
+### Mantenimiento local — 24 de septiembre de 2026
+
+La navegación final ahora se declara en el HTML y enfoca enlaces existentes,
+también al cambiar de tamaño. Se retiraron la inicialización de submenús
+sustituidos y la excepción de errores ligada al hash completo del documento.
+El verificador local exige cero errores y prueba ediciones editoriales en memoria.
+El contacto está separado en `public/assets/home-contact.js`; la traducción
+comprueba ausencias y admite claves estables y posiciones expresadas como rangos.
+Estos cambios locales son posteriores a la recuperación exacta: no alteran
+su inventario ni sus hashes y no acreditan una nueva equivalencia con producción.
 
 Se conserva lo publicado, incluidos textos, identidad, teléfono y correo,
 noindex, enlace mailto y páginas interiores ocultas. No se modifican ni se
