@@ -127,9 +127,18 @@ export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
     assert.equal(content.length, file.size, 'Upload size differs'); bytes += content.length;
     uploaded.add(actual);
   }
-  const visited = new Set();
+  const ancestors = new Set();
   const expectedStatic = new Set(manifest.inputs.filter(file => file.path.startsWith('apps/public-site/public/'))
     .map(file => file.path.slice('apps/public-site/public/'.length)));
+  // Match framework assets to the local Next build, not an open URL namespace.
+  // The adapter adds only one synthetic static response (see @vercel/next).
+  const generatedStatic = new Map();
+  const nextStatic = join(root, 'apps/public-site/.next/static');
+  if (existsSync(nextStatic)) for (const file of inventory(nextStatic)) {
+    assert(!/\.html?$/i.test(file.path), 'Unexpected HTML in framework assets');
+    generatedStatic.set('_next/static/' + file.path, file.sha256);
+  }
+  generatedStatic.set('_next/static/not-found.txt', sha256('Not Found'));
   function inspect(path) {
     const actual = realFile(path);
     if (path.startsWith(output + 'functions/') && path.endsWith('.func')) {
@@ -137,15 +146,20 @@ export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
       assert(expectedFunctions.includes(name)
         || /^(?:_global-error|_not-found)\.segments\/(?:_not-found\/)?(?:__PAGE__|_full|_tree)\.segment\.rsc\.func$/.test(name), 'Unexpected nested function');
     }
-    if (visited.has(actual)) return; visited.add(actual);
     if (statSync(actual).isDirectory()) {
+      assert(!ancestors.has(actual), 'Cyclic artifact directory');
+      ancestors.add(actual);
       for (const name of readdirSync(actual)) inspect(path + '/' + name);
+      ancestors.delete(actual);
     } else {
       assert(uploaded.has(actual), 'Output missing from upload inventory: ' + path);
       if (path.startsWith(output + 'static/')) {
         const relative = path.slice((output + 'static/').length);
-        assert(expectedStatic.has(relative) || relative.startsWith('_next/')
+        assert(expectedStatic.has(relative) || generatedStatic.has(relative)
           || /^(404|500)(?:\.html|\.rsc\.json|\.segments\/.*)$/.test(relative), 'Unexpected public output');
+        if (generatedStatic.has(relative)) {
+          assert.equal(sha256(readFileSync(actual)), generatedStatic.get(relative), 'Generated static asset differs');
+        }
       }
     }
   }

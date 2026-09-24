@@ -38,6 +38,42 @@ function fixture() {
 it('audits a complete local artifact without claiming publication or an exact commit', () => {
   const f = fixture(); expect(auditPlatform({...f.options, dryRun: f.dry()})).toMatchObject({result: 'passed', localOnly: true, publicationAuthorized: false});
 });
+it.each(['_next/unreviewed.html', '_next/static/unreviewed.js', '_next/static/nested/unreviewed.html'])(
+  'rejects unreviewed framework-namespace output %s', path => {
+    const f = fixture();
+    f.put('.vercel/output/static/' + path, 'unreviewed');
+    expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Unexpected public output');
+  });
+it('rejects an unreviewed static alias even when its target was already inspected', () => {
+  const f = fixture();
+  const dry = f.dry();
+  mkdirSync(join(f.root, '.vercel/output/static/_next'), {recursive: true});
+  symlinkSync('../../functions/en.prerender-fallback.body', join(f.root, '.vercel/output/static/_next/unreviewed.html'));
+  const target = '../../functions/en.prerender-fallback.body';
+  dry.totalSize += Buffer.byteLength(target);
+  dry.files.push({path: '.vercel/output/static/_next/unreviewed.html', size: Buffer.byteLength(target),
+    sha: createHash('sha1').update(target).digest('hex')});
+  expect(() => auditPlatform({...f.options, dryRun: dry})).toThrow('Unexpected public output');
+});
+it('accepts byte-matching generated chunks and the adapter not-found response', () => {
+  const f = fixture();
+  f.put('apps/public-site/.next/static/chunks/home.js', '/* built chunk */');
+  f.put('.vercel/output/static/_next/static/chunks/home.js', '/* built chunk */');
+  f.put('.vercel/output/static/_next/static/not-found.txt', 'Not Found');
+  expect(auditPlatform({...f.options, dryRun: f.dry()}).result).toBe('passed');
+});
+it('rejects modified generated asset bytes even when the upload inventory matches', () => {
+  const f = fixture();
+  f.put('apps/public-site/.next/static/chunks/home.js', '/* built chunk */');
+  f.put('.vercel/output/static/_next/static/chunks/home.js', 'modified');
+  expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Generated static asset differs');
+});
+it('rejects HTML smuggled into both framework inventories', () => {
+  const f = fixture();
+  f.put('apps/public-site/.next/static/extra.html', html);
+  f.put('.vercel/output/static/_next/static/extra.html', html);
+  expect(() => auditPlatform({...f.options, dryRun: f.dry()})).toThrow('Unexpected HTML');
+});
 it('prepares only a fresh export and records explicit settings without building', () => {
   const f = fixture();
   // Use a fresh export fixture without generated platform output.
