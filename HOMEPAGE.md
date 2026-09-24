@@ -114,6 +114,14 @@ salidas traducidas conocidas para no denunciarlas como ausencias.
 
 ## Tres recorridos de mantenimiento
 
+Antes de cada recorrido, `npm run check:checkout` identifica el checkout, SHA y
+cambios pendientes sin consultar remotos. Para una expectativa estricta usar
+`-- --expected-head=<SHA completo> --require-clean`. Un informe sin errores no
+afirma que el checkout sea el último remoto ni que esté publicado.
+La introducción editorial del contacto utiliza `data-i18n="contact.intro"`;
+su texto español vive en el HTML y EN/DE en el catálogo de claves. Una prueba
+cambia el texto español en memoria y verifica que EN/DE no pierden traducción.
+
 1. **Contenido:** editar `public/index.html` o el asset correspondiente. Para
    una zona con `data-i18n`, mantener su clave y revisar las variantes EN/DE en
    el catálogo; para una zona aún exact-text, actualizar su correspondencia o
@@ -154,6 +162,10 @@ separar dependencias es una decisión futura, no un requisito de esta receta.
 El `vercel.json` generado describe raíz/build para una revisión posterior;
 la salida local es `apps/public-site/.next`, **no** `.vercel/output` ni un
 artefacto listo para `vercel deploy --prebuilt`.
+
+La preparación local de configuración y la auditoría de Build Output están
+versionadas en `scripts/home-platform-artifact.mjs`; consultar la sección A.1
+del runbook. No ejecutan Vercel, no leen credenciales y no conceden autorización.
 
 `check:home:contract` y el prebuild comprueban noindex/nofollow, bloqueo del envío
 nativo, recursos locales, ausencia de primitivas de envío/analítica/almacenamiento

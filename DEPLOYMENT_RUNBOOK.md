@@ -46,6 +46,57 @@ flujo. Una excepción humana Home debe estar documentada para la candidata exact
 no se obtiene poniendo sus banderas en verde ni cambiando datos legales.
 La receta local no presupone que exista una excepción vigente.
 
+### A.1 Receta local de plataforma y auditoría repetible
+
+Desde el checkout seleccionado (`npm run check:checkout`), preparar primero una
+exportación nueva con `prepare:home`. Revisar su `home-candidate.json` y conservar
+el `source.inputsSha256` fuera de la exportación como expectativa de auditoría.
+Un export con `--allow-worktree` sigue siendo solo evidencia local: no tiene
+`exactCommit`. No se infiere aprobación de estos pasos.
+
+```sh
+npm run home:platform -- prepare --root=/ruta/export \
+  --inputs-sha256=<SHA256 revisado> --project-id=<prj_ID verificado> \
+  --org-id=<team_ID verificado> --target=production
+```
+
+Este comando comprueba las fuentes, exige destino sin `.vercel` y rechaza un
+checkout Git. Escribe únicamente en la exportación: asociación local explícita,
+`home-platform.json` y configuración de build. Usa `npm ls --omit=dev --depth=0`
+para validar las dependencias ya copiadas, sin reinstalación. Registra hashes de
+configuración, pero **no** comprueba la asociación remota ni ejecuta build Vercel.
+No sobrescribe un estado de plataforma existente: preparar otra exportación.
+
+Con la autorización que corresponda, un operador construye después el Build
+Output desde esa exportación usando la CLI fijada en el lockfile:
+`vercel build --prod --non-interactive` para production, o sin `--prod` para
+preview. Utilizar un entorno limpio, sin variables de aplicación heredadas;
+no hacer `vercel pull`, instalar paquetes ni recuperar secretos por inferencia.
+La receta local no cambia la configuración compartida de Vercel.
+
+El operador autorizado obtiene y conserva el inventario JSON con la CLI fijada:
+`vercel deploy --prebuilt --prod --skip-domain --dry --non-interactive --json`
+(omitir `--prod` para preview). **No quitar `--dry`**: este paso no publica.
+Los comandos de plataforma no son invocados por la herramienta local.
+
+```sh
+npm run home:platform -- audit --root=/ruta/export \
+  --inputs-sha256=<SHA256 revisado> --dry-run=/ruta/inventario.json
+```
+
+La auditoría es de lectura y emite JSON por stdout para conservar como evidencia.
+Vincula inputs, HTML servido, assets, funciones, entorno embebido, destinos de
+routing y el inventario de subida por hash/tamaño. Rechaza archivos fuera del
+alcance, enlaces fuera de la exportación, outputs ausentes del inventario y
+rutas/funciones inesperadas. Permite enlaces internos generados por Vercel y
+verifica sus bytes de enlace. Es un contrato del adaptador actual, no una prueba
+de todo comportamiento posible del JavaScript compilado. Un cambio de formato
+Vercel puede bloquearlo y requiere revisión y fixtures, no relajar el check.
+
+Un informe `passed` no consulta producción, no prueba CI ni autoriza publicación.
+Antes de publicar hay que revalidar SHA/inputs, configuración, CI, proyecto,
+entorno y permiso exactos; cualquier cambio del artefacto invalida su evidencia.
+
 ## B. Legado: activación, preview y publicación
 
 Los apartados siguientes son del legado en `src/`, con cuatro idiomas y APIs.

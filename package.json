@@ -7,6 +7,8 @@
   },
   "packageManager": "npm@11.16.0",
   "scripts": {
+    "check:checkout": "node scripts/checkout-context.mjs",
+    "home:platform": "node automation/agents/runtime.mjs exec -- node scripts/home-platform-artifact.mjs",
     "check:agent-runtime": "node automation/agents/runtime.mjs exec -- node automation/agents/runtime.mjs assert --json",
     "check:activation": "node automation/agents/runtime.mjs exec -- node --experimental-strip-types scripts/check-activation.mjs",
     "check:diff": "node automation/agents/runtime.mjs exec -- node scripts/check-branch-diff.mjs",
@@ -32,9 +34,9 @@
     "check:home:recovery": "node automation/agents/runtime.mjs exec -- node scripts/public-site-evidence.mjs",
     "prepare:home": "node automation/agents/runtime.mjs exec -- node scripts/prepare-home-candidate.mjs",
     "check:legacy": "npm run typecheck:legacy && npm run test:legacy && npm run build:legacy && npm run test:e2e:contact && npm run test:e2e && npm run lighthouse:legacy",
-    "lint:home": "node automation/agents/runtime.mjs exec -- eslint apps/public-site scripts/public-site.mjs scripts/verify-public-site.mjs scripts/home-contract.mjs scripts/public-site-evidence.mjs scripts/prepare-home-candidate.mjs tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts",
-    "test:home": "node automation/agents/runtime.mjs exec -- vitest run tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts",
-    "test:legacy": "node automation/agents/runtime.mjs exec -- vitest run --exclude 'tests/agents/**' --exclude tests/public-home.test.ts --exclude tests/home-contract.test.ts --exclude tests/public-site-evidence.test.ts --exclude tests/prepare-home-candidate.test.ts",
+    "lint:home": "node automation/agents/runtime.mjs exec -- eslint apps/public-site scripts/public-site.mjs scripts/verify-public-site.mjs scripts/home-contract.mjs scripts/public-site-evidence.mjs scripts/prepare-home-candidate.mjs scripts/checkout-context.mjs scripts/home-platform-artifact.mjs tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts tests/checkout-context.test.ts tests/home-platform-artifact.test.ts",
+    "test:home": "node automation/agents/runtime.mjs exec -- vitest run tests/public-home.test.ts tests/home-contract.test.ts tests/public-site-evidence.test.ts tests/prepare-home-candidate.test.ts tests/checkout-context.test.ts tests/home-platform-artifact.test.ts",
+    "test:legacy": "node automation/agents/runtime.mjs exec -- vitest run --exclude 'tests/agents/**' --exclude tests/public-home.test.ts --exclude tests/home-contract.test.ts --exclude tests/public-site-evidence.test.ts --exclude tests/prepare-home-candidate.test.ts --exclude tests/checkout-context.test.ts --exclude tests/home-platform-artifact.test.ts",
     "typecheck:legacy": "node automation/agents/runtime.mjs exec -- sh -c 'next typegen && tsc --noEmit'",
     "lighthouse:legacy": "node automation/agents/runtime.mjs exec -- node scripts/check-lighthouse.mjs"
   },

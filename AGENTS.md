@@ -1,5 +1,10 @@
 # Coordinación obligatoria
 
+Antes de trabajar, ejecutar `npm run check:checkout` desde la raíz elegida y
+registrar ruta, HEAD y cambios pendientes. El informe no acredita estado remoto.
+Si existe `WORKING_CHECKOUT.md` en el control, consultar su designación local;
+no confundir un checkout preservado con la candidata ni sincronizarlo automáticamente.
+
 Estas reglas se aplican a cualquier tarea que trabaje en este repositorio.
 
 ## Antes de editar

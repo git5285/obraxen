@@ -12,7 +12,8 @@ type Translator = {
 };
 
 // Exercise the real browser script. DOM interactions have separate Playwright coverage.
-function translator(locale: string, captureObserver?: (callback: (records: object[]) => void) => void): Translator {
+function translator(locale: string, captureObserver?: (callback: (records: object[]) => void) => void, nodes: object[] = []): Translator {
+  let cursor = -1;
   const context = {
     location: { pathname: locale === "es" ? "/" : `/${locale}` },
     window: {} as { obraxenI18n: Translator },
@@ -20,7 +21,7 @@ function translator(locale: string, captureObserver?: (callback: (records: objec
       body: { nodeType: 11, querySelectorAll: () => [] },
       documentElement: { lang: "es" },
       querySelector: () => null,
-      createTreeWalker: () => ({ nextNode: () => false }),
+      createTreeWalker: () => ({ nextNode: () => ++cursor < nodes.length, get currentNode() { return nodes[cursor]; } }),
     },
     Node: { TEXT_NODE: 3, ELEMENT_NODE: 1, DOCUMENT_FRAGMENT_NODE: 11 },
     NodeFilter: { SHOW_TEXT: 4 },
@@ -35,6 +36,19 @@ function translator(locale: string, captureObserver?: (callback: (records: objec
 }
 
 describe("published Home translations", () => {
+  it.each(["es", "en", "de"])("keeps contact intro translation stable after a Spanish editorial edit in %s", locale => {
+    expect(html).toContain('data-i18n="contact.intro"');
+    const edited = "Explica el estado de tu pavimento y el uso de tu instalación.";
+    const node = {nodeValue: edited, parentElement: {closest: () => null, getAttribute: () => "contact.intro"}};
+    const client = translator(locale, undefined, [node]);
+    expect(node.nodeValue).toBe(locale === "es" ? edited : client.message("contact.intro"));
+    expect(client.missingTranslations).toEqual([]);
+  });
+
+  it("rejects an unknown DOM translation key", () => {
+    const node = {nodeValue: "Texto", parentElement: {closest: () => null, getAttribute: () => "contact.missing"}};
+    expect(() => translator("en", undefined, [node])).toThrow("Missing Home translation");
+  });
   it.each([
     ["es", "1 de 4", "1–2 de 4"],
     ["en", "1 of 4", "1–2 of 4"],

@@ -1,0 +1,1 @@
+export function checkoutContext(repo: string, options?: {expectedHead?: string; requireClean?: boolean}): {root: string; head: string; branch: string | null; dirty: boolean; status: string[]; home: string; legacy: string; remoteState: string; publicationAuthorized: false};
