@@ -11,6 +11,7 @@ const ROOT_INPUTS = [
   '.nvmrc', '.npmrc', 'package.json', 'package-lock.json',
   'automation/agents/runtime.mjs', 'automation/agents/runtime-probe.mjs',
   'scripts/public-site.mjs', 'scripts/home-contract.mjs', 'scripts/public-site-evidence.mjs',
+  'scripts/patch-vercel-bundles.mjs',
 ];
 const APP_INPUTS = [
   'package.json', 'next.config.mjs', 'generate-route-content.mjs',

@@ -136,6 +136,7 @@
     "apps/public-site/generate-route-content.mjs",
     "apps/public-site/public/assets/home-contact.js",
     "scripts/public-site.mjs",
+    "scripts/patch-vercel-bundles*",
     "scripts/home-contract*",
     "scripts/checkout-context*",
     "scripts/home-platform-artifact*",
