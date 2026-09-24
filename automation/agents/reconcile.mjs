@@ -10,6 +10,7 @@ import {
 import { loadPolicy } from "./policy.mjs";
 import {
   exactKeys,
+  nonEmptyString,
   object,
   safeIdentifier as validateSafeIdentifier,
   timestamp as validateTimestamp,
@@ -34,11 +35,6 @@ const OUTCOMES = new Set([
   "evidence_mismatch",
   "local_state_stale",
 ]);
-
-function nonEmptyString(value, label) {
-  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty string`);
-  return value;
-}
 
 function nullableString(value, label) {
   if (value === null) return null;

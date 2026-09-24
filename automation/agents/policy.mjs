@@ -20,7 +20,7 @@ function requirePositiveInteger(object, key) {
   }
 }
 
-export function validatePolicy(policy) {
+function validateIdentityAndCoordination(policy) {
   if (policy?.schemaVersion !== 1) throw new Error("policy.schemaVersion must be 1");
   if (!new Set(["shadow", "active", "disabled"]).has(policy.mode)) {
     throw new Error("policy.mode must be shadow, active, or disabled");
@@ -36,7 +36,9 @@ export function validatePolicy(policy) {
   if (!(isAbsolute(stateHome) || stateHome === "~" || stateHome.startsWith("~/"))) {
     throw new Error("policy.coordination.stateHome must be absolute or home-relative");
   }
+}
 
+function validateLimits(policy) {
   for (const key of [
     "maxConcurrentWriters",
     "maxPendingLocalDiffs",
@@ -55,7 +57,9 @@ export function validatePolicy(policy) {
   if (policy.limits.maxPendingLocalDiffs !== 1) {
     throw new Error("Obraxen permits exactly one pending autonomous local diff");
   }
+}
 
+function validateMemory(policy) {
   if (policy.memory?.schemaVersion !== 1) {
     throw new Error("policy.memory.schemaVersion must be 1");
   }
@@ -76,7 +80,9 @@ export function validatePolicy(policy) {
   if (policy.memory.maxContextBytes < 4096) {
     throw new Error("policy.memory.maxContextBytes must be at least 4096");
   }
+}
 
+function validateAttentionBudget(policy) {
   if (policy.attentionBudget?.schemaVersion !== 1) {
     throw new Error("policy.attentionBudget.schemaVersion must be 1");
   }
@@ -136,7 +142,9 @@ export function validatePolicy(policy) {
   ) {
     throw new Error("policy.attentionBudget.agentPathPatterns must contain unique safe patterns");
   }
+}
 
+function validateReconciliation(policy) {
   if (!/^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$/.test(policy.reconciliation?.defaultBranch ?? "")) {
     throw new Error("policy.reconciliation.defaultBranch must be a safe branch name");
   }
@@ -155,7 +163,9 @@ export function validatePolicy(policy) {
   ) {
     throw new Error("policy.reconciliation.requiredPullRequestChecks must be unique");
   }
+}
 
+function validateGroupedAuthorizations(policy) {
   requireBoolean(policy.groupedAuthorizations, "enabled");
   if (policy.groupedAuthorizations.maxChangedFiles !== undefined) {
     requirePositiveInteger(policy.groupedAuthorizations, "maxChangedFiles");
@@ -189,7 +199,9 @@ export function validatePolicy(policy) {
   if (policy.groupedAuthorizations.maxLifetimeSeconds > 86400) {
     throw new Error("policy.groupedAuthorizations.maxLifetimeSeconds exceeds 24 hours");
   }
+}
 
+function validateAuthority(policy) {
   for (const key of [
     "allowScout",
     "allowMemoryPersistence",
@@ -236,6 +248,16 @@ export function validatePolicy(policy) {
   if (policy.authority.allowDraftPullRequest && !policy.authority.allowPush) {
     throw new Error("draft pull request authority requires push authority");
   }
+}
+
+export function validatePolicy(policy) {
+  validateIdentityAndCoordination(policy);
+  validateLimits(policy);
+  validateMemory(policy);
+  validateAttentionBudget(policy);
+  validateReconciliation(policy);
+  validateGroupedAuthorizations(policy);
+  validateAuthority(policy);
   return policy;
 }
 

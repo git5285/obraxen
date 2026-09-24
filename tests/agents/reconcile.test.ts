@@ -93,6 +93,19 @@ function report(runId = "run-delivery"): RunReport {
   };
 }
 
+describe("reconciliation text validation", () => {
+  it.each(["", " \t\n", null, undefined, 42, {}, []])("rejects an invalid base branch with the exact error: %j", (baseRefName) => {
+    expect(() => validatePullRequestView(mergedPullRequest({ baseRefName })))
+      .toThrow(new Error("pull request view.baseRefName must be a non-empty string"));
+  });
+
+  it("preserves accepted branch text and object identity", () => {
+    const view = mergedPullRequest({ baseRefName: " main " });
+    expect(validatePullRequestView(view)).toBe(view);
+    expect(view.baseRefName).toBe(" main ");
+  });
+});
+
 function candidate(overrides: Partial<MemoryCandidate> = {}): MemoryCandidate {
   return {
     candidateId: "candidate-cta",

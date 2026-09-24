@@ -47,31 +47,7 @@ const variants = [
   { path: '/de', lang: 'de', title: 'Obraxen · Reparatur von Industrieböden', h1: /Wir/ },
 ];
 
-async function inspect(origin, variant, viewport, label, htmlOverride) {
-  const context = await browser.newContext({ viewport, colorScheme: 'light', reducedMotion: 'reduce' });
-  const page = await context.newPage();
-  const errors = [];
-  const errorStacks = [];
-  const failedRequests = [];
-  const externalRequests = [];
-  page.on('pageerror', error => { errors.push(error.message); errorStacks.push(error.stack); });
-  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  page.on('requestfailed', request => {
-    if (request.failure()?.errorText !== 'net::ERR_ABORTED') failedRequests.push({ url: request.url(), error: request.failure()?.errorText });
-  });
-  page.on('request', request => {
-    if (!request.url().startsWith(origin + '/') && /^https?:/.test(request.url())) externalRequests.push(request.url());
-  });
-  if (htmlOverride) await page.route(origin + variant.path, route => route.fulfill({
-    status: 200, contentType: 'text/html; charset=utf-8', body: htmlOverride,
-  }));
-  await page.goto(origin + variant.path, { waitUntil: 'load' });
-  await expect(page.locator('html')).toHaveAttribute('lang', variant.lang);
-  await expect(page).toHaveTitle(variant.title);
-  await expect(page.locator('h1')).toContainText(htmlOverride && variant.lang === 'es'
-    ? /Recuperamos tus pavimentos industriales/ : variant.h1);
-  await expect(page.locator('#enquiry-review')).toBeEnabled();
-  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing initial translations`);
+async function capturePage(page, output, label) {
   await page.evaluate(async () => {
     for (const image of document.images) image.loading = 'eager';
     await Promise.all([...document.images].map(image => image.decode().catch(() => {})));
@@ -107,8 +83,10 @@ async function inspect(origin, variant, viewport, label, htmlOverride) {
   assert(snapshot.images.every(image => image.width > 0), `${label}: broken image`);
   assert(snapshot.links.every(href => /^(#|tel:|mailto:|\/$|\/en\/?$|\/de\/?$)/.test(href)), `${label}: unexpected active link`);
   const screenshot = await page.screenshot({ path: fileURLToPath(new URL(`${label}.png`, output)), fullPage: true, animations: 'disabled' });
+  return { snapshot, screenshot };
+}
 
-  // Landing navigation, mobile menu, repair dialog, carousel, sectors, local-only enquiry and legal disclosures.
+async function inspectNavigation(page, viewport) {
   if (viewport.width < 700) {
     await page.locator('#menu-toggle').click();
     await expect(page.locator('#mobile-nav')).toBeVisible();
@@ -134,6 +112,9 @@ async function inspect(origin, variant, viewport, label, htmlOverride) {
   else await page.locator('#tab-industria').click();
   await expect(page.locator('#panel-industria')).toBeVisible();
   await expect(page.locator('#panel-logistica')).toBeHidden();
+}
+
+async function inspectEnquiry(page, variant, label) {
   await page.locator('#hero-repair-trigger').click();
   await expect(page.locator('#hero-repair-menu')).toBeVisible();
   await page.keyboard.press('Escape');
@@ -166,12 +147,48 @@ async function inspect(origin, variant, viewport, label, htmlOverride) {
     await expect(page.locator('#enquiry-status')).not.toContainText('Selección eliminada');
     assert.notEqual(draft.searchParams.get('subject'), 'Consulta sobre pavimento');
   }
+}
+
+async function inspectDisclosuresAndLanguage(page, variant) {
   const details = page.locator('.footer-legal-disclosure').first();
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open', '');
   const otherLocale = variant.lang === 'en' ? 'de' : 'en';
   await page.locator(`.language-switcher a[href="/${otherLocale}/"]`).click();
   await expect(page.locator('html')).toHaveAttribute('lang', otherLocale);
+}
+
+async function inspect(origin, variant, viewport, label, htmlOverride) {
+  const context = await browser.newContext({ viewport, colorScheme: 'light', reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  const errors = [];
+  const errorStacks = [];
+  const failedRequests = [];
+  const externalRequests = [];
+  page.on('pageerror', error => { errors.push(error.message); errorStacks.push(error.stack); });
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('requestfailed', request => {
+    if (request.failure()?.errorText !== 'net::ERR_ABORTED') failedRequests.push({ url: request.url(), error: request.failure()?.errorText });
+  });
+  page.on('request', request => {
+    if (!request.url().startsWith(origin + '/') && /^https?:/.test(request.url())) externalRequests.push(request.url());
+  });
+  if (htmlOverride) await page.route(origin + variant.path, route => route.fulfill({
+    status: 200, contentType: 'text/html; charset=utf-8', body: htmlOverride,
+  }));
+  await page.goto(origin + variant.path, { waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('lang', variant.lang);
+  await expect(page).toHaveTitle(variant.title);
+  await expect(page.locator('h1')).toContainText(htmlOverride && variant.lang === 'es'
+    ? /Recuperamos tus pavimentos industriales/ : variant.h1);
+  await expect(page.locator('#enquiry-review')).toBeEnabled();
+  assert.deepEqual(await page.evaluate(() => window.obraxenI18n.missingTranslations), [], `${label}: missing initial translations`);
+  const { snapshot, screenshot } = await capturePage(page, output, label);
+
+  // Landing navigation, mobile menu, repair dialog, carousel, sectors, local-only enquiry and legal disclosures.
+  await inspectNavigation(page, viewport);
+  await inspectEnquiry(page, variant, label);
+  await inspectDisclosuresAndLanguage(page, variant);
   assert.deepEqual(errors, [], `${label}: unexpected browser errors`);
   assert.deepEqual(failedRequests, [], `${label}: failed requests`);
   assert.deepEqual(externalRequests, [], `${label}: external request`);

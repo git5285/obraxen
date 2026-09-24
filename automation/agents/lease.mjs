@@ -11,6 +11,7 @@ import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readArgumentValue as argument } from "./cli-arguments.mjs";
 import { loadPolicy } from "./policy.mjs";
 import { ensurePrivateDirectory, writeJsonAtomically } from "./storage.mjs";
 
@@ -519,14 +520,6 @@ export function releaseLease(repo, token, stateHome = null) {
     rmSync(paths.directory, { recursive: true, force: true });
     return { released: true, runId: record.runId };
   });
-}
-
-function argument(name) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return null;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
-  return value;
 }
 
 function main() {

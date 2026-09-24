@@ -1,5 +1,10 @@
 import { createHash } from "node:crypto";
 
+export function nonEmptyString(value, label) {
+  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty string`);
+  return value;
+}
+
 export function object(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${label} must be an object`);

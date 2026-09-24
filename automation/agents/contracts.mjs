@@ -4,16 +4,12 @@ import { ATTENTION_CLASSES, classifyFindingAttention } from "./attention.mjs";
 import { loadPolicy } from "./policy.mjs";
 import {
   exactKeys,
+  nonEmptyString as string,
   object,
   safeIdentifier as validateSafeIdentifier,
   sha,
   sha256,
 } from "./validation.mjs";
-
-function string(value, label) {
-  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty string`);
-  return value;
-}
 
 function array(value, label) {
   if (!Array.isArray(value)) throw new Error(`${label} must be an array`);

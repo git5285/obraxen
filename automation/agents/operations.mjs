@@ -7,6 +7,7 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readArgumentValue as argument } from "./cli-arguments.mjs";
 import {
   ACTIVE_CLAIM_STATES,
   canonicalClaimState,
@@ -485,14 +486,6 @@ export function transitionOperationalClaim({
     reason,
     evidence,
   }, { repo, stateHome, now });
-}
-
-function argument(name) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return null;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
-  return value;
 }
 
 function readJson(path, fallback) {
