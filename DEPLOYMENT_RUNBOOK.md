@@ -10,6 +10,13 @@ formulario ni rollback. El estado remoto debe comprobarse con evidencia fechada
 cuando se autorice esa inspección; este documento no afirma cuál es el deployment
 activo ni qué rollback está disponible.
 
+El handoff de entrega debe identificar SHA, aplicación, directorio de trabajo,
+raíz y build efectivos de Vercel, artefacto resultante y rutas esperadas. La
+Home sirve `/`, `/en` y `/de`; no reintroducir las rutas o APIs del apartado B.
+El job `Gated Vercel preview` no acredita por sí solo la aplicación construida:
+comprobar la asociación y configuración efectivas antes de ejecutarlo. Una
+discrepancia entre aplicación auditada y artefacto bloquea la entrega.
+
 ## A. Home: preparación local y frontera de entrega
 
 1. Trabajar en `apps/public-site/`, revisar `HOMEPAGE.md` y reservar las rutas

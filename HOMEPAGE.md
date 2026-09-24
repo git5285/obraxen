@@ -7,7 +7,10 @@ pertenecía a la implementación anterior, ahora retirada de esta candidata.
 
 ## Abrir y construir la Home aprobada
 
-Requiere las dependencias y el runtime fijados por el repositorio.
+Requiere las dependencias y el runtime fijados por el repositorio. Las pruebas
+Home también necesitan Chromium de Playwright: seguir la
+[preparación de navegadores](README.md#preparación-de-navegadores), incluidos
+los requisitos de sistema en Linux.
 
 ```sh
 npm run dev

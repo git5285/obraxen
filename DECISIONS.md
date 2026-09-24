@@ -4,6 +4,22 @@
 > Formato ligero. Fecha de referencia: 2026-07-16.
 > Estados: `Aceptada` · `Abierta` (aún sin decidir) · `Sustituida`.
 
+## Alcance del registro — 24 de septiembre de 2026
+
+Los estados y fechas inferiores conservan decisiones históricas. Las decisiones
+de la aplicación retirada `src/` no se trasladan automáticamente a Home en
+`apps/public-site/`: su fuente, tres rutas, vídeo y borrador `mailto:` están en
+[HOMEPAGE.md](HOMEPAGE.md). La retirada y recuperación del legado se documentan
+en [LEGACY_RETIREMENT.md](docs/LEGACY_RETIREMENT.md).
+
+ADR-002 (vídeo aplazado), ADR-003 (identidad en `brand.json`), ADR-007 (cutover),
+ADR-010 (cuatro prefijos e inglés inicial) y ADR-011 (Resend) no son contratos
+de la Home recuperada. ADR-010 tampoco describe el último checkout legado
+auditado, cuyo `next.config.ts` redirigía `/` a `/es/`; esa configuración ya no
+existe en esta candidata. Se conserva la decisión original como historia sin
+inventar una aprobación posterior. Consultar [SITE_ARCHITECTURE.md](SITE_ARCHITECTURE.md)
+para el mapa actual y `automation/agents/README.md` para la automatización interna.
+
 ---
 
 ## ADR-001 — Generador estático mínimo sin framework

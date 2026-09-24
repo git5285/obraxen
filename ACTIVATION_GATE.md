@@ -135,9 +135,17 @@ forma independiente.
 6. Publicar únicamente tras un `GO` expreso. Cualquier otro resultado mantiene
    todas las superficies apagadas.
 
-## Referencia histórica de rollback — requiere nueva autorización
+## Preparación del rollback
 
-Se retira inmediatamente alias/dominio o se desactiva formulario/analítica ante
-exposición sin control, identidad o permiso incorrectos, entrega de correo
-defectuosa, PII en logs o regresión crítica. El bootstrap `production` actual
-está en estado `ERROR`; no existe un deployment `READY` que deba revertirse.
+Ante exposición sin control, identidad o permiso incorrectos, entrega defectuosa,
+PII en logs o regresión crítica, preparar inmediatamente el rollback y conservar
+evidencia mínima sin datos personales. Ejecutarlo solo con autorización humana
+que identifique acción, entorno y alcance, o una autorización de incidente ya
+aplicable. Sin ella, solicitar la decisión antes de modificar servicios.
+El [apartado A del runbook](DEPLOYMENT_RUNBOOK.md#a-home-preparación-local-y-frontera-de-entrega)
+identifica la entrega Home; el apartado histórico 5 conserva el procedimiento
+del legado y sus condiciones de autorización, no funcionalidades de Home.
+
+El bootstrap en `ERROR` registrado el 12 de septiembre de 2026 es histórico;
+no acredita el estado remoto actual ni la ausencia de un deployment recuperable.
+Verificar el deployment afectado y el destino de recuperación antes de actuar.
