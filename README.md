@@ -29,6 +29,25 @@ Node 24.18.0 y npm 11.16.0 están fijados. Instalar con `npm ci` cuando esté
 autorizado; los assets LFS deben estar materializados antes de construir.
 No descargar ni activar servicios por inferencia.
 
+### Preparación de navegadores
+
+`npm ci` no instala los navegadores de Playwright. Para `check:home`,
+`test:e2e:home` y el gate actual, preparar Chromium desde la raíz con la CLI
+instalada y el runtime fijado, cuando esté autorizada la descarga:
+
+```sh
+node automation/agents/runtime.mjs exec -- node node_modules/@playwright/test/cli.js install chromium
+```
+
+En Linux se necesitan también sus bibliotecas del sistema: usar `install
+--with-deps chromium` en esa misma CLI si está autorizada la instalación de
+paquetes del sistema (puede requerir administración). El workflow CI conserva
+su preparación explícita. WebKit correspondía a las suites del legado retirado;
+no es un requisito del verificador Home actual. Los comandos históricos de las
+secciones inferiores no son instrucciones para este checkout.
+
+### Referencia de comandos
+
 | Trabajo | Comando |
 |---|---|
 | Desarrollar, construir, servir Home | `npm run dev:home`, `build:home`, `start:home` |
@@ -45,6 +64,13 @@ El inventario positivo de unitarias rechaza suites nuevas sin clasificar,
 duplicadas u obsoletas. `npm run test:home -- --list` permite consultar su ámbito.
 La cobertura mide el dominio interno, no el HTML Home. Seguridad, hooks, CI,
 autorizaciones y checks frescos no se sustituyen por una selección parcial.
+
+El gate interno `check:activation` bloquea por revisión legal, aprobación de
+Resend y su tratamiento y estado aprobado de las cuatro traducciones. Los
+faltantes de identidad, naming y contacto no son bloqueos de ese CLI; esto no
+elimina los requisitos humanos de `LEGAL_CHECKLIST.md` y `ACTIVATION_INPUTS.md`.
+Su contrato está en [ACTIVATION_GATE.md](ACTIVATION_GATE.md). No autoriza publicar
+Home ni evalúa sus rutas; los casos tienen contratos de evidencia independientes.
 
 ## Archivo histórico de la implementación retirada
 
