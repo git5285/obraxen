@@ -5,6 +5,15 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      vitest:
+        patterns:
+          - vitest
+          - "@vitest/*"
+    ignore:
+      # Keep types aligned with the repository's pinned Node 24 runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
