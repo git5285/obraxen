@@ -130,6 +130,8 @@ tarea. Conserva los bloqueos de ownership y la evidencia de cualquier transferen
 
 ## Autorizacion agrupada de entrega
 
+El ayudante local descrito abajo no usa ni concede esta autorización.
+
 Una decision humana puede cubrir sin nuevas interrupciones una secuencia
 contigua y exacta de `commit_candidate`, `push_branch` y
 `create_draft_pull_request`. El controlador la registra una sola vez con
@@ -176,6 +178,58 @@ node automation/agents/authorizations.mjs register --file <bundle.json>
 node automation/agents/authorizations.mjs inspect \
   --authorization-id <id> --context-file <context.json>
 ```
+
+## Ayudante para tareas locales
+
+Para una tarea humana local, el controlador puede preparar un JSON en su carpeta
+temporal y ejecutar desde el checkout elegido:
+
+```sh
+node automation/agents/runtime.mjs exec -- node scripts/local-task.mjs start /ruta/task.json
+node scripts/checkout-context.mjs --compact --task=<thread-id>
+```
+
+`task.json` contiene `threadId`, `objective`, `nextStep` (textos de una línea) y
+`files` (rutas exactas, sin comodines). Ejemplo:
+
+```json
+{"threadId":"tarea-ejemplo","objective":"Corregir un enlace","nextStep":"Editar y verificar el enlace","files":["apps/public-site/public/index.html"]}
+```
+
+El ayudante comprueba runtime, registro, clones, leases y conflictos, crea el
+marcador en el control, lo registra y pasa a `en_curso`. Devuelve el contexto
+compacto con la candidata elegida; no selecciona otra ni modifica Git. Preserva
+los cambios previos: el controlador sigue comprobándolos por nombre o checksum.
+El resumen de contexto es de solo lectura y muestra claims registradas; no
+sustituye preflight ni la inspección de reservas legacy antes de editar.
+
+Tras completar y verificar el alcance, prepara `result.json`:
+
+```json
+{
+  "threadId":"tarea-ejemplo",
+  "result":"Enlace corregido y comprobado",
+  "changedPaths":["apps/public-site/public/index.html"],
+  "checks":[{"command":"comando realmente ejecutado","status":"passed","evidence":"resultado observado o ruta del informe"}],
+  "decisions":["Decisión que debe acompañar a la candidata"],
+  "pending":[]
+}
+```
+
+```sh
+node automation/agents/runtime.mjs exec -- node scripts/local-task.mjs finish /ruta/result.json
+```
+
+`finish` rechaza checks fallidos o ausentes, pendientes, otro checkout, rutas
+fuera del alcance y marcadores alterados. Crea el handoff, calcula su checksum y
+añade `esperando_revision` y `liberado` al registro existente. Los checks los
+ejecuta y verifica el controlador: el ayudante registra esa evidencia, no la
+certifica por sí mismo. No cierra claims autónomas ni claims ajenas a este flujo.
+
+Un fallo parcial conserva marcador, handoff y eventos. No se reescriben ni se
+reintenta a ciegas: inspecciona `checkout-context --compact --task=…` y completa
+la transición pendiente con `operations.mjs` y evidencia verificada según este
+protocolo. Una tarea bloqueada o con trabajo pendiente conserva su reserva.
 
 ## Plantilla de handoff
 

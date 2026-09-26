@@ -7,21 +7,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "IMPECCABLE_SKILL_DIR=\"$HOME/.agents/skills/impeccable\" \"$HOME/.agents/skills/impeccable/scripts/bin/darwin-arm64/impeccable\" hook",
+            "command": "node .codex/hooks/design-scope.mjs",
             "timeout": 5,
             "statusMessage": "Revisando cambios de diseño"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "IMPECCABLE_SKILL_DIR=\"$HOME/.agents/skills/impeccable\" \"$HOME/.agents/skills/impeccable/scripts/bin/darwin-arm64/impeccable\" hook",
-            "timeout": 30,
-            "statusMessage": "Revisión final de diseño"
           }
         ]
       }
