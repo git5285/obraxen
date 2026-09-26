@@ -57,12 +57,17 @@ La receta local no presupone que exista una excepción vigente.
 Desde el checkout seleccionado (`npm run check:checkout`), preparar primero una
 exportación nueva con `prepare:home`. Revisar su `home-candidate.json` y conservar
 el `source.inputsSha256` fuera de la exportación como expectativa de auditoría.
+Conservar también el SHA-256 de los bytes completos de `home-candidate.json`
+después de revisar su procedencia contra Git; obtenerlo con
+`shasum -a 256 /ruta/export/home-candidate.json`. No recalcular la expectativa
+para aceptar una candidata modificada sin repetir la revisión.
 Un export con `--allow-worktree` sigue siendo solo evidencia local: no tiene
 `exactCommit`. No se infiere aprobación de estos pasos.
 
 ```sh
 npm run home:platform -- prepare --root=/ruta/export \
-  --inputs-sha256=<SHA256 revisado> --project-id=<prj_ID verificado> \
+  --inputs-sha256=<SHA256 inputs revisado> --candidate-sha256=<SHA256 manifiesto revisado> \
+  --project-id=<prj_ID verificado> \
   --org-id=<team_ID verificado> --target=production
 ```
 
@@ -87,15 +92,28 @@ Los comandos de plataforma no son invocados por la herramienta local.
 
 ```sh
 npm run home:platform -- audit --root=/ruta/export \
-  --inputs-sha256=<SHA256 revisado> --dry-run=/ruta/inventario.json
+  --inputs-sha256=<SHA256 inputs revisado> --candidate-sha256=<SHA256 manifiesto revisado> \
+  --dry-run=/ruta/inventario.json
 ```
 
 La auditoría es de lectura y emite JSON por stdout para conservar como evidencia.
+El contrato local es `2.0.0` (`schemaVersion: 2`): ambos comandos requieren
+`--candidate-sha256`, además del hash de inputs. Los callers anteriores deben
+revisar el manifiesto y aportar ese argumento; una preparación v1 no se reutiliza.
+El hash vincula la atribución a la revisión externa del manifiesto, no sustituye
+la comprobación de Git ni autentica por sí solo una declaración falsa.
 Vincula inputs, HTML servido, assets, funciones, entorno embebido, destinos de
 routing y el inventario de subida por hash/tamaño. Rechaza archivos fuera del
 alcance, enlaces fuera de la exportación, outputs ausentes del inventario y
 rutas/funciones inesperadas. Permite enlaces internos generados por Vercel y
-verifica sus bytes de enlace. Es un contrato del adaptador actual, no una prueba
+verifica sus bytes de enlace.
+Los assets de `_next/static/` deben coincidir por ruta y bytes con `.next/static/`
+del build local; no se acepta HTML en ese inventario. La única respuesta
+sintética admitida en ese namespace es `not-found.txt` con el texto `Not Found`.
+En `_next/__private/` solo se admiten `trace` y `stats.json`, si coinciden con
+`.next/trace` y `.next/next-stats.json` respectivamente, como los copia el adaptador.
+Cada alias se valida por su ruta pública aunque comparta un destino físico.
+Es un contrato del adaptador actual, no una prueba
 de todo comportamiento posible del JavaScript compilado. Un cambio de formato
 Vercel puede bloquearlo y requiere revisión y fixtures, no relajar el check.
 

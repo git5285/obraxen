@@ -13,14 +13,24 @@ const allowedUpload = path => safePath(path)
   && /^(?:\.vercel\/output\/|node_modules\/|apps\/public-site\/\.next\/)/.test(path)
   && !/(?:^|\/)\.env(?:\.|$)/.test(path);
 
-function candidate(root, expectedInputsSha256) {
+function candidate(root, expectedInputsSha256, expectedCandidateSha256) {
   assert(/^[a-f0-9]{64}$/.test(expectedInputsSha256 ?? ''), 'Explicit reviewed inputs SHA-256 required');
-  const manifest = readJson(sourceFile(root, 'home-candidate.json'));
+  assert(/^[a-f0-9]{64}$/.test(expectedCandidateSha256 ?? ''), 'Explicit reviewed candidate SHA-256 required');
+  const bytes = readFileSync(sourceFile(root, 'home-candidate.json'));
+  assert.equal(sha256(bytes), expectedCandidateSha256, 'Unexpected candidate manifest');
+  const manifest = JSON.parse(bytes);
   assert.equal(manifest.kind, 'home-only-local-candidate');
   assert.equal(manifest.result, 'built-local', 'A source-only export is not a platform candidate');
   assert.equal(manifest.build.result, 'passed');
   assert.equal(sha256(JSON.stringify(manifest.inputs)), expectedInputsSha256, 'Unexpected candidate inputs');
   assert.equal(manifest.source.inputsSha256, expectedInputsSha256);
+  const source = manifest.source;
+  assert(/^[a-f0-9]{40}$/.test(source.baseCommit ?? ''), 'Invalid candidate base commit');
+  assert(source.exactCommit === null || /^[a-f0-9]{40}$/.test(source.exactCommit ?? ''), 'Invalid candidate exact commit');
+  assert(typeof source.dirty === 'boolean' && typeof source.inputsMatchCommit === 'boolean', 'Invalid candidate source state');
+  assert(source.dirty === (source.exactCommit === null)
+    && (source.dirty || source.inputsMatchCommit)
+    && (source.exactCommit === null || source.exactCommit === source.baseCommit), 'Inconsistent candidate provenance');
   const seen = new Set();
   for (const file of manifest.inputs) {
     assert(!seen.has(file.path), 'Duplicate input'); seen.add(file.path);
@@ -35,12 +45,12 @@ function candidate(root, expectedInputsSha256) {
 }
 
 // Local export only. No CLI, network, credentials, installation or publication.
-export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, target }) {
+export function preparePlatform({ root, expectedInputsSha256, expectedCandidateSha256, projectId, orgId, target }) {
   root = realpathSync(root);
   assert(/^prj_[a-zA-Z0-9]+$/.test(projectId ?? '') && /^team_[a-zA-Z0-9]+$/.test(orgId ?? ''), 'Explicit project/team IDs required');
   assert(['preview', 'production'].includes(target), 'Explicit target required');
   assert(!existsSync(join(root, '.git')), 'Use an isolated export, not a checkout');
-  const manifest = candidate(root, expectedInputsSha256);
+  const manifest = candidate(root, expectedInputsSha256, expectedCandidateSha256);
   assert(!existsSync(join(root, '.vercel')), 'Existing platform state is never overwritten');
   assert(!existsSync(join(root, 'home-platform.json')), 'Existing preparation evidence is never overwritten');
   const previous = readJson(sourceFile(root, 'vercel.json'));
@@ -54,7 +64,7 @@ export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, 
   mkdirSync(join(root, '.vercel'));
   writeFileSync(join(root, '.vercel/project.json'), JSON.stringify(project, null, 2) + '\n', { flag: 'wx' });
   writeFileSync(join(root, 'vercel.json'), JSON.stringify(configuration, null, 2) + '\n');
-  const report = { kind: 'home-platform-preparation', expectedInputsSha256, projectId, orgId, target,
+  const report = { schemaVersion: 2, contractVersion: '2.0.0', kind: 'home-platform-preparation', expectedInputsSha256, expectedCandidateSha256, projectId, orgId, target,
     exactCommit: manifest.source.exactCommit, configurationSha256: sha256(readFileSync(join(root, 'vercel.json'))),
     projectConfigurationSha256: sha256(readFileSync(join(root, '.vercel/project.json'))),
     buildExecuted: false, publicationAuthorized: false };
@@ -62,13 +72,14 @@ export function preparePlatform({ root, expectedInputsSha256, projectId, orgId, 
   return report;
 }
 
-export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
+export function auditPlatform({ root, expectedInputsSha256, expectedCandidateSha256, dryRun }) {
   root = realpathSync(root);
-  const manifest = candidate(root, expectedInputsSha256);
+  const manifest = candidate(root, expectedInputsSha256, expectedCandidateSha256);
   let association = null;
   if (existsSync(join(root, 'home-platform.json'))) {
     association = readJson(sourceFile(root, 'home-platform.json'));
     assert.equal(association.expectedInputsSha256, expectedInputsSha256, 'Preparation inputs changed');
+    assert.equal(association.expectedCandidateSha256, expectedCandidateSha256, 'Preparation candidate changed');
     assert.equal(association.configurationSha256, sha256(readFileSync(sourceFile(root, 'vercel.json'))), 'Platform configuration drift');
     assert.equal(association.projectConfigurationSha256, sha256(readFileSync(sourceFile(root, '.vercel/project.json'))), 'Project configuration drift');
   }
@@ -127,9 +138,24 @@ export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
     assert.equal(content.length, file.size, 'Upload size differs'); bytes += content.length;
     uploaded.add(actual);
   }
-  const visited = new Set();
+  const ancestors = new Set();
   const expectedStatic = new Set(manifest.inputs.filter(file => file.path.startsWith('apps/public-site/public/'))
     .map(file => file.path.slice('apps/public-site/public/'.length)));
+  // Match framework assets to the local Next build, not an open URL namespace.
+  // The adapter adds only one synthetic static response (see @vercel/next).
+  const generatedStatic = new Map();
+  const nextStatic = join(root, 'apps/public-site/.next/static');
+  if (existsSync(nextStatic)) for (const file of inventory(nextStatic)) {
+    assert(!/\.html?$/i.test(file.path), 'Unexpected HTML in framework assets');
+    generatedStatic.set('_next/static/' + file.path, file.sha256);
+  }
+  generatedStatic.set('_next/static/not-found.txt', sha256('Not Found'));
+  for (const [source, target] of [['trace', 'trace'], ['next-stats.json', 'stats.json']]) {
+    const path = 'apps/public-site/.next/' + source;
+    if (existsSync(join(root, path))) {
+      generatedStatic.set('_next/__private/' + target, sha256(readFileSync(sourceFile(root, path))));
+    }
+  }
   function inspect(path) {
     const actual = realFile(path);
     if (path.startsWith(output + 'functions/') && path.endsWith('.func')) {
@@ -137,21 +163,26 @@ export function auditPlatform({ root, expectedInputsSha256, dryRun }) {
       assert(expectedFunctions.includes(name)
         || /^(?:_global-error|_not-found)\.segments\/(?:_not-found\/)?(?:__PAGE__|_full|_tree)\.segment\.rsc\.func$/.test(name), 'Unexpected nested function');
     }
-    if (visited.has(actual)) return; visited.add(actual);
     if (statSync(actual).isDirectory()) {
+      assert(!ancestors.has(actual), 'Cyclic artifact directory');
+      ancestors.add(actual);
       for (const name of readdirSync(actual)) inspect(path + '/' + name);
+      ancestors.delete(actual);
     } else {
       assert(uploaded.has(actual), 'Output missing from upload inventory: ' + path);
       if (path.startsWith(output + 'static/')) {
         const relative = path.slice((output + 'static/').length);
-        assert(expectedStatic.has(relative) || relative.startsWith('_next/')
+        assert(expectedStatic.has(relative) || generatedStatic.has(relative)
           || /^(404|500)(?:\.html|\.rsc\.json|\.segments\/.*)$/.test(relative), 'Unexpected public output');
+        if (generatedStatic.has(relative)) {
+          assert.equal(sha256(readFileSync(actual)), generatedStatic.get(relative), 'Generated static asset differs');
+        }
       }
     }
   }
   inspect('.vercel/output');
   assert.equal(dryRun.totalSize, bytes, 'Upload total differs');
-  return { kind: 'home-platform-audit', result: 'passed', expectedInputsSha256,
+  return { schemaVersion: 2, contractVersion: '2.0.0', kind: 'home-platform-audit', result: 'passed', expectedInputsSha256, expectedCandidateSha256,
     exactCommit: manifest.source.exactCommit, localOnly: !manifest.source.exactCommit,
     uploadFiles: names.size, uploadBytes: bytes, artifactManifestSha256: sha256(JSON.stringify(dryRun.files)),
     configurationSha256: sha256(readFileSync(sourceFile(root, 'vercel.json'))),
@@ -163,11 +194,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const [operation, ...args] = process.argv.slice(2);
   const options = {};
   for (const arg of args) {
-    const match = /^--(root|inputs-sha256|project-id|org-id|target|dry-run)=(.+)$/.exec(arg);
+    const match = /^--(root|inputs-sha256|candidate-sha256|project-id|org-id|target|dry-run)=(.+)$/.exec(arg);
     assert(match && !Object.hasOwn(options, match[1]), 'Unknown or duplicate option'); options[match[1]] = match[2];
   }
   assert(options.root, 'Explicit export root required');
-  const base = {root: options.root, expectedInputsSha256: options['inputs-sha256']};
+  const base = {root: options.root, expectedInputsSha256: options['inputs-sha256'], expectedCandidateSha256: options['candidate-sha256']};
   assert(['prepare', 'audit'].includes(operation), 'Use prepare|audit');
   const report = operation === 'prepare' ? preparePlatform({...base, projectId: options['project-id'], orgId: options['org-id'], target: options.target})
     : auditPlatform({...base, dryRun: readJson(options['dry-run'])});

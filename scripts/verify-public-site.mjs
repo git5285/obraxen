@@ -185,8 +185,56 @@ async function inspectDisclosuresAndLanguage(page, variant) {
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open', '');
   const otherLocale = variant.lang === 'en' ? 'de' : 'en';
-  await page.locator(`.language-switcher a[href="/${otherLocale}/"]`).click();
+  const hash = new URL(page.url()).hash;
+  const languageLink = page.locator(`.language-switcher a[lang="${otherLocale}"]`);
+  await expect(languageLink).toHaveAttribute('href', `/${otherLocale}/${hash}`);
+  await languageLink.click();
   await expect(page.locator('html')).toHaveAttribute('lang', otherLocale);
+  assert.equal(new URL(page.url()).hash, hash, 'language switch must retain the current section');
+}
+
+async function inspectLanguageHistory(origin, variant, viewport) {
+  const context = await browser.newContext({viewport, reducedMotion: 'reduce'});
+  const page = await context.newPage();
+  try {
+    const assertLinks = async hash => {
+      for (const lang of ['es', 'en', 'de']) {
+        await expect(page.locator(`.language-switcher a[lang="${lang}"]`))
+          .toHaveAttribute('href', (lang === 'es' ? '/' : `/${lang}/`) + hash);
+      }
+    };
+    for (const target of variants.filter(item => item.lang !== variant.lang)) {
+      await page.goto(origin + variant.path + '#projects');
+      await assertLinks('#projects');
+      const nav = viewport.width < 700 ? '#mobile-nav' : 'header .nav';
+      if (viewport.width < 700) await page.locator('#menu-toggle').click();
+      await page.locator(`${nav} a[href="#contact"]`).click();
+      await expect(page).toHaveURL(/#contact$/);
+      await assertLinks('#contact');
+      await page.goBack();
+      await expect(page).toHaveURL(/#projects$/);
+      await assertLinks('#projects');
+      await page.goForward();
+      await expect(page).toHaveURL(/#contact$/);
+      await assertLinks('#contact');
+      await page.evaluate(() => { location.hash = '#servicios'; });
+      await assertLinks('#servicios');
+      await page.goBack();
+      await assertLinks('#contact');
+      const link = page.locator(`.language-switcher a[lang="${target.lang}"]`);
+      // Native links must also carry the updated section into a new tab.
+      const newPage = context.waitForEvent('page');
+      await link.click({button: 'middle'});
+      const tab = await newPage;
+      await expect(tab.locator('html')).toHaveAttribute('lang', target.lang);
+      assert.equal(new URL(tab.url()).hash, '#contact');
+      await tab.close();
+      await link.focus();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('html')).toHaveAttribute('lang', target.lang);
+      assert.equal(new URL(page.url()).hash, '#contact');
+    }
+  } finally { await context.close(); }
 }
 
 async function inspect(origin, variant, viewport, label, htmlOverride) {
@@ -276,6 +324,7 @@ try {
         assert.equal(localResult.screenshot, entry.destination.screenshot, `screenshot differs: ${label}`);
       }
       report.browser.push(entry);
+      await inspectLanguageHistory(local, variant, viewport);
       console.log(`PASS ${label}: content, images, navigation, video, carousel, sectors, dialog, enquiry, languages, legal${compare ? ', destination parity' : ''}`);
     }
   }

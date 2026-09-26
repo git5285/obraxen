@@ -1,0 +1,128 @@
+{
+  "repository": "Obraxen",
+  "date": "2026-09-25",
+  "baseRevision": "470cb2ce4e3b64a74836ce5796a6f8e87741cdfb",
+  "codeRevision": "ebcdbda216ae27267afa930899bcaf9d51b69979",
+  "checkout": "/private/tmp/obraxen-main-audit-470cb2c",
+  "deliveryBranch": "codex/main-004-current-publication-review",
+  "delivery": "local only; no push, PR, merge or deployment",
+  "findings": [
+    {
+      "id": "MAIN-001",
+      "priority": "P2",
+      "category": "Artifact validation",
+      "status": "fixed locally",
+      "file": "scripts/home-platform-artifact.mjs",
+      "line": 144,
+      "component": "Home platform audit",
+      "description": "Unreviewed files under _next/ passed the public-output boundary.",
+      "rootCause": "An unrestricted namespace prefix and physical-path deduplication skipped URL-level checks.",
+      "impact": "A platform artifact could include extra unreviewed public content while its audit passed.",
+      "reproduction": "Add _next/unreviewed.html to a valid fixture and regenerate matching upload hashes; also alias an already-inspected function body at that URL.",
+      "fix": "Match generated static files to .next/static paths and hashes, reject generated HTML, and validate every URL alias. Permit only the pinned adapter's exact Not Found response and byte-matching trace/stats mappings; reject cycles.",
+      "verification": "31 platform tests pass, including injected HTML/JS, symlink alias, modified bytes, legitimate chunks and private trace/stats. A preserved real Vercel artifact at 482c777 passes with 329 upload files.",
+      "commits": [
+        "b3f8a5b",
+        "3c7fcae"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "MAIN-002",
+      "priority": "P2",
+      "category": "Evidence integrity",
+      "status": "fixed locally",
+      "file": "scripts/home-platform-artifact.mjs",
+      "line": 16,
+      "component": "Candidate provenance",
+      "description": "Unvalidated exactCommit metadata could report localOnly=false without matching reviewed provenance.",
+      "rootCause": "The expected digest covered input files but not the manifest's source metadata.",
+      "impact": "False commit attribution in local audit evidence; publication authorization was never granted.",
+      "reproduction": "Keep source inputs unchanged but alter exactCommit or combine a commit with dirty=true or inputsMatchCommit=false.",
+      "fix": "Require an independently reviewed full-manifest SHA-256 for preparation and audit; validate source metadata consistency and bind preparation evidence to that digest. Updated declarations and CLI documentation. Local API contract version is 2.0.0.",
+      "verification": "Tampered manifests, missing proof, malformed SHA and contradictory states reject. CLI regression preserves a reviewed clean commit; honest local-only exports still work.",
+      "commits": [
+        "a130e73",
+        "de72ba5"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "MAIN-003",
+      "priority": "P2",
+      "category": "Functional navigation",
+      "status": "fixed locally",
+      "file": "apps/public-site/public/assets/home-i18n.js",
+      "line": 339,
+      "component": "Home languages",
+      "description": "Language links retained the initial section rather than the current section.",
+      "rootCause": "Links were calculated once; pushState does not dispatch hashchange.",
+      "impact": "Changing language discarded Contact navigation or returned visitors to an earlier section.",
+      "reproduction": "Open / or /#projects, navigate to Contact, then select another language.",
+      "fix": "Refresh real link href values on hashchange, popstate and the Home's explicit section-navigation event. Preserve native link and keyboard behavior.",
+      "verification": "Six ES/EN/DE desktop/mobile views pass. Expanded browser regression covers all six locale directions at both widths, direct fragments, Back/Forward, keyboard Enter and middle-click new tabs.",
+      "commits": [
+        "b0eb502"
+      ],
+      "complexity": "low"
+    },
+    {
+      "id": "MAIN-004",
+      "priority": "P2",
+      "category": "Latent authorization logic",
+      "status": "fixed locally",
+      "file": "domain/publication/project-publication-authorization.ts",
+      "line": 13,
+      "component": "Internal publication evidence",
+      "description": "An old approval remained effective after a later denial or request for changes.",
+      "rootCause": "The helper accepted any approval without considering review dates.",
+      "impact": "False-positive internal eligibility. The helper remains disconnected from the Home and no live publication bypass is claimed.",
+      "reproduction": "Validate a project containing an approved review, then append a later denied review for the same document; the original helper returned true.",
+      "fix": "Select the newest review date per eligible document; all reviews on that date must approve. Conflicting same-day reviews fail closed.",
+      "verification": "Nine tests cover later denials/changes, reapproval, same-date conflicts/consistent approvals, ordering, document isolation, missing evidence and required scopes.",
+      "commits": [
+        "ebcdbda"
+      ],
+      "complexity": "low"
+    }
+  ],
+  "checks": {
+    "tests": {
+      "passed": 824,
+      "files": 43,
+      "command": "npm run test:coverage"
+    },
+    "lint": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "browser": "six standard views plus expanded language-history matrix passed",
+    "embeddedDependencies": "two reviewed Vercel 59.16.0 bundles passed",
+    "realPlatformArtifact": {
+      "revision": "482c7773b81d23361b62eb300ac7d17d6e4d8402",
+      "uploadFiles": 329,
+      "result": "passed",
+      "source": "preserved local artifact; no Vercel command or remote access"
+    },
+    "coverage": {
+      "statements": 95.89,
+      "branches": 91.66,
+      "functions": 96,
+      "lines": 95.77,
+      "scope": "internal publication domain only"
+    },
+    "dependencyAudit": {
+      "result": "prior approved audit found zero production vulnerabilities",
+      "rerun": false,
+      "lockfileUnchanged": true,
+      "sha256": "98e31ca0e456ead0a6c25b3a3bc160adad6d9d1f4cf054f1ee1b7be4be8e7830"
+    }
+  },
+  "limitations": [
+    "No live production, remote CI or fresh Vercel build was run. The real-artifact check used a preserved local artifact.",
+    "The initial full run hit one process-group EPERM in an unchanged isolated-host test; that file then passed 55/55 and subsequent complete runs passed.",
+    "Full typecheck caught the omitted declaration update; it was corrected and typecheck rerun successfully.",
+    "Artifact provenance is bound to an externally reviewed manifest digest; the digest is not independent proof of a false Git declaration.",
+    "No standalone performance benchmark. The real 329-file artifact audit completed successfully in a local sub-second command.",
+    "The control checkout's overlapping pre-existing files retain their original SHA-256 values; coordination records were added without changing product files there."
+  ]
+}

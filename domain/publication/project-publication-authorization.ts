@@ -11,11 +11,17 @@ export function getProjectPublicationDocuments(project: Project) {
 }
 
 export function hasProjectPublicationAuthorization(project: Project): boolean {
-  return getProjectPublicationDocuments(project).some((document) =>
-    project.autorizacionPublicacion.evidencias.some(
-      (evidence) => evidence.tipo === "revision_legal_verificada"
-        && evidence.documentoRevisado === document.referenciaDocumento
-        && evidence.resultado === "aprobada",
-    ),
-  );
+  return getProjectPublicationDocuments(project).some((document) => {
+    const reviews = project.autorizacionPublicacion.evidencias.filter(
+      (evidence) => evidence.tipo === "revision_legal_verificada",
+    ).filter((review) => review.documentoRevisado === document.referenciaDocumento);
+    const latestDate = reviews.reduce(
+      (latest, review) => review.revisadoEl > latest ? review.revisadoEl : latest,
+      "",
+    );
+    const latestReviews = reviews.filter((review) => review.revisadoEl === latestDate);
+    // Schema-validated dates have day precision: same-day conflicts fail closed.
+    return latestReviews.length > 0
+      && latestReviews.every((review) => review.resultado === "aprobada");
+  });
 }
