@@ -1,11 +1,15 @@
 # Coordinación obligatoria
 
-Antes de trabajar, ejecutar `node scripts/checkout-context.mjs` desde la raíz
+Antes de trabajar, ejecutar `node scripts/checkout-context.mjs --compact` desde la raíz
 elegida (también disponible como `npm run check:checkout`). Registrar ruta, HEAD,
 rol control/worktree y cambios pendientes. Consultar `designationFile` si existe
 para elegir la candidata de la tarea; el diagnóstico no la selecciona ni acredita
 estado remoto. Se puede exigir `--expected-root=<ruta>` y `--expected-head=<SHA>`.
 No sincronizar automáticamente un control preservado.
+
+Para el resumen de una tarea añade `--task=<thread-id>` al comando: muestra checkout, rama, HEAD, propietario,
+estado operativo y siguiente paso. La salida compacta limita los cambios a ocho;
+el comando sin `--compact` conserva el inventario completo.
 
 Home actual: `apps/public-site/` y `HOMEPAGE.md`. `src/` fue retirado de esta
 candidata; historial y recuperación en `docs/LEGACY_RETIREMENT.md`.
@@ -33,6 +37,12 @@ Una tarea de solo lectura no crea claim. `COORDINATION.md` es un resumen opciona
    añadas a la rama candidata.
 5. Registra ese marcador antes de editar con
    `automation/agents/operations.mjs register`.
+
+En tareas locales humanas, `node scripts/local-task.mjs start <task.json>` reúne
+preflight, marcador, registro y transición a `en_curso`; `finish <result.json>`
+prepara handoff y cierre con evidencia. Sigue los formatos y límites de «Ayudante
+para tareas locales» en `.coordination/README.md`. No sirve para ciclos autónomos,
+transferencias, reaperturas ni entrega remota; no sustituye la validación del trabajo.
 
 ## Propiedad y cambios ajenos
 
